@@ -1,0 +1,65 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Badge/Guidelines" />
+
+# Badge
+
+A small, non-interactive marker for counts, statuses, or short labels. Renders a
+`<span>` by default and composes onto any element (link, button) via the Base UI
+`render` prop. Every color maps to an AEGIS token.
+
+## When to use
+
+- **Do** use it to show a count ("3 CVEs"), a state ("Resolved"), or a category
+  tag next to a title.
+- **Do** use the severity-aligned `success` / `warning` / `destructive` variants
+  to signal status at a glance.
+- **Don't** use a badge as a primary action — reach for `Button`. If it must be
+  clickable (e.g. a filter chip), compose with `render={<a/>}` / `render={<button/>}`.
+- **Don't** put long text in a badge; keep it to a word or a number.
+
+## Anatomy
+
+1. **Container** — the pill; sets background, border, radius, and padding.
+2. **Icon** _(optional)_ — a leading lucide glyph, auto-sized to `size-3`.
+3. **Label** — the count or short text.
+
+## Behavior
+
+| Variant | Meaning |
+| --- | --- |
+| `default` | Neutral accent marker on `--primary`. |
+| `secondary` / `muted` / `outline` | Low-emphasis labels. |
+| `success` / `warning` / `destructive` | Status mapped to AEGIS severity tokens. |
+
+Sizes: `sm`, `default`, `lg`.
+
+## Accessibility
+
+- A badge is decorative by default and conveys meaning through text — avoid
+  color-only status; the label carries the meaning.
+- When rendered as a link/button via `render`, it inherits that element's role and
+  is keyboard-focusable with a visible focus ring (`--ring`).
+- For a numeric badge attached to a control, reference it with `aria-describedby`
+  or include the count in the control's accessible name.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--primary` / `--primary-foreground` | Default fill + text |
+| `--secondary` / `--muted` | Low-emphasis fills |
+| `--success` / `--warning` / `--destructive` | Status variants |
+| `--border` | Outline variant hairline |
+| `--ring` | Focus ring when interactive |
+
+## API
+
+`Badge`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"default" \| "secondary" \| "outline" \| "muted" \| "success" \| "warning" \| "destructive"` | `"default"` | Visual/status style. |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Padding + text size. |
+| `render` | `ReactElement \| (props, state) => ReactElement` | `<span/>` | Element to render as. |
+| `className` | `string` | — | Merged onto the element via `cn()`. |
