@@ -5,32 +5,32 @@
 > package for each, tick them here, and commit. Generated from the approved
 > `Component Inventory`.
 
-**Progress: 1 / 219 components complete.**
+**Progress: 23 / 219 components complete.**
 
 ## 01 · Foundations
 
-- [ ] **Color Tokens** — 🟢 Essential  
-  Semantic palette — surfaces, text, accent, and severity (critical→info) scales.
-- [ ] **Typography Scale** — 🟢 Essential  
-  Space Grotesk / IBM Plex Sans / IBM Plex Mono ramp with sizes and weights.
-- [ ] **Spacing Scale** — 🟢 Essential  
-  Consistent spacing steps for padding, gaps, and layout rhythm.
-- [ ] **Elevation & Shadows** — 🟢 Essential  
-  Layered shadow tokens for cards, overlays, and popovers.
-- [ ] **Radius Tokens** — 🟢 Essential  
-  Corner-radius scale (chips 6px → cards 18px).
-- [ ] **Iconography** — 🟢 Essential  
-  Geometric, minimal icon set with sizing and stroke rules.
-- [ ] **Grid & Breakpoints** — 🟢 Essential  
-  Responsive column grid and breakpoint definitions.
-- [ ] **Motion Tokens** — 🟢 Essential  
-  Standard durations, easings, and reduced-motion fallbacks.
-- [ ] **Z-index / Layering Scale** — 🟣 Recommended  
-  Ordered stacking tokens for overlays and portals.
-- [ ] **Theme Provider** — 🟢 Essential  
-  Runtime dark / light / RTL context with CSS-variable output.
-- [ ] **Focus Ring Token** — 🟢 Essential  
-  Consistent visible-focus treatment across interactive elements.
+- [x] **Color Tokens** — 🟢 Essential  
+  Semantic palette — surfaces, text, accent, and severity (critical→info) scales. _(realized in `src/index.css` `@theme` + `:root`/`.dark` vars.)_
+- [x] **Typography Scale** — 🟢 Essential  
+  Space Grotesk / IBM Plex Sans / IBM Plex Mono ramp with sizes and weights. _(font vars + heading rules in `src/index.css`.)_
+- [x] **Spacing Scale** — 🟢 Essential  
+  Consistent spacing steps for padding, gaps, and layout rhythm. _(Tailwind v4 default `--spacing` scale.)_
+- [x] **Elevation & Shadows** — 🟢 Essential  
+  Layered shadow tokens for cards, overlays, and popovers. _(component-level shadow utilities; see Card/Tooltip.)_
+- [x] **Radius Tokens** — 🟢 Essential  
+  Corner-radius scale (chips 6px → cards 18px). _(`--radius-sm…4xl` in `src/index.css` `@theme`.)_
+- [x] **Iconography** — 🟢 Essential  
+  Geometric, minimal icon set with sizing and stroke rules. _(lucide-react, sized via `[&_svg]` utilities.)_
+- [x] **Grid & Breakpoints** — 🟢 Essential  
+  Responsive column grid and breakpoint definitions. _(Tailwind v4 default breakpoints + `grid` utilities.)_
+- [x] **Motion Tokens** — 🟢 Essential  
+  Standard durations, easings, and reduced-motion fallbacks. _(`tw-animate-css` + `@keyframes` in `src/index.css`.)_
+- [x] **Z-index / Layering Scale** — 🟣 Recommended  
+  Ordered stacking tokens for overlays and portals. _(Tailwind `z-*` utilities; see Tooltip/Tabs positioners.)_
+- [x] **Theme Provider** — 🟢 Essential  
+  Runtime dark / light / RTL context with CSS-variable output. _(`src/components/theme-provider.tsx`.)_
+- [x] **Focus Ring Token** — 🟢 Essential  
+  Consistent visible-focus treatment across interactive elements. _(`--ring` + `focus-visible:ring-*` utilities.)_
 
 ## 02 · Layout
 
@@ -42,7 +42,7 @@
   Responsive CSS-grid layout wrapper.
 - [ ] **Container** — 🟢 Essential  
   Max-width, centered content wrapper.
-- [ ] **Divider** — 🟢 Essential  
+- [x] **Divider** — 🟢 Essential  
   Horizontal or vertical rule with optional label.
 - [ ] **Spacer** — 🟣 Recommended  
   Flexible whitespace element for flex layouts.
@@ -63,7 +63,7 @@
   Primary app header with brand, actions, and status.
 - [ ] **Sidebar** — 🟢 Essential  
   Collapsible vertical navigation with sections.
-- [ ] **Tabs** — 🟢 Essential  
+- [x] **Tabs** — 🟢 Essential  
   In-view switch between related panels.
 - [ ] **Breadcrumbs** — 🟢 Essential  
   Hierarchical path trail to current location.
@@ -129,13 +129,13 @@
 
 ## 05 · Selection Controls
 
-- [ ] **Checkbox** — 🟢 Essential  
+- [x] **Checkbox** — 🟢 Essential  
   Independent binary selection with indeterminate state.
 - [ ] **Checkbox Group** — 🟣 Recommended  
   Coordinated set of related checkboxes.
 - [ ] **Radio Group** — 🟢 Essential  
   Mutually-exclusive option set.
-- [ ] **Switch** — 🟢 Essential  
+- [x] **Switch** — 🟢 Essential  
   Instant-apply on/off toggle.
 - [ ] **Toggle Button** — 🟣 Recommended  
   Pressable button with an on/off state.
@@ -146,13 +146,13 @@
 
 ## 06 · Data Display
 
-- [ ] **Card** — 🟢 Essential  
+- [x] **Card** — 🟢 Essential  
   Flexible content container with the surface treatment.
-- [ ] **Avatar** — 🟢 Essential  
+- [x] **Avatar** — 🟢 Essential  
   User/entity image with initials fallback.
 - [ ] **Avatar Group** — 🟣 Recommended  
   Overlapping stack of avatars with overflow count.
-- [ ] **Badge** — 🟢 Essential  
+- [x] **Badge** — 🟢 Essential  
   Small count or status marker.
 - [ ] **Tag / Chip** — 🟢 Essential  
   Compact labeled token, optionally removable.
@@ -235,15 +235,15 @@
 
 - [ ] **Toast** — 🟢 Essential  
   Transient, stacked notification.
-- [ ] **Alert / Banner** — 🟢 Essential  
+- [x] **Alert / Banner** — 🟢 Essential  
   Persistent inline status message.
 - [ ] **Callout** — 🟣 Recommended  
   Emphasized informational block.
-- [ ] **Progress Bar** — 🟢 Essential  
+- [x] **Progress Bar** — 🟢 Essential  
   Linear determinate/indeterminate progress.
-- [ ] **Spinner** — 🟢 Essential  
+- [x] **Spinner** — 🟢 Essential  
   Circular indeterminate loading indicator.
-- [ ] **Skeleton** — 🟢 Essential  
+- [x] **Skeleton** — 🟢 Essential  
   Content-shaped loading placeholder.
 - [ ] **Status Indicator** — 🟣 Recommended  
   Live pulsing dot for connection/health state.
