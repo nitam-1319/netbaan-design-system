@@ -1,0 +1,63 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Avatar/Guidelines" />
+
+# Avatar
+
+A compact representation of a user or entity — a profile image with an automatic
+initials or icon fallback. Built on the Base UI `Avatar` primitive, which tracks
+the image loading status and swaps in the fallback on error or while loading. Sizes
+are CVA variants; all color comes from AEGIS tokens.
+
+## When to use
+
+- **Do** use an avatar to identify a person, team, or asset owner in lists, tables,
+  and headers.
+- **Do** provide a meaningful `alt` on the image and a legible fallback (initials
+  or an icon).
+- **Don't** rely on the image alone to convey identity — always supply a fallback.
+- **Don't** use avatars as buttons without giving them an accessible name.
+
+## Anatomy
+
+1. **Root** — the circular clip; sets size, background (`--surface-2`), and border.
+2. **Image** — the `<img>`, object-fit cover; hidden until loaded.
+3. **Fallback** — initials or icon shown while loading or on error.
+
+## Behavior
+
+| State | Result |
+| --- | --- |
+| Image loads | Image fades in and covers the root. |
+| Image missing / errors | Fallback renders (optionally after a `delay`). |
+| No image provided | Fallback renders immediately. |
+
+Sizes: `xs` (24px), `sm` (32px), `default` (36px), `lg` (44px), `xl` (56px).
+
+## Accessibility
+
+- The image's `alt` is the accessible name; use the person/entity name, not
+  "avatar".
+- The fallback text (initials) is visible to AT; keep it to 1–2 letters.
+- Avatar has no role or keyboard interaction on its own. If it triggers an action
+  (opening a profile), wrap it in a `button`/`link` with an accessible label.
+- Contrast: fallback text uses `--muted-foreground` on `--surface-2`, meeting 4.5:1
+  in both themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-2` | Root background |
+| `--border` | Root hairline |
+| `--muted-foreground` | Fallback text |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Avatar` | `size` | `"xs" \| "sm" \| "default" \| "lg" \| "xl"` | `"default"` | Diameter. |
+| `AvatarImage` | `src`, `alt`, … | `img` props | — | The picture; `alt` is the name. |
+| `AvatarFallback` | `delay` | `number` | — | Ms to wait before showing the fallback. |
+
+All parts accept `className` (merged via `cn()`) and carry a `data-slot`.
