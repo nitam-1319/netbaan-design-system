@@ -199,3 +199,13 @@
         font-family: var(--font-heading);
     }
 }
+
+/* Indeterminate progress-bar sweep (used by the Progress component). */
+@keyframes progress-indeterminate {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(300%);
+    }
+}

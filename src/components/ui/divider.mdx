@@ -1,0 +1,63 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Divider/Guidelines" />
+
+# Divider
+
+A thin rule that separates content along the horizontal or vertical axis, with an
+optional inline label. Built on the Base UI `Separator` primitive so it emits the
+correct `role="separator"` and `aria-orientation` for assistive technology. All
+color comes from AEGIS border tokens.
+
+## When to use
+
+- **Do** use it to group related content — between list rows, toolbar clusters, or
+  card sections.
+- **Do** use a labeled horizontal divider (e.g. "OR") to split alternative flows.
+- **Don't** use a divider where whitespace or a heading already communicates the
+  break; over-ruling adds visual noise.
+- **Don't** place interactive content inside a divider.
+
+## Anatomy
+
+1. **Rule** — the 1px line, `bg-border` by default. Horizontal spans full width;
+   vertical fills its container height (`self-stretch`).
+2. **Label** _(optional, horizontal only)_ — centered text flanked by two rule
+   segments; the wrapper carries `role="separator"`.
+
+## Behavior
+
+| Prop | Result |
+| --- | --- |
+| `orientation="horizontal"` | Full-width 1px rule (default). |
+| `orientation="vertical"` | Full-height 1px rule; use inside a flex row. |
+| `tone` | `default`, `strong` (`--border-strong`), or `faint`. |
+| `children` | Renders an inline label (horizontal only). |
+
+## Accessibility
+
+- Emits `role="separator"` with `aria-orientation` so screen readers announce the
+  structural break.
+- Purely decorative dividers can be hidden from AT by passing `aria-hidden`; the
+  labeled variant keeps its rule segments `aria-hidden` and exposes only the label.
+- A divider is never focusable and carries no keyboard interaction.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border` | Default rule color |
+| `--border-strong` | `tone="strong"` rule color |
+| `--text-faint` | Label text |
+
+## API
+
+`Divider` — renders the Base UI `Separator` (or a labeled wrapper when `children`
+are supplied).
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Rule axis. |
+| `tone` | `"default" \| "strong" \| "faint"` | `"default"` | Rule color weight. |
+| `children` | `ReactNode` | — | Inline label (horizontal only). |
+| `className` | `string` | — | Merged onto the element via `cn()`. |
