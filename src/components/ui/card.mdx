@@ -1,0 +1,72 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Card/Guidelines" />
+
+# Card
+
+A flexible content container using the AEGIS surface treatment. It is a set of
+composable slot parts rather than a single monolith, so any layout — a metric
+tile, a finding summary, a settings panel — can be assembled from the same parts.
+Colors and elevation come from AEGIS tokens only.
+
+## When to use
+
+- **Do** use a card to group a single coherent unit of content with its own
+  heading, body, and optional actions.
+- **Do** compose `CardHeader` + `CardAction` when a control (menu, badge, button)
+  must pin to the top-right of the header.
+- **Don't** nest cards more than one level deep; prefer dividers or sections.
+- **Don't** use a card purely for a background — reach for a plain `--surface`
+  element.
+
+## Anatomy
+
+1. **Card** — the container: `--card` surface, `--border` hairline, radius `xl`,
+   and the AEGIS elevation shadow.
+2. **CardHeader** — a container-query grid holding title, description, and action.
+3. **CardTitle** / **CardDescription** — heading (Space Grotesk) and muted subtext.
+4. **CardAction** — pins to the header's top-right column.
+5. **CardContent** — the main body.
+6. **CardFooter** — actions row; pair with `border-t` for a divided footer.
+
+## Behavior
+
+- The header switches to a two-column grid automatically when a `CardAction` is
+  present (`has-data-[slot=card-action]`).
+- Add `border-b` to `CardHeader` or `border-t` to `CardFooter` to get the built-in
+  padding for a divided section.
+
+## Accessibility
+
+- `Card` is a generic container with no implicit role; give it semantic meaning
+  where appropriate (e.g. `render`/wrap in `<article>`, or add `role="region"` with
+  an `aria-labelledby` pointing at the `CardTitle` for a landmark).
+- Ensure the `CardTitle` is a real heading in context so screen-reader users can
+  navigate by heading; use the surrounding document's heading level.
+- Keyboard: the card itself is not focusable; interactive children manage their own
+  focus and tab order.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--card` / `--card-foreground` | Surface + text |
+| `--border` | Card + section hairlines |
+| `--muted-foreground` | Description text |
+| `--radius` (xl) | Corner radius |
+| shadow `0 1px 2px` | Base elevation |
+
+## API
+
+All parts accept the native `div` props plus `className` (merged via `cn()`), and
+each carries a `data-slot` for targeting.
+
+| Part | Purpose |
+| --- | --- |
+| `Card` | Outer container. |
+| `CardHeader` | Title/description/action grid. |
+| `CardTitle` | Heading text. |
+| `CardDescription` | Muted supporting text. |
+| `CardAction` | Top-right header control. |
+| `CardContent` | Body region. |
+| `CardFooter` | Footer / actions row. |
