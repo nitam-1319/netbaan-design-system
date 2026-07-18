@@ -1,0 +1,74 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Tabs/Guidelines" />
+
+# Tabs
+
+In-view switching between related panels without navigating away. Built on the Base
+UI `Tabs` primitive: roving-tabindex keyboard navigation, `role="tablist"`,
+`role="tab"`, and `role="tabpanel"` wiring, and an optional sliding indicator are
+all handled. The list is a pill-style segmented track using AEGIS surfaces.
+
+## When to use
+
+- **Do** use tabs to organize peer content into a few sections viewed one at a time
+  (Overview / Findings / Assets).
+- **Don't** use tabs for sequential steps — use a `Stepper`.
+- **Don't** use tabs when all content should be visible/compared at once, or for
+  primary navigation between pages — use a `Navbar`/`Sidebar`.
+- Keep the tab count small (2–6) and labels short.
+
+## Anatomy
+
+1. **Tabs** — the root; owns the active value.
+2. **TabsList** — the `tablist` track holding the tabs.
+3. **TabsIndicator** — the sliding highlight positioned behind the active tab via
+   the `--active-tab-width` / `--active-tab-left` CSS variables the primitive sets.
+4. **TabsTab** — an individual `tab` button; needs a unique `value`.
+5. **TabsPanel** — the `tabpanel` shown when its `value` is active.
+
+## Behavior
+
+| Trigger | Result |
+| --- | --- |
+| Click a tab | Activates it; indicator slides to it. |
+| `←` / `→` (or `↑` / `↓` when vertical) | Moves focus between tabs (roving tabindex). |
+| `Home` / `End` | Focus first / last tab. |
+| `disabled` tab | Skipped in keyboard navigation. |
+
+Controlled via `value` + `onValueChange`; uncontrolled via `defaultValue`.
+
+## Accessibility
+
+- Roles: `tablist` (list), `tab` (each trigger), `tabpanel` (each panel), with
+  `aria-selected` and `aria-controls`/`aria-labelledby` associations managed by the
+  primitive.
+- Keyboard map: arrows move focus within the list, `Enter`/`Space` activate (or set
+  `activateOnFocus` on `TabsList` to activate on focus), `Home`/`End` jump to ends.
+- Each `TabsTab` needs a distinct, human-readable label; icon-only tabs need an
+  `aria-label`.
+- The active panel is focusable so keyboard users land on its content after the
+  tab.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-2` | List track background |
+| `--background` | Active-tab indicator |
+| `--foreground` | Active tab label |
+| `--muted-foreground` | Inactive tab labels |
+| `--ring` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Tabs` | `value` / `defaultValue` | `any` | `0` | Active tab value. |
+| `Tabs` | `onValueChange` | `(value, details) => void` | — | Change handler. |
+| `Tabs` | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout + arrow-key axis. |
+| `TabsList` | `activateOnFocus` | `boolean` | `false` | Activate tabs on focus. |
+| `TabsTab` | `value` | `any` | — | Identifies the tab/panel pair. |
+| `TabsPanel` | `value` | `any` | — | Matches its tab. |
+
+All parts accept `className` (merged via `cn()`) and carry a `data-slot`.
