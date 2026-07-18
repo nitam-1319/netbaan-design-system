@@ -1,0 +1,65 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Progress/Guidelines" />
+
+# Progress Bar
+
+A linear indicator of task completion. Built on the Base UI `Progress` primitive,
+which supplies `role="progressbar"` and the `aria-valuenow/min/max` wiring. Pass a
+number for determinate progress or `null` for the indeterminate (sliding) state.
+Tones map to AEGIS tokens.
+
+## When to use
+
+- **Do** use it when you can express completion as a percentage — a scan, an
+  upload, a coverage ratio.
+- **Do** use the indeterminate state (`value={null}`) only when the duration is
+  truly unknown; otherwise prefer a real value.
+- **Don't** use a progress bar for very short waits — a `Spinner` is lighter.
+- **Don't** animate a determinate bar backward.
+
+## Anatomy
+
+1. **Root** — the `progressbar`; owns the value and aria wiring.
+2. **Label** _(optional)_ — an accessible name via `ProgressLabel`.
+3. **Value** _(optional)_ — the formatted readout via `ProgressValue`.
+4. **Track** — the `--surface-3` rail.
+5. **Indicator** — the filled portion, tinted by `tone`.
+
+## Behavior
+
+| State | Result |
+| --- | --- |
+| `value={n}` | Indicator width = `n%`; `aria-valuenow` set. |
+| `value={null}` | Indeterminate sweep animation; no `aria-valuenow`. |
+| `tone` | `default`, `success`, `warning`, `critical`. |
+
+## Accessibility
+
+- The primitive exposes `role="progressbar"` with `aria-valuemin`, `aria-valuemax`,
+  and `aria-valuenow` (omitted when indeterminate).
+- Provide a name: render `ProgressLabel` (auto-associated) or pass `aria-label`.
+- `ProgressValue` mirrors the numeric value visually; screen readers get it from
+  the aria attributes, so the two stay in sync.
+- No keyboard interaction — progress is a status indicator, not an input.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-3` | Track rail |
+| `--primary` | Default indicator |
+| `--success` / `--warning` / `--sev-critical` | Toned indicators |
+| `--text-faint` | Value readout |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Progress` | `value` | `number \| null` | — | Percent complete; `null` = indeterminate. |
+| `Progress` | `tone` | `"default" \| "success" \| "warning" \| "critical"` | `"default"` | Indicator color. |
+| `Progress` | `max` / `min` | `number` | `100` / `0` | Value bounds. |
+| `ProgressLabel` | — | — | — | Accessible name. |
+| `ProgressValue` | `children` | `(formatted, value) => ReactNode` | — | Custom readout formatter. |
+
+All parts accept `className` (merged via `cn()`) and carry a `data-slot`.
