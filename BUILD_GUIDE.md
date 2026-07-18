@@ -50,6 +50,16 @@ Respect dependencies (build a primitive before the components that list it under
 "depends on" in the inventory). Do as many as the run's budget allows; always finish
 a component fully before starting the next (never leave a half-built component).
 
+**Foundations rows that are not React components.** The first category
+("Foundations") contains abstract tokens/config rather than shippable components —
+Color Tokens, Typography Scale, Spacing Scale, Elevation & Shadows, Radius Tokens,
+Iconography (lucide), Grid & Breakpoints, Motion Tokens, Z-index, Theme Provider,
+Focus Ring Token. These are already realized in `src/index.css`, the Tailwind v4
+config, `src/components/theme-provider.tsx`, and lucide-react. Do **not** author a
+`.tsx` component for them — just tick them off in `COMPONENTS_STATUS.md` (with a
+one-line note of where they live) and move on to the first real component. Only
+build a `.tsx` + stories + mdx when the row is an actual UI component.
+
 ## Validation gates (must pass before commit)
 
 ```bash
