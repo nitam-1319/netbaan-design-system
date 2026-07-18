@@ -1,0 +1,69 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Checkbox/Guidelines" />
+
+# Checkbox
+
+An independent binary selection with a third, indeterminate ("mixed") state. Built
+on the Base UI `Checkbox` primitive, which provides `role="checkbox"`,
+`aria-checked` (including `"mixed"`), a paired hidden `<input>` for forms, and
+keyboard support. The box and indicator use AEGIS tokens.
+
+## When to use
+
+- **Do** use a checkbox for an independent on/off choice, or in a group where
+  multiple options can be selected.
+- **Do** use the indeterminate state on a parent "select all" when only some
+  children are selected.
+- **Don't** use a checkbox for an instantly-applied setting — use a `Switch`.
+- **Don't** use single checkboxes for mutually exclusive options — use a
+  `Radio Group`.
+
+## Anatomy
+
+1. **Root** — the box (`role="checkbox"`) plus a hidden input for forms.
+2. **Indicator** — renders when checked or indeterminate; shows a check or a
+   minus glyph respectively.
+
+## Behavior
+
+| State | `aria-checked` | Indicator |
+| --- | --- | --- |
+| Unchecked | `false` | none |
+| Checked | `true` | `Check` |
+| Indeterminate | `mixed` | `Minus` |
+
+The check vs. minus glyph is switched purely via the indicator's
+`data-[indeterminate]` state attribute — no runtime branching.
+
+## Accessibility
+
+- Exposes `role="checkbox"` with `aria-checked` (`true` / `false` / `mixed`).
+- Always give it a name — wrap in a `<label>` or pass `aria-label`.
+- Keyboard map: `Tab` to focus, `Space` to toggle. Focus shows the AEGIS ring.
+- Invalid state is conveyed with `aria-invalid`, which tints the border/ring with
+  `--destructive`.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--input` | Unchecked border/fill |
+| `--primary` | Checked/indeterminate fill + border |
+| `--primary-foreground` | Glyph color |
+| `--ring` | Focus ring |
+| `--destructive` | Invalid state |
+
+## API
+
+`Checkbox` — Base UI `Checkbox.Root` props.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `checked` | `boolean` | — | Controlled state. |
+| `defaultChecked` | `boolean` | `false` | Uncontrolled initial state. |
+| `indeterminate` | `boolean` | `false` | Mixed state. |
+| `onCheckedChange` | `(checked, details) => void` | — | Change handler. |
+| `disabled` | `boolean` | `false` | Disable interaction. |
+| `name` / `value` | `string` | — | Form submission identity. |
+| `className` | `string` | — | Merged onto the root via `cn()`. |
