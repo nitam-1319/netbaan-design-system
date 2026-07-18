@@ -1,0 +1,55 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Skeleton/Guidelines" />
+
+# Skeleton
+
+A content-shaped placeholder shown while data loads, reducing perceived latency and
+layout shift. Renders a pulsing `<div>` by default; reshape it with size/radius
+utilities or compose onto another element via the `render` prop. Uses the AEGIS
+`--surface-3` tone.
+
+## When to use
+
+- **Do** mirror the final content's shape and size so the swap-in is seamless.
+- **Do** use skeletons for content that will arrive shortly (cards, tables, avatars).
+- **Don't** use a skeleton for very brief waits — a `Spinner` is less distracting.
+- **Don't** animate dozens of skeletons on screen at once; it reads as noise.
+
+## Anatomy
+
+1. **Shape** — one pulsing block sized by utility classes (`h-*`, `w-*`,
+   `rounded-*`). Compose several to approximate a layout (avatar + lines + block).
+
+## Behavior
+
+| Aspect | Result |
+| --- | --- |
+| Animation | `animate-pulse` (honors `prefers-reduced-motion` via Tailwind). |
+| Shape | Fully controlled by utility classes on each instance. |
+
+## Accessibility
+
+- Each skeleton is `aria-hidden` so screen readers don't announce the placeholder
+  shapes.
+- Convey loading status separately — e.g. a visually-hidden `role="status"` live
+  region ("Loading findings…") near the skeleton group — so AT users know content
+  is pending.
+- Remove skeletons as soon as real content is ready to avoid a stuck-loading
+  impression.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-3` | Placeholder fill (`/70` opacity) |
+| `--radius-md` | Default corner radius |
+
+## API
+
+`Skeleton`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `render` | `ReactElement \| (props, state) => ReactElement` | `<div/>` | Element to render as. |
+| `className` | `string` | — | Size/shape utilities, merged via `cn()`. |
