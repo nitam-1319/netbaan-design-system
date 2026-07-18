@@ -1,0 +1,60 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Spinner/Guidelines" />
+
+# Spinner
+
+A circular indeterminate loading indicator for waits of unknown duration. Wraps the
+lucide `LoaderCircle` glyph with the AEGIS spin animation and exposes itself as a
+`role="status"` region with an accessible label. Sizes and tones are CVA variants.
+
+## When to use
+
+- **Do** use a spinner for short, indeterminate waits — a button submitting, a
+  panel fetching, an inline refresh.
+- **Do** place a `sm`/`current`-toned spinner inside a button to show a pending
+  action.
+- **Don't** use a spinner when you can show determinate progress — use `Progress`.
+- **Don't** stack multiple spinners for the same operation.
+
+## Anatomy
+
+1. **Status wrapper** — `role="status"` `aria-live="polite"` span.
+2. **Glyph** — the spinning `LoaderCircle`, `aria-hidden`.
+3. **Label** — visually-hidden text (`sr-only`) announced by screen readers.
+
+## Behavior
+
+| Aspect | Result |
+| --- | --- |
+| Animation | `animate-spin`; honors `prefers-reduced-motion` via Tailwind. |
+| Sizes | `xs`, `sm`, `default`, `lg`, `xl`. |
+| Tones | `default` (muted), `primary`, `current` (inherits text color). |
+
+## Accessibility
+
+- The wrapper is a polite live region; the `label` prop (default "Loading") is
+  announced without stealing focus.
+- The glyph is `aria-hidden` so only the text label is read.
+- Set a task-specific `label` ("Scanning", "Saving") so the announcement is
+  meaningful.
+- No keyboard interaction — a spinner is a status indicator, not a control.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--muted-foreground` | Default glyph color |
+| `--primary` | `tone="primary"` glyph |
+| `currentColor` | `tone="current"` glyph |
+
+## API
+
+`Spinner`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"xs" \| "sm" \| "default" \| "lg" \| "xl"` | `"default"` | Glyph diameter. |
+| `tone` | `"default" \| "primary" \| "current"` | `"default"` | Glyph color. |
+| `label` | `string` | `"Loading"` | Screen-reader announcement. |
+| `className` | `string` | — | Merged onto the wrapper via `cn()`. |
