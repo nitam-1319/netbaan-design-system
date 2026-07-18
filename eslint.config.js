@@ -19,4 +19,11 @@ export default defineConfig([globalIgnores(['dist']), {
   languageOptions: {
     globals: globals.browser,
   },
+}, {
+  // UI components intentionally export variant helpers (e.g. `buttonVariants`)
+  // alongside the component, which is the shadcn/ui convention.
+  files: ['src/components/ui/**/*.{ts,tsx}'],
+  rules: {
+    'react-refresh/only-export-components': 'off',
+  },
 }, ...storybook.configs["flat/recommended"]])

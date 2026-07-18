@@ -1,0 +1,78 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Tooltip/Guidelines" />
+
+# Tooltip
+
+A hover- and focus-triggered contextual label. It surfaces a short, supplementary
+hint about the element it is attached to — never essential information, and never
+interactive content. Built on the Base UI tooltip primitive so pointer and keyboard
+triggering, grouped open/close delays, collision-aware positioning, and dismissal
+are handled for us; AEGIS tokens drive all of the styling.
+
+## When to use
+
+- **Do** use it to clarify an icon-only button, abbreviate a truncated label, or
+  explain a metric.
+- **Don't** put actions, links, or form fields inside a tooltip — reach for a
+  Popover or Hover Card when the content is interactive or rich.
+- **Don't** hide information a user must have to complete a task; tooltips are
+  unavailable on touch and to some assistive tech until focus/hover.
+
+## Anatomy
+
+1. **Trigger** — the element the tooltip describes; must be focusable (a button,
+   link, or element with `tabIndex`).
+2. **Positioner** — Base UI anchor layer that flips the popup to the opposite side
+   on collision.
+3. **Popup** — the floating `--popover` surface holding the label, with a
+   `--border-strong` hairline and the AEGIS elevation shadow.
+4. **Arrow** — optional caret that points back at the trigger; rotates per side.
+
+## Behavior
+
+| Trigger | Result |
+| --- | --- |
+| Hover | Opens after the group delay (200ms), closes on unhover. |
+| Focus | Opens immediately for keyboard users; closes on blur. |
+| `Escape` | Dismisses the open tooltip. |
+| Grouped | Once one tooltip in a `TooltipProvider` is open, siblings open without re-delay. |
+
+## Accessibility
+
+- The popup has `role="tooltip"` and is wired to its trigger via `aria-describedby`,
+  so screen readers announce it as a description of the control.
+- The tooltip is reachable by keyboard focus, not hover alone.
+- Never place the only copy of critical information in a tooltip.
+- Contrast: `--popover-foreground` on `--popover` clears 4.5:1 in both themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` | Popup surface |
+| `--popover-foreground` | Label text |
+| `--border-strong` | 1px popup + arrow hairline |
+| shadow `0 18px 50px -18px` | Popup elevation (deeper in dark) |
+| `--radius-md` | Popup corner radius |
+
+## API
+
+`Tooltip` — root; wraps a single `TooltipProvider`. Accepts Base UI `Tooltip.Root`
+props (`open`, `defaultOpen`, `onOpenChange`, `delay`, `trackCursorAxis`).
+
+`TooltipTrigger` — pass your own element with `render={<Button … />}` so the
+tooltip attaches to a real, focusable control.
+
+`TooltipContent` — the popup.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `side` | `"top" \| "right" \| "bottom" \| "left"` | `"top"` | Preferred side; flips on collision. |
+| `align` | `"start" \| "center" \| "end"` | `"center"` | Alignment along the side. |
+| `sideOffset` | `number` | `8` | Gap between trigger and popup, in px. |
+| `showArrow` | `boolean` | `true` | Render the caret. |
+| `className` | `string` | — | Merged onto the popup via `cn()`. |
+
+`TooltipProvider` — optional shared delay context (`delay`, `closeDelay`) when you
+want a group of tooltips to share timing.
