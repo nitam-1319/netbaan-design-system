@@ -1,0 +1,70 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Alert/Guidelines" />
+
+# Alert / Banner
+
+A persistent, inline status message tied to a region of the page — not a transient
+toast. Composed of `Alert`, `AlertTitle`, and `AlertDescription`, with an optional
+leading icon. Severity variants map onto AEGIS accent and severity tokens.
+
+## When to use
+
+- **Do** use an alert to surface a standing condition: an expiring certificate, a
+  coverage gap, a critical finding.
+- **Do** match the variant to severity (`info`, `success`, `warning`,
+  `destructive`) and pair it with a matching lucide icon.
+- **Don't** use an alert for transient confirmations — use `Toast`.
+- **Don't** stack many high-severity alerts; consolidate or prioritize.
+
+## Anatomy
+
+1. **Alert** — the region: a grid that aligns an optional icon with the copy.
+2. **Icon** _(optional)_ — a leading lucide glyph in the severity color.
+3. **AlertTitle** — a concise headline.
+4. **AlertDescription** — supporting detail; wraps and can hold links.
+
+## Behavior
+
+| Variant | Meaning |
+| --- | --- |
+| `default` | Neutral, on `--card`. |
+| `info` | Informational, `--sev-low`. |
+| `success` | Positive, `--success`. |
+| `warning` | Needs attention, `--warning`. |
+| `destructive` | Error / critical, `--destructive`. |
+
+The grid switches from a single column to `icon + content` automatically when an
+`<svg>` icon is present.
+
+## Accessibility
+
+- Defaults to `role="alert"` for assertive announcement of urgent, dynamic
+  messages. For advisory banners that shouldn't interrupt, override with
+  `role="status"` (polite) or `role="region"` + `aria-label`.
+- Don't rely on color alone — the icon and title text carry the severity meaning.
+- Keep the title first so it's announced before the detail.
+- No inherent keyboard interaction; interactive children (links, dismiss buttons)
+  manage their own focus.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--card` / `--card-foreground` | Default surface + text |
+| `--sev-low` | `info` variant |
+| `--success` | `success` variant |
+| `--warning` | `warning` variant |
+| `--destructive` | `destructive` variant |
+| `--border` | Default hairline |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Alert` | `variant` | `"default" \| "info" \| "success" \| "warning" \| "destructive"` | `"default"` | Severity style. |
+| `Alert` | `role` | `string` | `"alert"` | ARIA role; use `status`/`region` for advisory. |
+| `AlertTitle` | — | `div` props | — | Headline. |
+| `AlertDescription` | — | `div` props | — | Supporting copy. |
+
+All parts accept `className` (merged via `cn()`) and carry a `data-slot`.
