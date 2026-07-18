@@ -1,0 +1,65 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Switch/Guidelines" />
+
+# Switch
+
+An instant-apply on/off toggle. Built on the Base UI `Switch` primitive, which
+renders an accessible `role="switch"` control with a paired hidden `<input>` for
+form submission and full keyboard support. The track and thumb animate on the
+`data-[checked]` state using AEGIS tokens.
+
+## When to use
+
+- **Do** use a switch for a setting that takes effect immediately ("Continuous
+  monitoring", "Email alerts").
+- **Don't** use a switch for choices that only apply after a Save — use a
+  `Checkbox` in that case.
+- **Don't** use a switch for mutually exclusive options — use a `Radio Group` or
+  `Segmented Control`.
+
+## Anatomy
+
+1. **Root** — the track (`role="switch"`) plus a hidden input for forms.
+2. **Thumb** — the sliding knob that moves on toggle.
+
+## Behavior
+
+| Trigger | Result |
+| --- | --- |
+| Click / tap | Toggles state, fires `onCheckedChange`. |
+| `Space` / `Enter` | Toggles when focused. |
+| `disabled` | Non-interactive at 50% opacity. |
+
+Controlled via `checked` + `onCheckedChange`; uncontrolled via `defaultChecked`.
+
+## Accessibility
+
+- Exposes `role="switch"` with `aria-checked`.
+- Always give it a name — wrap in a `<label>`, or pass `aria-label` /
+  `aria-labelledby`.
+- Keyboard map: `Tab` to focus, `Space`/`Enter` to toggle. Focus shows the AEGIS
+  ring (`--ring`).
+- The hidden input carries `name`/`value` so the switch submits with forms.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-3` | Off track |
+| `--primary` | On track |
+| `--background` | Thumb |
+| `--ring` | Focus ring |
+
+## API
+
+`Switch` — Base UI `Switch.Root` props.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `checked` | `boolean` | — | Controlled state. |
+| `defaultChecked` | `boolean` | `false` | Uncontrolled initial state. |
+| `onCheckedChange` | `(checked, details) => void` | — | Change handler. |
+| `disabled` | `boolean` | `false` | Disable interaction. |
+| `name` / `value` | `string` | — | Form submission identity. |
+| `className` | `string` | — | Merged onto the root via `cn()`. |
