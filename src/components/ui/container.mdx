@@ -1,0 +1,58 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Container/Guidelines" />
+
+# Container
+
+A max-width, horizontally-centered content wrapper built on the `Box` primitive.
+`Container` constrains a page or section to a readable measure and applies
+responsive horizontal gutters. The `size` variant picks the max width; `gutter`
+sets the padding.
+
+## When to use
+
+- **Do** wrap page sections in a `Container` to keep content centered and within a
+  comfortable width on large screens.
+- **Do** use `size="prose"` for long-form reading and `size="2xl"` for wide app
+  dashboards.
+- **Don't** use `Container` for internal component spacing — that belongs to
+  `Stack`/`Grid`.
+- **Don't** nest containers; apply one per page section.
+
+## Anatomy
+
+1. **Container** — a centered (`mx-auto`), full-width-up-to-max `Box`
+   (`data-slot="container"`) with horizontal gutters.
+
+## Behavior
+
+- `size` sets `max-width` (`sm`–`2xl`, `prose`, or `full`).
+- `gutter` sets horizontal padding (`none`, `sm`, `md`, `lg`).
+- Extends `Box`, so `render` can change the element (e.g. `<main>` or `<section>`).
+
+## Accessibility
+
+- `Container` is a layout wrapper with no implicit role. Use `render` to output a
+  landmark element (`<main>`, `<section>`, `<article>`) where appropriate so
+  assistive tech can navigate by region.
+- Keyboard: not focusable; children own focus.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--spacing` scale | `gutter` padding steps |
+| Tailwind `screen-*` widths | `size` max-width breakpoints |
+
+Colors are never set by `Container`; pass token utilities via `className`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "md" \| "lg" \| "xl" \| "2xl" \| "prose" \| "full"` | `"xl"` | Max width. |
+| `gutter` | `"none" \| "sm" \| "md" \| "lg"` | `"md"` | Horizontal padding. |
+| `render` | `ReactElement \| fn` | `<div />` | Change the rendered element (via `Box`). |
+| `className` | `string` | — | Merged via `cn()`. |
+
+Carries `data-slot="container"`.
