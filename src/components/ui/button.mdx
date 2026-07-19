@@ -1,0 +1,68 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Button/Guidelines" />
+
+# Button
+
+Triggers an action or event — submitting, confirming, opening, running. The primitive-tier
+reference for the AEGIS closed API: built on `@base-ui/react/button`, styled entirely through
+tokens, customized only through semantic props.
+
+## When to use
+
+- **Do** use it for the single most important action in a view (`variant="default"`), secondary
+  actions (`outline` / `secondary` / `ghost`), and destructive actions (`destructive`).
+- **Do** use `variant="link"` for navigation styled as text.
+- **Don't** use a button for pure navigation between pages when a real link is correct — use
+  `render={<a href=… />}` so it is a semantic anchor.
+
+## Anatomy
+
+A single control: an optional leading/trailing icon (`data-icon="inline-start | inline-end"`) plus a
+label. Icon-only buttons (`size="icon"`) require an `aria-label`.
+
+## Variants & sizes
+
+- **variant**: `default`, `outline`, `secondary`, `ghost`, `destructive`, `link`.
+- **size**: `default`, `xs`, `sm`, `lg`, and icon sizes `icon`, `icon-xs`, `icon-sm`, `icon-lg`.
+
+## Behavior
+
+| Trigger | Result |
+| --- | --- |
+| Click / `Enter` / `Space` | Fires `onClick`. |
+| `disabled` | Non-interactive, 50% opacity, pointer events off. |
+| `render={<a … />}` | Renders as the given element (polymorphism) while keeping button styling. |
+
+## Accessibility
+
+- Renders a native `<button>` (or the element you pass to `render`), so keyboard activation and
+  roles come for free.
+- Focus-visible shows a 3px `--ring` outline meeting ≥3:1 contrast in both themes.
+- Icon-only buttons must provide an `aria-label`.
+- Invalid state is conveyed via `aria-invalid`, not color alone.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--primary` / `--primary-foreground` | `default` fill + label |
+| `--secondary`, `--muted`, `--accent` | `secondary` / `ghost` / hover surfaces |
+| `--destructive` | `destructive` variant + invalid ring |
+| `--ring` | focus-visible outline |
+| `--radius-lg` / `--radius-md` | corner radii |
+
+## API (closed)
+
+The public type is `Omit<ButtonPrimitive.Props, "className" | "style"> & VariantProps<…>` — there is
+**no `className`/`style`**. Customize via props below; for one-off layout use `Box`/`Stack`.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | see above | `default` | Visual treatment. |
+| `size` | see above | `default` | Control size. |
+| `disabled` | `boolean` | `false` | Non-interactive state. |
+| `render` | `ReactElement` | — | Swap the rendered element (e.g. an anchor). Composition, not styling. |
+| `onClick` | `(e) => void` | — | Activation handler. |
+
+No `className` or `style` — that's intentional (see `.agent/rules/API_RULES.md`).

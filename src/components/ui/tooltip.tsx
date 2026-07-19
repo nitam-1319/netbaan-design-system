@@ -4,11 +4,11 @@ import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import { cn } from "@/lib/utils"
 
 /**
- * AEGIS — Tooltip
+ * AEGIS — Tooltip (Interactive tier, closed API)
  *
- * A hover/focus contextual label built on the Base UI tooltip primitive, so
- * pointer + keyboard triggering, grouped delays, collision-aware positioning,
- * and dismissal are handled for us. Styling is driven entirely by AEGIS tokens.
+ * Hover/focus contextual label on the Base UI tooltip primitive. Public API is
+ * CLOSED: no `className` / `style`. Placement and arrow are semantic props.
+ * See `.agent/rules/API_RULES.md` and `.agent/DECISIONS.md` (escape-hatch policy).
  */
 
 function TooltipProvider({
@@ -34,26 +34,34 @@ function Tooltip(props: React.ComponentProps<typeof TooltipPrimitive.Root>) {
   )
 }
 
+// Trigger stays composition-friendly via Base UI's `render`, but exposes no styling hatch.
 function TooltipTrigger(
-  props: React.ComponentProps<typeof TooltipPrimitive.Trigger>
+  props: Omit<
+    React.ComponentProps<typeof TooltipPrimitive.Trigger>,
+    "className" | "style"
+  >
 ) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
+type TooltipContentProps = Omit<
+  React.ComponentProps<typeof TooltipPrimitive.Popup>,
+  "className" | "style"
+> & {
+  sideOffset?: number
+  side?: React.ComponentProps<typeof TooltipPrimitive.Positioner>["side"]
+  align?: React.ComponentProps<typeof TooltipPrimitive.Positioner>["align"]
+  showArrow?: boolean
+}
+
 function TooltipContent({
-  className,
   sideOffset = 8,
   side = "top",
   align = "center",
   showArrow = true,
   children,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Popup> & {
-  sideOffset?: number
-  side?: React.ComponentProps<typeof TooltipPrimitive.Positioner>["side"]
-  align?: React.ComponentProps<typeof TooltipPrimitive.Positioner>["align"]
-  showArrow?: boolean
-}) {
+}: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Positioner
@@ -67,8 +75,7 @@ function TooltipContent({
           data-slot="tooltip-content"
           className={cn(
             "bg-popover text-popover-foreground ring-border-strong relative max-w-[18rem] rounded-md px-2.5 py-1.5 text-xs leading-relaxed font-medium text-pretty shadow-[0_18px_50px_-18px_rgba(0,0,0,0.7)] ring-1",
-            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
-            className
+            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
           )}
           {...props}
         >
