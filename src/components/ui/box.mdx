@@ -1,0 +1,59 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Box/Guidelines" />
+
+# Box
+
+The lowest-level layout primitive in AEGIS. `Box` renders a `div` by default but
+is fully polymorphic through Base UI's `useRender`, so it can become any element
+or compose with another component via the `render` prop. It applies no styling of
+its own — it exists to be the single, consistent building block that `Stack`,
+`Grid`, and `Container` are built on.
+
+## When to use
+
+- **Do** reach for `Box` when you need a neutral, polymorphic wrapper and want a
+  `data-slot` hook for targeting.
+- **Do** use the `render` prop to change the tag (`<section>`, `<ul>`, `<nav>`) or
+  to merge props onto a child component instead of adding a wrapper `div`.
+- **Don't** add colors or spacing "defaults" to `Box`; pass AEGIS token utilities
+  through `className`.
+- **Don't** use `Box` where a more specific primitive (`Stack`, `Grid`,
+  `Container`) already expresses the intent.
+
+## Anatomy
+
+1. **Box** — a single element (a `div` unless `render` replaces it) carrying
+   `data-slot="box"` and the merged `className`.
+
+## Behavior
+
+- Without `render`, `Box` outputs a `div`.
+- With `render={<tag />}` (a React element) or a render function, `Box` outputs
+  that element instead, merging `className`, `style`, event handlers, and `ref`
+  via `useRender` — no extra DOM node is introduced.
+
+## Accessibility
+
+- `Box` has no implicit role and adds no ARIA. Choose a semantic element through
+  `render` (`<nav>`, `<section>`, `<ul>`, …) so the correct role is exposed.
+- Keyboard: not focusable by itself; interactive children own their own focus.
+
+## Design tokens
+
+`Box` sets no tokens directly. Any surface, text, border, or spacing comes from
+the AEGIS token utilities you pass via `className`.
+
+| Token | Applies to |
+| --- | --- |
+| _(none by default)_ | Provided by the consumer via `className` |
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `render` | `ReactElement \| (props, state) => ReactElement` | `<div />` | Element or render function to output instead of a `div`. |
+| `className` | `string` | — | Merged via `cn()`. |
+| `...props` | `ComponentProps<"div">` | — | Native attributes spread onto the rendered element. |
+
+Every rendered element carries `data-slot="box"`.
