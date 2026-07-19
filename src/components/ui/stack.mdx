@@ -1,0 +1,61 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Stack/Guidelines" />
+
+# Stack
+
+A one-dimensional flex container that auto-spaces its children along a single
+axis. `Stack` is built on the `Box` primitive and exposes ergonomic
+`direction` / `gap` / `align` / `justify` / `wrap` variants so layout rhythm stays
+consistent and token-driven instead of hand-written `flex` utilities.
+
+## When to use
+
+- **Do** use `Stack` for vertical form fields, button rows, list items, or any
+  linear arrangement that needs even spacing.
+- **Do** switch `direction` to `row` for horizontal toolbars and metric rows.
+- **Don't** use `Stack` for two-dimensional layouts — reach for `Grid`.
+- **Don't** nest deep chains of single-child stacks; compose one `Stack` per axis.
+
+## Anatomy
+
+1. **Stack** — a flex `Box` (`data-slot="stack"`) whose direction, gap, alignment,
+   justification, and wrapping are controlled by variants.
+
+## Behavior
+
+- `gap` maps to the AEGIS spacing scale (`xs`→`gap-1` … `xl`→`gap-8`).
+- `direction` sets the main axis; `align` is the cross-axis, `justify` the main
+  axis.
+- `wrap` toggles `flex-wrap`; combine with a width constraint to wrap chips/tags.
+- Because it extends `Box`, `Stack` accepts `render` to change the element (e.g. a
+  `<nav>` or `<ul>`).
+
+## Accessibility
+
+- `Stack` is a layout container with no implicit role. Use `render` to pick a
+  semantic element where the grouping is meaningful (e.g. `<ul>`/`<li>` for lists,
+  `<nav>` for navigation).
+- Keyboard: not focusable; children manage their own focus and tab order.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--spacing` scale | `gap` steps (`xs`–`xl`) |
+
+Colors are never set by `Stack`; pass token utilities via `className`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `direction` | `"row" \| "column" \| "row-reverse" \| "column-reverse"` | `"column"` | Main axis. |
+| `gap` | `"none" \| "xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Spacing between children. |
+| `align` | `"start" \| "center" \| "end" \| "stretch" \| "baseline"` | `"stretch"` | Cross-axis alignment. |
+| `justify` | `"start" \| "center" \| "end" \| "between" \| "around" \| "evenly"` | `"start"` | Main-axis distribution. |
+| `wrap` | `boolean` | `false` | Allow items to wrap. |
+| `render` | `ReactElement \| fn` | `<div />` | Change the rendered element (via `Box`). |
+| `className` | `string` | — | Merged via `cn()`. |
+
+Carries `data-slot="stack"`.
