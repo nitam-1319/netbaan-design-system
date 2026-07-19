@@ -34,12 +34,11 @@ const spinnerVariants = cva("shrink-0 animate-spin", {
 })
 
 function Spinner({
-  className,
   size = "default",
   tone = "default",
   label = "Loading",
   ...props
-}: React.ComponentProps<"span"> &
+}: Omit<React.ComponentProps<"span">, "className" | "style"> &
   VariantProps<typeof spinnerVariants> & {
     /** Accessible label announced by screen readers. */
     label?: string
@@ -49,7 +48,7 @@ function Spinner({
       data-slot="spinner"
       role="status"
       aria-live="polite"
-      className={cn("inline-flex items-center justify-center", className)}
+      className={cn("inline-flex items-center justify-center")}
       {...props}
     >
       <LoaderCircle aria-hidden className={cn(spinnerVariants({ size, tone }))} />

@@ -31,43 +31,45 @@ const avatarVariants = cva(
 )
 
 function Avatar({
-  className,
   size = "default",
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root> &
+}: Omit<React.ComponentProps<typeof AvatarPrimitive.Root>, "className" | "style"> &
   VariantProps<typeof avatarVariants>) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
-      className={cn(avatarVariants({ size, className }))}
+      className={cn(avatarVariants({ size }))}
       {...props}
     />
   )
 }
 
-function AvatarImage({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+function AvatarImage(
+  props: Omit<
+    React.ComponentProps<typeof AvatarPrimitive.Image>,
+    "className" | "style"
+  >
+) {
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
-      className={cn("aspect-square size-full object-cover", className)}
+      className={cn("aspect-square size-full object-cover")}
       {...props}
     />
   )
 }
 
-function AvatarFallback({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+function AvatarFallback(
+  props: Omit<
+    React.ComponentProps<typeof AvatarPrimitive.Fallback>,
+    "className" | "style"
+  >
+) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "text-muted-foreground flex size-full items-center justify-center font-medium",
-        className
+        "text-muted-foreground flex size-full items-center justify-center font-medium"
       )}
       {...props}
     />

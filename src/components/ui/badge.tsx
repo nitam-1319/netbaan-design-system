@@ -41,17 +41,17 @@ const badgeVariants = cva(
 )
 
 function Badge({
-  className,
   variant = "default",
   size = "default",
   render = <span />,
   ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+}: Omit<useRender.ComponentProps<"span">, "className" | "style"> &
+  VariantProps<typeof badgeVariants>) {
   return useRender({
     render,
     props: {
       "data-slot": "badge",
-      className: cn(badgeVariants({ variant, size, className })),
+      className: cn(badgeVariants({ variant, size })),
       ...props,
     },
   })

@@ -23,7 +23,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <Skeleton className="h-4 w-48" />,
+  render: () => <Skeleton render={<div className="h-4 w-48" />} />,
   play: async ({ canvasElement }) => {
     const el = canvasElement.querySelector("[data-slot='skeleton']")
     await expect(el).toBeInTheDocument()
@@ -35,16 +35,16 @@ export const CardPlaceholder: Story = {
   render: () => (
     <div className="w-72 space-y-3 rounded-xl border border-border bg-card p-4">
       <div className="flex items-center gap-3">
-        <Skeleton className="size-9 rounded-full" />
+        <Skeleton render={<div className="size-9 rounded-full" />} />
         <div className="space-y-2">
-          <Skeleton className="h-3.5 w-28" />
-          <Skeleton className="h-3 w-20" />
+          <Skeleton render={<div className="h-3.5 w-28" />} />
+          <Skeleton render={<div className="h-3 w-20" />} />
         </div>
       </div>
-      <Skeleton className="h-24 w-full" />
+      <Skeleton render={<div className="h-24 w-full" />} />
       <div className="space-y-2">
-        <Skeleton className="h-3 w-full" />
-        <Skeleton className="h-3 w-4/5" />
+        <Skeleton render={<div className="h-3 w-full" />} />
+        <Skeleton render={<div className="h-3 w-4/5" />} />
       </div>
     </div>
   ),

@@ -1,17 +1,15 @@
+import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { Box } from "@/components/ui/box"
 
 /**
- * AEGIS — Grid
+ * AEGIS — Grid (Layout primitive, closed API)
  *
- * A two-dimensional CSS-grid layout wrapper built on the `Box` primitive. It
- * exposes a fixed column count and a token-driven `gap`, plus a `flow` option
- * for row/column auto-placement. For responsive layouts, add Tailwind
- * breakpoint utilities (e.g. `md:grid-cols-3`) through `className` — they merge
- * cleanly over the variant. Spacing maps to the AEGIS spacing scale; no colors
- * are set here.
+ * Two-dimensional CSS-grid wrapper. Polymorphic via `render`. Layout is
+ * expressed through token props (`cols` / `gap` / `flow` / `align`) — there is
+ * no public `className`/`style`. Responsive column counts are exposed as
+ * dedicated props rather than raw breakpoint utilities.
  */
 
 const gridVariants = cva("grid", {
@@ -54,21 +52,25 @@ const gridVariants = cva("grid", {
   },
 })
 
+type GridProps = Omit<useRender.ComponentProps<"div">, "className" | "style"> &
+  VariantProps<typeof gridVariants>
+
 function Grid({
-  className,
+  render,
   cols = 12,
   gap = "md",
   flow = "row",
   align = "stretch",
   ...props
-}: React.ComponentProps<typeof Box> & VariantProps<typeof gridVariants>) {
-  return (
-    <Box
-      data-slot="grid"
-      className={cn(gridVariants({ cols, gap, flow, align }), className)}
-      {...props}
-    />
-  )
+}: GridProps) {
+  return useRender({
+    render: render ?? <div />,
+    props: {
+      "data-slot": "grid",
+      className: cn(gridVariants({ cols, gap, flow, align })),
+      ...props,
+    },
+  })
 }
 
 export { Grid, gridVariants }

@@ -28,12 +28,14 @@ const progressIndicatorVariants = cva("h-full w-full flex-1 transition-all", {
 })
 
 function Progress({
-  className,
   tone = "default",
   value,
   children,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root> &
+}: Omit<
+  React.ComponentProps<typeof ProgressPrimitive.Root>,
+  "className" | "style"
+> &
   VariantProps<typeof progressIndicatorVariants>) {
   const indeterminate = value === null
 
@@ -41,7 +43,7 @@ function Progress({
     <ProgressPrimitive.Root
       data-slot="progress"
       value={value}
-      className={cn("flex w-full flex-col gap-2", className)}
+      className={cn("flex w-full flex-col gap-2")}
       {...props}
     >
       {children}
@@ -62,30 +64,31 @@ function Progress({
   )
 }
 
-function ProgressLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Label>) {
+function ProgressLabel(
+  props: Omit<
+    React.ComponentProps<typeof ProgressPrimitive.Label>,
+    "className" | "style"
+  >
+) {
   return (
     <ProgressPrimitive.Label
       data-slot="progress-label"
-      className={cn("text-sm font-medium text-foreground", className)}
+      className={cn("text-sm font-medium text-foreground")}
       {...props}
     />
   )
 }
 
-function ProgressValue({
-  className,
-  ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Value>) {
+function ProgressValue(
+  props: Omit<
+    React.ComponentProps<typeof ProgressPrimitive.Value>,
+    "className" | "style"
+  >
+) {
   return (
     <ProgressPrimitive.Value
       data-slot="progress-value"
-      className={cn(
-        "text-text-faint font-mono text-xs tabular-nums",
-        className
-      )}
+      className={cn("text-text-faint font-mono text-xs tabular-nums")}
       {...props}
     />
   )

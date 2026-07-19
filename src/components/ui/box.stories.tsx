@@ -24,7 +24,11 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: () => (
-    <Box className="bg-surface border-border rounded-lg border p-4 text-sm">
+    <Box
+      render={
+        <div className="bg-surface border-border rounded-lg border p-4 text-sm" />
+      }
+    >
       A Box renders a plain <code>div</code> by default and merges any utility
       classes you give it.
     </Box>
@@ -39,8 +43,12 @@ export const Default: Story = {
 export const Polymorphic: Story = {
   render: () => (
     <Box
-      render={<section aria-label="Panel" />}
-      className="bg-surface-2 border-border rounded-lg border p-4 text-sm"
+      render={
+        <section
+          aria-label="Panel"
+          className="bg-surface-2 border-border rounded-lg border p-4 text-sm"
+        />
+      }
     >
       With the <code>render</code> prop the same Box becomes a{" "}
       <code>section</code> — no wrapper element added.
@@ -56,8 +64,9 @@ export const Polymorphic: Story = {
 export const AsList: Story = {
   render: () => (
     <Box
-      render={<ul />}
-      className="text-muted-foreground list-disc space-y-1 pl-5 text-sm"
+      render={
+        <ul className="text-muted-foreground list-disc space-y-1 pl-5 text-sm" />
+      }
     >
       <li>Discovered assets</li>
       <li>Monitored assets</li>

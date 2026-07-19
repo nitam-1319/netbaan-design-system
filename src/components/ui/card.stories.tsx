@@ -34,18 +34,20 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: () => (
-    <Card className="w-80">
-      <CardHeader>
-        <CardTitle>Attack surface</CardTitle>
-        <CardDescription>
-          Externally reachable services discovered this week.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-3xl font-semibold tracking-tight">128</p>
-        <p className="text-muted-foreground text-sm">+12 vs. last scan</p>
-      </CardContent>
-    </Card>
+    <div className="w-80">
+      <Card>
+        <CardHeader>
+          <CardTitle>Attack surface</CardTitle>
+          <CardDescription>
+            Externally reachable services discovered this week.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-semibold tracking-tight">128</p>
+          <p className="text-muted-foreground text-sm">+12 vs. last scan</p>
+        </CardContent>
+      </Card>
+    </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -58,24 +60,30 @@ export const Default: Story = {
 
 export const WithActionAndFooter: Story = {
   render: () => (
-    <Card className="w-80">
-      <CardHeader className="border-b">
-        <CardTitle>Coverage gap</CardTitle>
-        <CardDescription>17 hosts are unmonitored.</CardDescription>
-        <CardAction>
-          <Badge variant="warning">Action</Badge>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="text-muted-foreground text-sm">
-        Enable monitoring to close the gap and improve your posture grade.
-      </CardContent>
-      <CardFooter className="border-t justify-end gap-2">
-        <Button variant="ghost" size="sm">
-          Dismiss
-        </Button>
-        <Button size="sm">Monitor all</Button>
-      </CardFooter>
-    </Card>
+    <div className="w-80">
+      <Card>
+        <CardHeader>
+          <CardTitle>Coverage gap</CardTitle>
+          <CardDescription>17 hosts are unmonitored.</CardDescription>
+          <CardAction>
+            <Badge variant="warning">Action</Badge>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <div className="text-muted-foreground text-sm">
+            Enable monitoring to close the gap and improve your posture grade.
+          </div>
+        </CardContent>
+        <CardFooter>
+          <div className="flex w-full justify-end gap-2">
+            <Button variant="ghost" size="sm">
+              Dismiss
+            </Button>
+            <Button size="sm">Monitor all</Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)

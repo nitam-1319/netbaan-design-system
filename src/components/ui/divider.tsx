@@ -32,12 +32,12 @@ const dividerVariants = cva("shrink-0 border-0 bg-border", {
 })
 
 function Divider({
-  className,
   orientation = "horizontal",
   tone = "default",
   children,
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof dividerVariants>) {
+}: Omit<React.ComponentProps<"div">, "className" | "style"> &
+  VariantProps<typeof dividerVariants>) {
   // Labeled divider: only meaningful on the horizontal axis.
   if (children != null && orientation === "horizontal") {
     return (
@@ -46,8 +46,7 @@ function Divider({
         role="separator"
         aria-orientation="horizontal"
         className={cn(
-          "text-text-faint flex w-full items-center gap-3 text-xs font-medium tracking-wide",
-          className
+          "text-text-faint flex w-full items-center gap-3 text-xs font-medium tracking-wide"
         )}
         {...props}
       >
@@ -70,7 +69,7 @@ function Divider({
     <SeparatorPrimitive
       data-slot="divider"
       orientation={orientation ?? "horizontal"}
-      className={cn(dividerVariants({ orientation, tone }), className)}
+      className={cn(dividerVariants({ orientation, tone }))}
       {...props}
     />
   )

@@ -13,10 +13,12 @@ import { cn } from "@/lib/utils"
  * forms, and keyboard support. The box + indicator are styled with AEGIS tokens.
  */
 
-function Checkbox({
-  className,
-  ...props
-}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+function Checkbox(
+  props: Omit<
+    React.ComponentProps<typeof CheckboxPrimitive.Root>,
+    "className" | "style"
+  >
+) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
@@ -25,8 +27,7 @@ function Checkbox({
         "data-[checked]:border-primary data-[checked]:bg-primary data-[indeterminate]:border-primary data-[indeterminate]:bg-primary",
         "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:border-ring",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
-        className
+        "aria-invalid:border-destructive aria-invalid:ring-destructive/20"
       )}
       {...props}
     >

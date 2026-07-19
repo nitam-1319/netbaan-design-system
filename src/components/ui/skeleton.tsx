@@ -12,16 +12,15 @@ import { cn } from "@/lib/utils"
  */
 
 function Skeleton({
-  className,
   render = <div />,
   ...props
-}: useRender.ComponentProps<"div">) {
+}: Omit<useRender.ComponentProps<"div">, "className" | "style">) {
   return useRender({
     render,
     props: {
       "data-slot": "skeleton",
       "aria-hidden": true,
-      className: cn("bg-surface-3/70 animate-pulse rounded-md", className),
+      className: cn("bg-surface-3/70 animate-pulse rounded-md"),
       ...props,
     },
   })

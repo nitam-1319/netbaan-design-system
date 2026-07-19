@@ -1,16 +1,14 @@
+import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { Box } from "@/components/ui/box"
 
 /**
- * AEGIS — Container
+ * AEGIS — Container (Layout primitive, closed API)
  *
- * A max-width, horizontally-centered content wrapper built on the `Box`
- * primitive. It constrains a page or section to a readable measure and applies
- * responsive gutters. The `size` variant selects the max width; `gutter`
- * controls the horizontal padding. Widths and padding come from the AEGIS
- * spacing scale; no colors are set here.
+ * Max-width, horizontally-centered content wrapper. Polymorphic via `render`.
+ * Layout is expressed through token props (`size` / `gutter`) — there is no
+ * public `className`/`style`. Widths and padding come from the AEGIS scale.
  */
 
 const containerVariants = cva("mx-auto w-full", {
@@ -37,19 +35,26 @@ const containerVariants = cva("mx-auto w-full", {
   },
 })
 
+type ContainerProps = Omit<
+  useRender.ComponentProps<"div">,
+  "className" | "style"
+> &
+  VariantProps<typeof containerVariants>
+
 function Container({
-  className,
+  render,
   size = "xl",
   gutter = "md",
   ...props
-}: React.ComponentProps<typeof Box> & VariantProps<typeof containerVariants>) {
-  return (
-    <Box
-      data-slot="container"
-      className={cn(containerVariants({ size, gutter }), className)}
-      {...props}
-    />
-  )
+}: ContainerProps) {
+  return useRender({
+    render: render ?? <div />,
+    props: {
+      "data-slot": "container",
+      className: cn(containerVariants({ size, gutter })),
+      ...props,
+    },
+  })
 }
 
 export { Container, containerVariants }

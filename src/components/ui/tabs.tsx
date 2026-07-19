@@ -12,39 +12,35 @@ import { cn } from "@/lib/utils"
  * segmented track; the active tab sits on an AEGIS surface highlight.
  */
 
-function Tabs({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+function Tabs(
+  props: Omit<React.ComponentProps<typeof TabsPrimitive.Root>, "className" | "style">
+) {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("flex flex-col gap-2")}
       {...props}
     />
   )
 }
 
-function TabsList({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) {
+function TabsList(
+  props: Omit<React.ComponentProps<typeof TabsPrimitive.List>, "className" | "style">
+) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "bg-surface-2 text-muted-foreground relative inline-flex h-9 w-fit items-center justify-center rounded-lg border border-border/70 p-1",
-        className
+        "bg-surface-2 text-muted-foreground relative inline-flex h-9 w-fit items-center justify-center rounded-lg border border-border/70 p-1"
       )}
       {...props}
     />
   )
 }
 
-function TabsTab({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Tab>) {
+function TabsTab(
+  props: Omit<React.ComponentProps<typeof TabsPrimitive.Tab>, "className" | "style">
+) {
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-tab"
@@ -53,18 +49,19 @@ function TabsTab({
         "text-muted-foreground data-[selected]:text-foreground hover:text-foreground",
         "focus-visible:ring-3 focus-visible:ring-ring/50",
         "disabled:pointer-events-none disabled:opacity-50",
-        "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-        className
+        "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
       )}
       {...props}
     />
   )
 }
 
-function TabsIndicator({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Indicator>) {
+function TabsIndicator(
+  props: Omit<
+    React.ComponentProps<typeof TabsPrimitive.Indicator>,
+    "className" | "style"
+  >
+) {
   return (
     <TabsPrimitive.Indicator
       data-slot="tabs-indicator"
@@ -72,24 +69,21 @@ function TabsIndicator({
       className={cn(
         "absolute top-1/2 left-0 z-0 h-7 -translate-y-1/2 rounded-md bg-background shadow-sm",
         "w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)]",
-        "transition-[width,transform] duration-200 ease-out",
-        className
+        "transition-[width,transform] duration-200 ease-out"
       )}
       {...props}
     />
   )
 }
 
-function TabsPanel({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Panel>) {
+function TabsPanel(
+  props: Omit<React.ComponentProps<typeof TabsPrimitive.Panel>, "className" | "style">
+) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-panel"
       className={cn(
-        "flex-1 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-md",
-        className
+        "flex-1 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-md"
       )}
       {...props}
     />

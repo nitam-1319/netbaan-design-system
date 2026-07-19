@@ -38,15 +38,15 @@ export const Default: Story = {
         <TabsTab value="findings">Findings</TabsTab>
         <TabsTab value="assets">Assets</TabsTab>
       </TabsList>
-      <TabsPanel value="overview" className="pt-4 text-sm text-muted-foreground">
-        Posture summary and headline metrics.
-      </TabsPanel>
-      <TabsPanel value="findings" className="pt-4 text-sm text-muted-foreground">
-        Ranked vulnerabilities by exploitability.
-      </TabsPanel>
-      <TabsPanel value="assets" className="pt-4 text-sm text-muted-foreground">
-        Discovered hosts and services.
-      </TabsPanel>
+      <div className="pt-4 text-sm text-muted-foreground">
+        <TabsPanel value="overview">
+          Posture summary and headline metrics.
+        </TabsPanel>
+        <TabsPanel value="findings">
+          Ranked vulnerabilities by exploitability.
+        </TabsPanel>
+        <TabsPanel value="assets">Discovered hosts and services.</TabsPanel>
+      </div>
     </Tabs>
   ),
   play: async ({ canvasElement }) => {
@@ -72,15 +72,11 @@ export const WithIcons: Story = {
           <Globe /> Surface
         </TabsTab>
       </TabsList>
-      <TabsPanel value="activity" className="pt-4 text-sm text-muted-foreground">
-        Recent scans and changes.
-      </TabsPanel>
-      <TabsPanel value="risks" className="pt-4 text-sm text-muted-foreground">
-        Open risks needing action.
-      </TabsPanel>
-      <TabsPanel value="surface" className="pt-4 text-sm text-muted-foreground">
-        Exposed attack surface.
-      </TabsPanel>
+      <div className="pt-4 text-sm text-muted-foreground">
+        <TabsPanel value="activity">Recent scans and changes.</TabsPanel>
+        <TabsPanel value="risks">Open risks needing action.</TabsPanel>
+        <TabsPanel value="surface">Exposed attack surface.</TabsPanel>
+      </div>
     </Tabs>
   ),
 }
@@ -94,15 +90,11 @@ export const KeyboardNav: Story = {
         <TabsTab value="b">Second</TabsTab>
         <TabsTab value="c">Third</TabsTab>
       </TabsList>
-      <TabsPanel value="a" className="pt-4 text-sm text-muted-foreground">
-        First panel.
-      </TabsPanel>
-      <TabsPanel value="b" className="pt-4 text-sm text-muted-foreground">
-        Second panel.
-      </TabsPanel>
-      <TabsPanel value="c" className="pt-4 text-sm text-muted-foreground">
-        Third panel.
-      </TabsPanel>
+      <div className="pt-4 text-sm text-muted-foreground">
+        <TabsPanel value="a">First panel.</TabsPanel>
+        <TabsPanel value="b">Second panel.</TabsPanel>
+        <TabsPanel value="c">Third panel.</TabsPanel>
+      </div>
     </Tabs>
   ),
   play: async ({ canvasElement }) => {

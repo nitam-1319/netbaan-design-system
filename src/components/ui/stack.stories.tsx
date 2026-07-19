@@ -59,10 +59,12 @@ export const Horizontal: Story = {
 
 export const SpaceBetween: Story = {
   render: () => (
-    <Stack direction="row" justify="between" align="center" className="w-full">
-      <Item>Attack surface</Item>
-      <Item>128</Item>
-    </Stack>
+    <div className="w-full">
+      <Stack direction="row" justify="between" align="center">
+        <Item>Attack surface</Item>
+        <Item>128</Item>
+      </Stack>
+    </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -72,12 +74,14 @@ export const SpaceBetween: Story = {
 
 export const Wrapping: Story = {
   render: () => (
-    <Stack direction="row" gap="sm" wrap className="w-64">
-      <Item>tag-1</Item>
-      <Item>tag-2</Item>
-      <Item>tag-3</Item>
-      <Item>tag-4</Item>
-      <Item>tag-5</Item>
-    </Stack>
+    <div className="w-64">
+      <Stack direction="row" gap="sm" wrap>
+        <Item>tag-1</Item>
+        <Item>tag-2</Item>
+        <Item>tag-3</Item>
+        <Item>tag-4</Item>
+        <Item>tag-5</Item>
+      </Stack>
+    </div>
   ),
 }

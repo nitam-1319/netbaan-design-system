@@ -35,44 +35,41 @@ const alertVariants = cva(
 )
 
 function Alert({
-  className,
   variant = "default",
   role = "alert",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
+}: Omit<React.ComponentProps<"div">, "className" | "style"> &
+  VariantProps<typeof alertVariants>) {
   return (
     <div
       data-slot="alert"
       role={role}
-      className={cn(alertVariants({ variant, className }))}
+      className={cn(alertVariants({ variant }))}
       {...props}
     />
   )
 }
 
-function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
+function AlertTitle({
+  ...props
+}: Omit<React.ComponentProps<"div">, "className" | "style">) {
   return (
     <div
       data-slot="alert-title"
-      className={cn(
-        "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
-        className
-      )}
+      className={cn("col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight")}
       {...props}
     />
   )
 }
 
 function AlertDescription({
-  className,
   ...props
-}: React.ComponentProps<"div">) {
+}: Omit<React.ComponentProps<"div">, "className" | "style">) {
   return (
     <div
       data-slot="alert-description"
       className={cn(
-        "col-start-2 grid justify-items-start gap-1 text-sm text-pretty opacity-90 [&_p]:leading-relaxed",
-        className
+        "col-start-2 grid justify-items-start gap-1 text-sm text-pretty opacity-90 [&_p]:leading-relaxed"
       )}
       {...props}
     />

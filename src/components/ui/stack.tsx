@@ -1,17 +1,15 @@
+import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { Box } from "@/components/ui/box"
 
 /**
- * AEGIS — Stack
+ * AEGIS — Stack (Layout primitive, closed API)
  *
- * A one-dimensional flex container that auto-spaces its children along a single
- * axis. Built on top of the `Box` primitive, so it stays polymorphic (`render`)
- * while exposing ergonomic `direction` / `gap` / `align` / `justify` / `wrap`
- * variants as CVA options. Spacing steps map to the AEGIS spacing scale; no
- * colors are involved. Use it instead of hand-writing `flex` utilities whenever
- * you want consistent, token-driven rhythm.
+ * One-dimensional flex container that auto-spaces children along a single axis.
+ * Polymorphic via `render`. Layout is expressed through token props
+ * (`direction` / `gap` / `align` / `justify` / `wrap`) — there is no public
+ * `className`/`style`. Spacing steps map to the AEGIS spacing scale.
  */
 
 const stackVariants = cva("flex", {
@@ -59,25 +57,26 @@ const stackVariants = cva("flex", {
   },
 })
 
+type StackProps = Omit<useRender.ComponentProps<"div">, "className" | "style"> &
+  VariantProps<typeof stackVariants>
+
 function Stack({
-  className,
+  render,
   direction = "column",
   gap = "md",
   align = "stretch",
   justify = "start",
   wrap = false,
   ...props
-}: React.ComponentProps<typeof Box> & VariantProps<typeof stackVariants>) {
-  return (
-    <Box
-      data-slot="stack"
-      className={cn(
-        stackVariants({ direction, gap, align, justify, wrap }),
-        className
-      )}
-      {...props}
-    />
-  )
+}: StackProps) {
+  return useRender({
+    render: render ?? <div />,
+    props: {
+      "data-slot": "stack",
+      className: cn(stackVariants({ direction, gap, align, justify, wrap })),
+      ...props,
+    },
+  })
 }
 
 export { Stack, stackVariants }

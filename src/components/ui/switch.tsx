@@ -12,10 +12,12 @@ import { cn } from "@/lib/utils"
  * and animate on the `data-[checked]` state.
  */
 
-function Switch({
-  className,
-  ...props
-}: React.ComponentProps<typeof SwitchPrimitive.Root>) {
+function Switch(
+  props: Omit<
+    React.ComponentProps<typeof SwitchPrimitive.Root>,
+    "className" | "style"
+  >
+) {
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
@@ -23,8 +25,7 @@ function Switch({
         "peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent p-px transition-colors outline-none",
         "bg-surface-3 data-[checked]:bg-primary",
         "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:border-ring",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        className
+        "disabled:cursor-not-allowed disabled:opacity-50"
       )}
       {...props}
     >
