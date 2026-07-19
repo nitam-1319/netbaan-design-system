@@ -1,0 +1,75 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/AppShell/Guidelines" />
+
+# App Shell
+
+A full-application scaffold that arranges a sidebar, a topbar, and a scrolling
+content region. `App Shell` is a set of composable slot parts rather than a single
+monolith, so product screens are assembled consistently. It fills the viewport
+(`min-h-svh`) and keeps the content column independently scrollable, with sticky
+header and footer.
+
+## When to use
+
+- **Do** use `App Shell` as the outermost layout for an authenticated
+  application view with persistent navigation.
+- **Do** compose `AppShellSidebar` + `AppShellMain` (header + content + footer)
+  for the standard sidebar-left layout.
+- **Don't** use it for marketing pages or documents — use `Container` there.
+- **Don't** put page-level scroll on the shell; let `AppShellContent` scroll.
+
+## Anatomy
+
+1. **AppShell** — viewport-filling flex row; holds the sidebar and main column.
+2. **AppShellSidebar** — `<aside>` on the AEGIS sidebar surface with a right
+   border; `width` selects the expanded size and `collapsed` shrinks it to an
+   icon rail.
+3. **AppShellMain** — the vertical column containing header, content, and footer.
+4. **AppShellHeader** — sticky topbar (`<header>`) with blur and a bottom border.
+5. **AppShellContent** — the scrolling `<main>` region.
+6. **AppShellFooter** — optional sticky status/footer (`<footer>`).
+
+## Behavior
+
+- The sidebar animates its width (`transition-[width]`) when `collapsed` toggles;
+  a `data-collapsed` attribute is present while collapsed for styling and tests.
+- `AppShellHeader` is `sticky top-0`; `AppShellContent` owns the scroll via
+  `overflow-auto`, so the header and sidebar stay in place.
+- Collapse state is controlled by the consumer (pass `collapsed` and manage it in
+  application state) — the shell renders it but does not own the state.
+
+## Accessibility
+
+- Parts render semantic landmarks: `<aside>` (complementary), `<header>` (banner),
+  `<main>` (main), `<footer>` (contentinfo). Provide an `aria-label` on the
+  sidebar `<nav>` when multiple navigations exist.
+- **Roles:** complementary (sidebar), banner (header), main (content),
+  contentinfo (footer).
+- **Keyboard:** all interactive children (nav links, buttons) are natively
+  focusable and follow DOM order; the collapse toggle is a standard button
+  (Enter/Space).
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--sidebar` / `--sidebar-foreground` | Sidebar surface + text |
+| `--sidebar-border` | Sidebar right border |
+| `--surface` | Header background (translucent) |
+| `--border` | Header/footer hairlines |
+| `--background` / `--foreground` | Shell base surface + text |
+| `--muted-foreground` | Footer text |
+
+## API
+
+| Part | Element | Props | Purpose |
+| --- | --- | --- | --- |
+| `AppShell` | `div` | `ComponentProps<"div">` | Outer viewport-filling row. |
+| `AppShellSidebar` | `aside` | `+ width: "sm" \| "md" \| "lg"`, `collapsed: boolean` | Navigation rail. |
+| `AppShellMain` | `div` | `ComponentProps<"div">` | Header + content + footer column. |
+| `AppShellHeader` | `header` | `ComponentProps<"header">` | Sticky topbar. |
+| `AppShellContent` | `main` | `ComponentProps<"main">` | Scrolling content region. |
+| `AppShellFooter` | `footer` | `ComponentProps<"footer">` | Status/footer row. |
+
+All parts accept `className` (merged via `cn()`) and carry a `data-slot`.
