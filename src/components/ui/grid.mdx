@@ -1,0 +1,61 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Grid/Guidelines" />
+
+# Grid
+
+A two-dimensional CSS-grid layout wrapper built on the `Box` primitive. `Grid`
+exposes a fixed `cols` count and a token-driven `gap`, plus a `flow` option for
+auto-placement. Responsive column changes are applied with Tailwind breakpoint
+utilities through `className`, which merge cleanly over the base variant.
+
+## When to use
+
+- **Do** use `Grid` for card galleries, metric tiles, dashboards, and any layout
+  that needs alignment across both rows and columns.
+- **Do** combine `cols={12}` with `col-span-*` on children for classic 12-column
+  layouts.
+- **Do** add `md:grid-cols-*` utilities via `className` for responsive reflow.
+- **Don't** use `Grid` for a single axis of evenly-spaced items — use `Stack`.
+
+## Anatomy
+
+1. **Grid** — a `display: grid` `Box` (`data-slot="grid"`) with a column template,
+   gap, flow, and cross-axis alignment set by variants.
+
+## Behavior
+
+- `cols` sets `grid-template-columns` (1–6, 12, or `none` for custom templates via
+  `className`).
+- `gap` maps to the AEGIS spacing scale.
+- `flow` chooses `row`, `column`, or `dense` auto-placement.
+- Responsive overrides (e.g. `lg:grid-cols-4`) are supplied through `className`.
+- Extends `Box`, so `render` can change the element.
+
+## Accessibility
+
+- `Grid` is a presentational container with no implicit role and adds no ARIA.
+  Choose a semantic element via `render` when the grouping is meaningful.
+- Reading order follows DOM order; avoid using grid placement to create a visual
+  order that contradicts the DOM order for keyboard and screen-reader users.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--spacing` scale | `gap` steps (`xs`–`xl`) |
+
+Colors are never set by `Grid`; pass token utilities via `className`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `cols` | `1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 12 \| "none"` | `12` | Column count. |
+| `gap` | `"none" \| "xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Gap between cells. |
+| `flow` | `"row" \| "column" \| "dense"` | `"row"` | Auto-placement flow. |
+| `align` | `"start" \| "center" \| "end" \| "stretch"` | `"stretch"` | Cross-axis item alignment. |
+| `render` | `ReactElement \| fn` | `<div />` | Change the rendered element (via `Box`). |
+| `className` | `string` | — | Merged via `cn()`; add responsive `grid-cols-*` here. |
+
+Carries `data-slot="grid"`.
