@@ -5,7 +5,7 @@
 > package for each, tick them here, and commit. Generated from the approved
 > `Component Inventory`.
 
-**Progress: 23 / 219 components complete.**
+**Progress: 28 / 219 components complete.**
 
 ## 01 · Foundations
 
@@ -34,13 +34,13 @@
 
 ## 02 · Layout
 
-- [ ] **Box** — 🟢 Essential  
+- [x] **Box** — 🟢 Essential  
   Style-prop primitive underpinning all layout components.
-- [ ] **Stack** — 🟢 Essential  
+- [x] **Stack** — 🟢 Essential  
   Vertical / horizontal auto-spaced flex container.
-- [ ] **Grid** — 🟢 Essential  
+- [x] **Grid** — 🟢 Essential  
   Responsive CSS-grid layout wrapper.
-- [ ] **Container** — 🟢 Essential  
+- [x] **Container** — 🟢 Essential  
   Max-width, centered content wrapper.
 - [x] **Divider** — 🟢 Essential  
   Horizontal or vertical rule with optional label.
@@ -52,7 +52,7 @@
   Custom-styled, themable scroll container.
 - [ ] **Resizable Panels** — 🟡 Advanced  
   Draggable split-view / resizable regions.
-- [ ] **App Shell** — 🟢 Essential  
+- [x] **App Shell** — 🟢 Essential  
   Sidebar + topbar + content scaffold for full apps.
 - [ ] **Masonry** — 🟡 Advanced  
   Variable-height staggered grid layout.
