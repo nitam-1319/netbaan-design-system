@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -16,6 +16,7 @@
     --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
     --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    --font-fa: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
 
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
