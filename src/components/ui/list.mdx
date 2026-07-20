@@ -1,0 +1,105 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/List/Guidelines" />
+
+# List
+
+A vertical collection of related items rendered with semantic `<ul>` / `<ol>` and
+`<li>` elements. `List` owns spacing, dividers, density, and optional row
+affordances; `ListItem` and `ListItemContent` compose the content. Public API is
+closed (no `className` / `style`) and every border/surface comes from an AEGIS
+token.
+
+## Overview
+
+Use a List to present a sequence of comparable items — assets, findings, sessions,
+settings — where each row has the same shape. It is the foundation for
+`Description List`, `Device / Session List`, `Priority Action Item`, and other
+row-based components.
+
+## Usage
+
+- **Do** use it for homogeneous rows that read as one group.
+- **Do** use `variant="divided"` or `"bordered"` when rows need visual separation.
+- **Do** mark clickable rows with `interactive` so they get hover, focus, and a
+  focus ring, and are keyboard-reachable.
+- **Don't** use a List for tabular data with multiple aligned columns — use
+  `Table` / `Data Table`.
+- **Don't** nest interactive controls inside an `interactive` row in a way that
+  creates nested tab stops; put the row action on the row itself.
+
+## Anatomy
+
+1. **List** — the `<ul>`/`<ol>` container; applies the variant (plain, divided,
+   bordered) and holds the items.
+2. **ListItem** — a `<li>` row; applies density and, when `interactive`, hover/
+   focus affordances.
+3. **ListItemContent** — an optional flex column that holds primary/secondary
+   text and absorbs remaining width so trailing icons align right.
+
+## Variants
+
+- `plain` — no separators (default).
+- `divided` — hairline dividers between rows.
+- `bordered` — dividers plus an outer border, radius, and card surface.
+
+`ordered` switches the container to `<ol>` for sequences that imply order.
+
+## States
+
+Row density: `compact`, `default`, `comfortable`. Interactive rows add Hover,
+Focus (visible ring), and Disabled (dimmed, removed from tab order) states.
+
+## Behavior
+
+- **Static rows:** plain `<li>` content.
+- **Interactive rows:** set `interactive`; the row becomes focusable
+  (`tabIndex=0`), gains hover/focus styling, and should carry an `onClick`. A
+  `disabled` interactive row is dimmed, `aria-disabled`, and skipped by `Tab`.
+- Density and variant are independent — mix them per context.
+
+## Accessibility
+
+- Semantics: `<ul>`/`<ol>` + `<li>` with an explicit `role="list"` (restores list
+  semantics even when list-style is removed).
+- Keyboard map (interactive rows): `Tab` moves between focusable rows; `Enter` /
+  `Space` activate the row's handler.
+- Disabled rows expose `aria-disabled` and are not focusable.
+- Focus is always visible via the `--ring` focus ring in light and dark.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border` | Row dividers + outer border |
+| `--card` | Bordered variant surface |
+| `--muted` | Interactive hover/focus wash |
+| `--ring` | Interactive focus ring |
+| `--foreground` / `--muted-foreground` | Primary / secondary text |
+
+## API
+
+`List`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"plain" \| "divided" \| "bordered"` | `"plain"` | Separator / surface treatment. |
+| `ordered` | `boolean` | `false` | Render as `<ol>` instead of `<ul>`. |
+
+`ListItem`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `density` | `"compact" \| "default" \| "comfortable"` | `"default"` | Row padding. |
+| `interactive` | `boolean` | `false` | Enable hover/focus affordances + focusability. |
+| `disabled` | `boolean` | `false` | Dim and remove an interactive row from tab order. |
+
+`ListItemContent` — a flex column wrapper for primary/secondary text; no props
+beyond standard content.
+
+## Examples
+
+- **Dark & Light:** switch the Storybook **Theme** toolbar; dividers, surface, and
+  hover wash track the active theme.
+- **RTL / Persian:** switch the **Locale** toolbar to فارسی; row content and
+  trailing icons mirror automatically because layout uses flex + logical spacing.
