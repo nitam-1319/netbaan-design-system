@@ -1,0 +1,93 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Breadcrumb/Guidelines" />
+
+# Breadcrumb
+
+A hierarchical trail that shows where the current page sits in the app and lets
+the user jump back to any ancestor. Built from semantic `<nav>` → `<ol>` → `<li>`
+with an accessible label; the final crumb is marked `aria-current="page"`. Links
+compose onto any element (a router `Link`, a plain `<a>`) through the Base UI
+`render` prop, so the closed API needs no styling hatch.
+
+## Overview
+
+Use breadcrumbs on deep pages so users always know their location and have a
+one-click path back up the hierarchy. Colors, spacing, and the directional
+separator all come from AEGIS tokens.
+
+## Usage
+
+- **Do** use breadcrumbs when content is nested more than one level deep
+  (Dashboard → Assets → api.netbaan.io).
+- **Do** make every crumb except the last a link; render the last as
+  `BreadcrumbPage`.
+- **Do** collapse long trails with `BreadcrumbEllipsis` between the root and the
+  tail.
+- **Don't** use breadcrumbs as primary navigation — that is `Navbar` / `Sidebar`.
+- **Don't** include the current page as a link; it is the destination.
+
+## Anatomy
+
+1. **Breadcrumb** — the `<nav aria-label="Breadcrumb">` landmark.
+2. **BreadcrumbList** — the ordered `<ol>` of crumbs.
+3. **BreadcrumbItem** — a single `<li>` crumb slot.
+4. **BreadcrumbLink** — an ancestor link (`render` = `<a>` by default).
+5. **BreadcrumbPage** — the current page, non-interactive, `aria-current="page"`.
+6. **BreadcrumbSeparator** — a decorative directional chevron between crumbs.
+7. **BreadcrumbEllipsis** — a collapsed-middle indicator.
+
+## Variants
+
+Breadcrumbs are structural rather than variant-driven; the separator glyph can be
+overridden by passing children to `BreadcrumbSeparator` (e.g. a slash).
+
+## States
+
+Link crumbs have Default, Hover (text brightens to `--foreground`), and Focus
+(visible ring) states. The current page is static, non-focusable text.
+
+## Behavior
+
+- The last crumb is always `BreadcrumbPage`, not a link.
+- `BreadcrumbSeparator` is `aria-hidden` / `role="presentation"` so screen readers
+  announce only the crumbs, not the chevrons.
+- The separator is **directional**: it mirrors in RTL automatically
+  (`rtl:-scale-x-100`), so the trail reads correctly in Persian.
+
+## Accessibility
+
+- The container is a `<nav>` landmark labeled "Breadcrumb".
+- Ordering is conveyed by the `<ol>`; the current page uses `aria-current="page"`.
+- Keyboard map: `Tab` moves between crumb links; `Enter` follows a link.
+- Separators and the ellipsis are hidden from assistive tech.
+- Focus is always visible via the `--ring` focus ring in light and dark.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--muted-foreground` | Resting crumb + separator color |
+| `--foreground` | Hover/focus + current-page text |
+| `--ring` | Focus ring on links |
+
+## API
+
+`Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbSeparator`,
+`BreadcrumbEllipsis` — structural wrappers with no special props.
+
+`BreadcrumbLink`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `render` | `ReactElement \| (props, state) => ReactElement` | `<a/>` | Element to render as (router `Link`, `<a>`). |
+| `href` | `string` | — | When rendering the default `<a>`. |
+
+`BreadcrumbPage` — the current page; no props beyond content.
+
+## Examples
+
+- **Dark & Light:** switch the Storybook **Theme** toolbar; crumb, hover, and
+  separator colors track the active theme.
+- **RTL / Persian:** switch the **Locale** toolbar to فارسی; the trail flows
+  right-to-left and each separator chevron mirrors automatically.
