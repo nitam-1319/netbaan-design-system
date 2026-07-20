@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Tag/Guidelines" />
+
+# Tag / Chip
+
+A compact label for categories, filters, and user-managed selections. A Tag can
+optionally be **dismissed** through a first-class `onRemove` affordance, which is
+what distinguishes it from `Badge` — a Badge is a purely decorative status
+marker, a Tag is content a user adds, filters by, or removes. Every color maps to
+an AEGIS token and the public API is closed (no `className` / `style`).
+
+## Overview
+
+Use a Tag to represent a discrete value in a set: an applied filter, an assigned
+label, a selected option in a multi-select, or a keyword. Tags usually appear in
+groups and wrap onto multiple lines.
+
+## Usage
+
+- **Do** use it for applied filters, labels, or multi-select selections the user
+  can add and remove.
+- **Do** provide `removeLabel` when the tag text alone doesn't make the dismiss
+  action clear (e.g. `removeLabel="Remove us-east-1"`).
+- **Don't** use a Tag as a status marker with no interaction — use `Badge`.
+- **Don't** use a Tag as a primary action — use `Button`.
+
+## Anatomy
+
+1. **Container** — the pill; sets background, border, radius, and padding.
+2. **Icon** _(optional)_ — a leading lucide glyph, auto-sized to `size-3`.
+3. **Label** — the tag text.
+4. **Dismiss button** _(optional)_ — a trailing `×` shown only when `onRemove`
+   is set; it is a real `<button>` with an accessible name.
+
+## Variants
+
+`default`, `primary`, `outline`, `muted`, and the severity-aligned `success` /
+`warning` / `destructive`. These mirror `Badge` so the two read as one family.
+
+## States
+
+Default, Hover (dismiss button highlights), Focus (visible ring on the dismiss
+button), and Disabled (dimmed, non-interactive). The dismiss affordance only
+exists when `onRemove` is provided.
+
+## Behavior
+
+- A Tag is static unless `onRemove` is supplied; then a trailing dismiss button
+  appears and calls `onRemove` on click or keyboard activation.
+- `disabled` dims the tag and disables the dismiss button.
+- Removal state (which tags exist) is owned by the consumer — the Tag reports the
+  intent to remove; the parent updates its list.
+
+## Accessibility
+
+- The dismiss control is a native `<button>` with `aria-label` (`removeLabel`),
+  so it is focusable and operable with `Enter` / `Space`.
+- Keyboard map: `Tab` to the dismiss button, `Enter` / `Space` to remove.
+- Meaning is carried by the label text, never color alone.
+- Focus is always visible via the `--ring` focus ring in light and dark.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--secondary` / `--primary` / `--muted` | Fill + text per variant |
+| `--border` | Outline variant hairline |
+| `--success` / `--warning` / `--destructive` | Status variants |
+| `--foreground` | Dismiss hover wash (`foreground/10`) |
+| `--ring` | Dismiss focus ring |
+
+## API
+
+`Tag`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"default" \| "primary" \| "outline" \| "muted" \| "success" \| "warning" \| "destructive"` | `"default"` | Visual/status style. |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Padding + text size. |
+| `onRemove` | `() => void` | — | When set, shows a dismiss button and fires on activation. |
+| `removeLabel` | `string` | `"Remove"` | Accessible label for the dismiss button. |
+| `disabled` | `boolean` | `false` | Dims and disables the tag + dismiss button. |
+
+## Examples
+
+- **Dark & Light:** switch the Storybook **Theme** toolbar; fills, text, and the
+  dismiss ring track the active theme.
+- **RTL / Persian:** switch the **Locale** toolbar to فارسی; the leading icon and
+  trailing dismiss button swap sides automatically because spacing uses logical
+  properties and flex order.
