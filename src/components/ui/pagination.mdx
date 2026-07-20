@@ -1,0 +1,101 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Pagination/Guidelines" />
+
+# Pagination
+
+Page navigation for splitting a long result set into discrete pages. Built from a
+semantic `<nav aria-label="pagination">` → `<ul>` → `<li>` structure; the active
+page is marked `aria-current="page"`. Every control reuses `buttonVariants`, so
+pagination reads as one family with `Button`, and links compose onto any element
+(a router `Link`, a plain `<a>`, or a `<button>`) through the Base UI `render`
+prop. The public API is closed (no `className` / `style`).
+
+## Overview
+
+Use pagination beneath tables and lists when results exceed a page and users
+benefit from jumping to a specific page. It is a dependency of `Data Table`.
+
+## Usage
+
+- **Do** use pagination for server- or client-paged result sets with a knowable
+  page count.
+- **Do** render page controls as links (`<a>`) for URL-driven paging, or as
+  `<button>` for in-app state — both via `render`.
+- **Do** collapse long ranges with `PaginationEllipsis`.
+- **Don't** use pagination for infinite / continuously loaded feeds — use
+  incremental loading instead.
+
+## Anatomy
+
+1. **Pagination** — the `<nav>` landmark labeled "pagination".
+2. **PaginationContent** — the `<ul>` row of controls.
+3. **PaginationItem** — a `<li>` slot.
+4. **PaginationLink** — a page number; `isActive` marks the current page.
+5. **PaginationPrevious / PaginationNext** — directional controls with a label
+   and a chevron that mirrors in RTL.
+6. **PaginationEllipsis** — a collapsed-range indicator.
+
+## Variants
+
+Page controls use `buttonVariants`: the active page renders as the `outline`
+button, inactive pages and prev/next as `ghost`. Size is `icon` for numbers and
+`default` (label + chevron) for previous/next.
+
+## States
+
+Default, Hover, Focus (visible ring), and Active (current page, `outline` +
+`aria-current="page"`). Disable prev/next at the range ends by omitting the
+control or disabling the rendered element.
+
+## Behavior
+
+- **URL paging:** render each control with `render={<a href="…"/>}`.
+- **State paging:** render with `render={<button/>}` and wire `onClick` to update
+  the current page; set `isActive` on the current number.
+- Previous/Next chevrons are **directional** and mirror automatically in RTL
+  (`rtl:-scale-x-100`).
+
+## Accessibility
+
+- The container is a `<nav>` landmark labeled "pagination".
+- The current page uses `aria-current="page"`; prev/next expose descriptive
+  `aria-label`s ("Go to previous page").
+- The ellipsis is `aria-hidden` with an `sr-only` "More pages" label.
+- Keyboard map: `Tab` between controls, `Enter` (links) / `Enter` + `Space`
+  (buttons) to activate.
+- Focus is always visible via the `--ring` focus ring in light and dark.
+
+## Design tokens
+
+Pagination consumes the same tokens as `Button` through `buttonVariants`:
+
+| Token | Applies to |
+| --- | --- |
+| `--border` / `--background` | Active page (`outline`) surface |
+| `--muted` / `--foreground` | Ghost hover wash + text |
+| `--muted-foreground` | Ellipsis glyph |
+| `--ring` | Focus ring |
+
+## API
+
+`Pagination`, `PaginationContent`, `PaginationItem`, `PaginationEllipsis` —
+structural wrappers with no special props.
+
+`PaginationLink`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `isActive` | `boolean` | `false` | Marks the current page (`outline` + `aria-current`). |
+| `size` | `"icon" \| "default"` | `"icon"` | Number vs. labelled control sizing. |
+| `render` | `ReactElement \| (props, state) => ReactElement` | `<a/>` | Element to render as. |
+
+`PaginationPrevious` / `PaginationNext` — same as `PaginationLink` minus
+`isActive` / `size`; they preset the label, chevron, and `aria-label`.
+
+## Examples
+
+- **Dark & Light:** switch the Storybook **Theme** toolbar; active, ghost, and
+  focus styles track the active theme through `buttonVariants`.
+- **RTL / Persian:** switch the **Locale** toolbar to فارسی; the control row flows
+  right-to-left and the Previous/Next chevrons mirror automatically.
