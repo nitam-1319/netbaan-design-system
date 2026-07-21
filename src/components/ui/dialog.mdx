@@ -1,0 +1,93 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Dialog/Guidelines" />
+
+# Dialog
+
+A modal surface that interrupts the flow to focus attention on a single task or
+decision. Built on the Base UI `Dialog` primitive, so the portal, backdrop, focus
+trap, scroll lock, `role="dialog"` / `aria-modal`, and Escape / outside-press
+dismissal are all handled for us.
+
+## Overview
+
+Use a dialog when the user must acknowledge information, confirm a consequential
+action, or complete a short focused task before returning to the page. Because it
+traps focus and blocks the background, it should be reserved for moments that
+genuinely warrant the interruption.
+
+## When to use
+
+- **Do** use it to confirm destructive or irreversible actions (delete an asset,
+  mark a finding remediated).
+- **Do** use it for short, self-contained tasks (rename, schedule a scan).
+- **Don't** use it for non-blocking, transient feedback — use a `Toast`.
+- **Don't** stack dialogs or use one for long multi-step flows; prefer a dedicated
+  page or a `Drawer`.
+
+## Anatomy
+
+1. **Dialog** — the root; owns `open` state.
+2. **DialogTrigger** — the control that opens the dialog (usually renders a `Button`).
+3. **DialogContent** — the portalled backdrop + centered popup surface.
+4. **DialogHeader / DialogTitle / DialogDescription** — the accessible heading and
+   supporting text that label the dialog.
+5. **DialogFooter** — the action row.
+6. **DialogClose** — any control that dismisses the dialog.
+
+## Variants
+
+`DialogContent` exposes a `size` prop — `sm`, `default`, `lg`, `xl` — controlling the
+maximum width. There is no color variant; intent is carried by the buttons inside.
+
+## States
+
+Closed, Opening / Open (scale-and-fade in), and Closing (scale-and-fade out). The
+backdrop fades in tandem. Triggers and close controls inherit `Button` states.
+
+## Behavior
+
+- **Controlled:** pass `open` + `onOpenChange`. **Uncontrolled:** pass `defaultOpen`.
+- **Dismissal:** Escape, a click on the backdrop, or any `DialogClose` closes it.
+- **Focus:** on open, focus moves into the dialog (first tabbable element); on close,
+  it returns to the trigger. Focus is trapped while open.
+- **Scroll:** background scroll is locked while the dialog is open.
+
+## Accessibility
+
+- Roles: the popup is `role="dialog"` with `aria-modal="true"`, labelled by
+  `DialogTitle` (`aria-labelledby`) and described by `DialogDescription`
+  (`aria-describedby`).
+- Keyboard map: `Tab` / `Shift+Tab` cycle within the trapped focus scope, `Escape`
+  closes, `Enter` / `Space` activate the focused control.
+- Always include a `DialogTitle`; the visible close button carries `aria-label="Close"`.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Dialog surface + text |
+| `--background` | Backdrop tint |
+| `--border-strong` | Surface ring |
+| `--muted` / `--muted-foreground` | Close button + description |
+| `--ring` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Dialog` | `open` / `defaultOpen` | `boolean` | — | Open state (controlled / uncontrolled). |
+| `Dialog` | `onOpenChange` | `(open, details) => void` | — | Open-state change handler. |
+| `Dialog` | `modal` | `boolean \| "trap-focus"` | `true` | Whether the dialog blocks the background. |
+| `DialogContent` | `size` | `"sm" \| "default" \| "lg" \| "xl"` | `"default"` | Maximum width. |
+| `DialogContent` | `showClose` | `boolean` | `true` | Render the corner close button. |
+| `DialogClose` | `render` | `ReactElement` | — | Element to render as the close control. |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`,
+and element polymorphism is available through `render`.
+
+## Examples
+
+Stories render inside a `.dark` decorator on `bg-background`; switch the toolbar
+**Locale** to فارسی (RTL) to confirm the header, close button, and footer actions
+mirror correctly with Vazirmatn.
