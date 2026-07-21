@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      27
+Components built:      28
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -22,7 +22,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 - On a category boundary (Essential→Recommended→Advanced) → sign-off.
 - On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
 
-## Built (27) — closed API, on disk
+## Built (28) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |
 |---|------------------|------|-------|------|---------|-------|
 | 1 | accordion | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
@@ -45,13 +45,14 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 18 | popover | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 | 19 | progress | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 | 20 | radio | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
-| 21 | skeleton | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
-| 22 | spinner | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
-| 23 | stack | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
-| 24 | switch | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
-| 25 | tabs | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
-| 26 | tag | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
-| 27 | tooltip | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 21 | select | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 22 | skeleton | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 23 | spinner | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 24 | stack | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 25 | switch | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 26 | tabs | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 27 | tag | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 28 | tooltip | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;

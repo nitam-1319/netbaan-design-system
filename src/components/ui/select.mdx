@@ -1,0 +1,97 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Select/Guidelines" />
+
+# Select
+
+A form control for choosing one value — or several, with `multiple` — from a list of
+options. Built on the Base UI `Select` primitive, so portalling, floating-engine
+positioning, typeahead, roving focus, modal focus management, native form integration
+(`name` / `required` / `disabled`), and outside-press / Escape dismissal are all
+handled for us.
+
+## Overview
+
+Use a select when the user must pick from a known, moderately sized set of mutually
+exclusive options and the chosen value belongs in a form. The trigger shows the
+current value (or a placeholder); the portalled listbox shows the options.
+
+## When to use
+
+- **Do** use it for a single choice from ~5–20 known options that is part of a form
+  (severity, owner, plan, status).
+- **Don't** use it for two or three options where all should be visible at once — use a
+  `Radio Group` or `Segmented Control`.
+- **Don't** use it for free-text-plus-filtering over a large list — use a `Combobox`.
+- **Don't** use it for a list of commands/actions — use a `Menu`.
+
+## Anatomy
+
+1. **Select** — the root; owns `value` state (controlled `value` / uncontrolled
+   `defaultValue`), `open` state, and form props (`name`, `required`, `disabled`,
+   `multiple`).
+2. **SelectTrigger** — the control that opens the listbox (`role="combobox"`); sized
+   with the semantic `size` prop (`sm` / `default` / `lg`). Renders a trailing chevron.
+3. **SelectValue** — renders the selected item's label, or a `placeholder`.
+4. **SelectContent** — the portalled, positioned listbox with scroll arrows.
+   Placement is semantic: `side`, `align`, `sideOffset`, `alignOffset`.
+5. **SelectItem** — an option (`role="option"`) with a check indicator when selected;
+   supports `disabled`.
+6. **SelectGroup** / **SelectGroupLabel** — a labelled section of options.
+7. **SelectSeparator** — a non-focusable divider between sections.
+
+## Behavior
+
+- **Open/close:** click, `Enter`, `Space`, or `ArrowDown`/`ArrowUp` on the trigger
+  opens the listbox with the selected item highlighted. Selecting an option sets the
+  value and closes the listbox; `Escape` or an outside press closes without changing.
+- **Controlled/uncontrolled:** mirrors Base UI — `value` + `onValueChange` for
+  controlled, `defaultValue` for uncontrolled.
+- **Forms:** set `name` to submit with a native form; `required` enforces a choice;
+  `disabled` disables the whole control. The trigger reflects validity via
+  `aria-invalid`, which drives the destructive ring.
+- **Placeholder:** `SelectValue`'s `placeholder` shows in a muted color until a value
+  is chosen (driven by `data-[placeholder]`).
+
+## Accessibility
+
+- Meets WCAG 2.2 AA: option text and the highlighted-row surface clear 4.5:1 in both
+  themes; the placeholder uses `--muted-foreground` which holds 4.5:1 on the trigger.
+- Roles are supplied by the primitive: the trigger is a `combobox` with
+  `aria-haspopup="listbox"` / `aria-expanded`, the popup is a `listbox`, and items are
+  `option`s with `aria-selected`. Groups expose `aria-label` from their label.
+- **Keyboard map:**
+
+  | Key | Action |
+  | --- | --- |
+  | `Enter` / `Space` / `ArrowDown` / `ArrowUp` (on trigger) | Open the listbox |
+  | `ArrowUp` / `ArrowDown` | Move highlight between options |
+  | `Home` / `End` | First / last option |
+  | `A`–`Z` | Typeahead to a matching option |
+  | `Enter` / `Space` | Select the highlighted option, close |
+  | `Escape` | Close without changing the value |
+
+- Focus is managed by the primitive and returns to the trigger on close.
+
+## Tokens
+
+Trigger uses `--input` / `--background` with a `--ring` focus ring and `--destructive`
+for the invalid state; the popup uses `--popover` / `--popover-foreground` with a
+`--border-strong` ring; highlighted options use `--accent` / `--accent-foreground`;
+labels, chevrons, separators use `--muted-foreground` and `--border`. No hardcoded
+colors, spacing, or radii — tokens only.
+
+## API
+
+| Part | Key props | Notes |
+| --- | --- | --- |
+| `Select` | `value`, `defaultValue`, `onValueChange`, `open`, `defaultOpen`, `onOpenChange`, `name`, `required`, `disabled`, `readOnly`, `multiple` | Root; closed API |
+| `SelectTrigger` | `size` (`sm` \| `default` \| `lg`), `disabled`, `render` | `role="combobox"` |
+| `SelectValue` | `placeholder`, `children` (label formatter) | Shows current label |
+| `SelectContent` | `side`, `align`, `sideOffset`, `alignOffset` | Portalled listbox |
+| `SelectItem` | `value`, `disabled`, `label`, `render` | `role="option"` |
+| `SelectGroup` / `SelectGroupLabel` | — | Labelled section |
+| `SelectSeparator` | `orientation` | Divider |
+
+The public API is **closed**: no `className` / `style` on any part. Customize through
+the semantic `size` prop and place one-off layout in `Box` / `Stack`.
