@@ -1,0 +1,110 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Menu/Guidelines" />
+
+# Menu
+
+A list of commands or choices revealed from a trigger. Built on the Base UI `Menu`
+primitive, so portalling, floating-engine positioning (side / align / offsets with
+collision flipping), roving focus, typeahead, modal focus management, and
+outside-press / Escape dismissal are all handled for us. It shares the floating
+foundation with `Popover` and adds menu semantics: items, groups, checkbox and radio
+selections, and nested submenus.
+
+## Overview
+
+Use a menu to present a set of actions or single/multiple choices that act on the
+element the trigger belongs to — a row's overflow actions, a bulk-action list, a
+"view options" toggle set. The surface is transient: it opens on the trigger, closes
+on select (for plain items), Escape, or an outside press.
+
+## When to use
+
+- **Do** use it for a list of commands or actions anchored to a trigger (an overflow
+  "⋯" button, a "New" split button, row actions).
+- **Do** use `MenuCheckboxItem` / `MenuRadioGroup` for toggling view state or picking
+  one option from a short set inside the same surface.
+- **Don't** use it to pick a form value from a list — use `Select`.
+- **Don't** use it for supplementary controls or detail that aren't a command list —
+  use a `Popover`.
+- **Don't** use it for a blocking decision — use a `Dialog`.
+
+## Anatomy
+
+1. **Menu** — the root; owns `open` state (controlled `open` / uncontrolled
+   `defaultOpen`) and `modal` behavior.
+2. **MenuTrigger** — the control that toggles the surface; wires `aria-haspopup`,
+   `aria-expanded`, and `aria-controls`.
+3. **MenuContent** — the portalled, positioned popup (`role="menu"`). Placement is
+   semantic: `side`, `align`, `sideOffset`, `alignOffset`.
+4. **MenuItem** — a command (`role="menuitem"`). `variant="destructive"` marks a
+   dangerous action; `inset` aligns a label with sibling rows that have leading icons.
+5. **MenuGroup** / **MenuGroupLabel** — a labelled section (`role="group"` with an
+   accessible name).
+6. **MenuSeparator** — a non-focusable divider (`role="separator"`).
+7. **MenuCheckboxItem** — a toggle (`role="menuitemcheckbox"`) with `checked` /
+   `defaultChecked` + `onCheckedChange`.
+8. **MenuRadioGroup** / **MenuRadioItem** — single-choice items
+   (`role="menuitemradio"`) with `value` / `defaultValue` + `onValueChange`.
+9. **MenuSub** / **MenuSubTrigger** — a nested submenu; the trigger reuses
+   `MenuContent` for its own surface.
+10. **MenuShortcut** — a presentational keyboard hint aligned to the trailing edge.
+
+## Behavior
+
+- **Open/close:** click or `Enter`/`Space`/`ArrowDown` on the trigger opens the menu
+  and moves focus to the first item. Selecting a plain item closes the menu (checkbox
+  items stay open); `Escape` or an outside press closes it and returns focus to the
+  trigger.
+- **Controlled/uncontrolled:** the root mirrors Base UI — `open` + `onOpenChange` for
+  controlled, `defaultOpen` for uncontrolled. Checkbox and radio items follow the same
+  controlled/uncontrolled contract.
+- **Modal:** by default the menu is modal (page scroll locked, outside pointer
+  interactions disabled). Pass `modal={false}` on `Menu` for a non-modal menu.
+
+## Accessibility
+
+- Meets WCAG 2.2 AA: item text and the highlighted-row surface clear 4.5:1 in both
+  themes; the destructive variant keeps its foreground token in the highlighted state.
+- Roles are supplied by the primitive: `menu`, `menuitem`, `menuitemcheckbox`,
+  `menuitemradio`, `group`, `separator`, plus `aria-haspopup` / `aria-expanded` on the
+  trigger and `aria-checked` on toggle items.
+- **Keyboard map:**
+
+  | Key | Action |
+  | --- | --- |
+  | `Enter` / `Space` / `ArrowDown` (on trigger) | Open menu, focus first item |
+  | `ArrowUp` / `ArrowDown` | Move highlight between items (loops) |
+  | `ArrowRight` / `ArrowLeft` | Open / close a submenu (mirrored in RTL) |
+  | `Home` / `End` | First / last item |
+  | `A`–`Z` | Typeahead to a matching item |
+  | `Enter` / `Space` | Activate the highlighted item |
+  | `Escape` | Close the menu, return focus to the trigger |
+
+- Focus is trapped within the open menu and restored to the trigger on close.
+- The submenu chevron mirrors under RTL (`rtl:rotate-180`).
+
+## Tokens
+
+Surface uses `--popover` / `--popover-foreground` with a `--border-strong` ring;
+highlighted rows use `--accent` / `--accent-foreground`; destructive rows use
+`--destructive`; group labels, shortcuts, and dividers use `--muted-foreground` and
+`--border`. No hardcoded colors, spacing, or radii — tokens only.
+
+## API
+
+| Part | Key props | Notes |
+| --- | --- | --- |
+| `Menu` | `open`, `defaultOpen`, `onOpenChange`, `modal`, `orientation` | Root; closed API |
+| `MenuTrigger` | `render`, `disabled` | Element swap via `render` |
+| `MenuContent` | `side`, `align`, `sideOffset`, `alignOffset` | Portalled popup |
+| `MenuItem` | `variant` (`default` \| `destructive`), `inset`, `disabled`, `closeOnClick`, `onClick`, `render` | `role="menuitem"` |
+| `MenuGroup` / `MenuGroupLabel` | — | Labelled section |
+| `MenuSeparator` | `orientation` | `role="separator"` |
+| `MenuCheckboxItem` | `checked`, `defaultChecked`, `onCheckedChange`, `disabled` | `role="menuitemcheckbox"` |
+| `MenuRadioGroup` / `MenuRadioItem` | `value`, `defaultValue`, `onValueChange` / `value` | `role="menuitemradio"` |
+| `MenuSub` / `MenuSubTrigger` | `variant`, `inset`, `disabled` | Nested submenu |
+| `MenuShortcut` | `children` | Presentational hint |
+
+The public API is **closed**: no `className` / `style` on any part. Customize through
+the semantic `variant` / `inset` props and place one-off layout in `Box` / `Stack`.
