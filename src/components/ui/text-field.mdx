@@ -1,0 +1,79 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/TextField/Guidelines" />
+
+# Text Field
+
+The batteries-included single-line text input. A prop-driven convenience wrapper that
+composes the `FormField` family — label, control, helper text, and validation message —
+into one component for the common case. Built on the same Base UI `Field` primitive as
+`FormField`, so label association, `aria-describedby`, `aria-invalid`, and native
+validity all come for free.
+
+## Overview
+
+Reach for `TextField` whenever you need a labelled single-line input: a search target,
+an email, a name. Pass `label`, `description`, and `error` as props and the field wires
+itself up. When the flat API can't express the layout — two controls in one field, a
+bespoke error arrangement — compose the `FormField` parts directly instead.
+
+## When to use
+
+- **Do** use it for a standard labelled single-line input in a form.
+- **Do** drop to `FormField` + parts for anything the flat props can't express.
+- **Don't** use it for multi-line input — use `Textarea`.
+- **Don't** use it to pick from a fixed list — use `Select`; or to filter a large list
+  — use `Combobox`.
+
+## Anatomy
+
+`TextField` renders a `FormField` containing, in order:
+
+1. **label** — the field's visible label (rendered when `label` is set).
+2. **control** — the `<input>`; sized with the semantic `size` prop
+   (`sm` / `default` / `lg`) and reflecting validity via `aria-invalid`.
+3. **description** — optional helper text below the control.
+4. **error** — an optional validation message (shown whenever `error` is set).
+
+## Behavior
+
+- **Controlled/uncontrolled:** mirrors a native input — `value` + `onValueChange`
+  (or `onChange`) for controlled, `defaultValue` for uncontrolled.
+- **Validation:** for native-validity messages that appear/clear automatically, set
+  `validationMode` and provide your own `FormField` + `FieldError match=…` composition;
+  the flat `error` prop is for externally-controlled messages and should be paired with
+  `aria-invalid`.
+- **Forms:** `name` submits with a native `<form>`; `required`, `type`, `pattern`,
+  `min`/`max` drive native validity; `disabled` locks the field and dims the label.
+
+## Accessibility
+
+- Meets WCAG 2.2 AA: label and input text clear 4.5:1 in both themes; helper text
+  (`--muted-foreground`) and error text (`--destructive`) both hold 4.5:1.
+- The Base UI field associates the label (`htmlFor`), links helper and error text via
+  `aria-describedby`, and toggles `aria-invalid` — so the label and any error are
+  announced with the control. No manual `id` wiring is required.
+- **Keyboard:** `Tab` focuses the input; typing edits it; clicking the label focuses
+  the input; validation fires per `validationMode`.
+
+## Tokens
+
+Inherits `FormField`'s tokens: `--input` / `--background` with a `--ring` focus ring and
+`--destructive` for the invalid state; `--foreground` label; `--muted-foreground` helper
+text; `--destructive` error text. No hardcoded colors, spacing, or radii — tokens only.
+
+## API
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `label` | `ReactNode` | Visible label |
+| `description` | `ReactNode` | Helper text |
+| `error` | `ReactNode` | Externally-controlled validation message |
+| `size` | `sm` \| `default` \| `lg` | Control height |
+| `name` | `string` | Native form field name |
+| `disabled` | `boolean` | Locks the field, dims the label |
+| `required` / `type` / `placeholder` / `pattern` / `value` / `defaultValue` / `onValueChange` | native input props | Passed to the control |
+| `validationMode` / `validate` | field root props | Native / custom validation |
+
+The public API is **closed**: no `className` / `style`. Customize through the semantic
+`size` prop; place layout between fields in `Box` / `Stack`.
