@@ -1,0 +1,97 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Accordion/Guidelines" />
+
+# Accordion
+
+A vertically stacked set of headers that each reveal a section of content. Built on
+the Base UI `Accordion` primitive, so `role`/`aria-*` wiring, single- or
+multiple-open behavior, keyboard support, and the open/close height animation
+(via the `--accordion-panel-height` CSS variable) are handled for us.
+
+## Overview
+
+Use an accordion to let people scan a list of section titles and expand only the
+ones they care about. It trades immediate visibility for a shorter, calmer page —
+ideal for reference material, settings groups, and FAQs.
+
+## When to use
+
+- **Do** use it to condense a long page of independent sections a user reads one at
+  a time (a findings breakdown, grouped settings, an FAQ).
+- **Do** allow `multiple` open when sections are meant to be compared.
+- **Don't** use it for a small number of always-relevant fields — just show them.
+- **Don't** use it for step-by-step flows (use a `Stepper`) or for switching between
+  peer views (use `Tabs`).
+
+## Anatomy
+
+1. **Accordion** — the root; owns the open value(s) and the `variant`.
+2. **AccordionItem** — one collapsible section, identified by a unique `value`.
+3. **AccordionTrigger** — the header button that toggles its item; renders the
+   caret and an accessible `h3`/`button` pair.
+4. **AccordionPanel** — the revealed content region, animated by height.
+
+## Variants
+
+| Variant | Use |
+| --- | --- |
+| `default` | Flush rows separated by hairline dividers. |
+| `separated` | Each item boxed on its own surface with a gap between. |
+| `bordered` | One outlined container wrapping divided rows. |
+
+## States
+
+Default (collapsed), Open, Hover, Focus (visible ring on the trigger), and Disabled
+(per-item via the item's `disabled`, or whole-accordion via the root's `disabled`).
+
+## Behavior
+
+- **Single vs. multiple:** by default only one panel is open; set `multiple` to allow
+  several. Opening a panel in single mode closes the previously open one.
+- **Controlled:** pass `value` (an array of open item values) plus `onValueChange`.
+- **Uncontrolled:** pass `defaultValue`.
+- **Keyboard:** `Tab` moves between triggers, `Enter` / `Space` toggles the focused
+  panel.
+
+## Accessibility
+
+- Each header is a real `<button>` inside an `<h3>`, with `aria-expanded` and
+  `aria-controls` pointing at its panel; the panel is `aria-labelledby` its trigger.
+- Keyboard map: `Tab` / `Shift+Tab` move between headers, `Enter` and `Space` toggle
+  the focused section.
+- Disabled items are skipped and marked `aria-disabled`.
+- Icon-only triggers must still carry a text label (or `aria-label`).
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--foreground` | Trigger label |
+| `--muted-foreground` | Panel body + caret |
+| `--surface-2` | `separated` / `bordered` item surface |
+| `--border` | Dividers and container outline |
+| `--ring` | Trigger focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Accordion` | `variant` | `"default" \| "separated" \| "bordered"` | `"default"` | Visual treatment of the item stack. |
+| `Accordion` | `value` / `defaultValue` | `Value[]` | `[]` | Open item value(s). |
+| `Accordion` | `onValueChange` | `(value, details) => void` | — | Change handler. |
+| `Accordion` | `multiple` | `boolean` | `false` | Allow multiple panels open. |
+| `Accordion` | `disabled` | `boolean` | `false` | Disable the whole accordion. |
+| `AccordionItem` | `value` | `Value` | — | Identifies the item/panel pair. |
+| `AccordionItem` | `disabled` | `boolean` | `false` | Disable a single item. |
+| `AccordionTrigger` | `children` | `ReactNode` | — | Header label content. |
+| `AccordionPanel` | `keepMounted` | `boolean` | `false` | Keep collapsed content in the DOM. |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`
+for styling hooks and tests, and element polymorphism is available via `render`.
+
+## Examples
+
+The stories render inside a `.dark` decorator on the real `bg-background` surface;
+switch the toolbar **Locale** to فارسی (RTL) to verify the caret and padding mirror
+correctly with Vazirmatn.
