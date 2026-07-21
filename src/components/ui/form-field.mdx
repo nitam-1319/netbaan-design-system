@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FormField/Guidelines" />
+
+# Form Field
+
+The labelled-control building block for forms. Built on the Base UI `Field` primitive,
+so a label, control, helper text, and validation message are wired together
+automatically — `htmlFor` / `aria-describedby` / `aria-invalid` associations and
+validity state are handled for us. Every input in the system (Text Field, Textarea,
+Select, …) composes this so labelling and error handling stay consistent.
+
+## Overview
+
+Use a form field to wrap any single form control with its label and supporting text.
+The root owns the field's `name`, `disabled`, and validation behavior; the parts
+render the label, the control, an optional helper description, and one or more
+validation messages that appear based on the control's `ValidityState`.
+
+## When to use
+
+- **Do** wrap every labelled form control in a `FormField` so the label, help text,
+  and errors are correctly associated.
+- **Do** use `FieldControl`'s `render` prop to swap the element — e.g. a `<textarea>`
+  — while keeping the field wiring.
+- **Don't** use it for a standalone label with no control — use a plain heading or
+  `FieldLabel` only where a control exists.
+- **Don't** reach for raw `<label>` / `aria-*` wiring on inputs; let the field own it.
+
+## Anatomy
+
+1. **FormField** — the root (`Field.Root`); owns `name`, `disabled`, `validate`, and
+   `validationMode`. Lays its parts out in a vertical stack.
+2. **FieldLabel** — the control's label; associated automatically (no manual `htmlFor`).
+3. **FieldControl** — the control; renders an `<input>` by default, sized with the
+   semantic `size` prop (`sm` / `default` / `lg`). Reflects validity via `aria-invalid`.
+4. **FieldDescription** — helper text, linked via `aria-describedby`.
+5. **FieldError** — a validation message shown when the control matches a validity
+   state; `match` selects which state (`valueMissing`, `typeMismatch`, …) or `true` to
+   always show (for externally-controlled errors).
+
+## Behavior
+
+- **Validation:** set `validationMode` on `FormField` (`onSubmit` — default, `onBlur`,
+  or `onChange`) and provide `FieldError` parts with a `match`. The primitive reads the
+  native `ValidityState`, so `required`, `type="email"`, `min`/`max`, `pattern`, etc.
+  work without custom code. A `validate` callback on the root handles custom rules.
+- **Controlled/uncontrolled:** `FieldControl` mirrors a native input — `value` +
+  `onValueChange` (or `onChange`) for controlled, `defaultValue` for uncontrolled.
+- **Disabled:** `disabled` on `FormField` takes precedence and cascades to the label
+  and control.
+
+## Accessibility
+
+- Meets WCAG 2.2 AA: label and control text clear 4.5:1 in both themes; helper text
+  uses `--muted-foreground` (≥4.5:1 on the background) and error text uses
+  `--destructive`, which holds 4.5:1 in both themes.
+- The primitive associates the label (`htmlFor`), helper text and error
+  (`aria-describedby`), and toggles `aria-invalid` on the control when invalid, so
+  screen readers announce the error with the field.
+- **Keyboard:** standard control interaction — `Tab` moves focus to the control;
+  typing edits it; `onBlur` / `onSubmit` trigger validation per `validationMode`. The
+  visible label is also a click target that focuses the control.
+
+## Tokens
+
+Control uses `--input` / `--background` with a `--ring` focus ring and `--destructive`
+for the invalid state; the label uses `--foreground`; helper text uses
+`--muted-foreground`; error text uses `--destructive`. No hardcoded colors, spacing, or
+radii — tokens only.
+
+## API
+
+| Part | Key props | Notes |
+| --- | --- | --- |
+| `FormField` | `name`, `disabled`, `validate`, `validationMode` (`onSubmit` \| `onBlur` \| `onChange`) | Root; closed API |
+| `FieldLabel` | — | Auto-associated label |
+| `FieldControl` | `size` (`sm` \| `default` \| `lg`), `value`, `defaultValue`, `onValueChange`, plus native input props, `render` | Renders `<input>`; swap via `render` |
+| `FieldDescription` | — | Helper text |
+| `FieldError` | `match` (`true` \| `keyof ValidityState`) | Validation message |
+
+The public API is **closed**: no `className` / `style` on any part. Customize through
+the semantic `size` prop and place layout between fields in `Box` / `Stack`.
