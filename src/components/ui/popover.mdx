@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Popover/Guidelines" />
+
+# Popover
+
+A non-modal floating surface anchored to a trigger, used for supplementary controls
+and information. Built on the Base UI `Popover` primitive, so portalling,
+floating-engine positioning (side / align / offsets with collision flipping), focus
+management, and outside-press / Escape dismissal are all handled for us. It is the
+shared foundation for `Menu`, `Select`, `Combobox`, and `Hover Card`.
+
+## Overview
+
+Use a popover to reveal a small cluster of related controls or details next to the
+element they concern — a filter panel, a quick edit form, a detail preview — without
+navigating away or blocking the rest of the page.
+
+## When to use
+
+- **Do** use it for on-demand secondary controls or contextual detail anchored to a
+  trigger (filters, a mini form, an info card).
+- **Don't** use it for a blocking decision that must be acknowledged — use a `Dialog`.
+- **Don't** use it for a simple text label on hover — use a `Tooltip`.
+- **Don't** use it for a list of commands/actions — use a `Menu` (which is built on
+  this primitive).
+
+## Anatomy
+
+1. **Popover** — the root; owns `open` state.
+2. **PopoverTrigger** — the anchor control that toggles the surface.
+3. **PopoverContent** — the portalled, positioned popup surface (optional arrow).
+4. **PopoverTitle / PopoverDescription** — the accessible label and supporting text.
+5. **PopoverClose** — any control that dismisses the surface.
+
+## Variants
+
+There is no color variant. `PopoverContent` exposes placement as semantic props —
+`side`, `align`, `sideOffset`, `alignOffset` — and an optional `showArrow`.
+
+## States
+
+Closed, Opening / Open (scale-and-fade in), Closing (scale-and-fade out). The trigger
+reflects open state via `aria-expanded`.
+
+## Behavior
+
+- **Controlled:** pass `open` + `onOpenChange`. **Uncontrolled:** pass `defaultOpen`.
+- **Dismissal:** Escape, an outside press, or any `PopoverClose` closes it.
+- **Positioning:** the floating engine places the popup on the requested `side` /
+  `align` and flips it to stay in view near viewport edges.
+- **Focus:** focus moves into the popup on open and returns to the trigger on close;
+  because it is non-modal, focus is not trapped.
+
+## Accessibility
+
+- The trigger carries `aria-haspopup` and `aria-expanded`; the popup is labelled by
+  `PopoverTitle` (`aria-labelledby`) and described by `PopoverDescription`
+  (`aria-describedby`) when present.
+- Keyboard map: `Enter` / `Space` toggle from the trigger, `Escape` closes, `Tab`
+  moves through the popup's focusable content.
+- Provide a `PopoverTitle` (or `aria-label`) so the surface is announced.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Surface + text |
+| `--border-strong` | Surface ring + arrow stroke |
+| `--muted-foreground` | Description text |
+| `--ring` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Popover` | `open` / `defaultOpen` | `boolean` | — | Open state (controlled / uncontrolled). |
+| `Popover` | `onOpenChange` | `(open, details) => void` | — | Open-state change handler. |
+| `Popover` | `modal` | `boolean \| "trap-focus"` | `false` | Whether the popover blocks the background. |
+| `PopoverContent` | `side` | `"top" \| "right" \| "bottom" \| "left"` | `"bottom"` | Preferred side. |
+| `PopoverContent` | `align` | `"start" \| "center" \| "end"` | `"center"` | Alignment along the side. |
+| `PopoverContent` | `sideOffset` | `number` | `8` | Gap from the trigger. |
+| `PopoverContent` | `alignOffset` | `number` | `0` | Shift along the alignment axis. |
+| `PopoverContent` | `showArrow` | `boolean` | `false` | Render a pointer arrow. |
+| `PopoverClose` | `render` | `ReactElement` | — | Element to render as the close control. |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`,
+and element polymorphism is available through `render`.
+
+## Examples
+
+Stories render inside a `.dark` decorator on `bg-background`; switch the toolbar
+**Locale** to فارسی (RTL) to confirm placement and alignment mirror correctly with
+Vazirmatn.
