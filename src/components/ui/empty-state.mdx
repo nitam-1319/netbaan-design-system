@@ -1,0 +1,86 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Empty State/Guidelines" />
+
+# Empty State
+
+A centered placeholder for a region that has no content yet — an empty list, a
+cleared queue, a first-run surface, or a filtered view with no matches. It turns a
+dead-end into intentional guidance: what the region is for, why it's empty, and the
+next action to take.
+
+## Overview
+
+An empty state should answer three questions at a glance: what would normally be here,
+why nothing is showing, and what to do next. Pair a calm icon with a short title,
+one or two lines of supporting text, and — where the user can act — a primary action.
+
+## When to use
+
+- **Do** use it for genuinely empty collections (no findings, no assets, no results).
+- **Do** distinguish "nothing yet" (first-run) from "nothing matches" (filtered) with
+  different copy and icons.
+- **Don't** use it to report an error — use an `Error State` / `Alert`.
+- **Don't** use it while data is still loading — use a `Skeleton` or `Spinner`.
+
+## Anatomy
+
+1. **EmptyState** — the centered root; a polite `role="status"` region.
+2. **EmptyStateIcon** — an optional decorative icon in a muted circular chip (`aria-hidden`).
+3. **EmptyStateTitle** — the short headline (`<h3>`).
+4. **EmptyStateDescription** — one or two lines of supporting text.
+5. **EmptyStateActions** — the action row, composed from AEGIS `Button`s.
+
+## Variants
+
+`EmptyState` exposes a `size` prop — `sm`, `default`, `lg` — that scales the padding,
+gap, and icon chip together. There is no color variant; the icon chip and text use
+muted tokens so the state reads as calm rather than alarming.
+
+## States
+
+A single resting state. Any actions inside inherit their own `Button` states. The root
+announces politely via `role="status"` when it enters the view.
+
+## Behavior
+
+- The icon is decorative (`aria-hidden`); meaning comes from the title and description.
+- Keep copy short and action-oriented; lead the action row with a single primary button.
+
+## Accessibility
+
+- The root is `role="status"` (an `aria-live="polite"` region), so a state that appears
+  after an async action is announced without stealing focus.
+- The title is a real heading (`<h3>`), keeping the document outline intact.
+- The icon carries `aria-hidden`, so screen readers aren't read a decorative glyph.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+Content is centered and the copy flows with the document direction, so the empty state
+mirrors correctly under RTL (Persian / Vazirmatn) with no extra work.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--foreground` | Title text |
+| `--muted-foreground` | Description + icon glyph |
+| `--muted` | Icon chip background |
+
+## API
+
+| Part | Element | Notable prop | Description |
+| --- | --- | --- | --- |
+| `EmptyState` | `<div role="status">` | `size` (`sm` \| `default` \| `lg`) | Centered root; scales spacing + icon. |
+| `EmptyStateIcon` | `<div aria-hidden>` | native props | Decorative icon chip. |
+| `EmptyStateTitle` | `<h3>` | native props | Headline. |
+| `EmptyStateDescription` | `<p>` | native props | Supporting text. |
+| `EmptyStateActions` | `<div>` | native props | Action row (compose `Button`s). |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm the icon
+chip, title, and action row stay centered and legible in both directions.
