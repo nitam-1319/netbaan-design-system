@@ -10,6 +10,7 @@ four-value vocabulary `PASS` / `FAILED` / `BLOCKED` / `HUMAN_VERIFY_REQUIRED`
 - [ ] `npx tsc --noEmit` passes
 - [ ] `npm run build` passes
 - [ ] `npm run lint` passes (includes token + escape-hatch lint rules)
+- [ ] `node .agent/scripts/verify-conformance.mjs <name>` passes — conforms to the reference (rules/REFERENCE_FIDELITY.md)
 - [ ] Component file exists: `src/components/ui/<name>.tsx`
 - [ ] Stories exist: `src/components/ui/<name>.stories.tsx`
 - [ ] Docs exist: `src/components/ui/<name>.mdx`

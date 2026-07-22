@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#09090b}
+  a{color:#ab8ce8;text-decoration:none}
+  a:hover{color:#9373d9}
+  [data-theme="dark"]{
+    --bg:#09090b;--card:#0e0e12;--surface:#151319;--surface-2:#1b1922;--surface-3:#22202b;
+    --border:rgba(255,255,255,.07);--border-strong:rgba(255,255,255,.13);
+    --text:#eceaf2;--text-dim:#a29caf;--text-faint:#6e6880;
+    --accent:#9373d9;--accent-soft:rgba(147,115,217,.14);--accent-strong:#ab8ce8;
+    --track:rgba(255,255,255,.10);--shadow:0 18px 50px -18px rgba(0,0,0,.7);--code:#08080a;
+  }
+  [data-theme="light"]{
+    --bg:#f6f6f9;--card:#ffffff;--surface:#ffffff;--surface-2:#f8f6fc;--surface-3:#efeaf7;
+    --border:rgba(24,20,34,.09);--border-strong:rgba(24,20,34,.15);
+    --text:#191622;--text-dim:#5f596e;--text-faint:#8d8799;
+    --accent:#7c53d4;--accent-soft:rgba(124,83,212,.10);--accent-strong:#6a44c0;
+    --track:rgba(24,20,34,.14);--shadow:0 18px 50px -22px rgba(90,68,150,.32);--code:#f3f1f8;
+  }
+  @keyframes beamSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;transition:background .35s ease,color .35s ease;padding:40px 44px 90px;display:flex;flex-direction:column;gap:24px;width:1240px;margin:0 auto">
+
+  <!-- masthead -->
+  <div style="position:relative;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);background:var(--border-strong)">
+    <span style="position:absolute;left:50%;top:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 74%,var(--accent) 85%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 6.5s linear infinite;pointer-events:none"></span>
+    <div style="position:relative;z-index:1;margin:1.5px;border-radius:18.5px;background:var(--card);padding:26px 32px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div style="line-height:1.2">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <a href="../Home.dc.html" style="display:inline-flex;align-items:center;gap:6px;font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.04em;color:var(--text-dim);border:1px solid var(--border-strong);padding:3px 9px;border-radius:6px;text-decoration:none" style-hover="border-color:var(--accent);color:var(--accent-strong)"><span style="font-size:12px">←</span> Library</a>
+          <span style="font:600 9.5px 'IBM Plex Mono',monospace;letter-spacing:.08em;padding:3px 8px;background:var(--accent);color:#fff;border-radius:5px">AEGIS</span>
+          <span style="font:500 11px 'IBM Plex Mono',monospace;color:var(--text-faint);letter-spacing:.03em">SELECTION <span style="color:var(--text-dim)">/</span> TOGGLE</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font:700 28px 'Space Grotesk',sans-serif;letter-spacing:.01em;color:var(--text)">Toggle</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font:600 10px 'IBM Plex Mono';letter-spacing:.04em;text-transform:uppercase;color:#2fb680;background:color-mix(in srgb,#2fb680 15%,transparent);padding:4px 9px;border-radius:6px"><span style="width:6px;height:6px;border-radius:50%;background:#2fb680"></span>Essential</span>
+          <span style="font:500 10px 'IBM Plex Mono';color:var(--text-faint);border:1px solid var(--border);padding:4px 9px;border-radius:6px">v1.0 · Stable</span>
+        </div>
+        <div style="font:400 13.5px/1.6 'IBM Plex Sans',sans-serif;color:var(--text-dim);margin-top:10px;max-width:720px">Flips a single setting on or off with an immediate effect. Unlike a checkbox, a toggle commits the moment it moves — no save step — so it belongs on live preferences, feature switches, and system settings.</div>
+      </div>
+      <button onClick="{{ toggleTheme }}" style="padding:10px 16px;border-radius:9px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text);font:500 12.5px 'IBM Plex Sans';cursor:pointer;flex:none" style-hover="border-color:var(--accent);color:var(--accent-strong)">{{ themeLabel }}</button>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px">
+    <sc-for list="{{ toc }}" as="s" hint-placeholder-count="20">
+      <a href="{{ s.href }}" style="display:inline-flex;align-items:center;gap:7px;font:500 11.5px 'IBM Plex Sans';color:var(--text-dim);background:var(--card);border:1px solid var(--border);padding:6px 11px;border-radius:8px" style-hover="border-color:var(--accent);color:var(--accent-strong)"><span style="font:600 9.5px 'IBM Plex Mono';color:var(--text-faint)">{{ s.num }}</span>{{ s.name }}</a>
+    </sc-for>
+  </div>
+
+  <!-- PLAYGROUND -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)">
+    <div style="padding:14px 22px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:10px">
+      <span style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulseDot 1.8s infinite"></span>
+      <span style="font:600 12px 'IBM Plex Sans';letter-spacing:.04em;text-transform:uppercase;color:var(--text-dim)">Live playground</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 300px">
+      <div style="padding:44px 40px;display:flex;align-items:center;justify-content:center;background:radial-gradient(420px circle at 50% 0%,var(--accent-soft),transparent 70%);min-height:220px">
+        <label onClick="{{ onPgToggle }}" style="{{ pgRowStyle }}">
+          <span style="{{ pgTrackStyle }}"><span style="{{ pgThumbStyle }}">{{ pgThumbIcon }}</span></span>
+          <span style="display:flex;flex-direction:column;gap:2px">
+            <span style="font:600 14px 'IBM Plex Sans';color:{{ pgLabelColor }}">{{ pgLabel }}</span>
+            <span style="font:400 12px 'IBM Plex Sans';color:var(--text-faint)">{{ pgDesc }}</span>
+          </span>
+        </label>
+      </div>
+      <div style="border-inline-start:1px solid var(--border);padding:20px;display:flex;flex-direction:column;gap:16px;background:var(--surface-2)">
+        <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px">State</div><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ stateOpts }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div></div>
+        <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px">Size</div><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ sizeOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div></div>
+        <div><div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px">Options</div><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ toggleOpts }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 PURPOSE -->
+  <div id="purpose" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">01</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Purpose</span></div>
+    <div style="padding:22px 24px;display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font:400 13.5px/1.7 'IBM Plex Sans';color:var(--text-dim);max-width:820px">A toggle switches a single binary setting on or off and applies the change instantly, with no separate save. Its sliding thumb mimics a physical switch, signalling an immediate, reversible state change. Reach for a Checkbox when the choice is submitted with a form, and a Radio for exclusive choice between options.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px"><div style="font:600 11px 'IBM Plex Sans';color:var(--text);margin-bottom:5px">Instant effect</div><div style="font:400 12px/1.55 'IBM Plex Sans';color:var(--text-faint)">The change commits the moment the thumb slides — no save step.</div></div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px"><div style="font:600 11px 'IBM Plex Sans';color:var(--text);margin-bottom:5px">System settings</div><div style="font:400 12px/1.55 'IBM Plex Sans';color:var(--text-faint)">Best for preferences and feature switches with a clear on/off.</div></div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px"><div style="font:600 11px 'IBM Plex Sans';color:var(--text);margin-bottom:5px">Physical metaphor</div><div style="font:400 12px/1.55 'IBM Plex Sans';color:var(--text-faint)">The sliding thumb reads as a switch you flip, not a box you check.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 UX -->
+  <div id="ux" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">02</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">UX guidelines</span></div>
+    <div style="padding:8px 24px 12px"><sc-for list="{{ uxRules }}" as="r" hint-placeholder-count="6"><div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span><div><div style="font:600 13px 'IBM Plex Sans';color:var(--text)">{{ r.title }}</div><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-faint);margin-top:3px;max-width:860px">{{ r.body }}</div></div></div></sc-for></div>
+  </div>
+
+  <!-- 03 ANATOMY -->
+  <div id="anatomy" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">03</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Anatomy</span></div>
+    <div style="padding:32px 24px;display:grid;grid-template-columns:1fr 340px;gap:32px;align-items:center">
+      <div style="background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:14px;padding:40px 32px;display:flex;justify-content:center">
+        <label style="display:flex;align-items:center;gap:14px;cursor:default;max-width:320px">
+          <span style="width:44px;height:26px;border-radius:13px;background:linear-gradient(145deg,var(--accent),var(--accent-strong));display:flex;align-items:center;padding:0 3px;box-shadow:0 0 0 3px var(--accent-soft);flex:none"><span style="width:20px;height:20px;border-radius:50%;background:#fff;margin-inline-start:auto;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span></span>
+          <span style="display:flex;flex-direction:column;gap:3px"><span style="font:600 13.5px 'IBM Plex Sans';color:var(--text)">Two-factor auth</span><span style="font:400 12px/1.5 'IBM Plex Sans';color:var(--text-faint)">Require a code at every sign-in.</span></span>
+        </label>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px"><sc-for list="{{ anatomy }}" as="a" hint-placeholder-count="5"><div style="display:flex;align-items:baseline;gap:11px"><span style="width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent-strong);border:1px solid var(--border);font:600 11px 'IBM Plex Mono';display:inline-flex;align-items:center;justify-content:center;flex:none">{{ a.n }}</span><div><span style="font:600 12.5px 'IBM Plex Sans';color:var(--text)">{{ a.name }}</span><span style="font:400 12px 'IBM Plex Sans';color:var(--text-faint)"> — {{ a.desc }}</span></div></div></sc-for></div>
+    </div>
+  </div>
+
+  <!-- 04 VARIANTS -->
+  <div id="variants" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">04</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Variants</span></div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:18px 20px">
+          <div style="font:600 12.5px 'IBM Plex Sans';color:var(--text)">{{ v.name }}</div>
+          <div style="font:400 11px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:3px;margin-bottom:16px">{{ v.use }}</div>
+          <label style="display:flex;align-items:center;gap:12px"><span style="{{ v.trackStyle }}"><span style="{{ v.thumbStyle }}">{{ v.icon }}</span></span><span style="font:500 13px 'IBM Plex Sans';color:var(--text)">{{ v.label }}</span></label>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 05 SIZES -->
+  <div id="sizes" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">05</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Sizes</span></div>
+    <div style="padding:28px 24px;display:flex;flex-direction:column;gap:20px">
+      <sc-for list="{{ sizes }}" as="s" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:20px">
+          <div style="width:130px;flex:none"><div style="font:600 12px 'IBM Plex Sans';color:var(--text)">{{ s.name }}</div><div style="font:500 10px 'IBM Plex Mono';color:var(--text-faint);margin-top:2px">{{ s.spec }}</div></div>
+          <label style="display:flex;align-items:center;gap:11px"><span style="{{ s.trackStyle }}"><span style="{{ s.thumbStyle }}"></span></span><span style="font:500 13px 'IBM Plex Sans';color:var(--text)">Label</span></label>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 06 STATES -->
+  <div id="states" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">06</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">States</span></div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+      <sc-for list="{{ states }}" as="s" hint-placeholder-count="9">
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span style="font:600 12px 'IBM Plex Sans';color:var(--text)">{{ s.name }}</span></div>
+          <label style="display:flex;align-items:center;gap:10px"><span style="{{ s.trackStyle }}"><span style="{{ s.thumbStyle }}"></span></span><span style="font:500 12.5px 'IBM Plex Sans';color:{{ s.labelColor }}">{{ s.desc }}</span></label>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 07 BEHAVIORS -->
+  <div id="behaviors" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">07</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Behaviors</span></div>
+    <div style="padding:8px 24px 12px"><sc-for list="{{ behaviors }}" as="b" hint-placeholder-count="5"><div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border);align-items:baseline"><span style="font:600 10px 'IBM Plex Mono';letter-spacing:.04em;text-transform:uppercase;color:var(--accent-strong);background:var(--accent-soft);padding:4px 9px;border-radius:6px;flex:none;width:110px;text-align:center">{{ b.tag }}</span><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ b.body }}</div></div></sc-for></div>
+  </div>
+
+  <!-- 08 A11Y -->
+  <div id="a11y" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">08</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Accessibility</span></div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:12px"><sc-for list="{{ a11y }}" as="a" hint-placeholder-count="6"><div style="display:flex;gap:11px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:15px 16px"><span style="color:#2fb680;font:700 13px 'IBM Plex Mono';flex:none">✓</span><div><div style="font:600 12px 'IBM Plex Sans';color:var(--text)">{{ a.title }}</div><div style="font:400 11.5px/1.55 'IBM Plex Sans';color:var(--text-faint);margin-top:3px">{{ a.body }}</div></div></div></sc-for></div>
+  </div>
+
+  <!-- 09 TOKENS -->
+  <div id="tokens" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">09</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Design tokens</span></div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:16px;padding:11px 24px;border-bottom:1px solid var(--border);background:var(--surface-2)"><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Token</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Dark</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Light</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Applies to</span></div>
+    <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:16px;padding:11px 24px;border-bottom:1px solid var(--border);align-items:center"><span style="font:500 11.5px 'IBM Plex Mono';color:var(--accent-strong)">{{ t.name }}</span><span style="font:500 11px 'IBM Plex Mono';color:var(--text-dim);display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:3px;border:1px solid var(--border-strong);background:{{ t.dark }};flex:none"></span>{{ t.darkV }}</span><span style="font:500 11px 'IBM Plex Mono';color:var(--text-dim);display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:3px;border:1px solid var(--border-strong);background:{{ t.light }};flex:none"></span>{{ t.lightV }}</span><span style="font:400 11.5px 'IBM Plex Sans';color:var(--text-faint)">{{ t.use }}</span></div></sc-for>
+  </div>
+
+  <!-- 10 ICONS -->
+  <div id="icons" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">10</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Icons &amp; marks</span></div>
+    <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+      <p style="margin:0;font:400 13px/1.7 'IBM Plex Sans';color:var(--text-dim);max-width:820px">Position carries state: thumb right on a filled track is on, thumb left on a muted track is off. Optional hairline glyphs inside the thumb — a check when on, a bar when off — add redundancy for users who don't perceive the color shift, and should be reserved for critical settings where the extra clarity is worth the visual weight.</p>
+      <div style="display:flex;gap:28px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:44px;height:26px;border-radius:13px;background:linear-gradient(145deg,var(--accent),var(--accent-strong));display:flex;align-items:center;padding:0 3px"><span style="width:20px;height:20px;border-radius:50%;background:#fff;margin-inline-start:auto;display:flex;align-items:center;justify-content:center;font:700 10px 'IBM Plex Mono';color:var(--accent-strong)">✓</span></span><span style="font:500 12.5px 'IBM Plex Sans';color:var(--text-dim)">On — thumb right, check</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:44px;height:26px;border-radius:13px;background:var(--track);display:flex;align-items:center;padding:0 3px"><span style="width:20px;height:20px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center"><span style="width:8px;height:2px;border-radius:2px;background:var(--text-faint)"></span></span></span><span style="font:500 12.5px 'IBM Plex Sans';color:var(--text-dim)">Off — thumb left, bar</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11 RESPONSIVE -->
+  <div id="responsive" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">11</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Responsive behavior</span></div>
+    <div style="padding:8px 24px 12px"><sc-for list="{{ responsive }}" as="r" hint-placeholder-count="4"><div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border);align-items:baseline"><span style="font:600 10px 'IBM Plex Mono';color:var(--text-dim);flex:none;width:120px">{{ r.bp }}</span><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ r.body }}</div></div></sc-for></div>
+  </div>
+
+  <!-- 12 INTERACTION -->
+  <div id="interaction" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">12</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Interaction rules</span></div>
+    <div style="padding:8px 24px 12px"><sc-for list="{{ interaction }}" as="i" hint-placeholder-count="5"><div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)"><strong style="color:var(--text)">{{ i.k }}</strong> — {{ i.v }}</div></div></sc-for></div>
+  </div>
+
+  <!-- 13 USAGE -->
+  <div id="usage" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">13</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Usage guidelines</span></div>
+    <div style="padding:8px 24px 12px"><sc-for list="{{ usage }}" as="u" hint-placeholder-count="5"><div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ u }}</div></div></sc-for></div>
+  </div>
+
+  <!-- 14 DO & DON'T -->
+  <div id="dodont" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">14</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Do &amp; Don't</span></div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="border:1px solid color-mix(in srgb,#2fb680 35%,var(--border));border-radius:14px;overflow:hidden"><div style="display:flex;align-items:center;gap:8px;padding:11px 16px;background:color-mix(in srgb,#2fb680 12%,transparent);border-bottom:1px solid var(--border)"><span style="color:#2fb680;font:700 13px 'IBM Plex Mono'">✓</span><span style="font:600 12px 'IBM Plex Sans';color:#2fb680">Do</span></div><div style="padding:6px 16px 12px"><sc-for list="{{ dos }}" as="d" hint-placeholder-count="4"><div style="font:400 12px/1.6 'IBM Plex Sans';color:var(--text-dim);padding:9px 0;border-bottom:1px solid var(--border)">{{ d }}</div></sc-for></div></div>
+      <div style="border:1px solid color-mix(in srgb,#e5484d 35%,var(--border));border-radius:14px;overflow:hidden"><div style="display:flex;align-items:center;gap:8px;padding:11px 16px;background:color-mix(in srgb,#e5484d 12%,transparent);border-bottom:1px solid var(--border)"><span style="color:#e5484d;font:700 13px 'IBM Plex Mono'">✕</span><span style="font:600 12px 'IBM Plex Sans';color:#e5484d">Don't</span></div><div style="padding:6px 16px 12px"><sc-for list="{{ donts }}" as="d" hint-placeholder-count="4"><div style="font:400 12px/1.6 'IBM Plex Sans';color:var(--text-dim);padding:9px 0;border-bottom:1px solid var(--border)">{{ d }}</div></sc-for></div></div>
+    </div>
+  </div>
+
+  <!-- 15 FIGMA -->
+  <div id="figma" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">15</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Figma Auto Layout spec</span></div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:10px"><sc-for list="{{ figma }}" as="f" hint-placeholder-count="8"><div style="display:flex;justify-content:space-between;gap:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 15px"><span style="font:400 11.5px 'IBM Plex Sans';color:var(--text-faint)">{{ f.k }}</span><span style="font:500 11.5px 'IBM Plex Mono';color:var(--text);text-align:end">{{ f.v }}</span></div></sc-for></div>
+  </div>
+
+  <!-- 16 SPEC -->
+  <div id="spec" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">16</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Design specification</span></div>
+    <div style="display:grid;grid-template-columns:110px repeat(4,1fr);gap:14px;padding:11px 24px;border-bottom:1px solid var(--border);background:var(--surface-2)"><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Size</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Track</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Thumb</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Travel</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Gap</span></div>
+    <sc-for list="{{ specRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:110px repeat(4,1fr);gap:14px;padding:12px 24px;border-bottom:1px solid var(--border)"><span style="font:600 12px 'IBM Plex Sans';color:var(--text)">{{ r.size }}</span><span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.track }}</span><span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.thumb }}</span><span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.travel }}</span><span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.gap }}</span></div></sc-for>
+  </div>
+
+  <!-- 17 REACT -->
+  <div id="react" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">17</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">React implementation</span></div>
+    <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+      <div style="font:400 12.5px/1.7 'IBM Plex Sans';color:var(--text-dim);max-width:840px">Built on a native <span style="font-family:'IBM Plex Mono'">&lt;button role="switch"&gt;</span> with <span style="font-family:'IBM Plex Mono'">aria-checked</span>, so Space and Enter toggle it and screen readers announce on/off. The thumb slides via a CSS transform driven by the checked state — never by re-rendering position.</div>
+      <pre style="margin:0;background:var(--code);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:auto;font:500 12px/1.7 'IBM Plex Mono';color:var(--text-dim)">{{ reactCode }}</pre>
+    </div>
+  </div>
+
+  <!-- 18 CSS -->
+  <div id="css" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">18</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Tailwind / CSS variables</span></div>
+    <div style="padding:22px 24px"><pre style="margin:0;background:var(--code);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:auto;font:500 12px/1.7 'IBM Plex Mono';color:var(--text-dim)">{{ cssCode }}</pre></div>
+  </div>
+
+  <!-- 19 DARK MODE -->
+  <div id="darkmode" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">19</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Dark mode rules</span></div>
+    <div style="padding:8px 24px 12px"><sc-for list="{{ darkRules }}" as="d" hint-placeholder-count="4"><div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ d }}</div></div></sc-for></div>
+  </div>
+
+  <!-- 20 DOCS -->
+  <div id="docs" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)"><span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">20</span><span style="font:700 16px 'Space Grotesk';color:var(--text)">Documentation — API reference</span></div>
+    <div style="display:grid;grid-template-columns:150px 1.1fr 1fr;gap:16px;padding:11px 24px;border-bottom:1px solid var(--border);background:var(--surface-2)"><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Prop</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Type</span><span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Description</span></div>
+    <sc-for list="{{ props }}" as="p" hint-placeholder-count="9"><div style="display:grid;grid-template-columns:150px 1.1fr 1fr;gap:16px;padding:12px 24px;border-bottom:1px solid var(--border);align-items:baseline"><span style="font:500 11.5px 'IBM Plex Mono';color:var(--accent-strong)">{{ p.name }}</span><span style="font:500 11px 'IBM Plex Mono';color:var(--text-dim)">{{ p.type }}</span><span style="font:400 11.5px/1.5 'IBM Plex Sans';color:var(--text-faint)">{{ p.desc }}</span></div></sc-for>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:14px;padding:20px 24px;background:var(--surface-2);border:1px solid var(--border);border-radius:16px"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;animation:pulseDot 1.8s infinite;flex:none"></span><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)"><strong style="color:var(--text)">Toggle</strong> is component 6. It closes the selection-control family alongside Checkbox and Radio, and pairs with the Settings and Preferences patterns. Say <em>go next</em> to continue down the inventory.</div></div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:3100},&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Display&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { theme: props.defaultTheme || 'dark', on:true, size:'md', disabled:false, glyphs:false };
+  }
+
+  track(size, on, opt){
+    opt = opt || {};
+    const dim = { sm:[36,20,10], md:[44,26,13], lg:[52,30,15] }[size];
+    const w = dim[0], h = dim[1], r = dim[2];
+    let s = 'width:'+w+'px;height:'+h+'px;border-radius:'+r+'px;display:flex;align-items:center;padding:0 3px;flex:none;transition:background .2s ease,box-shadow .15s ease';
+    if (on) s += ';background:linear-gradient(145deg,var(--accent),var(--accent-strong))';
+    else s += ';background:var(--track)';
+    if (opt.st === 'focus') s += ';box-shadow:0 0 0 3px var(--accent-soft)';
+    else if (opt.st === 'error') s += ';box-shadow:0 0 0 3px color-mix(in srgb,#e5484d 15%,transparent)';
+    if (opt.disabled) s += ';opacity:.45';
+    return s;
+  }
+
+  thumb(size, on){
+    const t = { sm:16, md:20, lg:24 }[size];
+    let s = 'width:'+t+'px;height:'+t+'px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;transition:margin .2s ease;flex:none';
+    if (on) s += ';margin-inline-start:auto';
+    return s;
+  }
+
+  chip(active){
+    const base = "font:600 11px 'IBM Plex Sans';padding:6px 11px;border-radius:8px;cursor:pointer;transition:all .15s ease;text-transform:capitalize";
+    return active ? base + ';background:linear-gradient(145deg,var(--accent),var(--accent-strong));color:#fff;border:1px solid transparent' : base + ';background:var(--card);color:var(--text-dim);border:1px solid var(--border-strong)';
+  }
+
+  glyph(size, on){
+    const f = { sm:8, md:10, lg:11 }[size];
+    if (on) return "font:700 "+f+"px 'IBM Plex Mono';color:var(--accent-strong);line-height:1";
+    return 'width:'+(f-2)+'px;height:2px;border-radius:2px;background:var(--text-faint)';
+  }
+
+  renderVals(){
+    const theme = this.state.theme, st = this.state;
+
+    const toc = [
+      ['01','Purpose','#purpose'],['02','UX','#ux'],['03','Anatomy','#anatomy'],['04','Variants','#variants'],
+      ['05','Sizes','#sizes'],['06','States','#states'],['07','Behaviors','#behaviors'],['08','A11y','#a11y'],
+      ['09','Tokens','#tokens'],['10','Icons','#icons'],['11','Responsive','#responsive'],['12','Interaction','#interaction'],
+      ['13','Usage','#usage'],['14',"Do & Don't",'#dodont'],['15','Figma','#figma'],['16','Spec','#spec'],
+      ['17','React','#react'],['18','CSS','#css'],['19','Dark mode','#darkmode'],['20','Docs','#docs'],
+    ].map(x => ({ num:x[0], name:x[1], href:x[2] }));
+
+    // playground
+    const pgOn = st.on;
+    const pgRowStyle = 'display:flex;align-items:center;gap:14px;cursor:'+(st.disabled?'not-allowed':'pointer')+';user-select:none;max-width:340px'+(st.disabled?';opacity:.55':'');
+    const setOn = v => () => this.setState({ on:v });
+    const stateOpts = [['On',true],['Off',false]].map(o => ({ label:o[0], style:this.chip(st.on===o[1]), onClick:setOn(o[1]) }));
+    const setSize = s => () => this.setState({ size:s });
+    const sizeOpts = ['sm','md','lg'].map(s => ({ label:s, style:this.chip(st.size===s), onClick:setSize(s) }));
+    const toggleOpts = [
+      { label:'Disabled', style:this.chip(st.disabled), onClick:()=>this.setState(s=>({disabled:!s.disabled})) },
+      { label:'Glyphs', style:this.chip(st.glyphs), onClick:()=>this.setState(s=>({glyphs:!s.glyphs})) },
+    ];
+    const pgThumbIcon = st.glyphs ? (pgOn ? '\u2713' : '') : '';
+
+    const anatomy = [
+      ['1','Track','the pill that fills with accent when on, muted when off'],
+      ['2','Thumb','the circle that slides between the two ends'],
+      ['3','Focus ring','3px accent-soft halo on keyboard focus'],
+      ['4','Label','the setting name tied to the switch'],
+      ['5','Description','optional secondary line stating what the switch controls'],
+    ].map(a => ({ n:a[0], name:a[1], desc:a[2] }));
+
+    const variants = [
+      ['On','The setting is active.', true, false, 'Two-factor auth'],
+      ['Off','The setting is inactive.', false, false, 'Auto-play video'],
+      ['On with glyph','Adds a check for critical settings.', true, true, 'Encryption'],
+      ['Off with glyph','Adds a bar for redundancy.', false, true, 'Public profile'],
+    ].map(v => ({
+      name:v[0], use:v[1], label:v[4],
+      trackStyle: this.track('md', v[2], {}),
+      thumbStyle: this.thumb('md', v[2]) + (v[3] ? ';' + this.glyph('md', v[2]) : ''),
+      icon: v[3] ? (v[2] ? '\u2713' : '') : '',
+    }));
+
+    const sizes = [
+      ['Small','sm · 36×20 track','sm'],['Medium','md · 44×26 track (default)','md'],['Large','lg · 52×30 track','lg'],
+    ].map(s => ({ name:s[0], spec:s[1], trackStyle:this.track(s[2],true,{}), thumbStyle:this.thumb(s[2],true) }));
+
+    const states = [
+      ['Off','Inactive','off',{}],
+      ['On','Active','on',{}],
+      ['Hover off','Track lift','off',{st:'hover'}],
+      ['Focus on','Accent ring','on',{st:'focus'}],
+      ['Focus off','Ring while off','off',{st:'focus'}],
+      ['Error','Invalid required','off',{st:'error'}],
+      ['Disabled off','Inert','off',{disabled:true}],
+      ['Disabled on','Inert, active','on',{disabled:true}],
+      ['Loading','Pending commit','on',{}],
+    ].map(s => ({ name:s[0], desc:s[1], trackStyle:this.track('md', s[2]==='on', s[3]), thumbStyle:this.thumb('md', s[2]==='on'), labelColor: s[3].disabled ? 'var(--text-faint)' : 'var(--text-dim)' }));
+
+    const uxRules = [
+      ['Instant, no save','A toggle must apply its change immediately. If the setting only takes effect after a form submit, use a Checkbox instead.'],
+      ['Positive label','Name the on state affirmatively ("Enable notifications"), so sliding right always means more, never less.'],
+      ['No standalone action','A toggle sets a state; it should never behave like a button that fires a one-off action.'],
+      ['Show consequences','If turning a toggle on or off has a heavy or destructive effect, confirm or explain it inline near the switch.'],
+      ['Reflect true state','The thumb position must always mirror the real system value, including changes made elsewhere.'],
+      ['Pair with a clear label','Never ship a bare switch — always attach a label so its purpose is unambiguous.'],
+    ].map(r => ({ title:r[0], body:r[1] }));
+
+    const behaviors = [
+      ['Toggle','Click, Space, or Enter flips on ⇄ off; the thumb slides across in 200ms as the track color crossfades.'],
+      ['Immediate','The underlying value changes the instant the thumb moves — there is no pending or confirm step by default.'],
+      ['Optimistic','For async settings, the thumb moves immediately and reverts with a message if the write fails.'],
+      ['Keyboard','Tab focuses the switch; Space and Enter toggle it. Arrow keys do nothing.'],
+      ['Loading','A slow commit may show a spinner in the thumb and lock the switch until it resolves.'],
+    ].map(b => ({ tag:b[0], body:b[1] }));
+
+    const a11y = [
+      ['Switch role','Built as <button role="switch"> with aria-checked reflecting the on/off state.'],
+      ['Keyboard','Space and Enter both toggle; the switch is a single natural Tab stop.'],
+      ['Label association','An associated <label> or aria-labelledby names the setting the switch controls.'],
+      ['State, not color','Optional thumb glyphs and the announced aria-checked convey state without relying on color.'],
+      ['Focus visible','A 3px accent-soft ring with ≥3:1 contrast marks keyboard focus.'],
+      ['Hit target','The interactive area is ≥44px wide including padding, comfortable for touch even at sm size.'],
+    ].map(a => ({ title:a[0], body:a[1] }));
+
+    const tokens = [
+      ['--track-off','rgba .10','rgba .14','Off track background','#26242e','#e4dff0'],
+      ['--accent','#9373d9','#7c53d4','On track (start)','#9373d9','#7c53d4'],
+      ['--accent-strong','#ab8ce8','#6a44c0','On track (end)','#ab8ce8','#6a44c0'],
+      ['--thumb','#ffffff','#ffffff','Sliding thumb','#ffffff','#ffffff'],
+      ['--accent-soft','rgba .14','rgba .10','Focus ring','#211d2e','#efeaf7'],
+      ['--danger','#e5484d','#e5484d','Invalid-required ring','#e5484d','#e5484d'],
+      ['--radius-track','pill','pill','Track + thumb corner','#151319','#efeaf7'],
+      ['--thumb-shadow','rgba .30','rgba .30','Thumb elevation','#000000','#000000'],
+    ].map(t => ({ name:t[0], darkV:t[1], lightV:t[2], use:t[3], dark:t[4], light:t[5] }));
+
+    const responsive = [
+      ['Mobile (<640)','Switch sits at the row end with the label filling the width; the full row height is ≥44px for touch.'],
+      ['Tablet (≥768)','Settings lists keep the switch right-aligned; grouped switches share consistent track sizing.'],
+      ['Desktop (≥1024)','Default md track; dense admin tables may use the sm track inline with other controls.'],
+      ['Track scale','Track width never drops below 36px so the thumb travel stays legible at any size.'],
+    ].map(r => ({ bp:r[0], body:r[1] }));
+
+    const interaction = [
+      ['Hover','Off track lightens slightly; on track deepens; the thumb may lift its shadow a touch.'],
+      ['Focus','3px accent-soft ring appears around the track on keyboard focus only.'],
+      ['Toggle','Thumb slides end-to-end over 200ms with an ease curve while the track color crossfades underneath.'],
+      ['Active','On press the thumb may squash slightly (scale-x) to reinforce the physical switch feel.'],
+      ['Disabled','45% opacity, not-allowed cursor, no hover / focus / toggle response.'],
+    ].map(i => ({ k:i[0], v:i[1] }));
+
+    const usage = [
+      'Use a toggle for a single setting that turns on or off and takes effect immediately.',
+      'Label the on state positively so sliding right always means enabling, never disabling.',
+      'Keep the thumb position in sync with the real value, even when it changes from elsewhere.',
+      'For a choice that is only saved with a form, use a Checkbox; for exclusive options, use Radio.',
+      'Confirm or explain inline when flipping the switch has a heavy or destructive consequence.',
+    ];
+
+    const dos = [
+      'Apply the change instantly on toggle.',
+      'Attach a clear, affirmative label.',
+      'Mirror the true system state.',
+      'Add a thumb glyph for critical settings.',
+    ];
+    const donts = [
+      'Use a toggle that only saves on submit.',
+      'Fire a one-off action from a switch.',
+      'Ship a bare switch with no label.',
+      'Rely on track color alone to show state.',
+    ];
+
+    const figma = [
+      ['Layout direction','Horizontal (switch · text)'],['Switch→label gap','14'],
+      ['Track size (md)','44 × 26'],['Thumb size (md)','20'],
+      ['Thumb inset','3'],['Corner radius','Pill'],
+      ['Vertical resizing','Hug'],['Variants','state × size × glyph × disabled'],
+    ].map(f => ({ k:f[0], v:f[1] }));
+
+    const specRows = [
+      ['Small','36×20','16px','16px','12px'],
+      ['Medium','44×26','20px','18px','14px'],
+      ['Large','52×30','24px','22px','16px'],
+    ].map(r => ({ size:r[0], track:r[1], thumb:r[2], travel:r[3], gap:r[4] }));
+
+    const darkRules = [
+      'The off track uses --track (a low-opacity white in dark, low-opacity ink in light), so it reads as a muted groove against either card without a hard-coded gray.',
+      'The on track is the accent gradient in both themes; only the accent stops shift per theme, keeping the white thumb at high contrast against the filled track.',
+      'The thumb is pure white in both themes because it always sits on either the saturated accent or the muted track, never directly on the card surface.',
+      'The thumb shadow stays a soft black in both themes to lift the circle off the track; its opacity is low enough not to muddy the light-mode surface.',
+    ];
+
+    const props = [
+      ['checked / defaultChecked','boolean','Controlled or uncontrolled on/off state.'],
+      ['onChange','(next: boolean) => void','Fires immediately when the switch is toggled.'],
+      ['size','"sm" | "md" | "lg"','Track size. Default "md".'],
+      ['label / description','ReactNode','Setting name and optional helper line.'],
+      ['showIcons','boolean','Renders check / bar glyphs inside the thumb.'],
+      ['isDisabled','boolean','Inert, non-interactive state.'],
+      ['isLoading','boolean','Shows a spinner and locks the switch during an async commit.'],
+      ['isInvalid','boolean','Danger ring for an invalid required switch.'],
+      ['name / value','string','Submitted with a form when checked, if used in one.'],
+    ].map(p => ({ name:p[0], type:p[1], desc:p[2] }));
+
+    const reactCode =
+'export const Switch = forwardRef(function Switch(\n  { checked, onChange, label, description, size = "md", showIcons, disabled }, ref\n) {\n  return (\n    <label className="flex items-center gap-3.5 cursor-pointer select-none">\n      <button\n        ref={ref} type="button" role="switch"\n        aria-checked={checked} disabled={disabled}\n        onClick={() => onChange(!checked)}\n        className={track({ size, on: checked })}\n      >\n        <span className={thumb({ size, on: checked })} aria-hidden>\n          {showIcons && (checked ? <Check /> : <Bar />)}\n        </span>\n      </button>\n      {label && (\n        <span className="flex flex-col gap-0.5">\n          <span className="font-semibold text-fg">{label}</span>\n          {description && (\n            <span className="text-fg-faint text-xs">{description}</span>\n          )}\n        </span>\n      )}\n    </label>\n  );\n});';
+
+    const cssCode =
+':root[data-theme="dark"] {\n  --switch-track-off: rgba(255,255,255,.10);\n  --switch-accent:    #9373d9;\n  --switch-accent-2:  #ab8ce8;\n  --switch-thumb:     #ffffff;\n  --switch-ring:      rgba(147,115,217,.14);\n}\n:root[data-theme="light"] {\n  --switch-track-off: rgba(24,20,34,.14);\n  --switch-accent:    #7c53d4;\n  --switch-accent-2:  #6a44c0;\n  --switch-ring:      rgba(124,83,212,.10);\n}\n\n.switch {\n  background: var(--switch-track-off);\n  transition: background .2s ease;\n}\n.switch[aria-checked="true"] {\n  background: linear-gradient(145deg, var(--switch-accent), var(--switch-accent-2));\n}\n.switch .thumb { transition: margin .2s ease; }\n.switch[aria-checked="true"] .thumb { margin-inline-start: auto; }\n.switch:focus-visible { box-shadow: 0 0 0 3px var(--switch-ring); }';
+
+    return {
+      theme,
+      themeLabel: theme === 'dark' ? '\u2600  Light mode' : '\u263e  Dark mode',
+      toggleTheme: () => this.setState(s => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
+      toc,
+      pgRowStyle,
+      pgTrackStyle: this.track(st.size, pgOn, { disabled: st.disabled }),
+      pgThumbStyle: this.thumb(st.size, pgOn) + (st.glyphs ? ';' + this.glyph(st.size, pgOn) : ''),
+      pgThumbIcon,
+      pgLabel: 'Two-factor authentication',
+      pgDesc: 'Require a verification code at every sign-in.',
+      pgLabelColor: st.disabled ? 'var(--text-faint)' : 'var(--text)',
+      onPgToggle: () => { if (!st.disabled) this.setState(s => ({ on: !s.on })); },
+      stateOpts, sizeOpts, toggleOpts,
+      variants, sizes, states, anatomy, uxRules, behaviors, a11y, tokens,
+      responsive, interaction, usage, dos, donts, figma, specRows, darkRules, props,
+      reactCode, cssCode,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -49,6 +49,7 @@ Finish one component fully before starting the next.
 npx tsc --noEmit      # type safety
 npm run build         # build
 npm run lint          # lint
+node .agent/scripts/verify-conformance.mjs <name>   # reference fidelity — HARD GATE (rules/REFERENCE_FIDELITY.md)
 ```
 Storybook / play-test / a11y-runner gates: see `../rules/TESTING_RULES.md` — they are only
 "passing" if you actually ran them this session. Otherwise tag `human-verify`.

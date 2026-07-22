@@ -6,6 +6,7 @@
 npx tsc --noEmit
 npm run build
 npm run lint
+node .agent/scripts/verify-conformance.mjs <name>   # reference-fidelity gate (rules/REFERENCE_FIDELITY.md)
 ```
 
 **Environment-dependent (only "passing" if actually executed this session):**

@@ -50,6 +50,11 @@ need to bypass it. Any change that creates visual or behavioral inconsistency is
    the memory you lack across runs.
 7. When implementing a new component, copy the closest-tier gold-standard reference in
    `references/` (Primitive → Button, Interactive → Dialog, Data → DataTable).
+8. **Reference fidelity is mandatory and machine-gated.** A component must match its AEGIS
+   reference in `references/spec/<Name>.dc.html` exactly — structure, visuals, interactions,
+   animations, shadows, borders, behavior — not just colors. Components with no reference page
+   still follow the same design language + signature motifs. This is enforced by
+   `scripts/verify-conformance.mjs` (a hard gate). See `rules/REFERENCE_FIDELITY.md`.
 
 ---
 
@@ -58,20 +63,25 @@ need to bypass it. Any change that creates visual or behavioral inconsistency is
 Pick your mode from the task, then load **only** the listed documents.
 
 ### MODE: CREATE — build the next new component
+**Before coding, open the component's reference and build to it exactly:**
+`references/spec/<Name>.dc.html` (spec arrays in its `<script type="text/x-dc">`) and its entry in
+`references/spec-manifest.json`. Non-reference components follow the same design language. See
+`rules/REFERENCE_FIDELITY.md`.
 Load, in order:
 1. `guides/BUILD_GUIDE.md`
 2. `guides/COMPONENT_ARCHITECTURE.md`
-3. `rules/API_RULES.md`
-4. `rules/TOKEN_RULES.md`
-5. `rules/DESIGN_RULES.md`
-6. `rules/RTL_I18N_RULES.md`
-7. `rules/RESPONSIVE_RULES.md`
-8. `rules/STORYBOOK_RULES.md`
-9. `rules/ACCESSIBILITY_RULES.md`
-10. `rules/DOCUMENTATION_RULES.md`
-11. `rules/TESTING_RULES.md`
-12. `checklists/REVIEW_CHECKLIST.md`
-13. `checklists/COMPONENTS_STATUS.md`
+3. `rules/REFERENCE_FIDELITY.md`
+4. `rules/API_RULES.md`
+5. `rules/TOKEN_RULES.md`
+6. `rules/DESIGN_RULES.md`
+7. `rules/RTL_I18N_RULES.md`
+8. `rules/RESPONSIVE_RULES.md`
+9. `rules/STORYBOOK_RULES.md`
+10. `rules/ACCESSIBILITY_RULES.md`
+11. `rules/DOCUMENTATION_RULES.md`
+12. `rules/TESTING_RULES.md`
+13. `checklists/REVIEW_CHECKLIST.md`
+14. `checklists/COMPONENTS_STATUS.md`
 Prompt: `prompts/component-create.md`
 
 ### MODE: REVIEW — audit an existing component against current standards (read-only)
@@ -112,6 +122,7 @@ checkpoint gates in `checklists/COMPONENTS_STATUS.md`).
 │   └── RELEASE_GUIDE.md           versioning, changelog, visual regression, release
 ├── rules/
 │   ├── DESIGN_RULES.md            consistency + visual quality bar
+│   ├── REFERENCE_FIDELITY.md      match the reference EXACTLY (machine-gated)
 │   ├── API_RULES.md               prop naming, escape-hatch policy
 │   ├── TOKEN_RULES.md             tokens: source, generation, usage
 │   ├── STORYBOOK_RULES.md         stories, mdx, controls, actions, play tests
@@ -132,6 +143,7 @@ checkpoint gates in `checklists/COMPONENTS_STATUS.md`).
 │   └── release-check.md
 └── scripts/
     └── verify-inventory.mjs       reconciles trackers vs filesystem AND computes per-component status
+    └── verify-conformance.mjs     reference-fidelity gate (vs references/spec-manifest.json)
 
 (repo root)
 └── CHANGELOG.md                   consumer-facing; generated release notes + curated migration notes

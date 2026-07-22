@@ -1,0 +1,89 @@
+{
+  "$comment": "Machine-readable conformance contract, derived from .agent/references/spec/*.dc.html (the authoritative AEGIS reference pages). Consumed by .agent/scripts/verify-conformance.mjs, which is a HARD GATE. Component names map to kebab source files; note toggle -> switch.",
+  "universal": {
+    "$comment": "Rules every component in src/components/ui must satisfy — the shared AEGIS design language.",
+    "forbidden": [
+      { "pattern": "shadow-\\[", "message": "Hard-coded box-shadow literal. Use `shadow-elevated` (the --shadow token) for elevation.", "severity": "error" },
+      { "pattern": "ring-ring/50", "message": "shadcn default focus ring. AEGIS focus is a 3px accent-soft ring (`ring-accent-soft`) + accent border.", "severity": "error" },
+      { "pattern": "#[0-9a-fA-F]{6}\\b", "message": "Hard-coded hex color. Use an AEGIS token/utility (colors are token-only).", "severity": "error" },
+      { "pattern": "rgba\\(", "message": "Hard-coded rgba color. Use a token/utility.", "severity": "error" }
+    ],
+    "focusRing": "accent-soft",
+    "elevationUtility": "shadow-elevated"
+  },
+  "components": {
+    "button": {
+      "file": "button.tsx",
+      "reference": "spec/Button.dc.html",
+      "requiredVariants": ["primary", "secondary", "soft", "outline", "ghost", "destructive", "link"],
+      "requiredSizes": ["sm", "md", "lg"],
+      "requiredStates": ["hover", "active", "focus", "loading", "disabled"],
+      "signatureAnimation": "animate-beam-spin",
+      "notes": "Default variant is `secondary`. Primary carries the rotating beam (conic-gradient) + gradient fill + underglow. Loading holds width, shows a spinner (animate-spin), sets aria-busy. Sizes 32/38/46px. Focus = 3px accent-soft ring."
+    },
+    "checkbox": {
+      "file": "checkbox.tsx",
+      "reference": "spec/Checkbox.dc.html",
+      "requiredSizes": ["sm", "md", "lg"],
+      "requiredStates": ["checked", "indeterminate", "hover", "focus", "disabled", "error", "readonly"],
+      "signatureAnimation": "animate-check-pop",
+      "notes": "Box 16/20/24px (default md=20). Mark pops in with check-pop. Supports label + description slots. Indeterminate bar. Focus = accent-soft ring; resting border = border-strong."
+    },
+    "switch": {
+      "file": "switch.tsx",
+      "reference": "spec/Toggle.dc.html",
+      "requiredSizes": ["sm", "md", "lg"],
+      "requiredStates": ["hover", "focus", "disabled", "error", "loading"],
+      "notes": "Track 36x20 / 44x26 (default md) / 52x30. Thumb inset 3px, pure-white thumb. Optional showIcons glyphs (check on / bar off). label + description slots. Off-track uses the --track token."
+    },
+    "badge": {
+      "file": "badge.tsx",
+      "reference": "spec/Badge.dc.html",
+      "requiredVariants": ["soft", "solid", "outline"],
+      "requiredTones": ["accent", "neutral", "success", "warning", "danger", "info", "low", "medium", "high", "critical"],
+      "requiredSizes": ["sm", "md", "lg"],
+      "signatureAnimation": "animate-pulse-dot",
+      "notes": "Two axes: tone (10, incl. severity ramp low/medium/high/critical + info) x variant style (soft default/solid/outline). Optional dot (pulse-dot), leading icon, numeric count with max -> 99+. Per-size radius 6/7/8px."
+    },
+    "avatar": {
+      "file": "avatar.tsx",
+      "reference": "spec/Avatar.dc.html",
+      "requiredSizes": ["xs", "sm", "md", "lg", "xl"],
+      "requiredShape": ["circle", "square"],
+      "requiredStatus": ["online", "away", "busy", "offline"],
+      "signatureAnimation": "animate-status-ping",
+      "notes": "Diameter xs24/sm32/md40/lg64/xl88. Fallback chain image->initials->icon. Name-seeded initials color (hash -> 8-pair palette). Presence dot (online pings). ring (current-user). AvatarGroup stack + +N overflow (max 4). square radius 28%."
+    },
+    "chip": {
+      "file": "chip.tsx",
+      "reference": "spec/Chip.dc.html",
+      "requiredSizes": ["sm", "md", "lg"],
+      "signatureAnimation": "animate-chip-pop",
+      "notes": "Not yet built. Removable token; chip-pop entrance. Follow reference when built."
+    },
+    "input": {
+      "file": "input.tsx",
+      "reference": "spec/Input.dc.html",
+      "requiredVariants": ["outline", "filled", "flush"],
+      "requiredSizes": ["sm", "md", "lg"],
+      "requiredStates": ["hover", "focus", "disabled", "error", "readonly"],
+      "notes": "Not yet built. Leading/trailing adornments; focus = accent-soft ring + accent border; resting border-strong. Sizes 32/40/48px."
+    },
+    "select": {
+      "file": "select.tsx",
+      "reference": "spec/Select.dc.html",
+      "requiredVariants": ["outline", "filled", "flush"],
+      "requiredSizes": ["sm", "md", "lg"],
+      "signatureAnimation": "animate-menu-in",
+      "notes": "Not yet built. Menu enters with menu-in; chevron rotates 180deg; selected row tint + check."
+    },
+    "radio": {
+      "file": "radio.tsx",
+      "reference": "spec/Radio.dc.html",
+      "requiredSizes": ["sm", "md", "lg"],
+      "requiredStates": ["hover", "focus", "disabled", "error", "readonly"],
+      "signatureAnimation": "animate-dot-pop",
+      "notes": "Not yet built. Ring 16/20/24px; inner dot pops in (dot-pop); focus = accent-soft ring."
+    }
+  }
+}

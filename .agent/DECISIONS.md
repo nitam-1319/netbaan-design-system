@@ -103,3 +103,17 @@ and rule #2 ("CREATE never rewrites"), applied only to this migration. Going for
 component ships closed from the start; anything `npx shadcn add` generates is treated as
 non-conformant scaffolding that must be closed before it counts as done. Future closed-API violations
 found in existing components are handled in REFACTOR mode, not silently in CREATE.
+
+## 2026-07-22 — Reference fidelity is mandatory and machine-gated
+Status: accepted
+Decision: Every component must match its AEGIS reference (`references/spec/<Name>.dc.html`) exactly —
+structure, visual design, interactions, animations, shadows, borders, and behavior — not only colors.
+Components without a reference page must follow the same design language and signature motifs.
+Enforced by `scripts/verify-conformance.mjs` (a HARD gate) against `references/spec-manifest.json`.
+Reason: The build had drifted to shadcn defaults (dropped size scales, missing variants/states, no
+signature beam/pulse/pop animations, `ring-ring/50` focus, generic/hard-coded shadows). The reference
+specs were never a build input, so drift was inevitable. This makes the specs both an input and a gate.
+Impact: New components fail the gate unless they conform. The signature keyframes + `--shadow` token now
+live in `src/index.css` (utilities `animate-*`, `shadow-elevated`; focus `ring-accent-soft`; control
+borders `border-strong`). The five existing drifted components (button, checkbox, switch, badge, avatar)
+are a REFACTOR backlog to bring into conformance — done only after this foundation lands.

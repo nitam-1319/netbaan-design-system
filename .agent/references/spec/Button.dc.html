@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#09090b}
+  a{color:#ab8ce8;text-decoration:none}
+  a:hover{color:#9373d9}
+  [data-theme="dark"]{
+    --bg:#09090b;--card:#0e0e12;--surface:#151319;--surface-2:#1b1922;--surface-3:#22202b;
+    --border:rgba(255,255,255,.07);--border-strong:rgba(255,255,255,.13);
+    --text:#eceaf2;--text-dim:#a29caf;--text-faint:#6e6880;
+    --accent:#9373d9;--accent-soft:rgba(147,115,217,.14);--accent-strong:#ab8ce8;
+    --track:rgba(255,255,255,.08);--shadow:0 18px 50px -18px rgba(0,0,0,.7);
+    --code:#08080a;
+  }
+  [data-theme="light"]{
+    --bg:#f6f6f9;--card:#ffffff;--surface:#ffffff;--surface-2:#f8f6fc;--surface-3:#efeaf7;
+    --border:rgba(24,20,34,.09);--border-strong:rgba(24,20,34,.15);
+    --text:#191622;--text-dim:#5f596e;--text-faint:#8d8799;
+    --accent:#7c53d4;--accent-soft:rgba(124,83,212,.10);--accent-strong:#6a44c0;
+    --track:rgba(24,20,34,.08);--shadow:0 18px 50px -22px rgba(90,68,150,.32);
+    --code:#f3f1f8;
+  }
+  @keyframes beamSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;transition:background .35s ease,color .35s ease;padding:40px 44px 90px;display:flex;flex-direction:column;gap:24px;width:1240px;margin:0 auto">
+
+  <!-- masthead -->
+  <div style="position:relative;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);background:var(--border-strong)">
+    <span style="position:absolute;left:50%;top:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 74%,var(--accent) 85%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 6.5s linear infinite;pointer-events:none"></span>
+    <div style="position:relative;z-index:1;margin:1.5px;border-radius:18.5px;background:var(--card);padding:26px 32px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div style="line-height:1.2">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <a href="../Home.dc.html" style="display:inline-flex;align-items:center;gap:6px;font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.04em;color:var(--text-dim);border:1px solid var(--border-strong);padding:3px 9px;border-radius:6px;text-decoration:none" style-hover="border-color:var(--accent);color:var(--accent-strong)"><span style="font-size:12px">←</span> Library</a>
+          <span style="font:600 9.5px 'IBM Plex Mono',monospace;letter-spacing:.08em;padding:3px 8px;background:var(--accent);color:#fff;border-radius:5px">AEGIS</span>
+          <span style="font:500 11px 'IBM Plex Mono',monospace;color:var(--text-faint);letter-spacing:.03em">FOUNDATIONS <span style="color:var(--text-dim)">/</span> ACTIONS <span style="color:var(--text-dim)">/</span> BUTTON</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font:700 28px 'Space Grotesk',sans-serif;letter-spacing:.01em;color:var(--text)">Button</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font:600 10px 'IBM Plex Mono';letter-spacing:.04em;text-transform:uppercase;color:#2fb680;background:color-mix(in srgb,#2fb680 15%,transparent);padding:4px 9px;border-radius:6px"><span style="width:6px;height:6px;border-radius:50%;background:#2fb680"></span>Essential</span>
+          <span style="font:500 10px 'IBM Plex Mono';color:var(--text-faint);border:1px solid var(--border);padding:4px 9px;border-radius:6px">v1.0 · Stable</span>
+        </div>
+        <div style="font:400 13.5px/1.6 'IBM Plex Sans',sans-serif;color:var(--text-dim);margin-top:10px;max-width:720px">Triggers an action or event — the most-used interactive primitive in the system. Every actionable surface (forms, toolbars, dialogs, cards) composes it, so its variants, sizes, and states set the tone for the entire library.</div>
+      </div>
+      <button onClick="{{ toggleTheme }}" style="padding:10px 16px;border-radius:9px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text);font:500 12.5px 'IBM Plex Sans';cursor:pointer;flex:none" style-hover="border-color:var(--accent);color:var(--accent-strong)">{{ themeLabel }}</button>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px">
+    <sc-for list="{{ toc }}" as="s" hint-placeholder-count="20">
+      <a href="{{ s.href }}" style="display:inline-flex;align-items:center;gap:7px;font:500 11.5px 'IBM Plex Sans';color:var(--text-dim);background:var(--card);border:1px solid var(--border);padding:6px 11px;border-radius:8px" style-hover="border-color:var(--accent);color:var(--accent-strong)"><span style="font:600 9.5px 'IBM Plex Mono';color:var(--text-faint)">{{ s.num }}</span>{{ s.name }}</a>
+    </sc-for>
+  </div>
+
+  <!-- PLAYGROUND -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)">
+    <div style="padding:14px 22px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:10px">
+      <span style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulseDot 1.8s infinite"></span>
+      <span style="font:600 12px 'IBM Plex Sans';letter-spacing:.04em;text-transform:uppercase;color:var(--text-dim)">Live playground</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 300px">
+      <div style="padding:48px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(420px circle at 50% 0%,var(--accent-soft),transparent 70%);min-height:220px">
+        <sc-if value="{{ pgIsPrimary }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ onPgClick }}" style="{{ pgBeamOuter }}" style-hover="filter:brightness(1.08)">
+            <span style="{{ pgBeamLayer }}"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+            <span style="{{ pgBeamInner }}">
+              <sc-if value="{{ pgLoading }}" hint-placeholder-val="{{ false }}"><span style="width:13px;height:13px;border-radius:50%;border:2px solid color-mix(in srgb,currentColor 35%,transparent);border-top-color:currentColor;animation:spin .6s linear infinite;display:inline-block"></span></sc-if>
+              <span>{{ pgLabel }}</span>
+              <sc-if value="{{ pgIcon }}" hint-placeholder-val="{{ true }}"><span style="font-size:1.05em;line-height:1">→</span></sc-if>
+            </span>
+          </button>
+        </sc-if>
+        <sc-if value="{{ pgIsFlat }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onPgClick }}" style="{{ pgStyle }}">
+            <sc-if value="{{ pgLoading }}" hint-placeholder-val="{{ false }}"><span style="width:13px;height:13px;border-radius:50%;border:2px solid color-mix(in srgb,currentColor 35%,transparent);border-top-color:currentColor;animation:spin .6s linear infinite;display:inline-block"></span></sc-if>
+            <sc-if value="{{ pgIcon }}" hint-placeholder-val="{{ true }}"><span style="font-size:1.05em;line-height:1;margin-top:-1px">+</span></sc-if>
+            <span>{{ pgLabel }}</span>
+          </button>
+        </sc-if>
+        <span style="font:500 11px 'IBM Plex Mono';color:var(--text-faint)">{{ pgCountLabel }}</span>
+      </div>
+      <div style="border-inline-start:1px solid var(--border);padding:20px;display:flex;flex-direction:column;gap:18px;background:var(--surface-2)">
+        <div>
+          <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px">Variant</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ variantOpts }}" as="o" hint-placeholder-count="7"><button onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+          </div>
+        </div>
+        <div>
+          <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px">Size</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ sizeOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+          </div>
+        </div>
+        <div>
+          <div style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:9px">Options</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ toggleOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 PURPOSE -->
+  <div id="purpose" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">01</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Purpose</span>
+    </div>
+    <div style="padding:22px 24px;display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font:400 13.5px/1.7 'IBM Plex Sans';color:var(--text-dim);max-width:820px">A button lets a user commit to a single, immediate action — submit, confirm, create, run, or cancel. It is <strong style="color:var(--text)">not</strong> for navigation between pages (use a Link) or for toggling persistent state (use a Switch or Toggle). If the label reads like a destination rather than a verb, it should probably be a link.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px"><div style="font:600 11px 'IBM Plex Sans';color:var(--text);margin-bottom:5px">Use when</div><div style="font:400 12px/1.55 'IBM Plex Sans';color:var(--text-faint)">An action changes data, submits a form, or triggers a process.</div></div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px"><div style="font:600 11px 'IBM Plex Sans';color:var(--text);margin-bottom:5px">One primary per view</div><div style="font:400 12px/1.55 'IBM Plex Sans';color:var(--text-faint)">Reserve the filled Primary variant for the single most important action.</div></div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px"><div style="font:600 11px 'IBM Plex Sans';color:var(--text);margin-bottom:5px">Verb-first labels</div><div style="font:400 12px/1.55 'IBM Plex Sans';color:var(--text-faint)">“Run scan”, “Export”, “Renew” — concise, action-led, sentence case.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 UX GUIDELINES -->
+  <div id="ux" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">02</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">UX guidelines</span>
+    </div>
+    <div style="padding:8px 24px 12px">
+      <sc-for list="{{ uxRules }}" as="r" hint-placeholder-count="6">
+        <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span>
+          <div><div style="font:600 13px 'IBM Plex Sans';color:var(--text)">{{ r.title }}</div><div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-faint);margin-top:3px;max-width:860px">{{ r.body }}</div></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 03 ANATOMY -->
+  <div id="anatomy" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">03</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Anatomy</span>
+    </div>
+    <div style="padding:32px 24px;display:grid;grid-template-columns:1fr 340px;gap:32px;align-items:center">
+      <div style="display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:14px;padding:56px 20px">
+        <span style="position:relative;display:inline-flex;border-radius:12px;box-shadow:0 0 0 4px var(--accent-soft),0 0 0 5px var(--border-strong),0 14px 34px -12px color-mix(in srgb,var(--accent) 60%,transparent)">
+          <span style="position:absolute;inset:0;border-radius:12px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:9px;padding:12px 24px;border-radius:10.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 15px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <sc-for list="{{ anatomy }}" as="a" hint-placeholder-count="6">
+          <div style="display:flex;align-items:baseline;gap:11px">
+            <span style="width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent-strong);border:1px solid var(--border);font:600 11px 'IBM Plex Mono';display:inline-flex;align-items:center;justify-content:center;flex:none">{{ a.n }}</span>
+            <div><span style="font:600 12.5px 'IBM Plex Sans';color:var(--text)">{{ a.name }}</span><span style="font:400 12px 'IBM Plex Sans';color:var(--text-faint)"> — {{ a.desc }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 VARIANTS -->
+  <div id="variants" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">04</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Variants</span>
+    </div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="7">
+        <div style="display:flex;align-items:center;gap:18px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:18px 20px">
+          <div style="flex:none;width:130px"><div style="font:600 12.5px 'IBM Plex Sans';color:var(--text)">{{ v.name }}</div><div style="font:400 11px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:3px">{{ v.use }}</div></div>
+          <div style="flex:1;display:flex;justify-content:center">
+            <sc-if value="{{ v.isPrimary }}" hint-placeholder-val="{{ false }}">
+              <button style="position:relative;padding:0;border:none;background:transparent;border-radius:11px;cursor:pointer;box-shadow:0 0 0 1px var(--border-strong),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)" style-hover="filter:brightness(1.08)">
+                <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+                <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'">{{ v.label }}<span style="font-size:1.05em;line-height:1">→</span></span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ v.isFlat }}" hint-placeholder-val="{{ true }}">
+              <button style="{{ v.style }}"><sc-if value="{{ v.hasIcon }}" hint-placeholder-val="{{ false }}"><span style="font-size:1.05em;line-height:1">+</span></sc-if>{{ v.label }}</button>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 05 SIZES -->
+  <div id="sizes" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">05</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Sizes</span>
+    </div>
+    <div style="padding:36px 24px;display:flex;align-items:flex-end;gap:34px;flex-wrap:wrap;justify-content:center">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        <button style="position:relative;padding:0;border:none;background:transparent;border-radius:10px;cursor:pointer;box-shadow:0 0 0 1px var(--border-strong),0 10px 26px -12px color-mix(in srgb,var(--accent) 60%,transparent)" style-hover="filter:brightness(1.08)">
+          <span style="position:absolute;inset:0;border-radius:10px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </button>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Small</div><div style="font:500 10px 'IBM Plex Mono';color:var(--text-faint);margin-top:2px">sm · 32px</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        <button style="position:relative;padding:0;border:none;background:transparent;border-radius:11px;cursor:pointer;box-shadow:0 0 0 1px var(--border-strong),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)" style-hover="filter:brightness(1.08)">
+          <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </button>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Medium</div><div style="font:500 10px 'IBM Plex Mono';color:var(--text-faint);margin-top:2px">md · 38px (default)</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        <button style="position:relative;padding:0;border:none;background:transparent;border-radius:13px;cursor:pointer;box-shadow:0 0 0 1px var(--border-strong),0 14px 34px -12px color-mix(in srgb,var(--accent) 60%,transparent)" style-hover="filter:brightness(1.08)">
+          <span style="position:absolute;inset:0;border-radius:13px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:9px;padding:11px 22px;border-radius:11.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 14px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </button>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Large</div><div style="font:500 10px 'IBM Plex Mono';color:var(--text-faint);margin-top:2px">lg · 46px</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 STATES -->
+  <div id="states" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">06</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">States</span>
+    </div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;align-items:center">
+        <span style="position:relative;display:inline-flex;border-radius:11px;box-shadow:0 0 0 1px var(--border-strong),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)">
+          <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </span>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Default</div><div style="font:400 10.5px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:2px">Beam idles at 3.4s</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;align-items:center">
+        <span style="position:relative;display:inline-flex;border-radius:11px;filter:brightness(1.08);box-shadow:0 0 0 1px var(--border-strong),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)">
+          <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 22%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </span>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Hover</div><div style="font:400 10.5px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:2px">Brightness lift +8%</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;align-items:center">
+        <span style="position:relative;display:inline-flex;border-radius:11px;filter:brightness(.95);transform:scale(.98);box-shadow:0 0 0 1px var(--border-strong),0 8px 20px -12px color-mix(in srgb,var(--accent) 60%,transparent)">
+          <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </span>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Active</div><div style="font:400 10.5px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:2px">Pressed, scale .98</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;align-items:center">
+        <span style="position:relative;display:inline-flex;border-radius:11px;box-shadow:0 0 0 1px var(--border-strong),0 0 0 4px var(--accent-soft),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)">
+          <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </span>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Focus</div><div style="font:400 10.5px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:2px">3px accent-soft ring</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;align-items:center">
+        <span style="position:relative;display:inline-flex;border-radius:11px;box-shadow:0 0 0 1px var(--border-strong),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)">
+          <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'"><span style="width:13px;height:13px;border-radius:50%;border:2px solid color-mix(in srgb,currentColor 35%,transparent);border-top-color:currentColor;animation:spin .6s linear infinite;display:inline-block"></span>Scanning</span>
+        </span>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Loading</div><div style="font:400 10.5px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:2px">Spinner, width held</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:24px 20px;align-items:center">
+        <span style="position:relative;display:inline-flex;border-radius:11px;opacity:.5;cursor:not-allowed;box-shadow:0 0 0 1px var(--border-strong)">
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:9.5px;background:var(--surface-2);color:var(--text-dim);font:600 12.5px 'IBM Plex Sans'">Run scan<span style="font-size:1.05em;line-height:1">→</span></span>
+        </span>
+        <div style="text-align:center"><div style="font:600 11.5px 'IBM Plex Sans';color:var(--text)">Disabled</div><div style="font:400 10.5px/1.5 'IBM Plex Sans';color:var(--text-faint);margin-top:2px">Beam off, 50% opacity</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BEHAVIORS -->
+  <div id="behaviors" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">07</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Behaviors</span>
+    </div>
+    <div style="padding:8px 24px 12px">
+      <sc-for list="{{ behaviors }}" as="b" hint-placeholder-count="5">
+        <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border);align-items:baseline">
+          <span style="font:600 10px 'IBM Plex Mono';letter-spacing:.04em;text-transform:uppercase;color:var(--accent-strong);background:var(--accent-soft);padding:4px 9px;border-radius:6px;flex:none;width:110px;text-align:center">{{ b.tag }}</span>
+          <div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ b.body }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 08 ACCESSIBILITY -->
+  <div id="a11y" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">08</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Accessibility</span>
+    </div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <sc-for list="{{ a11y }}" as="a" hint-placeholder-count="6">
+        <div style="display:flex;gap:11px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:15px 16px">
+          <span style="color:#2fb680;font:700 13px 'IBM Plex Mono';flex:none">✓</span>
+          <div><div style="font:600 12px 'IBM Plex Sans';color:var(--text)">{{ a.title }}</div><div style="font:400 11.5px/1.55 'IBM Plex Sans';color:var(--text-faint);margin-top:3px">{{ a.body }}</div></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 09 DESIGN TOKENS -->
+  <div id="tokens" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">09</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Design tokens</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:16px;padding:11px 24px;border-bottom:1px solid var(--border);background:var(--surface-2)">
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Token</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Dark</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Light</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)">Applies to</span>
+    </div>
+    <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="9">
+      <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:16px;padding:11px 24px;border-bottom:1px solid var(--border);align-items:center">
+        <span style="font:500 11.5px 'IBM Plex Mono';color:var(--accent-strong)">{{ t.name }}</span>
+        <span style="font:500 11px 'IBM Plex Mono';color:var(--text-dim);display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:3px;border:1px solid var(--border-strong);background:{{ t.dark }};flex:none"></span>{{ t.darkV }}</span>
+        <span style="font:500 11px 'IBM Plex Mono';color:var(--text-dim);display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;border-radius:3px;border:1px solid var(--border-strong);background:{{ t.light }};flex:none"></span>{{ t.lightV }}</span>
+        <span style="font:400 11.5px 'IBM Plex Sans';color:var(--text-faint)">{{ t.use }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- 10 ICONS -->
+  <div id="icons" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">10</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Icons</span>
+    </div>
+    <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+      <p style="margin:0;font:400 13px/1.7 'IBM Plex Sans';color:var(--text-dim);max-width:820px">Icons are optional and always paired with a label except in the dedicated icon-only variant. Use a leading icon to reinforce the action, a trailing icon only for direction (→) or disclosure (▾). Icon sizing tracks the label: 1em, optically centered, with a fixed gap token.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button style="position:relative;padding:0;border:none;background:transparent;border-radius:11px;cursor:pointer;box-shadow:0 0 0 1px var(--border-strong),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)" style-hover="filter:brightness(1.08)">
+          <span style="position:absolute;inset:0;border-radius:11px;overflow:hidden;pointer-events:none"><span style="position:absolute;top:50%;left:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0 68%,var(--accent) 84%,var(--accent-strong) 92%,transparent 100%);animation:beamSpin 3.4s linear infinite"></span></span>
+          <span style="position:relative;margin:1.5px;display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9.5px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 12.5px 'IBM Plex Sans'"><span style="font-size:1.05em">+</span>Leading icon</span>
+        </button>
+        <button style="display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 15px;border-radius:9px;background:var(--card);color:var(--text);border:1px solid var(--border-strong);font:600 12.5px 'IBM Plex Sans';cursor:pointer">Trailing icon<span style="font-size:1.05em">→</span></button>
+        <button aria-label="Add" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:var(--accent-soft);color:var(--accent-strong);border:1px solid transparent;font:600 16px 'IBM Plex Sans';cursor:pointer">+</button>
+        <button style="display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 15px;border-radius:9px;background:transparent;color:var(--text-dim);border:1px solid transparent;font:600 12.5px 'IBM Plex Sans';cursor:pointer">Menu<span style="font-size:.9em">▾</span></button>
+      </div>
+      <div style="font:400 11.5px 'IBM Plex Sans';color:var(--text-faint)">Icon-only buttons <strong style="color:var(--text-dim)">must</strong> carry an <span style="font-family:'IBM Plex Mono'">aria-label</span> and a Tooltip.</div>
+    </div>
+  </div>
+
+  <!-- 11 RESPONSIVE -->
+  <div id="responsive" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">11</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Responsive behavior</span>
+    </div>
+    <div style="padding:8px 24px 12px">
+      <sc-for list="{{ responsive }}" as="r" hint-placeholder-count="4">
+        <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border);align-items:baseline">
+          <span style="font:600 10px 'IBM Plex Mono';color:var(--text-dim);flex:none;width:120px">{{ r.bp }}</span>
+          <div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ r.body }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 12 INTERACTION -->
+  <div id="interaction" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">12</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Interaction rules</span>
+    </div>
+    <div style="padding:8px 24px 12px">
+      <sc-for list="{{ interaction }}" as="i" hint-placeholder-count="5">
+        <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span>
+          <div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)"><strong style="color:var(--text)">{{ i.k }}</strong> — {{ i.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 13 USAGE -->
+  <div id="usage" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">13</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Usage guidelines</span>
+    </div>
+    <div style="padding:8px 24px 12px">
+      <sc-for list="{{ usage }}" as="u" hint-placeholder-count="5">
+        <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span>
+          <div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ u }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 14 DO & DON'T -->
+  <div id="dodont" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">14</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Do &amp; Don't</span>
+    </div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="border:1px solid color-mix(in srgb,#2fb680 35%,var(--border));border-radius:14px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:8px;padding:11px 16px;background:color-mix(in srgb,#2fb680 12%,transparent);border-bottom:1px solid var(--border)"><span style="color:#2fb680;font:700 13px 'IBM Plex Mono'">✓</span><span style="font:600 12px 'IBM Plex Sans';color:#2fb680">Do</span></div>
+        <div style="padding:6px 16px 12px">
+          <sc-for list="{{ dos }}" as="d" hint-placeholder-count="4"><div style="font:400 12px/1.6 'IBM Plex Sans';color:var(--text-dim);padding:9px 0;border-bottom:1px solid var(--border)">{{ d }}</div></sc-for>
+        </div>
+      </div>
+      <div style="border:1px solid color-mix(in srgb,#e5484d 35%,var(--border));border-radius:14px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:8px;padding:11px 16px;background:color-mix(in srgb,#e5484d 12%,transparent);border-bottom:1px solid var(--border)"><span style="color:#e5484d;font:700 13px 'IBM Plex Mono'">✕</span><span style="font:600 12px 'IBM Plex Sans';color:#e5484d">Don't</span></div>
+        <div style="padding:6px 16px 12px">
+          <sc-for list="{{ donts }}" as="d" hint-placeholder-count="4"><div style="font:400 12px/1.6 'IBM Plex Sans';color:var(--text-dim);padding:9px 0;border-bottom:1px solid var(--border)">{{ d }}</div></sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15 FIGMA AUTO LAYOUT -->
+  <div id="figma" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">15</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Figma Auto Layout spec</span>
+    </div>
+    <div style="padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <sc-for list="{{ figma }}" as="f" hint-placeholder-count="8">
+        <div style="display:flex;justify-content:space-between;gap:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 15px">
+          <span style="font:400 11.5px 'IBM Plex Sans';color:var(--text-faint)">{{ f.k }}</span>
+          <span style="font:500 11.5px 'IBM Plex Mono';color:var(--text);text-align:end">{{ f.v }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 16 DESIGN SPEC -->
+  <div id="spec" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">16</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Design specification</span>
+    </div>
+    <div style="display:grid;grid-template-columns:110px repeat(4,1fr);gap:14px;padding:11px 24px;border-bottom:1px solid var(--border);background:var(--surface-2)">
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Size</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Height</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Padding X</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Font</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Radius / Gap</span>
+    </div>
+    <sc-for list="{{ specRows }}" as="r" hint-placeholder-count="4">
+      <div style="display:grid;grid-template-columns:110px repeat(4,1fr);gap:14px;padding:12px 24px;border-bottom:1px solid var(--border)">
+        <span style="font:600 12px 'IBM Plex Sans';color:var(--text)">{{ r.size }}</span>
+        <span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.h }}</span>
+        <span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.px }}</span>
+        <span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.font }}</span>
+        <span style="font:500 11.5px 'IBM Plex Mono';color:var(--text-dim)">{{ r.rg }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- 17 REACT -->
+  <div id="react" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">17</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">React implementation</span>
+    </div>
+    <div style="padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+      <div style="font:400 12.5px/1.7 'IBM Plex Sans';color:var(--text-dim);max-width:840px">Ship a single polymorphic <span style="font-family:'IBM Plex Mono'">&lt;Button&gt;</span> with a headless base (Radix <span style="font-family:'IBM Plex Mono'">Slot</span> via <span style="font-family:'IBM Plex Mono'">asChild</span>) so it can render as <span style="font-family:'IBM Plex Mono'">&lt;a&gt;</span> or a router link without losing styling. Variants via <span style="font-family:'IBM Plex Mono'">cva</span>; forward the ref; spread native button props.</div>
+      <pre style="margin:0;background:var(--code);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:auto;font:500 12px/1.7 'IBM Plex Mono';color:var(--text-dim)">{{ reactCode }}</pre>
+    </div>
+  </div>
+
+  <!-- 18 CSS VARS -->
+  <div id="css" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">18</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Tailwind / CSS variables</span>
+    </div>
+    <div style="padding:22px 24px">
+      <pre style="margin:0;background:var(--code);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:auto;font:500 12px/1.7 'IBM Plex Mono';color:var(--text-dim)">{{ cssCode }}</pre>
+    </div>
+  </div>
+
+  <!-- 19 DARK MODE -->
+  <div id="darkmode" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">19</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Dark mode rules</span>
+    </div>
+    <div style="padding:8px 24px 12px">
+      <sc-for list="{{ darkRules }}" as="d" hint-placeholder-count="4">
+        <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none"></span>
+          <div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)">{{ d }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 20 DOCUMENTATION / API -->
+  <div id="docs" style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <span style="font:600 12px 'IBM Plex Mono';color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--border);padding:5px 10px;border-radius:8px">20</span>
+      <span style="font:700 16px 'Space Grotesk';color:var(--text)">Documentation — API reference</span>
+    </div>
+    <div style="display:grid;grid-template-columns:150px 1.1fr 1fr;gap:16px;padding:11px 24px;border-bottom:1px solid var(--border);background:var(--surface-2)">
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Prop</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Type</span>
+      <span style="font:600 9.5px 'IBM Plex Mono';letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)">Description</span>
+    </div>
+    <sc-for list="{{ props }}" as="p" hint-placeholder-count="8">
+      <div style="display:grid;grid-template-columns:150px 1.1fr 1fr;gap:16px;padding:12px 24px;border-bottom:1px solid var(--border);align-items:baseline">
+        <span style="font:500 11.5px 'IBM Plex Mono';color:var(--accent-strong)">{{ p.name }}</span>
+        <span style="font:500 11px 'IBM Plex Mono';color:var(--text-dim)">{{ p.type }}</span>
+        <span style="font:400 11.5px/1.5 'IBM Plex Sans';color:var(--text-faint)">{{ p.desc }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:14px;padding:20px 24px;background:var(--surface-2);border:1px solid var(--border);border-radius:16px">
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;animation:pulseDot 1.8s infinite;flex:none"></span>
+    <div style="font:400 12.5px/1.6 'IBM Plex Sans';color:var(--text-dim)"><strong style="color:var(--text)">Button</strong> is component 1 of the build. Approve the format and I'll continue down the inventory — next up the remaining Foundations, then Layout primitives. Say the word if you'd like a different order.</div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:3200},&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Display&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { theme: props.defaultTheme || 'dark', variant:'primary', size:'md', loading:false, disabled:false, icon:true, count:0 };
+  }
+
+  btn(variant, size, opt){
+    opt = opt || {};
+    const S = {
+      xs:'padding:5px 10px;font-size:11px;border-radius:7px;gap:5px',
+      sm:'padding:7px 12px;font-size:12px;border-radius:8px;gap:6px',
+      md:'padding:9px 16px;font-size:12.5px;border-radius:9px;gap:7px',
+      lg:'padding:12px 20px;font-size:14px;border-radius:11px;gap:8px',
+    };
+    const V = {
+      primary:"color:#fff;border:1px solid rgba(255,255,255,.10);background:radial-gradient(120% 80% at 50% 132%,rgba(184,154,248,.92),rgba(147,115,217,.18) 44%,transparent 60%),linear-gradient(180deg,#1d1a27,#100e16);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -8px 16px -9px rgba(184,154,248,.8),0 9px 24px -10px rgba(147,115,217,.6),0 8px 20px -12px rgba(0,0,0,.75)",
+      secondary:'background:var(--card);color:var(--text);border:1px solid var(--border-strong)',
+      soft:'background:var(--accent-soft);color:var(--accent-strong);border:1px solid transparent',
+      outline:'background:transparent;color:var(--text);border:1px solid var(--border-strong)',
+      ghost:'background:transparent;color:var(--text-dim);border:1px solid transparent',
+      destructive:'background:#e5484d;color:#fff;border:1px solid transparent;box-shadow:0 6px 18px -8px #e5484d',
+      link:'background:none;color:var(--accent-strong);border:1px solid transparent;text-decoration:underline;text-underline-offset:3px;box-shadow:none',
+    };
+    const base = "display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Sans',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap;transition:filter .15s ease,border-color .15s ease,color .15s ease,background .15s ease,box-shadow .15s ease;line-height:1.1";
+    let s = base + ';' + S[size] + ';' + V[variant];
+    if (opt.focus) s += ';box-shadow:0 0 0 3px var(--accent-soft),0 6px 18px -8px var(--accent)';
+    if (opt.disabled) s += ';opacity:.45;cursor:not-allowed';
+    return s;
+  }
+
+  chip(active){
+    const base = "font:600 11px 'IBM Plex Sans';padding:6px 11px;border-radius:8px;cursor:pointer;transition:all .15s ease;text-transform:capitalize";
+    return active
+      ? base + ';background:linear-gradient(145deg,var(--accent),var(--accent-strong));color:#fff;border:1px solid transparent'
+      : base + ';background:var(--card);color:var(--text-dim);border:1px solid var(--border-strong)';
+  }
+
+  renderVals(){
+    const theme = this.state.theme;
+    const st = this.state;
+
+    const toc = [
+      ['01','Purpose','#purpose'],['02','UX','#ux'],['03','Anatomy','#anatomy'],['04','Variants','#variants'],
+      ['05','Sizes','#sizes'],['06','States','#states'],['07','Behaviors','#behaviors'],['08','A11y','#a11y'],
+      ['09','Tokens','#tokens'],['10','Icons','#icons'],['11','Responsive','#responsive'],['12','Interaction','#interaction'],
+      ['13','Usage','#usage'],['14',"Do & Don't",'#dodont'],['15','Figma','#figma'],['16','Spec','#spec'],
+      ['17','React','#react'],['18','CSS','#css'],['19','Dark mode','#darkmode'],['20','Docs','#docs'],
+    ].map(x => ({ num:x[0], name:x[1], href:x[2] }));
+
+    // playground
+    const pgStyle = this.btn(st.variant, st.size, { disabled: st.disabled });
+    // size-aware beam geometry for the primary variant
+    const BEAM = {
+      sm: { or:10, ir:8.5, pad:'6px 12px', gap:6, font:12 },
+      md: { or:11, ir:9.5, pad:'8px 16px', gap:8, font:12.5 },
+      lg: { or:13, ir:11.5, pad:'11px 22px', gap:9, font:14 },
+    };
+    const bm = BEAM[st.size] || BEAM.md;
+    let pgBeamOuter = `position:relative;padding:0;border:none;background:transparent;border-radius:${bm.or}px;box-shadow:0 0 0 1px var(--border-strong),0 12px 30px -12px color-mix(in srgb,var(--accent) 60%,transparent)`;
+    pgBeamOuter += st.disabled ? ';opacity:.5;cursor:not-allowed' : ';cursor:pointer';
+    if (st.loading) pgBeamOuter += ';pointer-events:none';
+    const pgBeamLayer = `position:absolute;inset:0;border-radius:${bm.or}px;overflow:hidden;pointer-events:none`;
+    const pgBeamInner = `position:relative;margin:1.5px;display:flex;align-items:center;gap:${bm.gap}px;padding:${bm.pad};border-radius:${bm.ir}px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 15%,var(--surface-2)),var(--surface-2));color:var(--text);font:600 ${bm.font}px 'IBM Plex Sans'`;
+    const setV = v => () => this.setState({ variant:v });
+    const setS = s => () => this.setState({ size:s });
+    const variantOpts = ['primary','secondary','soft','outline','ghost','destructive','link']
+      .map(v => ({ label:v, style:this.chip(st.variant===v), onClick:setV(v) }));
+    const sizeOpts = ['sm','md','lg'].map(s => ({ label:s, style:this.chip(st.size===s), onClick:setS(s) }));
+    const toggleOpts = [
+      { label:'Icon', style:this.chip(st.icon), onClick:()=>this.setState(s=>({icon:!s.icon})) },
+      { label:'Loading', style:this.chip(st.loading), onClick:()=>this.setState(s=>({loading:!s.loading})) },
+      { label:'Disabled', style:this.chip(st.disabled), onClick:()=>this.setState(s=>({disabled:!s.disabled})) },
+    ];
+
+    const variants = [
+      ['Primary','Single most important action','primary','Run scan',true],
+      ['Secondary','Neutral, common actions','secondary','Export',false],
+      ['Soft','Low-emphasis accent action','soft','Filter',false],
+      ['Outline','Bordered, quiet emphasis','outline','Cancel',false],
+      ['Ghost','Toolbar / inline action','ghost','More',false],
+      ['Destructive','Irreversible / dangerous','destructive','Delete',false],
+      ['Link','Text-level action','link','Learn more',false],
+    ].map(v => ({ name:v[0], use:v[1], style:this.btn(v[2],'md'), label:v[3], hasIcon:v[4], isPrimary:v[2]==='primary', isFlat:v[2]!=='primary' }));
+
+    const sizes = [
+      ['Small','sm · 32px','sm'],['Medium','md · 38px (default)','md'],['Large','lg · 46px','lg'],
+    ].map(s => ({ name:s[0], spec:s[1], style:this.btn(s[2],s[2]) }));
+
+    const states = [
+      ['Default','Resting appearance', this.btn('primary','md'), 'Run scan', false],
+      ['Hover','Brightness lift +8%', this.btn('primary','md')+';filter:brightness(1.08)', 'Run scan', false],
+      ['Active','Pressed, slight scale', this.btn('primary','md')+';filter:brightness(.94);transform:scale(.98)', 'Run scan', false],
+      ['Focus','3px accent-soft ring', this.btn('primary','md',{focus:true}), 'Run scan', false],
+      ['Loading','Spinner, label held', this.btn('primary','md')+';pointer-events:none', 'Scanning', true],
+      ['Disabled','45% opacity, inert', this.btn('primary','md',{disabled:true}), 'Run scan', false],
+    ].map(s => ({ name:s[0], desc:s[1], style:s[2], label:s[3], loading:s[4] }));
+
+    const anatomy = [
+      ['1','Interior','padded surface — 180° accent-tinted gradient, 9.5px radius'],
+      ['2','Label','verb-first text, 600 weight, IBM Plex Sans'],
+      ['3','Trailing glyph','optional 1em arrow (→) for forward actions'],
+      ['4','Beam border','1.5px conic-gradient arc spinning at 3.4s'],
+      ['5','Focus ring','3px accent-soft outline on keyboard focus'],
+      ['6','Underglow','accent drop-shadow cast beneath the button'],
+    ].map(a => ({ n:a[0], name:a[1], desc:a[2] }));
+
+    const uxRules = [
+      ['One primary action per view','Never show two filled Primary buttons competing in the same context — demote the rest to Secondary or Ghost.'],
+      ['Order by importance','Primary action sits last in LTR (right), first in RTL. Keep destructive actions separated from confirm.'],
+      ['Keep labels short','1–3 words, verb-first, sentence case. Avoid “Click here” and vague labels.'],
+      ['Preserve width while loading','Swap the label for a spinner but keep the button width fixed to prevent layout shift.'],
+      ['Match weight to consequence','Higher visual weight = higher commitment. Reserve Destructive red for irreversible actions.'],
+      ['Give feedback within 100ms','Every press needs an immediate visual response; long tasks show loading state.'],
+    ].map(r => ({ title:r[0], body:r[1] }));
+
+    const behaviors = [
+      ['Click / Tap','Fires the action once. Ignored while disabled or loading.'],
+      ['Loading','Enters an inert loading state showing a spinner; blocks repeat submissions until resolved.'],
+      ['Debounce','Async submit buttons auto-disable on click to prevent double submission.'],
+      ['Truncate','Label never wraps; it truncates with an ellipsis and exposes the full text via title/tooltip.'],
+      ['As link','With asChild the button renders as an anchor while keeping button styling and keyboard semantics.'],
+    ].map(b => ({ tag:b[0], body:b[1] }));
+
+    const a11y = [
+      ['Native element','Renders a real <button> (or <a> when navigational) so keyboard and AT behavior is free.'],
+      ['Keyboard','Focusable in tab order; activates on Enter and Space.'],
+      ['Focus visible','Uses :focus-visible for a clear ring without showing it on mouse click.'],
+      ['Icon-only labels','Icon-only buttons require aria-label and a Tooltip.'],
+      ['Loading state','Sets aria-busy="true" and aria-disabled rather than removing from the tab order abruptly.'],
+      ['Contrast','All variants meet WCAG AA (4.5:1 text) in both themes; hit area ≥ 24×24 (44×44 on touch).'],
+    ].map(a => ({ title:a[0], body:a[1] }));
+
+    const tokens = [
+      ['--btn-primary-bg','#9373d9','#7c53d4','Primary fill (gradient base)','#9373d9','#7c53d4'],
+      ['--accent-strong','#ab8ce8','#6a44c0','Gradient end / link color','#ab8ce8','#6a44c0'],
+      ['--btn-fg-on-accent','#ffffff','#ffffff','Text on filled variants','#ffffff','#ffffff'],
+      ['--card','#0e0e12','#ffffff','Secondary button surface','#0e0e12','#ffffff'],
+      ['--border-strong','rgba .13','rgba .15','Secondary / outline border','#2b2b33','#d9d4e2'],
+      ['--accent-soft','rgba .14','rgba .10','Soft variant + focus ring','#211d2e','#efeaf7'],
+      ['--btn-destructive','#e5484d','#e5484d','Destructive fill','#e5484d','#e5484d'],
+      ['--text-dim','#a29caf','#5f596e','Ghost label color','#a29caf','#5f596e'],
+      ['--radius-btn','9px','9px','Default corner radius','#151319','#efeaf7'],
+    ].map(t => ({ name:t[0], darkV:t[1], lightV:t[2], use:t[3], dark:t[4], light:t[5] }));
+
+    const responsive = [
+      ['Mobile (<640)','Full-width primary/submit buttons in forms; min 44px touch height; stack action groups vertically.'],
+      ['Tablet (≥768)','Buttons return to intrinsic width; action groups sit inline with 8–12px gaps.'],
+      ['Desktop (≥1024)','Default md size; dense toolbars may use sm; hover states become primary affordance.'],
+      ['Label overflow','On any breakpoint labels truncate rather than wrap or push layout.'],
+    ].map(r => ({ bp:r[0], body:r[1] }));
+
+    const interaction = [
+      ['Hover','filter brightness +8% on filled; border+text shift to accent on secondary/outline — 150ms ease.'],
+      ['Active','brightness −6% and scale(.98) for a tactile press.'],
+      ['Focus','only :focus-visible shows the 3px accent-soft ring; never on pointer clicks.'],
+      ['Disabled','pointer-events none, 45% opacity, no hover/active response.'],
+      ['Loading','spinner replaces the leading icon; width locked; further clicks ignored.'],
+    ].map(i => ({ k:i[0], v:i[1] }));
+
+    const usage = [
+      'Pair a Primary with at most one Secondary and any number of Ghost/Link actions.',
+      'Use Destructive only for irreversible actions, and confirm high-impact ones with a dialog.',
+      'Prefer text labels; use icon-only buttons only in dense, space-constrained toolbars.',
+      'Group related actions with a consistent size; do not mix sizes within one action row.',
+      'For navigation that looks like a button, still render a semantic link (asChild).',
+    ];
+
+    const dos = [
+      'Use one filled Primary as the clear next step.',
+      'Write verb-first labels: “Run scan”, “Export”.',
+      'Keep button widths stable through loading.',
+      'Provide aria-label + tooltip for icon-only.',
+    ];
+    const donts = [
+      'Stack two Primary buttons side by side.',
+      'Use a button for pure page navigation.',
+      'Put destructive next to confirm without spacing.',
+      'Disable a submit with no reason or hint.',
+    ];
+
+    const figma = [
+      ['Layout direction','Horizontal'],['Vertical align','Center'],
+      ['Padding (md)','9 / 16'],['Item gap','7'],
+      ['Horizontal resizing','Hug'],['Vertical resizing','Fixed 38'],
+      ['Corner radius','9'],['Variants','variant × size × state'],
+    ].map(f => ({ k:f[0], v:f[1] }));
+
+    const specRows = [
+      ['Small','32px','12px','12 / 600','8 / 6'],
+      ['Medium','38px','16px','12.5 / 600','9 / 7'],
+      ['Large','46px','20px','14 / 600','11 / 8'],
+      ['Icon-only','38px','—','—','9'],
+    ].map(r => ({ size:r[0], h:r[1], px:r[2], font:r[3], rg:r[4] }));
+
+    const darkRules = [
+      'Filled Primary keeps the same purple gradient; the colored shadow is softened (higher blur, lower opacity) so it reads on the near-black canvas.',
+      'Secondary/Outline borders switch from rgba(0,0,0) to rgba(255,255,255) tint values via --border-strong — never hard-code hex per theme.',
+      'Ghost and Soft backgrounds use --accent-soft, which is defined per theme; no manual opacity tweaks in the component.',
+      'Focus ring uses --accent-soft in both themes so contrast against the button stays consistent.',
+    ];
+
+    const props = [
+      ['variant','"primary" | "secondary" | "soft" | "outline" | "ghost" | "destructive" | "link"','Visual emphasis. Default "secondary".'],
+      ['size','"sm" | "md" | "lg"','Control size. Default "md".'],
+      ['iconLeft / iconRight','ReactNode','Optional leading/trailing icon slot.'],
+      ['isLoading','boolean','Shows spinner, locks width, sets aria-busy.'],
+      ['isDisabled','boolean','Inert, non-focusable-on-click styling.'],
+      ['asChild','boolean','Render as child element (e.g. <a>) via Slot.'],
+      ['fullWidth','boolean','Stretch to container width (mobile forms).'],
+      ['onClick','(e) => void','Action handler; ignored while loading/disabled.'],
+    ].map(p => ({ name:p[0], type:p[1], desc:p[2] }));
+
+    const reactCode =
+'const button = cva(\n  "inline-flex items-center justify-center font-semibold rounded-[9px] transition\\n   focus-visible:ring-[3px] focus-visible:ring-accent-soft disabled:opacity-45",\n  {\n    variants: {\n      variant: {\n        primary:     "bg-gradient-to-br from-accent to-accent-strong text-white shadow-btn",\n        secondary:   "bg-card text-fg border border-strong hover:border-accent",\n        soft:        "bg-accent-soft text-accent-strong",\n        outline:     "border border-strong text-fg",\n        ghost:       "text-fg-dim hover:bg-accent-soft",\n        destructive: "bg-danger text-white",\n        link:        "text-accent-strong underline underline-offset-[3px]",\n      },\n      size: { sm:"h-8 px-3 text-xs gap-1.5", md:"h-[38px] px-4 text-sm gap-2", lg:"h-[46px] px-5 gap-2" },\n    },\n    defaultVariants: { variant:"secondary", size:"md" },\n  }\n);\n\nexport const Button = forwardRef(({ variant, size, asChild, isLoading, ...props }, ref) => {\n  const Comp = asChild ? Slot : "button";\n  return (\n    <Comp ref={ref} className={button({ variant, size })} aria-busy={isLoading} {...props} />\n  );\n});';
+
+    const cssCode =
+':root[data-theme="dark"] {\n  --btn-primary-from: #9373d9;\n  --btn-primary-to:   #ab8ce8;\n  --btn-fg-on-accent: #ffffff;\n  --btn-secondary-bg: #0e0e12;\n  --btn-border:       rgba(255,255,255,.13);\n  --btn-soft-bg:      rgba(147,115,217,.14);\n  --btn-danger:       #e5484d;\n  --btn-radius:       9px;\n  --btn-ring:         var(--btn-soft-bg);\n}\n:root[data-theme="light"] {\n  --btn-primary-from: #7c53d4;\n  --btn-primary-to:   #6a44c0;\n  --btn-secondary-bg: #ffffff;\n  --btn-border:       rgba(24,20,34,.15);\n  --btn-soft-bg:      rgba(124,83,212,.10);\n}\n\n/* tailwind.config → theme.extend.colors */\naccent:       "var(--btn-primary-from)",\n"accent-strong":"var(--btn-primary-to)",\n"accent-soft": "var(--btn-soft-bg)",\ndanger:       "var(--btn-danger)",';
+
+    return {
+      theme,
+      themeLabel: theme === 'dark' ? '\u2600  Light mode' : '\u263e  Dark mode',
+      toggleTheme: () => this.setState(s => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
+      toc,
+      pgStyle, pgBeamOuter, pgBeamLayer, pgBeamInner,
+      pgIcon: st.icon && !st.loading, pgLoading: st.loading,
+      pgIsPrimary: st.variant === 'primary', pgIsFlat: st.variant !== 'primary',
+      pgLabel: st.loading ? 'Scanning' : 'Run scan',
+      pgCountLabel: st.count === 0 ? 'onClick fires here — try it' : ('clicked ' + st.count + (st.count===1?' time':' times')),
+      onPgClick: () => { if (this.state.disabled || this.state.loading) return; this.setState(s => ({ count: s.count + 1 })); },
+      variantOpts, sizeOpts, toggleOpts,
+      variants, sizes, states, anatomy, uxRules, behaviors, a11y, tokens,
+      responsive, interaction, usage, dos, donts, figma, specRows, darkRules, props,
+      reactCode, cssCode,
+    };
+  }
+}
+</script>
+</body>
+</html>
