@@ -1,0 +1,85 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Form Provider/Guidelines" />
+
+# Form Provider
+
+The coordinating root for a form. It renders a native `<form>` and consolidates
+validation across the `FormField` parts it wraps — deciding when fields validate,
+routing server / action errors back to the right field, and handing you typed values on
+submit. Built on the Base UI `Form` primitive.
+
+## Overview
+
+Where `FormField` labels and validates a single control, `FormProvider` ties a set of
+fields into one submittable unit. It owns cross-field concerns: the validation moment,
+externally-supplied errors, and the submit handler. Because it is a real `<form>`,
+Enter-to-submit, `required`, and native submission behave as users expect.
+
+## When to use
+
+- **Do** wrap any group of fields the user submits together (login, settings, filters).
+- **Do** feed server-side validation back through `errors`, keyed by field `name`.
+- **Don't** use it for a single, non-submitted input — a bare `FormField` is enough.
+
+## Anatomy
+
+1. **FormProvider** — the `<form>` root; owns `validationMode`, `errors`, `onFormSubmit`.
+2. **FormField** (+ `FieldLabel` / `FieldControl` / `FieldDescription` / `FieldError`) —
+   one labelled, validated control each. Each field's `name` is the key `errors` uses.
+3. **FormActions** — the trailing action row (submit / reset).
+
+## Variants
+
+There is no visual variant. Behavior is configured through props: `validationMode`
+(`onSubmit` default, `onBlur`, `onChange`) sets when fields validate; `errors` injects
+external messages; `onFormSubmit` receives the typed values.
+
+## States
+
+Pristine, validating (per `validationMode`), invalid (fields show their `FieldError`),
+and submitting. Field-level states are owned by `FormField`.
+
+## Behavior
+
+- **Validation timing:** `validationMode` on the provider is the default; a
+  `validationMode` on an individual `FormField` overrides it.
+- **Server errors:** pass `errors={{ fieldName: "message" }}`; each message renders in
+  that field's `FieldError` and marks the control `aria-invalid`.
+- **Submit:** `onFormSubmit(values, details)` fires after client validation passes; the
+  native submit event's `preventDefault()` is called for you.
+
+## Accessibility
+
+- Native `<form>` semantics: implicit submission, `required`, and Enter-to-submit work.
+- Errors associate with their control via `aria-describedby`, and invalid controls carry
+  `aria-invalid` — both wired by `FormField`, so screen readers announce the error.
+- Keep a real submit `Button` (`type="submit"`) so keyboard submission is available.
+
+## RTL / i18n
+
+The form is a logical vertical stack, and its fields inherit the document direction, so
+labels, controls, and errors mirror correctly under RTL (Persian / Vazirmatn).
+
+## Design tokens
+
+The provider itself is layout-only (vertical rhythm); color tokens are applied by the
+`FormField` parts it wraps (`--foreground`, `--muted-foreground`, `--destructive`,
+`--input`, `--ring`).
+
+## API
+
+| Symbol | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `FormProvider` | `validationMode` | `"onSubmit" \| "onBlur" \| "onChange"` | `"onSubmit"` | When fields validate. |
+| `FormProvider` | `errors` | `Record<string, string \| string[]>` | — | External errors keyed by field `name`. |
+| `FormProvider` | `onFormSubmit` | `(values, details) => void` | — | Fires after client validation passes. |
+| `FormActions` | — | native `<div>` props | — | Trailing action row. |
+
+The public API is closed: no `className` / `style`. Each part carries a `data-slot`.
+
+## Examples
+
+The **Default** story shows client-side required validation on submit; **ServerErrors**
+shows an externally-injected error. Switch the toolbar **Locale** to فارسی (RTL) to
+confirm the form mirrors correctly.
