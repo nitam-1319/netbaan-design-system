@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/VisuallyHidden/Guidelines" />
+
+# Visually Hidden
+
+Hides its children from sight while keeping them in the accessibility tree, so screen readers still
+announce them. It is the sanctioned way to add spoken-only text: an accessible name for an
+icon-only control, extra context on a link ("opens in a new tab"), or a heading that structures the
+page without cluttering a compact widget.
+
+## Overview
+
+Reach for `VisuallyHidden` whenever information that a sighted user infers from layout or iconography
+must still be conveyed to assistive tech. Unlike `display: none`, `hidden`, or `aria-hidden`, the
+content stays perceivable to screen readers — it is only removed visually.
+
+## Usage
+
+- **Do** use it to name an icon-only button, toggle, or link.
+- **Do** use it to add screen-reader-only context ("current page", "sorted ascending").
+- **Do** use `render` to emit a semantically correct element (e.g. an `<h2>`) that should exist for
+  structure but not be shown.
+- **Don't** use it to hide content you also want gone for screen readers — use `hidden` /
+  `aria-hidden` for that.
+- **Don't** use it for a control that should appear on focus (a skip link) — use `Skip to Content`,
+  which reveals itself when focused.
+
+## Anatomy
+
+A single element (a `<span>` by default) whose children are clipped to a 1px box and pulled out of
+layout flow, so it occupies no visible space and does not affect wrapping or scrolling. There are no
+sub-parts.
+
+## Variants
+
+None. The component has no visual variants by design — its entire purpose is to not be seen.
+
+## States
+
+None. It renders identically at all times; it has no interactive or visual state.
+
+## Behavior
+
+- **Polymorphism:** renders a `<span>` by default; pass `render` to swap the element (for example
+  `render={<h2 />}` to contribute a heading to the document outline). `render` is for composition,
+  not styling.
+- **Layout-safe:** the clipping technique keeps the node from adding scrollbars or affecting the
+  flow of surrounding content, even inside flex/grid containers.
+- **Direction-agnostic:** it carries no directional styling, so it behaves identically in LTR and
+  RTL.
+
+## Accessibility
+
+- Content remains in the accessibility tree and is announced by screen readers; only the visual
+  presentation is suppressed. This is the difference from `display: none` (removed for everyone) and
+  `aria-hidden` (removed for assistive tech).
+- When used inside a control, its text contributes to the control's **accessible name** — an
+  icon-only `Button` wrapping `<VisuallyHidden>Run scan</VisuallyHidden>` is announced as
+  "Run scan, button".
+- Add `aria-hidden` to purely decorative icons that sit alongside the hidden label so they are not
+  double-announced.
+
+## Tokens
+
+None consumed. The component is purely structural (position, clip, size) and applies no color,
+spacing, radius, or typography tokens — it inherits nothing visual because nothing is shown.
+
+## API
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `children` | `ReactNode` | The content to expose to assistive tech only |
+| `render` | `ReactElement` | Swap the rendered element (e.g. `<h2 />`); composition only |
+| ...native props | element props | `id`, `aria-*`, `role`, event handlers, etc. |
+
+The public API is **closed**: no `className` / `style`. There is nothing visual to customize.
+
+## Examples
+
+Stories cover the standalone hidden text, an icon-only button label, screen-reader-only link
+context, and a `render`-swapped heading. Because the component is never visible, the Theme and
+Locale toolbar controls have no effect on its appearance — its behavior is identical in Dark / Light
+and English / فارسی.
