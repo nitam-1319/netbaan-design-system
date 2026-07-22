@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Navbar/Guidelines" />
+
+# Navbar / Top Bar
+
+The horizontal application bar: brand on the inline-start, primary navigation, and
+trailing actions. It renders a landmark `<header>` containing a labelled `<nav>`, so
+assistive tech exposes both the banner and navigation regions of the page.
+
+## Overview
+
+The navbar is the constant top-level frame of an application — where users orient
+themselves and move between top-level areas. Keep it stable across screens: brand,
+a short set of primary destinations, and a small cluster of global actions.
+
+## When to use
+
+- **Do** use it for top-level, always-present navigation and global actions.
+- **Do** pair it with a `Sidebar` for deep, section-level navigation.
+- **Don't** overload it with more than a handful of primary items — nest the rest.
+- **Don't** put page-specific controls here; those belong in the page header/toolbar.
+
+## Anatomy
+
+1. **Navbar** — the sticky `<header>` + labelled `<nav>` landmark; owns `size`.
+2. **NavbarBrand** — the logo / product name on the inline-start.
+3. **NavbarContent** — the list (`<ul>`) of navigation items; `justify` aligns it.
+4. **NavbarItem** — a navigation link (`<a>` by default); `active` marks the current page.
+5. **NavbarActions** — the trailing cluster (invite, avatar, new-scan).
+
+## Variants
+
+`Navbar` exposes `size` — `sm`, `default`, `lg` — controlling bar height.
+`NavbarContent` exposes `justify` — `start` (default), `center`, `end` — to align the
+nav list. `NavbarItem` takes `active` to mark the current destination.
+
+## States
+
+Items are resting (muted), hover (muted surface + foreground text), focus-visible
+(accent-soft ring), and active/current (accent-soft surface + foreground, `aria-current`).
+
+## Behavior
+
+- The bar is `sticky top-0` and blurs content behind it.
+- `NavbarItem` renders an `<a>` by default; swap it for a router link via `render`.
+- Only one item should be `active` at a time — the current top-level destination.
+
+## Accessibility
+
+- The root is a `<header>` (banner landmark) wrapping a `<nav>` labelled via `navLabel`
+  (default "Primary"), so multiple nav regions on a page stay distinguishable.
+- The active item carries `aria-current="page"`; others carry none.
+- Items are real links/buttons, keyboard-focusable, with a visible focus ring.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+The brand pins to the inline-start and actions to the inline-end via logical utilities
+(`ms-auto`), so the whole bar mirrors correctly under RTL (Persian / Vazirmatn).
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface` | Bar background (translucent) |
+| `--border` | Bottom divider |
+| `--foreground` | Brand + active item text |
+| `--muted` / `--muted-foreground` | Item hover surface + resting text |
+| `--accent-soft` | Active item surface + focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Navbar` | `size` | `"sm" \| "default" \| "lg"` | `"default"` | Bar height. |
+| `Navbar` | `navLabel` | `string` | `"Primary"` | Accessible label for the `<nav>`. |
+| `NavbarContent` | `justify` | `"start" \| "center" \| "end"` | `"start"` | Nav-list alignment. |
+| `NavbarItem` | `active` | `boolean` | `false` | Marks the current page. |
+| `NavbarItem` | `render` | `ReactElement` | `<a>` | Element polymorphism (e.g. router link). |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm the brand,
+nav items, and actions mirror and stay legible in both directions.
