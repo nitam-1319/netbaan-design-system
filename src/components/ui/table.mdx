@@ -1,0 +1,95 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Table/Guidelines" />
+
+# Table
+
+A semantic data table for presenting rows of structured, comparable data. It
+renders native `<table>` markup, so the table / row / columnheader / cell roles
+are exposed to assistive technology without any ARIA scaffolding.
+
+## Overview
+
+Use a table when the user needs to scan, compare, or act on many records that share
+the same fields — findings, assets, sessions, audit events. For a small set of
+key–value pairs, prefer a description list; for freeform content, prefer a `Card`.
+
+## When to use
+
+- **Do** use it for tabular, multi-column records that benefit from column alignment.
+- **Do** compose cells from AEGIS primitives (`Badge`, `Tag`, `Button`).
+- **Don't** use it purely for layout — use `Grid` / `Stack`.
+- **Don't** hand-roll interactive sorting/pagination here; those land in `Data Table`,
+  which builds on this primitive.
+
+## Anatomy
+
+1. **Table** — the root; renders a `<table>` inside a horizontally scrollable region.
+2. **TableCaption** — the accessible caption (rendered below the table).
+3. **TableHeader / TableRow / TableHead** — the header row and its column headers (`<th>`).
+4. **TableBody / TableRow / TableCell** — the data rows and cells (`<td>`).
+5. **TableFooter** — an optional summary row region (`<tfoot>`).
+
+## Variants
+
+There is no color variant. Row state is expressed with `data-state="selected"` on a
+`TableRow`, which tints the row with the accent-soft token. Header cells align to
+`text-start` and stay on one line; wrap cell content in AEGIS primitives for richer
+presentation.
+
+## States
+
+Default rows, hover (subtle muted tint), and selected (`data-state="selected"`,
+accent-soft tint). The footer carries a muted surface to separate summary rows.
+
+## Behavior
+
+- The root scrolls horizontally when the table is wider than its container, so wide
+  tables never break the page layout.
+- Sorting, filtering, selection, and pagination are **not** built in — compose them at
+  the `Data Table` level.
+
+## Accessibility
+
+- Native table semantics: `role="table"`, `columnheader`, `row`, `cell` are all
+  implicit from the elements used.
+- Always provide a `TableCaption` (or an external `aria-labelledby` heading) so the
+  table's purpose is announced.
+- Header cells are `<th>`; keep them as the first row so column headers associate with
+  their columns.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+Cells and headers align with logical `text-start` and use logical inline padding, so
+column alignment mirrors correctly under RTL (Persian / Vazirmatn).
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--foreground` | Cell text |
+| `--muted-foreground` | Header text + caption |
+| `--border` | Row / header / footer dividers |
+| `--muted` | Row hover + footer surface |
+| `--accent-soft` | Selected-row tint |
+
+## API
+
+| Part | Element | Notable prop | Description |
+| --- | --- | --- | --- |
+| `Table` | `<table>` (in a scroll region) | native `<table>` props | Root container. |
+| `TableHeader` | `<thead>` | native props | Header row group. |
+| `TableBody` | `<tbody>` | native props | Data row group. |
+| `TableFooter` | `<tfoot>` | native props | Summary row group. |
+| `TableRow` | `<tr>` | `data-state="selected"` | A row; `selected` tints it. |
+| `TableHead` | `<th>` | native props | A column header. |
+| `TableCell` | `<td>` | native props | A data cell. |
+| `TableCaption` | `<caption>` | native props | Accessible caption. |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm column
+alignment, hover, and the selected-row tint read correctly in both directions.
