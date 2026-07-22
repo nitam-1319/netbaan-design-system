@@ -1,0 +1,111 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Toast/Guidelines" />
+
+# Toast
+
+Transient, non-blocking feedback that confirms an action or reports a background
+result without interrupting the user or stealing focus. Built on the Base UI Toast
+primitive, so the live-region announcement, auto-dismiss timers, hover-to-pause,
+swipe-to-dismiss, and focus management all come for free.
+
+## Overview
+
+A toast is the right tool when something happened that the user should know about but
+doesn't need to act on immediately — a queued scan, a saved change, a failed export.
+It appears at the edge of the screen, announces itself to assistive tech, and dismisses
+itself after a timeout.
+
+## When to use
+
+- **Do** use it for confirmations and background results ("Copied", "Scan queued").
+- **Do** use `type="error"` with `priority: "high"` for failures the user should notice.
+- **Don't** use it for content the user must act on before continuing — use a `Dialog`.
+- **Don't** use it for persistent, in-page status — use an `Alert`.
+
+## Setup
+
+Wrap the app once in `ToastProvider`, and render `Toaster` once near the root:
+
+```tsx
+<ToastProvider>
+  <App />
+  <Toaster />
+</ToastProvider>
+```
+
+Then raise toasts from anywhere with the `useToast` hook:
+
+```tsx
+const toast = useToast()
+toast.add({ type: "success", title: "Saved", description: "Your changes are live." })
+```
+
+## Anatomy
+
+1. **ToastProvider** — owns the queue, default timeout, and visible limit.
+2. **Toaster** — the portalled viewport pinned to the bottom-inline-end edge.
+3. Each toast renders an optional status icon, a **Title**, a **Description**, an
+   optional **Action** button, and a **Close** button.
+
+## Variants
+
+`type` sets intent and the leading status icon: `success`, `warning`, `error`, `info`,
+or default (no icon). The surface stays neutral (`popover` token) in every type; the
+icon carries the color, so a stack of mixed toasts reads calmly.
+
+## States
+
+Entering (slide-up + fade in), resting, hover (auto-dismiss paused), swiping
+(follows the pointer toward the swipe direction), and leaving (fade out). Toasts beyond
+the provider's `limit` are marked `data-limited` rather than dropped.
+
+## Behavior
+
+- **Auto-dismiss:** after `timeout` (default 5000ms); `timeout: 0` keeps it until closed.
+- **Pause:** hovering or focusing the stack pauses every timer.
+- **Dismiss:** the close button, a swipe (right / down), or `toast.close(id)`.
+- **Promise:** `toast.promise(p, { loading, success, error })` drives a toast through an
+  async lifecycle.
+
+## Accessibility
+
+- The viewport is a live region: `low` priority announces politely, `high` announces
+  urgently (use `high` for errors).
+- Focus is never stolen; the toast is reachable via the viewport's keyboard hotkey and
+  the close button carries `aria-label="Close"`.
+- The status icon is decorative (`aria-hidden`); meaning comes from the title/description.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+The viewport anchors to the logical `end` edge and toasts swipe toward the logical
+direction, so the stack mirrors correctly under RTL (Persian / Vazirmatn).
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Toast surface + text |
+| `--border-strong` | Surface ring |
+| `--shadow` (`shadow-elevated`) | Elevation |
+| `--success` / `--warning` / `--destructive` / `--sev-low` | Status icon tones |
+| `--muted` / `--muted-foreground` | Description + close/action controls |
+| `--accent-soft` / `--ring` | Focus ring |
+
+## API
+
+| Symbol | Kind | Description |
+| --- | --- | --- |
+| `ToastProvider` | component | Wraps the app; props `timeout`, `limit`. |
+| `Toaster` | component | The portalled viewport; render once. |
+| `useToast()` | hook | Returns `{ add, close, update, promise, toasts }`. |
+| `add(options)` | method | `{ title, description, type, timeout, priority, actionProps }`. |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`.
+
+## Examples
+
+Trigger the stories' buttons to raise each toast type. Switch the toolbar **Theme** to
+Light and **Locale** to فارسی (RTL) to confirm placement, icon tone, and swipe direction
+mirror correctly.
