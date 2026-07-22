@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Live Region/Guidelines" />
+
+# Live Region
+
+An ARIA live region that announces dynamic updates to assistive technology without
+moving focus. When its content changes, screen readers read the new text — so
+background changes (a loaded count, an applied filter, a copied value, a failed scan)
+are perceivable to non-sighted users the same way a visual toast or status is to
+sighted ones.
+
+## Overview
+
+Sighted users notice a spinner resolving, a row count updating, or a toast sliding in.
+A live region is how those same moments reach screen-reader users. Render the message
+inside a `LiveRegion` and update its text when the event happens; the browser handles
+the announcement.
+
+## When to use
+
+- **Do** use it for status that appears without a focus change — async results,
+  validation summaries, "copied", "saved", "N items loaded".
+- **Do** use `assertive` only for genuinely urgent, time-sensitive messages (errors).
+- **Don't** use it for content that already receives focus (a dialog announces itself).
+- **Don't** put large or frequently-churning content inside it — it will be over-read.
+
+## Anatomy
+
+A single element — `LiveRegion` — with `role` and `aria-live` set from `politeness`.
+It is visually hidden by default; set `visible` to also show the message on screen.
+
+## Variants
+
+`politeness` selects urgency: `polite` (default) waits until the screen reader is idle
+and exposes `role="status"`; `assertive` interrupts and exposes `role="alert"`.
+`atomic` (default `true`) re-reads the whole region on any change. `visible` renders the
+message on screen in addition to announcing it.
+
+## Behavior
+
+- The region should be **present in the DOM before** the text changes, so the change is
+  detected — mount it once and update its children, rather than mounting it with the
+  message already in place.
+- Keep messages short and complete; assistive tech reads the region's text, not markup.
+
+## Accessibility
+
+- `polite` → `role="status"` + `aria-live="polite"`; `assertive` → `role="alert"` +
+  `aria-live="assertive"`.
+- `aria-atomic="true"` ensures partial updates are announced as one coherent message.
+- Reserve `assertive` for errors; overusing it makes the interface feel like it's
+  shouting and interrupts the user's own navigation.
+- When `visible` is false the message is clipped to a 1px box (still in the a11y tree),
+  never `display:none` — which would remove it from announcements.
+
+## RTL / i18n
+
+The region carries no directional layout of its own; when `visible`, its text inherits
+the document direction, so it reads correctly under RTL (Persian / Vazirmatn).
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--muted-foreground` | Visible message text (`visible` mode only) |
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `politeness` | `"polite" \| "assertive"` | `"polite"` | Urgency; sets `role` + `aria-live`. |
+| `atomic` | `boolean` | `true` | Re-read the whole region on change (`aria-atomic`). |
+| `visible` | `boolean` | `false` | Also render the message on screen. |
+| `children` | `ReactNode` | — | The message to announce. |
+
+The public API is closed: no `className` / `style`; `role`, `aria-live`, and
+`aria-atomic` are derived from props, not overridable. The element carries a `data-slot`.
+
+## Examples
+
+The **Polite** story announces a live count; the **Assertive** story exposes an alert.
+Switch the toolbar **Locale** to فارسی (RTL) to confirm the visible variant reads
+correctly in both directions.
