@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Sidebar/Guidelines" />
+
+# Sidebar
+
+The vertical, section-level navigation rail: a header (brand / workspace), a scrollable
+body of grouped navigation items, and a pinned footer. It renders a `<nav>` landmark,
+and each item is a real link with a current-page state. Designed to sit inside
+`AppShellSidebar` and pair with a `Navbar`.
+
+## Overview
+
+Where the `Navbar` carries top-level, always-present destinations, the sidebar carries
+the deeper navigation of a section — grouped, scannable, often icon-led. It stays fixed
+while the content column scrolls, giving users a persistent map of where they can go.
+
+## When to use
+
+- **Do** use it for section-level navigation with several grouped destinations.
+- **Do** group related items under a `SidebarGroupLabel`.
+- **Don't** use it for a handful of top-level links — a `Navbar` is enough.
+- **Don't** put page content or forms in it; it is navigation.
+
+## Anatomy
+
+1. **Sidebar** — the `<nav>` landmark rail; owns the surface tokens.
+2. **SidebarHeader** — the brand / workspace row at the top.
+3. **SidebarContent** — the scrollable body holding the groups.
+4. **SidebarGroup / SidebarGroupLabel** — a titled cluster of items.
+5. **SidebarItem** — a navigation link (`<a>` by default); `active` marks the current page.
+6. **SidebarFooter** — a pinned footer (account, status), separated by a divider.
+
+## Variants
+
+There is no visual variant; the rail inherits the AEGIS sidebar surface. `SidebarItem`
+takes `active` to mark the current destination. Items accept a leading icon plus label.
+
+## States
+
+Items are resting (muted foreground), hover (sidebar-accent surface), focus-visible
+(accent-soft ring), and active/current (sidebar-accent surface + `aria-current="page"`).
+
+## Behavior
+
+- The body (`SidebarContent`) scrolls independently; the footer stays pinned.
+- `SidebarItem` renders an `<a>` by default; swap it for a router link via `render`.
+- Exactly one item should be `active` — the current section destination.
+
+## Accessibility
+
+- The root is a `<nav>` landmark labelled via `navLabel` (default "Sidebar"), so it is
+  distinguishable from other nav regions (e.g. the `Navbar`).
+- The active item carries `aria-current="page"`; others carry none.
+- Items are keyboard-focusable with a visible focus ring; leading icons are decorative.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+The rail sits on the inline-start of the shell and uses logical spacing/borders, so it
+mirrors correctly under RTL (Persian / Vazirmatn) — the border moves to the inline-end
+and icons lead the label in reading order.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--sidebar` / `--sidebar-foreground` | Rail surface + text |
+| `--sidebar-accent` / `--sidebar-accent-foreground` | Item hover + active surface |
+| `--sidebar-border` | Footer divider |
+| `--muted-foreground` | Group labels + footer text |
+| `--accent-soft` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Sidebar` | `navLabel` | `string` | `"Sidebar"` | Accessible label for the `<nav>`. |
+| `SidebarItem` | `active` | `boolean` | `false` | Marks the current page. |
+| `SidebarItem` | `render` | `ReactElement` | `<a>` | Element polymorphism (e.g. router link). |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm the rail,
+groups, and active item mirror and stay legible in both directions.
