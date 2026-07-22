@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      40
+Components built:      41
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -22,7 +22,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 - On a category boundary (Essential→Recommended→Advanced) → sign-off.
 - On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
 
-## Built (40) — closed API, on disk
+## Built (41) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |
 |---|------------------|------|-------|------|---------|-------|
 | 1 | accordion | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
@@ -59,6 +59,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 26 | switch | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 | 27 | tabs | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 | 27a | table | ✅ | ✅ | ✅ | PARTIAL | Essential/Tables; semantic table; runner axes HUMAN_VERIFY_REQUIRED |
+| 27a2 | data-table | ✅ | ✅ | ✅ | PARTIAL | Essential/Tables & Data Grid; config-driven columns on Table+Checkbox+Skeleton+EmptyState; sort/select/states/density; runner axes HUMAN_VERIFY_REQUIRED; virtualization + arrow-key cell-nav deferred (REVIEW finding) |
 | 27b | toast | ✅ | ✅ | ✅ | PARTIAL | Essential/Feedback; on Base UI Toast primitive; runner axes HUMAN_VERIFY_REQUIRED |
 | 28 | tag | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 | 29 | text-field | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |

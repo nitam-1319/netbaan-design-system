@@ -117,3 +117,34 @@ Impact: New components fail the gate unless they conform. The signature keyframe
 live in `src/index.css` (utilities `animate-*`, `shadow-elevated`; focus `ring-accent-soft`; control
 borders `border-strong`). The five existing drifted components (button, checkbox, switch, badge, avatar)
 are a REFACTOR backlog to bring into conformance — done only after this foundation lands.
+
+## 2026-07-22b — DataTable is config-driven (typed columns), not a compound generic
+Status: accepted
+Decision: `DataTable` exposes a **config-driven** API — a typed `columns: DataTableColumn<TRow>[]`
+array plus `data` / `getRowId` — rather than compound `DataTable.Root/Header/Body/Row/Cell`
+sub-components. The reference (`references/DATA.datatable.md`) names a compound shape as one option;
+this build satisfies its actual mandate — "a column-definition API (typed columns), not hardcoded
+markup" — through the config form. Composition slots (`toolbar`, `footer`) remain for AEGIS nodes
+(e.g. `Pagination`).
+Reason: A generic compound component built over React context loses row-type inference at the leaf
+(`Cell`) — context is invariant, so `TRow` degrades to `unknown` and every cell needs a manual cast.
+The config form keeps end-to-end inference from the row shape to each `cell(row)` callback, which is
+the stronger type-safety guarantee and the one the closed-API contract depends on.
+Impact: The four required state surfaces (loading/empty/error/filled), selection, sorting (`aria-sort`),
+and density all live on the single `DataTable` root. If a future consumer genuinely needs compound
+composition, add it as an additive layer over the same column model — do not fork the state logic.
+
+## 2026-07-22c — DataTable defers virtualization + arrow-key cell navigation (REVIEW finding)
+Status: proposed
+Decision: The first `DataTable` ships WITHOUT row virtualization and without arrow-key cell/row
+grid navigation. All rows render to the DOM; keyboard access follows the natural tab order of the
+interactive controls (sort headers, checkboxes, retry). Both gaps are documented in `data-table.mdx`
+("Known limitations") and recorded here as a REVIEW/REFACTOR backlog item.
+Reason: The reference lists virtualization ("document the threshold at which it engages") and
+cell/row keyboard navigation as target patterns. Both are large, browser-verification-heavy additions;
+landing them blind in a no-browser sandbox risks unverifiable complexity. Shipping a correct,
+type-safe, fully-stated table now — with the gaps stated honestly rather than silently — is the better
+increment (safety rule #3: never claim a capability not delivered).
+Impact: A follow-up REFACTOR run adds windowing (recommended engage threshold ~100 rows) and roving
+`tabindex` cell navigation, verified against the reference in CI with a browser runner. Until then the
+guidance is: paginate via the `footer` slot for large datasets.

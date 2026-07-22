@@ -1,0 +1,162 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DataTable/Guidelines" />
+
+# Data Table
+
+An interactive, stateful table for records the user needs to scan, sort, select,
+and act on. It builds on the semantic `Table` primitive and adds the four things
+a bare table lacks: **typed columns**, **row selection**, **column sorting**, and
+the full set of async **states** (loading / empty / error / filled).
+
+## Overview
+
+Use a Data Table when a list of records is large or interactive enough to need
+sorting or selection, or when the data loads asynchronously and the surface must
+communicate loading, empty, and error conditions. For static, read-only tabular
+content, prefer the plain `Table`. For a small set of key–value pairs, prefer a
+description list; for freeform content, prefer a `Card`.
+
+## When to use
+
+- **Do** use it for interactive record lists — assets, findings, sessions, users.
+- **Do** describe the data with a typed `columns` array; let cells compose AEGIS
+  primitives (`Badge`, `Tag`, `Button`).
+- **Don't** hand-write `<td>` markup — the column API keeps rows type-safe and
+  consistent.
+- **Don't** use it purely for layout — reach for `Grid` / `Stack`.
+
+## Anatomy
+
+1. **Root** (`DataTable`) — the config-driven container; renders the toolbar,
+   the bordered table surface, a loading indicator, and the footer.
+2. **Toolbar** (`toolbar` slot) — optional region above the table for filters,
+   search, or bulk actions.
+3. **Header** — column headers derived from `columns`; sortable columns render a
+   sort button carrying `aria-sort`.
+4. **Selection column** — an optional leading checkbox column with a
+   select-all control (indeterminate when the page is partially selected).
+5. **Body** — one row per datum; each cell is produced by its column's `cell`
+   renderer.
+6. **State surfaces** — loading (skeleton rows + spinner), empty (`EmptyState`),
+   and error (`role="alert"` with a retry affordance) replace the body.
+7. **Footer** (`footer` slot) — optional region below the table, typically a
+   `Pagination`.
+
+## Column API
+
+Each column is a `DataTableColumn<TRow>`:
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `id` | `string` | Stable identifier (sort state + React key). |
+| `header` | `ReactNode` | Header content. |
+| `headerLabel` | `string` | Accessible header text when `header` is not a string. |
+| `cell` | `(row, index) => ReactNode` | Renders the cell. |
+| `align` | `"start" \| "center" \| "end"` | Alignment; numeric columns use `"end"`. |
+| `sortable` | `boolean` | Enables click-to-sort (requires `sortValue`). |
+| `sortValue` | `(row) => string \| number` | The comparable sort key. |
+
+## States
+
+All four states are first-class, not afterthoughts:
+
+- **Loading** (`loading`) — tokenized skeleton rows (count via `loadingRowCount`)
+  plus an accessible "Loading data…" spinner, never a blank flash.
+- **Empty** — a dedicated `EmptyState` with `emptyTitle` / `emptyDescription`,
+  distinct from loading.
+- **Error** (`error`) — a recoverable surface (`role="alert"`) with
+  `errorTitle` / `errorDescription` and a **Try again** button when `onRetry` is
+  provided.
+- **Filled** — the normal render.
+
+## Sorting
+
+Set `sortable` + `sortValue` on a column. Clicking a sortable header cycles
+ascending → descending → unsorted. Sort state is available controlled (`sort` +
+`onSortChange`) or uncontrolled (`defaultSort`). The active column exposes
+`aria-sort="ascending" | "descending"`; inactive sortable columns expose
+`aria-sort="none"`.
+
+## Selection
+
+Set `selectable` to add the checkbox column. Selection is controlled
+(`selectedIds` + `onSelectedIdsChange`) or uncontrolled (`defaultSelectedIds`),
+keyed by `getRowId`. The header checkbox selects/clears the current rows and
+shows an indeterminate state on partial selection.
+
+## Density
+
+`density="comfortable"` (default) or `"compact"` adjusts row padding via tokens
+through a `data-density` hook — no hard-coded spacing.
+
+## Behavior
+
+- The table surface scrolls horizontally when wider than its container, so wide
+  tables never break the page.
+- Sorting re-orders a copy of `data`; the original array is never mutated.
+
+## Accessibility
+
+- Native table semantics via the `Table` primitive (`table` / `row` /
+  `columnheader` / `cell` are implicit).
+- A required `caption` is rendered as a visually-hidden `<caption>` so the
+  table's purpose is announced.
+- Sort state is announced through `aria-sort` on the header cell; each sort
+  control has an explicit `aria-label` ("Sort by …").
+- The select-all and per-row checkboxes carry descriptive `aria-label`s.
+- The error surface is `role="alert"` so failures are announced.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+### Keyboard
+
+| Key | Action |
+|-----|--------|
+| `Tab` / `Shift+Tab` | Move between interactive controls (sort headers, checkboxes, retry). |
+| `Enter` / `Space` | Activate a sort header, toggle a checkbox, or trigger retry. |
+
+## RTL / i18n
+
+Cells align with logical `text-start`, so columns mirror correctly in RTL
+(Persian). Numeric columns set `align="end"` and keep sensible alignment in both
+directions. All strings (`caption`, empty/error copy) are props, so they are
+fully translatable.
+
+## Known limitations
+
+- **Virtualization is not yet implemented.** All rows render to the DOM. For
+  lists beyond ~100 rows, paginate (via the `footer` slot) or window the data
+  before passing it in; row virtualization is tracked as a follow-up.
+- **Arrow-key cell/row navigation** beyond native tab order is a planned
+  enhancement; today, keyboard access follows the natural tab order of the
+  interactive controls.
+
+## Tokens
+
+Colors, borders, and surfaces come from AEGIS semantic tokens (`border-border`,
+`bg-card`, `text-muted-foreground`, `bg-accent-soft` for the selected row). No
+literal colors, shadows, or spacing values appear in the component.
+
+## API
+
+`DataTable<TRow>` — key props:
+
+| Prop | Type | Default | Purpose |
+|------|------|---------|---------|
+| `columns` | `DataTableColumn<TRow>[]` | — | Typed column definitions. |
+| `data` | `TRow[]` | — | Rows to render. |
+| `getRowId` | `(row, index) => string` | — | Stable id for keys + selection. |
+| `caption` | `string` | — | Accessible (visually-hidden) caption. |
+| `density` | `"comfortable" \| "compact"` | `"comfortable"` | Row density. |
+| `loading` | `boolean` | `false` | Show the loading surface. |
+| `loadingRowCount` | `number` | `5` | Skeleton row count. |
+| `error` | `boolean` | `false` | Show the error surface. |
+| `onRetry` | `() => void` | — | Retry handler (adds a retry button). |
+| `selectable` | `boolean` | `false` | Enable the selection column. |
+| `selectedIds` / `defaultSelectedIds` | `string[]` | — | Controlled / uncontrolled selection. |
+| `onSelectedIdsChange` | `(ids) => void` | — | Selection change handler. |
+| `sort` / `defaultSort` | `DataTableSort \| null` | — | Controlled / uncontrolled sort. |
+| `onSortChange` | `(sort) => void` | — | Sort change handler. |
+| `toolbar` / `footer` | `ReactNode` | — | Composition slots. |
+
+The public API is **closed**: no `className` / `style` on any part.
