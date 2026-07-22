@@ -1,0 +1,105 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Drawer/Guidelines" />
+
+# Drawer / Sheet
+
+An edge-anchored surface that slides in from a side of the viewport for secondary
+tasks, filters, or detail panels. Built on the Base UI `Dialog` primitive — the
+Interactive-tier gold standard — so the portal, backdrop, focus trap, scroll lock,
+`role="dialog"` / `aria-modal`, and Escape / outside-press dismissal are all handled
+for us.
+
+## Overview
+
+Use a drawer when the user needs a focused surface that stays connected to the page
+context — filtering a list, inspecting a row's details, or a compact navigation menu
+— without the full interruption of a centered modal. Like a dialog it traps focus and
+blocks the background, so reserve it for moments that warrant that focus.
+
+## When to use
+
+- **Do** use it for filters, detail/inspection panels, and side navigation.
+- **Do** use a `bottom` drawer for mobile-style action sheets.
+- **Don't** use it for a short confirmation — use a `Dialog`.
+- **Don't** use it for transient, non-blocking feedback — use a `Toast`.
+
+## Anatomy
+
+1. **Drawer** — the root; owns `open` state.
+2. **DrawerTrigger** — the control that opens the drawer (usually renders a `Button`).
+3. **DrawerContent** — the portalled backdrop + edge-anchored panel; owns `side` and `size`.
+4. **DrawerHeader / DrawerTitle / DrawerDescription** — the accessible heading and supporting text.
+5. **DrawerBody** — the scrollable content region.
+6. **DrawerFooter** — the action row.
+7. **DrawerClose** — any control that dismisses the drawer.
+
+## Variants
+
+`DrawerContent` exposes two semantic props. `side` — `right` (default), `left`, `top`,
+`bottom` — anchors the panel to an edge and sets the slide direction. `size` — `sm`,
+`default`, `lg`, `xl` — controls the panel width for the inline sides (`left` / `right`)
+and the panel height for the block sides (`top` / `bottom`). There is no color variant;
+intent is carried by the buttons inside.
+
+## States
+
+Closed, Opening / Open (slide-and-fade in from the anchored edge), and Closing
+(slide-and-fade out toward the edge). The backdrop fades in tandem. Triggers and close
+controls inherit `Button` states.
+
+## Behavior
+
+- **Controlled:** pass `open` + `onOpenChange`. **Uncontrolled:** pass `defaultOpen`.
+- **Dismissal:** Escape, a click on the backdrop, or any `DrawerClose` closes it.
+- **Focus:** on open, focus moves into the drawer (first tabbable element); on close,
+  it returns to the trigger. Focus is trapped while open.
+- **Scroll:** background scroll is locked; long drawer content scrolls inside `DrawerBody`.
+
+## Accessibility
+
+- Roles: the panel is `role="dialog"` with `aria-modal="true"`, labelled by
+  `DrawerTitle` (`aria-labelledby`) and described by `DrawerDescription`
+  (`aria-describedby`).
+- Keyboard map: `Tab` / `Shift+Tab` cycle within the trapped focus scope, `Escape`
+  closes, `Enter` / `Space` activate the focused control.
+- Always include a `DrawerTitle`; the visible close button carries `aria-label="Close"`.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+Header text uses logical alignment (`text-start`) and the header reserves inline-end
+padding (`pe-8`) for the close button, so both mirror correctly under RTL. `side` is a
+physical anchor (`left` / `right`) chosen deliberately by the consumer; pick the side
+that matches the reading direction of your layout.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Drawer surface + text |
+| `--background` | Backdrop tint |
+| `--border-strong` | Surface ring |
+| `--shadow` (`shadow-elevated`) | Panel elevation |
+| `--muted` / `--muted-foreground` | Close button + body text |
+| `--accent-soft` / `--ring` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `Drawer` | `open` / `defaultOpen` | `boolean` | — | Open state (controlled / uncontrolled). |
+| `Drawer` | `onOpenChange` | `(open, details) => void` | — | Open-state change handler. |
+| `Drawer` | `modal` | `boolean \| "trap-focus"` | `true` | Whether the drawer blocks the background. |
+| `DrawerContent` | `side` | `"right" \| "left" \| "top" \| "bottom"` | `"right"` | Anchored edge + slide direction. |
+| `DrawerContent` | `size` | `"sm" \| "default" \| "lg" \| "xl"` | `"default"` | Panel width (inline sides) or height (block sides). |
+| `DrawerContent` | `showClose` | `boolean` | `true` | Render the corner close button. |
+| `DrawerClose` | `render` | `ReactElement` | — | Element to render as the close control. |
+
+The public API is closed: no `className` / `style`. Every part carries a `data-slot`,
+and element polymorphism is available through `render`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm the
+header, close button, and footer actions mirror correctly with Vazirmatn.
