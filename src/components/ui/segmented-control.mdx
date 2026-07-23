@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SegmentedControl/Guidelines" />
+
+# Segmented Control
+
+A compact, mutually-exclusive selector rendered as connected segments inside a
+shared track — the "pick one of a few" control for view switches, time ranges, or
+modes. Built on the Base UI `ToggleGroup` primitive in single-select mode, so it
+inherits roving focus, arrow-key navigation, and pressed coordination. The active
+segment lifts onto a `background` surface with `shadow-elevated`. Exactly one
+segment is always selected.
+
+## When to use
+
+- **Do** use it for 2–5 mutually-exclusive, equally-weighted options that fit on
+  one line (Grid / List / Map, 24h / 7d / 30d).
+- **Do** use it for an immediate view or mode switch where the choice takes effect
+  at once.
+- **Don't** use it for many options or long labels — use **Select** or **Tabs**.
+- **Don't** use it for multi-select (use **Toggle Group**) or for navigation
+  between page-level sections (use **Tabs**).
+
+## Anatomy
+
+1. **Track** — the rounded container (`bg-surface-2`, hairline border, inset
+   padding) that groups the segments.
+2. **Segment** — a toggle button; the active one is raised onto `background` with
+   `shadow-elevated`.
+3. **Label** — text and/or an icon per segment (icon-only needs `aria-label`).
+
+## Sizes & layout
+
+| Prop | Values |
+| --- | --- |
+| `size` | `sm` (28px) · `md` (32px, default) · `lg` (36px) |
+| `orientation` | `horizontal` (default) · `vertical` |
+| `fullWidth` | stretch the track and divide width evenly across segments |
+
+## States
+
+Default, hover (label brightens), selected (`data-pressed` → raised surface),
+focus (3px `accent-soft` ring), and disabled (whole control or a single segment).
+
+## Behavior
+
+- **Controlled**: pass `value` + `onValueChange`. **Uncontrolled**: pass
+  `defaultValue`. The value is a scalar `string`, not an array.
+- Re-pressing the active segment does **not** clear the selection — a segmented
+  control always keeps exactly one active value.
+- Config-driven: pass an `items` array (`{ value, label, aria-label?, disabled? }`)
+  rather than composing children.
+
+## Accessibility
+
+- The track is a `group`; each segment is a toggle button exposing
+  `aria-pressed`. Arrow keys move focus between segments (with focus looping).
+- Icon-only segments must set `aria-label`.
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes; selected/unselected states meet AA contrast in light and dark.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-2` | Track background |
+| `--border` | Track border |
+| `--background` | Active segment surface |
+| `--foreground` | Active / hovered label |
+| `--muted-foreground` | Inactive label |
+| `--accent-soft` | Focus ring |
+| `--shadow` (`shadow-elevated`) | Active-segment elevation |
+
+## API
+
+`SegmentedControl` — renders a Base UI `ToggleGroup` of `Toggle` segments.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `SegmentedControlItem[]` | — | Segments to render. |
+| `value` | `string` | — | Controlled selected value. |
+| `defaultValue` | `string` | — | Uncontrolled initial value. |
+| `onValueChange` | `(value, details) => void` | — | Fired with the new value. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Segment height. |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout axis. |
+| `fullWidth` | `boolean` | `false` | Stretch and divide width evenly. |
+| `disabled` | `boolean` | `false` | Disable the whole control. |
+
+`SegmentedControlItem` = `{ value: string; label: ReactNode; "aria-label"?: string; disabled?: boolean }`.
+
+The public API is closed: there is no `className` or `style` prop.
