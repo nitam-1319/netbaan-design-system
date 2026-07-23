@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      41
+Components built:      44
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -22,7 +22,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 - On a category boundary (Essential→Recommended→Advanced) → sign-off.
 - On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
 
-## Built (41) — closed API, on disk
+## Built (44) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |
 |---|------------------|------|-------|------|---------|-------|
 | 1 | accordion | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
@@ -66,6 +66,9 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 30 | textarea | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 | 31 | tooltip | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
 | 32 | visually-hidden | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
+| 19d | scroll-area | ✅ | ✅ | ✅ | PARTIAL | Recommended/Layout; on Base UI ScrollArea; overlay theme-aware scrollbars, vertical/horizontal/both; runner axes HUMAN_VERIFY_REQUIRED |
+| 33 | toggle | ✅ | ✅ | ✅ | PARTIAL | Recommended/Selection Controls; on Base UI Toggle primitive; two-state button, default/outline × sm/default/lg; runner axes HUMAN_VERIFY_REQUIRED |
+| 33b | toggle-group | ✅ | ✅ | ✅ | PARTIAL | Recommended/Selection Controls; on Base UI ToggleGroup; composes Toggle; single/multiple select, roving focus, shared appearance via context; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;

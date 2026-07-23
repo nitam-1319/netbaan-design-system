@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScrollArea/Guidelines" />
+
+# Scroll Area
+
+A scrollable container with thin, theme-aware overlay scrollbars that match the
+AEGIS surface. Built on the Base UI ScrollArea primitive, so native scrolling
+physics, keyboard scrolling, and accessibility are preserved while the browser's
+default scrollbar is replaced with a custom thumb.
+
+## Purpose
+
+Use a Scroll Area when a bounded region holds more content than fits — a long
+asset list in a panel, a wide table, a menu of many items — and you want a
+consistent, non-layout-shifting scrollbar in both themes. The scrollbar overlays
+the content and fades in on hover or scroll, so it never reserves gutter space.
+
+## When to use
+
+- **Do** wrap overflowing content inside a region that has a **bounded size**
+  (a fixed height, `max-h`, or a flex child that can shrink).
+- **Do** use `orientation="horizontal"` or `"both"` for wide content like a card
+  rail or a data grid.
+- **Don't** use it for full-page scrolling — let the document scroll natively.
+- **Don't** rely on it to create the size constraint; it fills its parent, so the
+  parent must set the height/width.
+
+## Anatomy
+
+1. **Root** — positioning context; clips overflow and inherits the parent radius.
+2. **Viewport** — the actual scrollable, focusable container.
+3. **Content** — wraps the children and reports their natural size.
+4. **Scrollbar** (per axis) — the track; fades in on `data-hovering` /
+   `data-scrolling`.
+5. **Thumb** — the draggable position indicator.
+6. **Corner** — fills the junction when both scrollbars are shown.
+
+## Behavior
+
+- **Sizing:** the area fills its parent; the parent's bounded size is what makes
+  it scroll.
+- **Scrollbar visibility:** hidden at rest, fades in while hovering the area or
+  actively scrolling, then fades out.
+- **Interaction:** drag the thumb, click the track, use the wheel/trackpad, or
+  focus the viewport and use the keyboard.
+- **`orientation`:** `"vertical"` (default), `"horizontal"`, or `"both"`.
+
+## Accessibility
+
+- **Focus:** the viewport is focusable; focusing it shows a 3px `accent-soft`
+  ring so keyboard users can scroll with the arrow keys.
+- **Keyboard:**
+
+  | Key | Action |
+  | --- | --- |
+  | `Tab` | Move focus to the viewport |
+  | `Arrow` keys | Scroll by a line in that direction |
+  | `PageUp` / `PageDown` | Scroll by a page |
+  | `Home` / `End` | Scroll to the start / end |
+
+- The custom scrollbar supplements — it does not remove — native scrolling, so
+  assistive tech and touch gestures keep working.
+- Meets WCAG 2.2 AA contrast for the thumb against the surface in both themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Scrollbar thumb (resting) |
+| `--muted-foreground` | Scrollbar thumb (hover) |
+| `--accent-soft` / `--ring` | Viewport focus ring |
+
+The scrollbar carries all color; the track is transparent, so the area blends
+into any surface it sits on.
+
+## RTL / i18n
+
+The vertical scrollbar anchors to the logical inline-end edge, so it moves to the
+left under RTL (Persian / Vazirmatn) automatically; horizontal scrolling follows
+the writing direction.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `orientation` | `"vertical" \| "horizontal" \| "both"` | `"vertical"` | Which scrollbars to render. |
+| `children` | `ReactNode` | — | The scrollable content. |
+| `render` | `ReactElement \| function` | — | Element polymorphism (composition, not styling). |
+
+The public API is closed: no `className` / `style`. Every part carries a
+`data-slot`. Give the area its size from the parent `Box`/`Stack`.
