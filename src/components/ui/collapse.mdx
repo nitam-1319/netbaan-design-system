@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Collapse/Guidelines" />
+
+# Collapse
+
+A low-level motion primitive that shows and hides a region by animating its
+height open and closed. It is built on the Base UI Collapsible primitive, which
+owns the disclosure state, the trigger↔panel ARIA wiring, and the measured panel
+height exposed as the `--collapsible-panel-height` CSS variable that the height
+transition runs against.
+
+## When to use
+
+- **Do** use it to expand/collapse a single region of content behind a trigger —
+  a "show more", an advanced-options section, a collapsible sidebar group.
+- **Do** reach for it as the motion building block when composing your own
+  disclosure UI.
+- **Don't** use it for a set of mutually-exclusive or independently-toggled
+  sections with consistent chrome — that is an **Accordion** (which is itself
+  built on the same primitive).
+- **Don't** use it for transient overlays (menus, popovers, dialogs) — those
+  portal and position; Collapse is in-flow.
+
+## Anatomy
+
+1. **Collapse** — the root that owns open state (`open` / `defaultOpen` /
+   `onOpenChange` / `disabled`).
+2. **CollapseTrigger** — the toggle. It is intentionally **unstyled**: supply
+   your own control (usually a `Button`) via the `render` prop. It receives
+   `aria-expanded` and `data-panel-open` for state-driven styling of its
+   children (e.g. rotating a chevron).
+3. **CollapseContent** — the animated region. Its height transitions between `0`
+   and the measured content height; overflow is clipped during the animation.
+
+## Behavior
+
+- Toggling the trigger animates the panel height using
+  `--collapsible-panel-height`, so the motion is correct for any content size.
+- The panel is removed from the DOM when closed by default. Pass `keepMounted`
+  to keep it mounted (useful when inner state must persist), or `hiddenUntilFound`
+  to keep it findable by in-page search and expandable on match.
+- Works controlled (`open` + `onOpenChange`) or uncontrolled (`defaultOpen`).
+
+## Accessibility
+
+- WCAG 2.2 AA: the trigger exposes `aria-controls` pointing at the panel and
+  `aria-expanded` reflecting state; the panel is a labelled region — all wired by
+  the primitive.
+- Because the trigger is your own element, ensure it is a genuine button (the
+  `render` `Button` is), so it is focusable and operable with Enter/Space.
+- Respect reduced-motion at the app level; the height transition is short and
+  token-driven.
+
+### Keyboard map
+
+| Key | Action |
+| --- | --- |
+| Enter / Space | Toggle the panel when the trigger is focused |
+| Tab | Move focus to the trigger / into the open panel |
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--collapsible-panel-height` | Target height for the open/close transition |
+| duration `200ms` / `ease-out` | Motion timing (matches Accordion) |
+
+Colour and typography come from whatever content and trigger you compose in;
+Collapse itself is chrome-free.
+
+## API
+
+| Part | Key props |
+| --- | --- |
+| `Collapse` | `open`, `defaultOpen`, `onOpenChange`, `disabled` |
+| `CollapseTrigger` | `render` (your control), standard button props |
+| `CollapseContent` | `keepMounted`, `hiddenUntilFound`, `children` |
+
+The public API is **closed**: no `className` / `style` on any part. Style the
+trigger and content by composing your own elements (via `render` / children) and
+AEGIS components; use `Box` / `Stack` for one-off layout.
