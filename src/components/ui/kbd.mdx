@@ -1,0 +1,69 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Kbd/Guidelines" />
+
+# Kbd
+
+A keyboard-key marker for documenting shortcuts. It renders a native `<kbd>`
+element styled as a small physical key — a `muted` chip with a slightly heavier
+bottom edge — so shortcut hints read clearly inline or in a menu. Combine
+several with a "+" between them to show a chord.
+
+## When to use
+
+- **Do** use it to show a shortcut in help text, tooltips, menus, or a command
+  palette (key hints beside actions).
+- **Do** keep each key to one token — `⌘`, `Ctrl`, `Enter`, `Esc`, a single
+  letter — and combine multiple `Kbd`s for chords.
+- **Don't** use it for arbitrary emphasis; it carries the `<kbd>` semantic of a
+  keyboard input.
+- **Don't** pack a whole chord into one `Kbd`; separate keys read and translate
+  better.
+
+## Anatomy
+
+A single `<kbd>` chip containing a key label (text or an icon such as ⌘). No
+internal structure; chords are composed by placing several `Kbd`s side by side.
+
+## Sizes
+
+| `size` | Height |
+| --- | --- |
+| `sm` | 20px |
+| `md` | 24px (default) |
+| `lg` | 28px |
+
+## Behavior
+
+- `Kbd` is presentational — it has no interactive behaviour of its own.
+- It composes with other elements through the Base UI `render` prop for
+  polymorphism, though `<kbd>` is almost always correct.
+
+## Accessibility
+
+- Uses the native `<kbd>` element so assistive tech announces it as keyboard
+  input.
+- Icon-only keys (e.g. ⌘) should be paired with a text alternative in the
+  surrounding context if the glyph alone is ambiguous.
+- Chips are non-focusable and carry no interaction, so there are no keyboard
+  concerns of their own.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--muted` | Key fill |
+| `--muted-foreground` | Key label |
+| `--border` | Key border and bottom edge |
+
+## API
+
+`Kbd` — renders a `<kbd>` key chip.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Key size. |
+| `children` | `ReactNode` | — | The key label (text or icon). |
+| `render` | `ReactElement` | `<kbd />` | Element to render (polymorphism). |
+
+The public API is closed: there is no `className` or `style` prop.
