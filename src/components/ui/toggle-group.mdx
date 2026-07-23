@@ -1,0 +1,103 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ToggleGroup/Guidelines" />
+
+# Toggle Group
+
+A set of `Toggle` buttons that share state — single-select or multi-select.
+Built on the Base UI ToggleGroup primitive, so roving focus, arrow-key
+navigation, and the pressed coordination between items all come for free.
+
+## Purpose
+
+Use a Toggle Group when a small, fixed set of related options is switched
+in place: a view switcher (List / Board / Graph), text alignment, or text
+formatting (Bold / Italic / Underline). Appearance is set once on the group
+and every item inherits it, so the set reads as one control.
+
+## When to use
+
+- **Do** use single-select (the default) for mutually exclusive options — a
+  view mode, a date granularity.
+- **Do** use `multiple` for independent options that can combine — bold **and**
+  italic.
+- **Don't** use it for a dropdown of many options — that is a `Select`.
+- **Don't** use it for a labelled boolean in a form — that is a `Switch`.
+- **Don't** reach for the joined "pill" segmented look here — that is the
+  dedicated `Segmented Control`.
+
+## Anatomy
+
+1. **ToggleGroup** (`<div>`) — the coordinating container. Owns selection mode
+   (`multiple`), `orientation`, and the shared `variant` / `size`.
+2. **ToggleGroupItem** — a `Toggle` bound to the group by its `value`. Inherits
+   the group's appearance; can override `variant` / `size` per item.
+
+## Behavior
+
+- **Uncontrolled:** `defaultValue` (an array of item values) sets the initial
+  pressed items.
+- **Controlled:** pass `value` (array) plus `onValueChange`.
+- **Selection mode:** single-select by default (activating one releases the
+  others); `multiple` lets any number stay pressed.
+- **Disabled:** `disabled` on the group disables every item; an item can also
+  be disabled on its own.
+
+## Accessibility
+
+- **Roles:** each item is a native `button` with `aria-pressed`; the group is a
+  focus-managed container exposing `data-orientation`.
+- **Focus:** roving tabindex — the group is a single tab stop and arrow keys
+  move between items.
+- **Keyboard:**
+
+  | Key | Action |
+  | --- | --- |
+  | `Tab` / `Shift+Tab` | Move focus to / from the group |
+  | `Arrow Left` / `Arrow Right` | Move between items (horizontal) |
+  | `Arrow Up` / `Arrow Down` | Move between items (vertical) |
+  | `Space` / `Enter` | Toggle the focused item |
+  | `Home` / `End` | Move to the first / last item |
+
+- Focus on an item shows a 3px `accent-soft` ring plus an accent border.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## Design tokens
+
+Inherited from `Toggle`: `--muted` / `--muted-foreground` (resting + hover),
+`--accent` / `--accent-foreground` (pressed), `--border` / `--border-strong`
+(outline), and `--ring` / `--accent-soft` (focus). The group container adds
+only layout, no color.
+
+## RTL / i18n
+
+`Arrow Left` / `Arrow Right` follow the writing direction, so navigation
+mirrors correctly under RTL (Persian / Vazirmatn); the group anchors to the
+logical start.
+
+## API
+
+### ToggleGroup
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"default" \| "outline"` | `"outline"` | Shared item appearance. |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Shared item height. |
+| `multiple` | `boolean` | `false` | Allow more than one item pressed. |
+| `value` | `string[]` | — | Controlled pressed values (with `onValueChange`). |
+| `defaultValue` | `string[]` | — | Uncontrolled initial pressed values. |
+| `onValueChange` | `(value, details) => void` | — | Fired when the pressed set changes. |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout + arrow-key axis. |
+| `disabled` | `boolean` | `false` | Disable every item. |
+| `loopFocus` | `boolean` | `true` | Wrap arrow-key focus at the ends. |
+
+### ToggleGroupItem
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Identifies the item within the group (required). |
+| `variant` / `size` | see above | inherited | Override the group appearance. |
+| `disabled` | `boolean` | `false` | Disable this item only. |
+
+The public API is closed: no `className` / `style`. Every part carries a
+`data-slot`.
