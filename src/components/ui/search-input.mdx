@@ -1,0 +1,101 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SearchInput/Guidelines" />
+
+# Search Input
+
+A single-line search field with a leading search glyph and an optional trailing
+clear button. It is a sibling of **Text Field**, **Password Input**, and
+**Number Input**, sharing the AEGIS Input shell (resting `border-strong`,
+`accent-strong` hover border, 3px `accent-soft` focus ring, and the
+32 / 40 / 48px size scale) so search fields sit consistently in a toolbar or
+form.
+
+## When to use
+
+- **Do** use it to filter a list, table, or result set, or to run a query.
+- **Do** place it in a page header, toolbar, or the top of a list it filters.
+- **Don't** use it for free-form text entry unrelated to search — use a
+  **Text Field**.
+- **Don't** stack multiple search fields; one scoped search per view reads
+  more clearly.
+
+## Anatomy
+
+1. **Label** _(optional)_ — persistent field name above the control.
+2. **Shell** — the bordered container (`border-strong`) holding the parts.
+3. **Search icon** — the leading, decorative magnifier glyph.
+4. **Input** — the native `type=search` control.
+5. **Clear button** — the trailing button that appears once the field has a
+   value and empties it.
+6. **Helper / error** — guidance below; swaps to a danger message when `error`
+   is set.
+
+## Sizes
+
+| `size` | Height |
+| --- | --- |
+| `sm` | 32px |
+| `md` | 40px (default) |
+| `lg` | 48px |
+
+## States
+
+Default, hover (`accent-strong` border), focus-within (3px `accent-soft` ring +
+accent border), disabled, and error (danger border + message). The clear button
+is present only while the field holds a value and is not disabled.
+
+## Behavior
+
+- **Controlled**: pass `value` + `onChange`. **Uncontrolled**: pass
+  `defaultValue`. It is a standard `input[type=search]`, so all native input
+  props apply.
+- The clear button empties the field, fires `onChange` (so controlled state
+  stays in sync), calls `onClear`, and returns focus to the input. It is removed
+  from the tab order (`tabIndex=-1`) so keyboard users tab straight past it;
+  keyboard users can clear with the native `Escape` behaviour of a search input.
+- `hideClear` removes the clear button entirely.
+- The native WebKit search decorations are hidden so the control looks identical
+  across browsers.
+
+## Accessibility
+
+- The input exposes the implicit `searchbox` role via `type=search`.
+- The label is associated via `htmlFor`; helper/error text is linked through
+  `aria-describedby` and the control carries `aria-invalid` when `error` is set.
+- The leading icon is `aria-hidden`; the clear button has an `aria-label`
+  ("Clear search").
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Resting shell border |
+| `--accent-strong` | Hover / focus border |
+| `--accent-soft` | Focus ring |
+| `--background` | Shell fill |
+| `--destructive` | Error border + message |
+| `--muted-foreground` | Placeholder, helper text, icons |
+
+## API
+
+`SearchInput` — renders a labelled `input[type=search]` with a search icon and a
+clear button.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` / `defaultValue` | `string` | — | Controlled / uncontrolled value. |
+| `onChange` | `(event) => void` | — | Native input change handler. |
+| `onClear` | `() => void` | — | Called after the clear button empties the field. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control height. |
+| `label` | `ReactNode` | — | Field label. |
+| `description` | `ReactNode` | — | Helper text. |
+| `error` | `ReactNode` | — | Validation message + error styling. |
+| `placeholder` | `string` | `"Search…"` | Empty-state hint. |
+| `hideClear` | `boolean` | `false` | Hide the clear button. |
+| `disabled` / `required` / `readOnly` | `boolean` | `false` | Field flags. |
+| `name` | `string` | — | Form field name. |
+
+The public API is closed: there is no `className` or `style` prop.
