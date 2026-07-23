@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Toggle/Guidelines" />
+
+# Toggle
+
+A two-state button that stays pressed once activated. Built on the Base UI
+Toggle primitive, so the pressed state, keyboard activation, and
+`aria-pressed` reflection all come for free.
+
+## Purpose
+
+Use a Toggle when a single control turns something on or off and the pressed
+state is meaningful on its own — "bold" in a text editor, "mute", "pin",
+"show grid". It is a button, not a form field: it reflects and flips an
+in-place setting rather than collecting a value for submission.
+
+## When to use
+
+- **Do** use it for an in-place on/off affordance whose state is visible at a
+  glance ("Bold", "Mute").
+- **Do** compose several inside a `ToggleGroup` for a set of related options
+  (alignment, view density) — single-select or multi-select.
+- **Don't** use it for a labelled boolean setting in a form — that is a
+  `Switch` or `Checkbox`, which carry a label and a `name`.
+- **Don't** use it to trigger an action that doesn't have a lingering pressed
+  state — that is a `Button`.
+
+## Anatomy
+
+1. **Root** (`<button>`) — the pressable surface. Carries `data-pressed` when
+   active and `aria-pressed` for assistive tech.
+2. **Content** — a short text label, an icon, or both. Icon-only toggles must
+   provide an `aria-label`.
+
+## Behavior
+
+- **Uncontrolled:** `defaultPressed` sets the initial state; the component
+  tracks it internally.
+- **Controlled:** pass `pressed` plus `onPressedChange` to own the state.
+- **Activation:** a click, `Enter`, or `Space` flips the pressed state and
+  fires `onPressedChange(pressed, details)`.
+- **Disabled:** `disabled` removes it from the tab order and blocks activation.
+
+## Accessibility
+
+- **Role:** native `button` with `aria-pressed` reflecting the state — screen
+  readers announce it as a toggle button.
+- **Labelling:** text content labels the control; for icon-only toggles supply
+  `aria-label`.
+- **Keyboard:**
+
+  | Key | Action |
+  | --- | --- |
+  | `Tab` / `Shift+Tab` | Move focus to / from the toggle |
+  | `Space` | Flip the pressed state |
+  | `Enter` | Flip the pressed state |
+
+- **Focus:** a 3px `accent-soft` ring plus an accent border (`ring-accent-soft`
+  + `border-ring`), never the shadcn default ring.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--muted` / `--muted-foreground` | Resting + hover surface and text |
+| `--accent` / `--accent-foreground` | Pressed surface + text |
+| `--background` | Outline variant resting surface |
+| `--border` / `--border-strong` | Outline border |
+| `--ring` / `--accent-soft` | Focus ring + pressed outline border |
+
+## RTL / i18n
+
+The control is direction-agnostic: label and icon flow with the inherited
+writing direction, so it mirrors correctly under RTL (Persian / Vazirmatn).
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"default" \| "outline"` | `"default"` | Ghost (default) or bordered surface. |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Control height (28 / 32 / 36px). |
+| `pressed` | `boolean` | — | Controlled pressed state (with `onPressedChange`). |
+| `defaultPressed` | `boolean` | `false` | Uncontrolled initial pressed state. |
+| `onPressedChange` | `(pressed, details) => void` | — | Fired when the pressed state flips. |
+| `disabled` | `boolean` | `false` | Removes the toggle from interaction. |
+| `value` | `string` | — | Identifies the toggle inside a `ToggleGroup`. |
+| `render` | `ReactElement \| function` | — | Element polymorphism (composition, not styling). |
+
+The public API is closed: no `className` / `style`. Every part carries a
+`data-slot`.
