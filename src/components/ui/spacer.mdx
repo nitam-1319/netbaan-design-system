@@ -1,0 +1,67 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Spacer/Guidelines" />
+
+# Spacer
+
+A token-only spacing element with two modes: a **flexible** spacer that grows to
+fill free space along the parent flex axis, and a **fixed** spacer that inserts a
+rigid, non-collapsing gap. It renders a `div` by default and is polymorphic via
+`render`. It carries no visual styling and exposes no `className`/`style` — all
+spacing comes from the AEGIS spacing scale.
+
+## When to use
+
+- **Do** use a flexible `Spacer` inside a `Stack` or flex row to push a group of
+  items to the opposite edge (title left, actions right) without hand-tuning
+  margins.
+- **Do** use a fixed `Spacer` when a hard gap is needed between two blocks and the
+  container's `gap` cannot express it (e.g. one larger break in an otherwise
+  even rhythm).
+- **Don't** reach for `Spacer` where `Stack`'s `gap` already spaces children
+  evenly — that is the preferred tool for consistent rhythm.
+- **Don't** use it to add page margins; use `Container` / `Box` for structural
+  layout.
+
+## Anatomy
+
+1. **Element** — a single empty `div` (or the `render` element), marked
+   `aria-hidden` because it conveys no content. In flexible mode it carries
+   `flex-1`; in fixed mode it carries a `w-*` / `h-*` from the scale and
+   `shrink-0` so it never collapses.
+
+## Behavior
+
+| Prop | Result |
+| --- | --- |
+| `grow` (default `true`) | Expands to consume free space along the parent flex axis. |
+| `grow={false}` | Rigid gap sized by `axis` + `size`. |
+| `axis` | `vertical` (height), `horizontal` (width), or `both`. Ignored when `grow`. |
+| `size` | `none` · `xs` · `sm` · `md` · `lg` · `xl` on the spacing scale. Ignored when `grow`. |
+
+The flexible mode depends on a flex parent; it has no effect in a normal block
+flow. Fixed mode works in any flow.
+
+## Accessibility
+
+- The element is decorative and always `aria-hidden`, so assistive tech skips it.
+- It is never focusable and carries no role or keyboard interaction.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| spacing scale (`--spacing` steps 1/2/4/6/8) | Fixed `size` gaps via `w-*` / `h-*` |
+
+## API
+
+`Spacer` — renders a `div` (or the `render` element).
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `grow` | `boolean` | `true` | Grow to fill free space along the flex axis. |
+| `axis` | `"horizontal" \| "vertical" \| "both"` | `"vertical"` | Fixed-spacer axis (ignored when `grow`). |
+| `size` | `"none" \| "xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Fixed-spacer size (ignored when `grow`). |
+| `render` | `ReactElement` | `<div />` | Element polymorphism (Base UI `render`). |
+
+The public API is closed: there is no `className` or `style` prop.
