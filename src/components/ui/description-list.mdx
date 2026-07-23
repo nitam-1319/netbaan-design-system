@@ -1,0 +1,69 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DescriptionList/Guidelines" />
+
+# Description List
+
+A semantic list of term/description pairs, rendered as native `<dl>` / `<dt>` /
+`<dd>` elements. Use it for key–value metadata: entity details, account
+summaries, spec sheets, order recaps. The `stacked` variant places each
+description under its term; the `grid` variant aligns terms and descriptions into
+two columns.
+
+## When to use
+
+- **Do** use it for read-only key–value information that belongs together.
+- **Do** choose `grid` for short values that align neatly, and `stacked` for
+  long values (addresses, paragraphs) that need the full width.
+- **Don't** use it for editable fields — that's a **Form** with **Form Field**s.
+- **Don't** use it for tabular, comparable rows across records — use a **Table**.
+
+## Anatomy
+
+1. **DescriptionList** — the `<dl>` container and layout.
+2. **DescriptionTerm** — a `<dt>`; the muted key.
+3. **DescriptionDetails** — a `<dd>`; the foreground value.
+
+Provide the terms and details as alternating children; every term should be
+followed by one or more details.
+
+## Variants
+
+| `variant` | Layout |
+| --- | --- |
+| `stacked` | Description under its term, pairs spaced vertically (default). |
+| `grid` | Two aligned columns: terms left, descriptions right. |
+
+## Behavior
+
+- Presentational and read-only; the component manages layout only.
+- In `grid` mode, terms and descriptions auto-flow into two columns in source
+  order, so keep one `DescriptionDetails` per `DescriptionTerm` for clean
+  alignment (multiple `dd`s per `dt` are valid HTML and will wrap to the value
+  column).
+
+## Accessibility
+
+- Uses native `<dl>`/`<dt>`/`<dd>`, so assistive tech announces the term/value
+  association without extra ARIA.
+- Term and value colours meet WCAG AA contrast in both themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--muted-foreground` | Term (`<dt>`) text |
+| `--foreground` | Description (`<dd>`) text |
+
+## API
+
+`DescriptionList` (`<dl>`) plus `DescriptionTerm` (`<dt>`) and
+`DescriptionDetails` (`<dd>`).
+
+| Component | Key props | Description |
+| --- | --- | --- |
+| `DescriptionList` | `variant` | Container + layout (`stacked` / `grid`). |
+| `DescriptionTerm` | — | The key. |
+| `DescriptionDetails` | — | The value. |
+
+The public API is closed: there is no `className` or `style` prop on any part.
