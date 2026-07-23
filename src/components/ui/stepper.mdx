@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Stepper/Guidelines" />
+
+# Stepper
+
+A progress indicator for a linear, multi-step flow — checkout, onboarding, a
+form wizard. It shows an ordered list of steps as numbered (or checked)
+indicators joined by a track that fills as the user advances, so people can see
+how far they've come and how much remains.
+
+## When to use
+
+- **Do** use it to orient users inside a sequential task with a known number of
+  discrete steps.
+- **Do** keep step labels to one or two words, with an optional short
+  description.
+- **Don't** use it for free navigation between unrelated sections — that's a
+  **Tabs** or **Navigation Menu**.
+- **Don't** use it as the control that performs navigation; it reports progress.
+  Drive `activeStep` from your flow state and place the actual Next / Back
+  controls (Buttons) beside it.
+
+## Anatomy
+
+1. **Indicator** — a circle per step holding the step number, a check once the
+   step is complete, or a supplied `icon`.
+2. **Label block** — the step's `label` and optional `description`.
+3. **Track** — the connector between indicators; it fills with the primary
+   colour up to the current step.
+
+## State model
+
+Every step's state is derived from a single `activeStep` index:
+
+- steps **before** `activeStep` are **complete** (filled indicator + check, filled
+  incoming track);
+- the step **at** `activeStep` is **current** (ringed indicator, marked
+  `aria-current="step"`);
+- steps **after** `activeStep` are **upcoming** (muted outline).
+
+Set `activeStep` to `steps.length` to show every step complete.
+
+## Orientation
+
+`orientation` is `horizontal` (default) — indicators in a row with labels
+beneath — or `vertical` — indicators stacked with labels beside, for narrow
+columns or long labels. `size` is `sm` or `md` (default).
+
+## Accessibility
+
+- Renders a semantic ordered list (`<ol>` / `<li>`); the current step carries
+  `aria-current="step"`, and each indicator includes visually-hidden status text
+  ("(completed)" / "(current step)" / "(upcoming)") so state is never conveyed by
+  colour alone.
+- Meets WCAG 2.2 AA contrast in both themes: complete indicators use
+  `--primary-foreground` on `--primary`; current uses `--primary` text with the
+  `--accent-soft` focus-style ring; upcoming uses `--muted-foreground` on the
+  page background with a `--border-strong` outline.
+- Give the `<ol>` an accessible name with `aria-label` (e.g. "Checkout
+  progress") when the surrounding context doesn't already name it.
+
+## RTL / i18n
+
+Horizontal steppers flow in the ambient text direction (the Storybook toolbar's
+English-LTR / Persian-RTL switch): indicators and the filling track run
+start-to-end, so progress reads naturally in both LTR and RTL.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--primary` / `--primary-foreground` | Complete indicator fill + check; filled track |
+| `--accent-soft` | Current indicator ring |
+| `--border-strong` | Upcoming indicator outline |
+| `--border` | Unfilled track |
+| `--foreground` | Complete / current labels |
+| `--muted-foreground` | Upcoming labels; descriptions |
+
+## API
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `steps` | `StepperStep[]` | Ordered steps: `{ label, description?, icon? }`. |
+| `activeStep` | `number` | Index of the current step (earlier = complete, later = upcoming). |
+| `orientation` | `"horizontal" \| "vertical"` | Track direction. Default `horizontal`. |
+| `size` | `"sm" \| "md"` | Indicator + text scale. Default `md`. |
+
+The public API is closed: there is no `className` or `style` prop. Steps are
+supplied as the typed `steps` config; presentation is the `orientation` and
+`size` props.
