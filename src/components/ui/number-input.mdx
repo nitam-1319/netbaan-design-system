@@ -1,0 +1,104 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/NumberInput/Guidelines" />
+
+# Number Input
+
+A numeric input with increment/decrement steppers and pointer scrubbing, built on
+the Base UI `NumberField` primitive. It handles locale-aware parsing and
+formatting, keyboard stepping, min/max clamping, and native form submission.
+Depends on and visually matches the AEGIS **Text Field** / Input reference so
+numeric fields sit consistently beside text fields.
+
+## When to use
+
+- **Do** use it for bounded, exact numeric entry — counts, ports, limits,
+  timeouts, quantities.
+- **Do** pair it with `min`/`max`/`step` so the steppers and keyboard enforce
+  valid values.
+- **Don't** use it for approximate selection along a range; use **Slider**.
+- **Don't** use it for phone numbers, PINs, or codes that are strings, not
+  quantities — use a masked/OTP input.
+
+## Anatomy
+
+1. **Label** _(optional)_ — persistent field name above the control.
+2. **Group** — the bordered container (`border-strong`) holding the parts.
+3. **Decrement** — the leading `−` stepper button.
+4. **Input** — the numeric value (center-aligned, tabular figures).
+5. **Increment** — the trailing `+` stepper button.
+6. **Helper / error** — guidance below; swaps to a danger message when `error`
+   is set.
+
+## Sizes
+
+| `size` | Height |
+| --- | --- |
+| `sm` | 32px |
+| `md` | 40px (default) |
+| `lg` | 48px |
+
+## States
+
+Default, hover (`accent-strong` border), focus-within (3px `accent-soft` ring +
+accent border), disabled, read-only, and error (danger border + message). Stepper
+buttons have their own hover/active/disabled states.
+
+## Behavior
+
+- **Controlled**: pass `value` + `onValueChange` (value is `number | null`).
+  **Uncontrolled**: pass `defaultValue`. Mirrors the Base UI contract.
+- **Keyboard**: Arrow Up/Down step by `step`; Page Up/Down and Shift+Arrow step by
+  `largeStep`; Home/End clamp to `min`/`max`. Typing is parsed and re-formatted on
+  blur.
+- **Scrub**: dragging over the control (pointer) adjusts the value.
+- `format` (an `Intl.NumberFormatOptions`) controls display — currency, unit,
+  percent, decimals.
+- `hideSteppers` removes the +/- buttons while keeping keyboard and scrub input.
+
+## Accessibility
+
+- The `Input` is a native numeric field; `min`/`max`/`step` map to the underlying
+  input so screen readers announce the range.
+- The label is associated via `htmlFor`; the error message is exposed and the
+  control carries `aria-invalid` when `error` is present.
+- Stepper buttons have `aria-label`s ("Increase" / "Decrease") and are keyboard
+  reachable.
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Resting group border |
+| `--accent-strong` | Hover / focus border |
+| `--accent-soft` | Focus ring |
+| `--background` | Group fill |
+| `--surface-2` / `--surface-3` | Stepper hover / active |
+| `--border` | Stepper dividers |
+| `--destructive` | Error border + message |
+| `--muted-foreground` | Placeholder, helper text, stepper glyphs |
+
+## API
+
+`NumberInput` — renders the composed Base UI number-field parts.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `number \| null` | — | Controlled value. |
+| `defaultValue` | `number` | — | Uncontrolled initial value. |
+| `onValueChange` | `(value, details) => void` | — | Fired on value change. |
+| `min` / `max` | `number` | — | Range bounds (clamped). |
+| `step` / `largeStep` / `smallStep` | `number` | `1` / `10` | Increments. |
+| `format` | `Intl.NumberFormatOptions` | — | Display formatting. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control height. |
+| `label` | `ReactNode` | — | Field label. |
+| `description` | `ReactNode` | — | Helper text. |
+| `error` | `ReactNode` | — | Validation message + error styling. |
+| `placeholder` | `string` | — | Empty-state hint. |
+| `hideSteppers` | `boolean` | `false` | Hide the +/- buttons. |
+| `disabled` / `readOnly` / `required` | `boolean` | `false` | Field flags. |
+| `name` | `string` | — | Form field name. |
+
+The public API is closed: there is no `className` or `style` prop.
