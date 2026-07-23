@@ -1,0 +1,108 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ContextMenu/Guidelines" />
+
+# Context Menu
+
+A menu of actions revealed by right-click (or long-press on touch) on a specific
+element or area — the "more actions for _this_ thing" surface. It is built on the
+Base UI Context Menu primitive, which shares the Menu surface family: portalling,
+floating-engine positioning anchored at the pointer, roving focus, typeahead,
+modal focus management, and outside-press / Escape dismissal.
+
+## When to use
+
+- **Do** use it to expose contextual actions for the element under the pointer —
+  a row, a card, a canvas node, a file tile.
+- **Do** mirror every context-menu action somewhere discoverable too (a visible
+  button, a `Menu`, a toolbar): right-click is not discoverable and is
+  unavailable to many keyboard-only and touch users.
+- **Don't** use it as the _only_ way to reach an action.
+- **Don't** use it for a menu opened by a visible button — that is a **Menu**.
+- **Don't** put more than a short, scannable set of actions in it; deep trees
+  belong in a dedicated panel.
+
+## Anatomy
+
+1. **ContextMenu** — the root that owns open state.
+2. **ContextMenuTrigger** — the _area_ (a `<div>`) that opens the menu on
+   right-click / long-press. Wrap the content it applies to, or supply your own
+   element via the `render` prop.
+3. **ContextMenuContent** — the portalled, pointer-anchored menu surface.
+4. **ContextMenuItem** — an action row (`variant` `default` | `destructive`,
+   optional `inset` for aligning label rows under icon rows).
+5. **ContextMenuGroup** / **ContextMenuGroupLabel** — a labelled section.
+6. **ContextMenuCheckboxItem**, **ContextMenuRadioGroup** /
+   **ContextMenuRadioItem** — stateful selections.
+7. **ContextMenuSeparator**, **ContextMenuShortcut** — a divider and a trailing
+   keyboard-hint slot.
+8. **ContextMenuSub** / **ContextMenuSubTrigger** — a nested submenu.
+
+## Placement
+
+`ContextMenuContent` anchors at the pointer position. `side` (default `bottom`),
+`align` (default `start`), `sideOffset`, and `alignOffset` tune the offset from
+the click point; the floating engine flips and shifts to stay in view, so the
+menu is never clipped by overflow.
+
+## Behavior
+
+- Opens on the native `contextmenu` event (right-click) or a long-press on
+  touch; closes on selection, outside-press, or Escape.
+- Keyboard: once open, Up/Down move between items, Right/Left enter/leave
+  submenus, typeahead jumps to a matching item, Enter/Space activates, Escape
+  closes and restores focus.
+- The open/close transition animates opacity and scale from the computed
+  transform origin.
+
+## Accessibility
+
+- The menu is a WCAG 2.2 AA target: `role="menu"` with `menuitem` /
+  `menuitemcheckbox` / `menuitemradio` children, full keyboard operation, and
+  focus restoration to the trigger on close — all supplied by the primitive.
+- Because right-click / long-press is not discoverable, **never** make a context
+  menu the sole path to an action; provide an equivalent visible affordance.
+- Destructive actions use the `destructive` variant so intent is conveyed by
+  text and semantics, not colour alone.
+- Icons inside items are decorative (`aria-hidden`); the item's text is its
+  accessible name.
+
+### Keyboard map
+
+| Key | Action |
+| --- | --- |
+| Right-click / long-press | Open the menu at the pointer |
+| Up / Down | Move between items |
+| Right / Left | Enter / leave a submenu (mirrored in RTL) |
+| Enter / Space | Activate the highlighted item |
+| A–Z | Typeahead to a matching item |
+| Escape | Close and restore focus to the trigger |
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Menu surface fill / text |
+| `--border-strong` | Surface hairline ring |
+| `--accent` / `--accent-foreground` | Highlighted item |
+| `--destructive` | Destructive item text / highlight |
+| `--muted-foreground` | Group labels, shortcuts |
+| `--border` | Separators |
+
+## API
+
+| Part | Key props |
+| --- | --- |
+| `ContextMenu` | `open`, `defaultOpen`, `onOpenChange` |
+| `ContextMenuTrigger` | `render` (area/element), standard `div` props |
+| `ContextMenuContent` | `side`, `align`, `sideOffset`, `alignOffset` |
+| `ContextMenuItem` | `variant` (`default` \| `destructive`), `inset`, `disabled`, `onClick`, `render` |
+| `ContextMenuCheckboxItem` | `checked`, `onCheckedChange`, `disabled` |
+| `ContextMenuRadioGroup` | `value`, `onValueChange` |
+| `ContextMenuRadioItem` | `value`, `disabled` |
+| `ContextMenuSub` / `ContextMenuSubTrigger` | submenu root / trigger (`variant`, `inset`) |
+| `ContextMenuShortcut` | `children` (keyboard hint) |
+
+The public API is **closed**: no `className` / `style` on any part. Customize via
+semantic props (`variant`, `inset`); use `render` for element polymorphism, and
+`Box` / `Stack` for one-off layout inside the surface.
