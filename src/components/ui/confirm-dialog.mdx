@@ -1,0 +1,103 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ConfirmDialog/Guidelines" />
+
+# Confirmation Dialog
+
+A focused "are you sure?" surface that interrupts a flow to confirm a consequential
+or irreversible action — deleting, removing access, publishing, resetting. It is
+built on the Base UI Alert Dialog primitive, which renders `role="alertdialog"`,
+is always modal, and — unlike a general `Dialog` — cannot be dismissed by clicking
+outside, forcing an explicit Cancel or Confirm.
+
+## When to use
+
+- **Do** use it to confirm a destructive or hard-to-reverse action before it runs.
+- **Do** name the action on the confirm button (e.g. "Delete", "Remove"), not a
+  generic "OK", so the choice is unambiguous.
+- **Don't** use it for routine, easily-reversible actions — prefer an inline
+  undo (a `Toast` with an Undo action) which is less interruptive.
+- **Don't** use it to display information with a single dismiss — that is a
+  `Dialog` or an `Alert`.
+
+## Anatomy
+
+1. **ConfirmDialog** — the root that owns open state (`open` / `defaultOpen` /
+   `onOpenChange`).
+2. **ConfirmDialogTrigger** — the element that opens it, supplied via `render`.
+   Omit it when driving the dialog from external state (controlled).
+3. **ConfirmDialogContent** — the config-driven surface: `title`, `description`,
+   `confirmLabel`, `cancelLabel`, a semantic `tone`, an `onConfirm` callback, and
+   an optional `children` body slot. It composes AEGIS `Button` for the two
+   actions, so their tokens and sizes match the rest of the system.
+
+This is a config-driven convenience over `Dialog` (see `.agent/DECISIONS.md`,
+2026-07-22b): the fixed shape — icon, title, description, cancel + confirm — is
+the whole point, so it is expressed as props rather than free composition.
+
+## Tone
+
+`tone` (`default` | `destructive`) drives both the header icon and the confirm
+button's variant. Use `destructive` for anything that deletes or removes; the
+confirm button becomes destructive and the icon a warning triangle. `default`
+uses a neutral question icon and the primary button.
+
+## Behavior
+
+- Always modal: focus is trapped, background scroll is locked, and an
+  outside-press does **not** close it. Escape and the Cancel button do.
+- `onConfirm` fires when the confirm button is pressed, immediately before the
+  dialog closes. For an async operation that should keep the dialog open until it
+  resolves, drive `open` yourself (controlled) and close it when the work
+  completes.
+- `confirmDisabled` disables the confirm action (e.g. until a precondition, like
+  typing the resource name, is met).
+- The open/close transition animates opacity and scale from the transform origin.
+
+## Accessibility
+
+- WCAG 2.2 AA: `role="alertdialog"` with the title as its accessible name and the
+  description as `aria-describedby`, a focus trap, and focus restoration to the
+  trigger on close — all supplied by the primitive.
+- Initial focus lands inside the dialog; Tab cycles Cancel ↔ Confirm; Escape
+  cancels. The confirm button is not auto-focused for destructive tones so a
+  stray Enter does not trigger the dangerous action.
+- Intent is conveyed by the button label and variant, not colour alone; the icon
+  is decorative (`aria-hidden`).
+
+### Keyboard map
+
+| Key | Action |
+| --- | --- |
+| Tab / Shift+Tab | Move between Cancel and Confirm |
+| Enter / Space | Activate the focused button |
+| Escape | Cancel and restore focus to the trigger |
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Dialog surface fill / text |
+| `--border-strong` | Surface hairline ring |
+| `--background` | Backdrop scrim (70% + blur) |
+| `--accent` / `--accent-foreground` | Default-tone icon chip |
+| `--destructive` | Destructive icon chip + confirm button |
+| `--muted-foreground` | Description text |
+
+## API
+
+| Prop (on `ConfirmDialogContent`) | Type | Default |
+| --- | --- | --- |
+| `title` | `ReactNode` | — (required) |
+| `description` | `ReactNode` | — |
+| `tone` | `default` \| `destructive` | `default` |
+| `confirmLabel` | `ReactNode` | `"Confirm"` |
+| `cancelLabel` | `ReactNode` | `"Cancel"` |
+| `onConfirm` | `() => void` | — |
+| `confirmDisabled` | `boolean` | `false` |
+| `showIcon` | `boolean` | `true` |
+| `size` | `sm` \| `default` \| `lg` | `default` |
+| `children` | `ReactNode` | — (extra body) |
+
+The public API is **closed**: no `className` / `style` on any part. Customize via
+the semantic props above; use `render` on the trigger for element polymorphism.
