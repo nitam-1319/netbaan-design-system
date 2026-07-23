@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Fieldset/Guidelines" />
+
+# Fieldset
+
+A semantic grouping of related form controls under a shared `legend`, built on
+the Base UI `Fieldset` primitive (a native `<fieldset>` with an
+auto-associated legend). Use it to split a long form into labelled sections and
+to disable a whole group at once. The `plain` variant is pure structure; the
+`card` variant wraps the group in a bordered surface for heavier separation.
+
+## When to use
+
+- **Do** use it to group inputs that share a purpose — an address block, a set
+  of notification toggles, a payment section.
+- **Do** disable the entire group with `disabled` when the section does not
+  apply (native `fieldset` disabling cascades to the controls).
+- **Don't** nest a **Radio Group**'s own labelling inside a fieldset legend
+  redundantly — a Radio Group is already a labelled group.
+- **Don't** use it purely for visual spacing; reach for a layout **Stack**
+  instead when there is no shared label.
+
+## Anatomy
+
+1. **Legend** — the group title, associated with the fieldset for assistive tech.
+2. **Description** _(optional)_ — supporting text under the legend, linked via
+   `aria-describedby`.
+3. **Body** — a vertical stack (`gap-4`) holding the grouped controls.
+4. **Surface** _(card variant)_ — a `border` / `radius` / `padding` container.
+
+## Variants
+
+| `variant` | Appearance |
+| --- | --- |
+| `plain` | Legend + description + spaced body, no container (default). |
+| `card` | The above inside a bordered, rounded, elevated surface. |
+
+## States
+
+Default and disabled. When `disabled` is set, the native `<fieldset>` disables
+every control inside it, and the group dims.
+
+## Behavior
+
+- `legend` and `description` are both optional; when neither is present the body
+  renders flush (no top margin).
+- The grouped controls are supplied as `children`; the fieldset does not manage
+  their values — it only groups and can disable them.
+
+## Accessibility
+
+- Rendered as a native `<fieldset>` / legend, so screen readers announce the
+  group name when focus enters a control inside it.
+- The description is linked with `aria-describedby`.
+- `disabled` uses the native fieldset behaviour, disabling descendants
+  accessibly without extra ARIA.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--foreground` | Legend text |
+| `--muted-foreground` | Description text |
+| `--border` | Card border |
+| `--card` | Card fill |
+| `--shadow` (`shadow-elevated`) | Card elevation |
+
+## API
+
+`Fieldset` — renders a `<fieldset>` with a legend, optional description, and a
+spaced body of children.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `legend` | `ReactNode` | — | Group title (rendered as the legend). |
+| `description` | `ReactNode` | — | Supporting text under the legend. |
+| `variant` | `"plain" \| "card"` | `"plain"` | Visual weight. |
+| `disabled` | `boolean` | `false` | Disable the whole group. |
+| `children` | `ReactNode` | — | The grouped controls. |
+| `name` | `string` | — | Passed through to the fieldset. |
+
+The public API is closed: there is no `className`, `style`, or `render` prop.
