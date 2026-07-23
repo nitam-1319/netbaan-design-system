@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      64
+Components built:      65
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -89,6 +89,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 118b | confirm-dialog | ✅ | ✅ | ✅ | PARTIAL | Recommended/Overlays (dep Dialog); on Base UI AlertDialog (role=alertdialog, always modal, no outside-press dismiss); config-driven convenience over Dialog (title/description/tone/confirmLabel/cancelLabel/onConfirm/confirmDisabled/children) composing AEGIS Button for actions; tone default/destructive drives icon + confirm variant; mirrors Dialog surface (popover token, border-strong ring, backdrop blur); closed API; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 196b | collapse | ✅ | ✅ | ✅ | PARTIAL | Recommended/Motion (dep Motion Tokens); on Base UI Collapsible (Root/Trigger/Panel); low-level height show/hide primitive, animates --collapsible-panel-height with transition-[height] 200ms ease-out (matches Accordion), aria-expanded/aria-controls via primitive, keepMounted/hiddenUntilFound passthrough; unstyled trigger (compose Button via render); token-only; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 56b | checkbox-group | ✅ | ✅ | ✅ | PARTIAL | Recommended/Selection Controls (dep Checkbox); on Base UI CheckboxGroup composing AEGIS Checkbox; value array of item names (value→Checkbox name), vertical/horizontal orientation, CheckboxGroupSelectAll parent (tri-state via allValues + Checkbox parent), label rows (native label, clickable text), group/item disabled; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
+| 42b | combobox | ✅ | ✅ | ✅ | PARTIAL | Recommended/Inputs (dep Popover); on Base UI Combobox (Root+Input+Clear+Trigger+Portal+Positioner+Popup+List+Empty+Item+ItemIndicator+Group+GroupLabel); SINGLE-SELECT autocomplete — built-in items filtering, portalled width-matched listbox (--anchor-width), selected check, sm/md/lg AEGIS input shell (border-strong, accent-soft focus); multi-select chips DEFERRED (DECISIONS 2026-07-23, REVIEW backlog); not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;

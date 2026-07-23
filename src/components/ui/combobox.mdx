@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Combobox/Guidelines" />
+
+# Combobox
+
+A text input that filters a list as you type and selects a value from it — an
+autocomplete. It is built on the Base UI Combobox primitive, which supplies the
+`role="combobox"` / `listbox` / `option` wiring, `aria-activedescendant`
+highlight, built-in filtering of `items`, portalling, floating-engine
+positioning, and keyboard operation.
+
+## When to use
+
+- **Do** use it when the option set is large enough that typing to filter beats
+  scrolling — countries, users, repos, tags.
+- **Do** use it when free-text search over the options is the natural interaction.
+- **Don't** use it for a short, fixed set that fits on screen — a **Select** is
+  simpler and needs no typing.
+- **Don't** use it for boolean or few-option choices — use **Radio Group** /
+  **Segmented Control**.
+
+## Scope (this build)
+
+This Combobox is **single-select**. Multi-select with removable chips
+(`Chips` / `Chip` / `ChipRemove` on the primitive) is a documented backlog item
+(`.agent/DECISIONS.md`, 2026-07-22d), deferred rather than shipped unverified in a
+sandbox without a browser runner. Until then, use **Select** with `multiple` for
+multi-value picking, or await the Multi-select component (queue #43).
+
+## Anatomy
+
+1. **Combobox** — the root that owns `items` (filtered automatically), the
+   selected `value` (`value` / `defaultValue` / `onValueChange`), the typed
+   `inputValue`, and open state.
+2. **ComboboxInput** — the AEGIS input shell: the text field plus a clear button
+   and a chevron trigger. `size` is `sm` | `md` | `lg`; `hideClear` removes the
+   clear button.
+3. **ComboboxContent** — the portalled, positioned list surface (`side`,
+   `align`, `sideOffset`, `alignOffset`); it matches the input width and scrolls.
+4. **ComboboxEmpty** — shown when no item matches the query.
+5. **ComboboxList** — the option container. Its children may be a render function
+   `(item, index) => …` when `items` is supplied, so only matches render.
+6. **ComboboxItem** — an option with a selected check indicator (`value`).
+7. **ComboboxGroup** / **ComboboxGroupLabel**, **ComboboxSeparator** — optional
+   sectioning.
+
+## Behavior
+
+- Typing filters `items` (default substring match); the first match is
+  highlighted for quick Enter-to-select.
+- The chevron trigger opens the full list; the clear button empties the input and
+  selection.
+- Selecting an item fills the input with its label and closes the list.
+- The list is portalled, so it is never clipped by overflow, and it is width-matched
+  to the input via `--anchor-width`.
+- Works controlled (`value` / `inputValue` + change handlers) or uncontrolled.
+
+## Accessibility
+
+- WCAG 2.2 AA: `role="combobox"` on the input with `aria-expanded` and
+  `aria-controls`; options are `role="option"` in a `listbox`; the active option
+  is tracked with `aria-activedescendant` (focus stays in the input) — all wired
+  by the primitive.
+- Provide a visible label (or `aria-label`) for the input in context.
+- The clear and trigger buttons have accessible names ("Clear", "Open").
+
+### Keyboard map
+
+| Key | Action |
+| --- | --- |
+| Type | Filter the list |
+| Down / Up | Move the highlight through options |
+| Enter | Select the highlighted option |
+| Escape | Close the list (and clear on a second press) |
+| Tab | Commit and move focus on |
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Input shell border + list ring |
+| `--accent-strong` / `--accent-soft` | Focus-within border + 3px ring |
+| `--popover` / `--popover-foreground` | List surface fill / text |
+| `--accent` / `--accent-foreground` | Highlighted option + selected check |
+| `--muted-foreground` | Placeholder, empty state, group labels |
+
+## API
+
+| Part | Key props |
+| --- | --- |
+| `Combobox` | `items`, `value`, `defaultValue`, `onValueChange`, `inputValue`, `onInputValueChange`, `open`, `onOpenChange` |
+| `ComboboxInput` | `size` (`sm` \| `md` \| `lg`), `hideClear`, `placeholder`, `disabled` |
+| `ComboboxContent` | `side`, `align`, `sideOffset`, `alignOffset` |
+| `ComboboxItem` | `value`, `disabled` |
+| `ComboboxList` | `children` (nodes or `(item, index) => node`) |
+
+The public API is **closed**: no `className` / `style` on any part. Sizing is
+`size`; placement is semantic; use `Box` / `Stack` for one-off layout.

@@ -148,3 +148,19 @@ increment (safety rule #3: never claim a capability not delivered).
 Impact: A follow-up REFACTOR run adds windowing (recommended engage threshold ~100 rows) and roving
 `tabindex` cell navigation, verified against the reference in CI with a browser runner. Until then the
 guidance is: paginate via the `footer` slot for large datasets.
+
+## 2026-07-23 — Combobox ships single-select; multi-select chips deferred (REVIEW finding)
+Status: proposed
+Decision: The first `Combobox` is **single-select** — input + filtered listbox + selected-check
+indicator, built on the Base UI Combobox primitive. Multi-select with removable chips (the
+primitive's `Chips` / `Chip` / `ChipRemove` parts, plus `multiple`) is NOT wrapped in this build and
+is recorded here as a REVIEW/REFACTOR backlog item.
+Reason: Chip entry/removal, backspace-to-remove, wrapping/overflow and multi-value keyboard semantics
+are interaction-heavy and browser-verification-heavy; landing them blind in a no-browser sandbox risks
+unverifiable complexity (same rationale as DataTable, 2026-07-22c). Shipping a correct, type-safe,
+fully-stated single-select autocomplete now — with the gap stated honestly in `combobox.mdx` — is the
+better increment (safety rule #3).
+Impact: A follow-up REFACTOR run adds the chips layer over the same root (additive, not a fork),
+verified against a browser runner in CI. Until then: use `Select` with `multiple` for multi-value
+picking, or the future Multi-select component (queue #43). This mirrors the config-driven, honestly-
+scoped precedent set by DataTable.
