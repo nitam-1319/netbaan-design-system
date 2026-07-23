@@ -1,0 +1,75 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/CheckboxGroup/Guidelines" />
+
+# Checkbox Group
+
+A set of related checkboxes that share a single value — "which of these apply?".
+It is built on the Base UI Checkbox Group primitive, which tracks the array of
+ticked names and, with `allValues`, derives the tri-state of an optional
+"select all" parent checkbox.
+
+## When to use
+
+- **Do** use it when a user can pick **any number** of options from a related
+  set (notification channels, permissions, filters).
+- **Do** use the select-all parent when the set is long and toggling everything
+  at once is useful.
+- **Don't** use it for a single on/off — that is a standalone **Checkbox**.
+- **Don't** use it for **exactly one** choice from many — that is a **Radio
+  Group**.
+
+## Anatomy
+
+1. **CheckboxGroup** — the root that owns the value array (`value` /
+   `defaultValue` / `onValueChange`) and an `orientation` (`vertical` |
+   `horizontal`). Pass `allValues` when using a select-all parent.
+2. **CheckboxGroupItem** — a labelled row composing the AEGIS `Checkbox`. Its
+   `value` is the name the group tracks; label content is its children.
+3. **CheckboxGroupSelectAll** — a parent checkbox that ticks/unticks every item
+   and shows the mixed (indeterminate) state when only some are ticked. Requires
+   `allValues` on the group.
+
+## Behavior
+
+- The group's value is an array of the `value`s of the ticked items.
+- The select-all parent is checked when all items are ticked, unchecked when
+  none are, and indeterminate (mixed) in between — computed by the primitive from
+  `allValues`.
+- Works controlled (`value` + `onValueChange`) or uncontrolled (`defaultValue`).
+- `disabled` on the group disables every item; `disabled` on an item disables
+  just that one.
+
+## Accessibility
+
+- WCAG 2.2 AA: each item is a `role="checkbox"` with `aria-checked`
+  (`true` / `false` / `mixed`); the label row is a `<label>`, so its text is
+  clickable and is the checkbox's accessible name.
+- The parent exposes `aria-checked="mixed"` for the indeterminate state, not just
+  a visual dash.
+- Give the group an accessible name in context (a heading or `Fieldset` legend)
+  so its purpose is announced.
+
+### Keyboard map
+
+| Key | Action |
+| --- | --- |
+| Tab / Shift+Tab | Move between checkboxes |
+| Space | Toggle the focused checkbox |
+
+## Design tokens
+
+Item chrome comes from the `Checkbox` (`--primary` fill when checked,
+`--input` border, `--ring` focus). The group and item rows add only layout and
+`--foreground` / `--border` for the label and select-all divider.
+
+## API
+
+| Part | Key props |
+| --- | --- |
+| `CheckboxGroup` | `value`, `defaultValue`, `onValueChange`, `allValues`, `orientation`, `disabled` |
+| `CheckboxGroupItem` | `value` (required), `disabled`, `children` (label) |
+| `CheckboxGroupSelectAll` | `disabled`, `children` (label) — needs group `allValues` |
+
+The public API is **closed**: no `className` / `style` on any part. Use
+`orientation` for direction and `Box` / `Stack` for one-off layout.
