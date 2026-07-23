@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Toolbar/Guidelines" />
+
+# Toolbar
+
+A container that groups a set of controls — action buttons, links, toggle
+groups, or an inline input — with a single roving tab stop. It is built on the
+Base UI Toolbar primitive, which supplies `role="toolbar"`, arrow-key movement
+between items, focus looping, and orientation semantics. The bar is an AEGIS
+surface (bordered, rounded, elevated); items are ghost controls that take a
+`muted` hover and the accent focus ring.
+
+## When to use
+
+- **Do** use it for a compact cluster of related actions: a formatting bar, a
+  chart's view controls, a card's quick actions.
+- **Do** group items with `ToolbarGroup` and divide clusters with
+  `ToolbarSeparator`.
+- **Don't** use it as a page header or primary navigation — use **Navbar** /
+  **App Shell**.
+- **Don't** put a single button in a toolbar; use a plain **Button**.
+
+## Anatomy
+
+1. **Toolbar** — the roving-focus container (`role="toolbar"`). Always give it an
+   `aria-label`.
+2. **ToolbarButton** — an action item; the roving tab stop.
+3. **ToolbarLink** — a navigational item styled to match.
+4. **ToolbarGroup** — a sub-cluster of related items.
+5. **ToolbarSeparator** — a divider between clusters; its orientation defaults to
+   the opposite of the toolbar's.
+
+## Sizes
+
+`ToolbarButton` and `ToolbarLink` take a `size` (`sm` / `md` / `lg`, default
+`md`) controlling item height (28 / 32 / 40px) and icon size.
+
+## States
+
+Default, hover (`muted` surface), focus-visible (3px `accent-soft` ring),
+pressed (`aria-pressed` / `data-pressed` → muted surface, for items used as
+toggles), and disabled.
+
+## Behavior
+
+- The whole toolbar is a single tab stop. Tab moves into it; Arrow keys move
+  between items; `loopFocus` (on by default) wraps at the ends.
+- `orientation="vertical"` stacks items and switches the arrow-key axis.
+- `ToolbarButton` can act as a trigger for a **Menu** or **Dialog** via the Base
+  UI `render` composition on the underlying primitive.
+
+## Accessibility
+
+- The container exposes `role="toolbar"`; supply an `aria-label` describing the
+  cluster.
+- Roving tabindex keeps the tab order flat; arrow-key navigation is provided by
+  the primitive.
+- Icon-only items must carry an `aria-label`.
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--card` | Bar fill |
+| `--border` | Bar border, separators |
+| `--shadow` (`shadow-elevated`) | Bar elevation |
+| `--muted` | Item hover / pressed surface |
+| `--muted-foreground` | Resting item text/icon |
+| `--foreground` | Active item text/icon |
+| `--accent-soft` | Focus ring |
+
+## API
+
+`Toolbar` (root) plus `ToolbarButton`, `ToolbarLink`, `ToolbarGroup`,
+`ToolbarSeparator`.
+
+| Component | Key props | Description |
+| --- | --- | --- |
+| `Toolbar` | `orientation`, `loopFocus`, `disabled`, `aria-label` | Roving-focus container. |
+| `ToolbarButton` | `size`, `disabled`, `focusableWhenDisabled` | Action item. |
+| `ToolbarLink` | `size`, `href` | Navigational item. |
+| `ToolbarGroup` | `disabled` | Sub-cluster of items. |
+| `ToolbarSeparator` | `orientation` | Divider between clusters. |
+
+The public API is closed: there is no `className` or `style` prop on any part.

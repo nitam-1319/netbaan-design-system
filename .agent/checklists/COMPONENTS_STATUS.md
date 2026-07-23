@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      53
+Components built:      54
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -22,7 +22,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 - On a category boundary (Essential→Recommended→Advanced) → sign-off.
 - On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
 
-## Built (53) — closed API, on disk
+## Built (54) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |
 |---|------------------|------|-------|------|---------|-------|
 | 1 | accordion | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
@@ -78,6 +78,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 39b | search-input | ✅ | ✅ | ✅ | PARTIAL | Recommended/Inputs (dep Text Field); native input[type=search] + leading icon + clear button; shares AEGIS Input shell (border-strong, accent-soft focus, 32/40/48px); controlled+uncontrolled clear via native setter, label/helper/error, hideClear/onClear; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 50b | otp-input | ✅ | ✅ | ✅ | PARTIAL | Recommended/Inputs; on Base UI OTPField (Root+Input slots); length slots, paste-fill/auto-advance/arrow-nav via primitive, numeric/mask/validationType, sm/md/lg (36/44/56px), filled→accent border, label/helper/error; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 125b | fieldset | ✅ | ✅ | ✅ | PARTIAL | Recommended/Forms; on Base UI Fieldset (Root+Legend); native fieldset/legend grouping, plain + card variants, description via aria-describedby, native disabled cascade; token-only; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
+| 32b | toolbar | ✅ | ✅ | ✅ | PARTIAL | Recommended/Navigation; on Base UI Toolbar (Root+Button+Link+Group+Separator); role=toolbar, roving-tabindex arrow-nav + loopFocus via primitive, horizontal/vertical, ghost items sm/md/lg (28/32/40px), muted hover, accent-soft focus; compound closed exports; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;
