@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Rating/Guidelines" />
+
+# Rating
+
+A star control for capturing or displaying a whole-number score — product
+reviews, feedback prompts, quality signals. Interactive ratings let a user pick
+a value with pointer or keyboard; read-only ratings show an existing score
+compactly.
+
+## When to use
+
+- **Do** use it to collect a quick subjective score on a small, fixed scale.
+- **Do** use `readOnly` to render an aggregate or previously-submitted score in
+  a card, list, or table.
+- **Don't** use it for precise measurements or large ranges — use a **Slider**
+  or a **Number Input**.
+- **Don't** rely on it as the only way to convey a score to assistive tech — the
+  control is labelled, but pair it with the numeric value in dense UIs.
+
+## Anatomy
+
+A row of star glyphs. Interactive ratings render each star as a label around a
+visually-hidden native radio, wrapped in a `radiogroup`. Read-only ratings render
+a single labelled image with no controls.
+
+## Behavior
+
+- **Selection** sets the score to the clicked star. Use `value` +
+  `onValueChange` for a controlled score, or `defaultValue` for an uncontrolled
+  one.
+- **Hover** previews the score by filling the stars up to the pointer without
+  committing; leaving the row restores the committed value.
+- **Keyboard** follows native radio semantics: arrow keys move and select
+  between stars, Home/End jump to the ends, and the focused star shows the
+  `--accent-soft` focus ring.
+- `max` sets the number of stars (default 5); `size` is `sm` / `md` / `lg`.
+
+Ratings are whole-star; there is no half-star selection.
+
+## Accessibility
+
+- Interactive: a `role="radiogroup"` (named via `aria-label`, default "Rating")
+  of native radios, each labelled "N stars", so screen-reader users hear and set
+  the value with standard radio interactions.
+- Read-only: `role="img"` with an `aria-label` of "N out of M stars", so the
+  score is announced as a single value rather than a list of controls.
+- State is never colour-only — filled vs empty stars back a real value that
+  assistive tech reads from the labels above.
+- Meets WCAG 2.2 AA: filled stars use the `--warning` token and empty stars a
+  muted outline, both legible on the page background in either theme.
+
+## RTL / i18n
+
+The row follows the ambient text direction (the Storybook toolbar's
+English-LTR / Persian-RTL switch), so stars fill from the logical start in both
+LTR and RTL. Star count and labels are locale-independent.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--warning` | Filled star fill + stroke |
+| `--muted-foreground` | Empty star outline |
+| `--accent-soft` | Focus ring on the focused star |
+
+## API
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `value` | `number` | Controlled score (1..`max`; 0 = unrated). |
+| `defaultValue` | `number` | Uncontrolled initial score. Default `0`. |
+| `onValueChange` | `(value: number) => void` | Fired with the newly selected score. |
+| `max` | `number` | Number of stars. Default `5`. |
+| `size` | `"sm" \| "md" \| "lg"` | Star scale. Default `md`. |
+| `readOnly` | `boolean` | Display-only, no controls. |
+| `disabled` | `boolean` | Dim and block interaction. |
+| `name` | `string` | Form field name for the radios. |
+| `aria-label` | `string` | Accessible name for the group. Default "Rating". |
+
+The public API is closed: there is no `className` or `style` prop. Score is the
+`value` / `defaultValue` props; presentation is the `size` prop.
