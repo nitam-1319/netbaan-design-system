@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      49
+Components built:      50
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -22,7 +22,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 - On a category boundary (Essential→Recommended→Advanced) → sign-off.
 - On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
 
-## Built (49) — closed API, on disk
+## Built (50) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |
 |---|------------------|------|-------|------|---------|-------|
 | 1 | accordion | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
@@ -74,6 +74,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 48b | slider | ✅ | ✅ | ✅ | PARTIAL | Recommended/Inputs; on Base UI Slider; single+range (array value → 2 thumbs), sm/md/lg, horizontal/vertical, label+value readout, invalid; accent-soft focus ring, shadow-elevated thumb; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 37b | number-input | ✅ | ✅ | ✅ | PARTIAL | Recommended/Inputs (dep Text Field); on Base UI NumberField; +/- steppers, scrub, min/max/step, sm/md/lg (32/40/48px), label/helper/error, hideSteppers; built to AEGIS Input spec (border-strong, accent-soft focus); not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 31b | segmented-control | ✅ | ✅ | ✅ | PARTIAL | Recommended/Navigation; on Base UI ToggleGroup (single-select) + Toggle; config-driven items, scalar value, sm/md/lg, horizontal/vertical, fullWidth, per-segment disabled; active segment raised (shadow-elevated), accent-soft focus; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
+| 38b | password-input | ✅ | ✅ | ✅ | PARTIAL | Recommended/Inputs (dep Text Field); native input + reveal toggle; shares AEGIS Input shell w/ number-input (border-strong, accent-soft focus, 32/40/48px); label/helper/error, hideReveal, aria-pressed toggle; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;
