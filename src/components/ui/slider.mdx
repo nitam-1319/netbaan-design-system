@@ -1,0 +1,95 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Slider/Guidelines" />
+
+# Slider
+
+A single-value or range slider for choosing a number (or a pair of numbers) from a
+continuous or stepped range. Built on the Base UI `Slider` primitive, which
+supplies the `role="slider"` thumb inputs, keyboard stepping, and aria value
+wiring. Passing an array `value`/`defaultValue` yields a two-thumb range slider.
+
+## When to use
+
+- **Do** use it for bounded numeric input where the approximate value matters more
+  than precision — thresholds, volume, opacity, coverage percentages.
+- **Do** use the range form to pick a min/max window (port ranges, price bands).
+- **Don't** use it when an exact value must be typed; use **Number Input**.
+- **Don't** use it for more than two thumbs or non-numeric choices.
+
+## Anatomy
+
+1. **Label** _(optional)_ — associated text above the track.
+2. **Value** _(optional)_ — a live, locale-formatted readout of the current
+   value(s).
+3. **Control** — the interactive region containing the track.
+4. **Track** — the full range rail (`bg-surface-3`).
+5. **Indicator** — the filled portion from the range origin to the value.
+6. **Thumb(s)** — the draggable handle(s); each wraps a hidden `input type=range`.
+
+## Variants & sizes
+
+| Prop | Values |
+| --- | --- |
+| `size` | `sm` · `md` (default) · `lg` — track height and thumb diameter. |
+| `orientation` | `horizontal` (default) · `vertical`. |
+
+## States
+
+Default, hover, focus (3px `accent-soft` ring on the thumb), dragging
+(`data-dragging` → `accent-strong` border), disabled, and invalid (danger-token
+thumb border). The filled indicator uses `--primary`, or `--destructive` when
+`invalid`.
+
+## Behavior
+
+- **Controlled**: pass `value` + `onValueChange`. **Uncontrolled**: pass
+  `defaultValue`. Mirrors the Base UI contract; `onValueCommitted` fires once at
+  the end of a drag / keyboard change.
+- `min`, `max`, `step`, and `largeStep` control the numeric range and increments.
+- Range mode activates automatically when the value is an array of two numbers.
+
+## Accessibility
+
+- Each thumb is a native `input[type=range]` exposing `aria-valuemin/max/now`.
+- Keyboard: Arrow keys step by `step`; Page Up/Down and Shift+Arrow step by
+  `largeStep`; Home/End jump to min/max.
+- Provide `getAriaLabel` to name each thumb (especially for range sliders).
+- Focus is a 3px `accent-soft` ring on the thumb, meeting WCAG 2.2 focus
+  appearance in both themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-3` | Track rail |
+| `--primary` | Filled indicator |
+| `--destructive` | Indicator + thumb border when `invalid` |
+| `--background` | Thumb fill |
+| `--border-strong` / `--primary` | Thumb resting border |
+| `--accent-strong` | Thumb border while dragging |
+| `--accent-soft` | Focus ring |
+| `--shadow` (`shadow-elevated`) | Thumb elevation |
+
+## API
+
+`Slider` — renders the composed Base UI slider parts.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `number \| number[]` | — | Controlled value(s). Array → range. |
+| `defaultValue` | `number \| number[]` | — | Uncontrolled initial value(s). |
+| `onValueChange` | `(value, details) => void` | — | Fired as the value changes. |
+| `onValueCommitted` | `(value, details) => void` | — | Fired when a change is committed. |
+| `min` / `max` | `number` | `0` / `100` | Range bounds. |
+| `step` / `largeStep` | `number` | `1` / `10` | Increment granularity. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Track/thumb size. |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Axis. |
+| `disabled` | `boolean` | `false` | Disable interaction. |
+| `invalid` | `boolean` | `false` | Error styling. |
+| `label` | `ReactNode` | — | Inline label above the track. |
+| `showValue` | `boolean` | `false` | Show the live value readout. |
+| `getAriaLabel` | `(index) => string` | — | Per-thumb accessible label. |
+| `name` | `string` | — | Form field name. |
+
+The public API is closed: there is no `className` or `style` prop.

@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      46
+Components built:      47
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -22,7 +22,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 - On a category boundary (Essential→Recommended→Advanced) → sign-off.
 - On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
 
-## Built (46) — closed API, on disk
+## Built (47) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |
 |---|------------------|------|-------|------|---------|-------|
 | 1 | accordion | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
@@ -71,6 +71,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 33b | toggle-group | ✅ | ✅ | ✅ | PARTIAL | Recommended/Selection Controls; on Base UI ToggleGroup; composes Toggle; single/multiple select, roving focus, shared appearance via context; runner axes HUMAN_VERIFY_REQUIRED |
 | 17c | spacer | ✅ | ✅ | ✅ | PARTIAL | Recommended/Layout; token-only layout primitive (useRender, no Base UI); flexible (flex-1) + fixed w/h scale; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 18b | aspect-ratio | ✅ | ✅ | ✅ | PARTIAL | Recommended/Layout; token-only layout primitive (useRender, CSS aspect-ratio); curated named ratios, media object-cover; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
+| 48b | slider | ✅ | ✅ | ✅ | PARTIAL | Recommended/Inputs; on Base UI Slider; single+range (array value → 2 thumbs), sm/md/lg, horizontal/vertical, label+value readout, invalid; accent-soft focus ring, shadow-elevated thumb; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;
