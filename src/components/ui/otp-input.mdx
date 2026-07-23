@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/OTPInput/Guidelines" />
+
+# OTP Input
+
+A one-time-passcode / verification-code field: `length` individual character
+slots that behave as a single control. It is built on the Base UI `OTPField`
+primitive, so paste-to-fill, arrow-key navigation, auto-advance, and
+backspace-to-previous all work out of the box. Each slot wears the AEGIS Input
+skin (resting `border-strong`, `accent-strong` on hover, 3px `accent-soft` focus
+ring); a filled slot carries an `accent-strong` border so progress reads at a
+glance.
+
+## When to use
+
+- **Do** use it for short, fixed-length codes: email/SMS verification, 2FA/TOTP
+  codes, or a numeric PIN.
+- **Do** pair it with a **Button** to submit and, optionally, `autoSubmit` to
+  submit automatically once the last slot fills.
+- **Don't** use it for passwords or secrets of variable length — use a
+  **Password Input**.
+- **Don't** exceed ~8 slots; long codes are better as a single field.
+
+## Anatomy
+
+1. **Label** _(optional)_ — persistent field name above the group.
+2. **Root** — the flex group that owns the value and keyboard behaviour.
+3. **Slots** — one `input` per character; the focused slot shows the accent ring
+   and filled slots take the accent border.
+4. **Helper / error** — guidance below; swaps to a danger message when `error`
+   is set.
+
+## Sizes
+
+| `size` | Slot |
+| --- | --- |
+| `sm` | 36 × 36px |
+| `md` | 44 × 44px (default) |
+| `lg` | 56 × 56px |
+
+## States
+
+Default, hover (`accent-strong` border), focus (3px `accent-soft` ring + accent
+border), filled (accent border), disabled, and error (danger border on every
+slot + message).
+
+## Behavior
+
+- **Controlled**: pass `value` + `onValueChange`. **Uncontrolled**: pass
+  `defaultValue`.
+- `length` sets the slot count (required). `validationType` defaults to
+  `numeric`; `mask` renders masked characters for sensitive codes.
+- `onValueComplete` fires when every slot is filled; set `autoSubmit` to submit
+  the owning form at that moment.
+- Pasting a full code fills all slots; typing auto-advances; Backspace moves to
+  the previous slot; Arrow keys move between slots.
+
+## Accessibility
+
+- Each slot has an `aria-label` ("Character N of M"); the group is labelled by
+  the field label and described by helper/error text via `aria-describedby`.
+- `aria-invalid` is set on the group when `error` is present.
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes; keyboard operation is provided by the Base UI primitive.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Resting slot border |
+| `--accent-strong` | Hover / focus / filled border |
+| `--accent-soft` | Focus ring |
+| `--background` | Slot fill |
+| `--destructive` | Error border + message |
+| `--muted-foreground` | Helper text |
+
+## API
+
+`OTPInput` — renders a labelled group of `length` character slots on the Base UI
+`OTPField` primitive.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `length` | `number` | — | Number of slots (required). |
+| `value` / `defaultValue` | `string` | — | Controlled / uncontrolled value. |
+| `onValueChange` | `(value, details) => void` | — | Fires as the value changes. |
+| `onValueComplete` | `(value, details) => void` | — | Fires when all slots are filled. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Slot size. |
+| `mask` | `boolean` | `false` | Mask entered characters. |
+| `validationType` | `"numeric" \| "alphanumeric" \| "alpha" \| "none"` | `"numeric"` | Accepted characters. |
+| `autoSubmit` | `boolean` | `false` | Submit the owning form on completion. |
+| `label` | `ReactNode` | — | Field label. |
+| `description` | `ReactNode` | — | Helper text. |
+| `error` | `ReactNode` | — | Validation message + error styling. |
+| `disabled` / `readOnly` / `required` | `boolean` | `false` | Field flags. |
+| `name` | `string` | — | Form field name. |
+
+The public API is closed: there is no `className`, `style`, or `render` prop.
