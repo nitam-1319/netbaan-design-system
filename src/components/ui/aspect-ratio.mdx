@@ -1,0 +1,72 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/AspectRatio/Guidelines" />
+
+# AspectRatio
+
+Constrains its content to a fixed width-to-height ratio using the modern CSS
+`aspect-ratio` property. Media placed inside — an image, video, or iframe — fills
+the box and is cropped with `object-cover`, so thumbnails, preview tiles, map
+embeds, and chart frames keep a consistent shape across a responsive grid. It
+renders a `div` by default and is polymorphic via `render`. Token-only, with no
+`className`/`style`.
+
+## When to use
+
+- **Do** wrap media whose intrinsic dimensions vary (user uploads, remote
+  thumbnails, map tiles) so a grid stays visually even.
+- **Do** reserve space for content that loads later (embeds, charts) to prevent
+  layout shift.
+- **Don't** use it for text blocks or components that should size to their own
+  content — it will clip them.
+- **Don't** reach for an arbitrary ratio outside the curated set; if a new ratio
+  is genuinely needed, add it to the named map rather than opening a style hatch.
+
+## Anatomy
+
+1. **Box** — a `relative w-full overflow-hidden` element carrying the chosen
+   `aspect-*` utility. It establishes the ratio and clips overflow.
+2. **Content** — the child. `img` / `video` / `iframe` children are stretched to
+   fill (`h-full w-full`) and images/videos are `object-cover`.
+
+## Ratios
+
+| `ratio` | Value |
+| --- | --- |
+| `square` | 1 / 1 |
+| `video` | 16 / 9 (default) |
+| `portrait` / `3/4` | 3 / 4 |
+| `4/3` | 4 / 3 |
+| `3/2` | 3 / 2 |
+| `2/1` / `wide` | 2 / 1 |
+| `ultrawide` | 21 / 9 |
+| `golden` | 1.618 / 1 |
+
+## Behavior
+
+- The box always fills the available width and derives its height from the ratio.
+- Non-media children are not stretched automatically; place a full-size element
+  inside if you need it to fill.
+
+## Accessibility
+
+- `AspectRatio` is a layout wrapper with no role of its own; accessibility lives
+  with its content. Provide `alt` on images and a title on iframes as usual.
+- It is not focusable and adds no keyboard interaction.
+
+## Design tokens
+
+`AspectRatio` consumes no color tokens — it is pure geometry. Any borders,
+radius, or background belong to the content placed inside it.
+
+## API
+
+`AspectRatio` — renders a `div` (or the `render` element).
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `ratio` | `AspectRatioValue` | `"video"` | Named width-to-height ratio. |
+| `render` | `ReactElement` | `<div />` | Element polymorphism (Base UI `render`). |
+| `children` | `ReactNode` | — | Content constrained to the ratio. |
+
+The public API is closed: there is no `className` or `style` prop.
