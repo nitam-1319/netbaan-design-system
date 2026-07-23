@@ -1,0 +1,109 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/NavigationMenu/Guidelines" />
+
+# Navigation Menu
+
+A horizontal site-navigation bar whose top-level items either link directly to a
+destination or open a rich dropdown panel of grouped links. It is built on the
+Base UI Navigation Menu primitive, which handles hover/click open intent,
+portalling, floating-engine positioning (side / align / offsets / collision
+flipping), roving-focus keyboard navigation, teleporting the active item's
+content into a single shared viewport, and Escape / outside-press dismissal.
+
+## When to use
+
+- **Do** use it for primary, persistent site navigation in a header or top bar,
+  especially when sections need a dropdown of sub-destinations.
+- **Do** keep panels to navigational links and short descriptions.
+- **Don't** use it for a list of _actions_ or commands on a control — use a
+  **Menu** (or **Context Menu**).
+- **Don't** use it for the collapsible navigation of an app chrome — use the
+  **Sidebar** / **App Shell**.
+- **Don't** nest interactive forms or long content inside a panel; a navigation
+  menu is for going places, not doing work.
+
+## Anatomy
+
+1. **NavigationMenu** — the root `<nav>` that owns open state and orientation.
+2. **NavigationMenuList** — the `<ul>` row of items.
+3. **NavigationMenuItem** — a single `<li>`; contains either a link or a
+   trigger + content pair.
+4. **NavigationMenuTrigger** — the `<button>` that opens a panel, with a
+   built-in chevron that rotates while open.
+5. **NavigationMenuContent** — the panel for an item, teleported into the shared
+   viewport when that item is active.
+6. **NavigationMenuLink** — an `<a>`; used both as a plain top-level item and for
+   the links inside a panel. Set `active` to mark the current page.
+7. **NavigationMenuViewport** — the single portalled, positioned surface the
+   active panel renders into. Render exactly one, after the list.
+
+## Placement
+
+`NavigationMenuViewport` takes `side` (default `bottom`), `align` (default
+`center`), `sideOffset`, and `alignOffset`. The floating engine flips and shifts
+the surface to stay in view. Set `showArrow` to point the surface at the active
+trigger.
+
+## Behavior
+
+- A trigger opens on hover or click after a short intent delay; moving to
+  another trigger swaps the panel in the same viewport, and the surface animates
+  its transform and opacity from the computed origin.
+- Content is portalled to the end of the document, so panels are never clipped
+  by header overflow.
+- Only one panel is open at a time; the active item's content is what the
+  viewport shows.
+
+## Accessibility
+
+- Meets WCAG 2.2 AA: nav-item text uses `--foreground` on the header background
+  and `--accent-foreground` on the hovered/active `--accent` fill in both
+  themes; the focus ring is the signature `--accent-soft` (3px), not a hairline.
+- Keyboard: `Tab` moves into the menu; **Arrow keys** move between items and into
+  an open panel (roving focus); `Enter` / `Space` activate a trigger or link;
+  `Esc` closes the open panel. All of this is provided by the primitive.
+- The root renders a `<nav>` landmark; give it an accessible name via
+  `aria-label` when a page has more than one navigation region.
+- Mark the current destination with `active` on its `NavigationMenuLink` (it maps
+  to the primitive's active state / `aria-current`), so screen-reader users know
+  where they are.
+
+## RTL / i18n
+
+Layout follows the ambient text direction (the Storybook toolbar's
+English-LTR / Persian-RTL switch); items flow start-to-end and panels align to
+the logical start. The trigger chevron rotates about its own centre, so it needs
+no directional mirroring.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--foreground` | Nav-item text (resting) |
+| `--accent` / `--accent-foreground` | Hover, open-trigger, and active fill + text |
+| `--accent-soft` | Focus ring |
+| `--popover` / `--popover-foreground` | Panel surface fill / text + arrow |
+| `--border-strong` | Panel ring + arrow stroke |
+| `--shadow` (`shadow-elevated`) | Panel elevation |
+| `--muted-foreground` | Secondary description text (in examples) |
+
+## API
+
+`NavigationMenu` (root) plus `NavigationMenuList`, `NavigationMenuItem`,
+`NavigationMenuTrigger`, `NavigationMenuContent`, `NavigationMenuLink`, and
+`NavigationMenuViewport`.
+
+| Component | Key props | Description |
+| --- | --- | --- |
+| `NavigationMenu` | `value`, `defaultValue`, `onValueChange`, `orientation`, `delay`, `closeDelay` | Root `<nav>` + open state. |
+| `NavigationMenuList` | — | The `<ul>` row of items. |
+| `NavigationMenuItem` | `value` | A single `<li>`. |
+| `NavigationMenuTrigger` | `render` | Opens the item's panel; built-in chevron. |
+| `NavigationMenuContent` | `keepMounted` | The item's panel, shown in the viewport. |
+| `NavigationMenuLink` | `active`, `closeOnClick`, `render` | A navigational anchor. |
+| `NavigationMenuViewport` | `side`, `align`, `sideOffset`, `alignOffset`, `showArrow` | The shared positioned surface. |
+
+The public API is closed: there is no `className` or `style` prop on any part.
+Route a link through a framework component with the `render` prop; lay panels out
+with plain demo markup or `Box`/`Stack`.
