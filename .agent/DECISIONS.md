@@ -164,3 +164,18 @@ Impact: A follow-up REFACTOR run adds the chips layer over the same root (additi
 verified against a browser runner in CI. Until then: use `Select` with `multiple` for multi-value
 picking, or the future Multi-select component (queue #43). This mirrors the config-driven, honestly-
 scoped precedent set by DataTable.
+
+## 2026-07-23b — Choice Card ships single-select; multi-select deferred
+Status: proposed
+Decision: The first `ChoiceCard` is **single-select** — a `ChoiceCardGroup` on the Base UI Radio
+Group + Radio primitives, one `ChoiceCard` (role=radio) per option. A multi-select variant (several
+cards selectable at once, built on the Checkbox Group primitive) is NOT wrapped in this build and is
+recorded here as a REVIEW/REFACTOR backlog item.
+Reason: Single-select is the dominant choice-card pattern (pick one plan / workspace / speed) and maps
+cleanly onto the existing Radio group semantics (roving focus, aria-checked, native form submission).
+Adding a parallel checkbox-backed group in the same run doubles the state/keyboard surface with no
+browser runner to verify it; shipping the correct single-select increment now — with the gap stated in
+`choice-card.mdx` — is the better step (safety rule #3). Mirrors Combobox (2026-07-23) and DataTable
+(2026-07-22c).
+Impact: A follow-up run adds a checkbox-backed multi-select group as an additive layer (not a fork of
+`ChoiceCard`). Until then, for multi-select compose `Checkbox` inside `Card`.

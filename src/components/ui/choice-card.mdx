@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ChoiceCard/Guidelines" />
+
+# Choice Card
+
+A large, selectable card for picking one option from a small set — a pricing
+plan, a workspace type, a shipping speed. It gives each option room for a title,
+a supporting line, and an icon, while behaving exactly like a radio button.
+
+## When to use
+
+- **Do** use it when options deserve explanation and visual weight, and the user
+  picks exactly one.
+- **Do** keep the set small (roughly two to five); more options belong in a
+  **Select** or **Combobox**.
+- **Don't** use it for a plain one-line choice — use a **Radio Group**.
+- **Don't** use it for multi-select today; this build is single-select (see
+  _Known limitations_).
+
+## Anatomy
+
+1. **ChoiceCardGroup** — the `role="radiogroup"` that owns selection and layout.
+2. **ChoiceCard** — one selectable card (`role="radio"`) with a `label`, optional
+   `description`, optional leading `icon`, and a trailing radio indicator.
+
+Each `ChoiceCard` needs a unique `value`; the group's `value` /
+`onValueChange` (or `defaultValue`) track the selection.
+
+## Behavior
+
+- Selecting a card checks it and unchecks the rest; the checked card takes the
+  primary border, a soft accent fill, and a filled indicator dot.
+- The group is keyboard-navigable as a radio group: arrow keys move and select
+  between cards, and the whole card is the hit target.
+- `orientation` lays the cards out as a column (default) or a row; individual
+  cards can be `disabled`.
+
+## Accessibility
+
+- Built on Base UI Radio Group + Radio: a real `role="radiogroup"` with
+  roving-tabindex arrow navigation, `role="radio"` + `aria-checked` per card, and
+  a hidden native input for form submission.
+- Name the group with `aria-label` (e.g. "Choose a plan"); each card's
+  accessible name comes from its label and description text.
+- Selection is not conveyed by colour alone — the checked state is exposed via
+  `aria-checked` and reinforced by the indicator dot and border.
+- Meets WCAG 2.2 AA in both themes: the checked border/ring use `--primary`, the
+  fill uses `--accent-soft`, and the focus ring is the signature `--accent-soft`
+  (3px).
+
+## RTL / i18n
+
+Card content and the icon → body → indicator order follow the ambient text
+direction (the Storybook toolbar's English-LTR / Persian-RTL switch), so the
+indicator sits on the logical trailing edge in both LTR and RTL.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--input` | Resting card + indicator border |
+| `--border-strong` | Hover border |
+| `--primary` | Checked border, ring, indicator fill; checked icon |
+| `--primary-foreground` | Indicator dot |
+| `--accent` / `--accent-soft` | Hover fill / checked fill |
+| `--accent-soft` | Focus ring |
+| `--foreground` / `--muted-foreground` | Label / description + resting icon |
+
+## Known limitations
+
+This build is **single-select** (one radio group). Multi-select choice cards —
+several selectable at once on the Checkbox Group primitive — are a follow-up,
+recorded in `.agent/DECISIONS.md`. For multi-select today, compose **Checkbox**
+inside **Card**.
+
+## API
+
+`ChoiceCardGroup` (root) plus `ChoiceCard`.
+
+| Component | Key props | Description |
+| --- | --- | --- |
+| `ChoiceCardGroup` | `value`, `defaultValue`, `onValueChange`, `orientation`, `disabled` | Radio group + layout. |
+| `ChoiceCard` | `value`, `label`, `description`, `icon`, `showIndicator`, `disabled` | One selectable card. |
+
+The public API is closed: there is no `className` or `style` prop. Content is the
+`label` / `description` / `icon` props; layout is the group's `orientation`.
