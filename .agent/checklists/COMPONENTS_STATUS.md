@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      59
+Components built:      60
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -22,7 +22,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 - On a category boundary (Essential→Recommended→Advanced) → sign-off.
 - On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
 
-## Built (59) — closed API, on disk
+## Built (60) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |
 |---|------------------|------|-------|------|---------|-------|
 | 1 | accordion | ✅ | ✅ | ✅ | PARTIAL | runner axes HUMAN_VERIFY_REQUIRED |
@@ -84,6 +84,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 69b | description-list | ✅ | ✅ | ✅ | PARTIAL | Recommended/Data Display; semantic dl/dt/dd (DescriptionList/Term/Details); stacked + grid (2-col auto-flow) variants; muted terms, foreground details; token-only; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 64b | avatar-group | ✅ | ✅ | ✅ | PARTIAL | Recommended/Data Display (dep Avatar); overlapping Avatar stack, background ring per item, max→"+N" overflow chip (aria-label "N more"), size xs/sm/default/lg/xl matching Avatar scale; token-only; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 103b | callout | ✅ | ✅ | ✅ | PARTIAL | Recommended/Feedback; emphasis block (distinct from composable Alert banner); auto tone icon (note/info/success/warning/danger) + left accent bar + soft bg, optional title, icon override/false; decorative icons (meaning via text); token-only (sev-low/success/warning/destructive); not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
+| 117b | hover-card | ✅ | ✅ | ✅ | PARTIAL | Recommended/Overlays (dep Popover); on Base UI PreviewCard (Root+Trigger+Portal+Positioner+Popup+Arrow); hover/focus-intent open, floating-engine side/align/offset + collision flip, optional arrow; mirrors Popover surface (popover token, border-strong ring); closed compound; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;

@@ -1,0 +1,75 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/HoverCard/Guidelines" />
+
+# Hover Card
+
+A rich preview surface that opens when a user hovers or focuses a trigger — a
+person card behind an @mention, a repo card behind a link, a product peek. It is
+built on the Base UI PreviewCard primitive, which handles hover-intent open/close
+delays, portalling, floating-engine positioning (side / align / offsets /
+collision flipping), and focus/dismissal.
+
+## When to use
+
+- **Do** use it to preview more about a linked entity without navigating —
+  people, repos, files, products.
+- **Do** keep the content glanceable and mostly non-interactive.
+- **Don't** use it for a short text label — use a **Tooltip**.
+- **Don't** use it for actions or forms that need a click and keyboard focus —
+  use a **Popover**; hover surfaces are unreliable for interactive content and
+  unavailable on touch.
+
+## Anatomy
+
+1. **HoverCard** — the root that owns open state and hover intent.
+2. **HoverCardTrigger** — the anchor element (usually a link), supplied via the
+   Base UI `render` prop.
+3. **HoverCardContent** — the portalled, positioned card surface, with an
+   optional arrow.
+
+## Placement
+
+`HoverCardContent` takes `side` (`top` / `right` / `bottom` / `left`, default
+`bottom`), `align` (`start` / `center` / `end`), `sideOffset`, and `alignOffset`.
+The floating engine flips and shifts to stay in view. Set `showArrow` to point
+at the trigger.
+
+## Behavior
+
+- Opens on hover or keyboard focus of the trigger after a short intent delay;
+  closes when the pointer leaves both trigger and card.
+- Content is portalled to the end of the document and positioned against the
+  trigger, so it is never clipped by overflow.
+- The open/close transition animates opacity and scale from the computed
+  transform origin.
+
+## Accessibility
+
+- The trigger should be a genuinely focusable element (a link or button) so
+  keyboard and screen-reader users can open the card via focus.
+- Because hover cards are supplementary and unavailable to touch/hover-less
+  users, never place essential information or the only path to an action inside
+  one — mirror it in the trigger's destination.
+- Focus, Escape-to-close, and dismissal are handled by the primitive.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Card fill / text |
+| `--border-strong` | Card ring + arrow stroke |
+| `--muted-foreground` | Secondary text |
+| `--primary` | Trigger link colour (in examples) |
+
+## API
+
+`HoverCard` (root) plus `HoverCardTrigger` and `HoverCardContent`.
+
+| Component | Key props | Description |
+| --- | --- | --- |
+| `HoverCard` | `open`, `defaultOpen`, `onOpenChange` | Root + open state. |
+| `HoverCardTrigger` | `render` | The anchor element. |
+| `HoverCardContent` | `side`, `align`, `sideOffset`, `alignOffset`, `showArrow` | Positioned card surface. |
+
+The public API is closed: there is no `className` or `style` prop on any part.
