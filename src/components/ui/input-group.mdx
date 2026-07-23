@@ -1,0 +1,79 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/InputGroup/Guidelines" />
+
+# Input Group
+
+Joins a single-line input with leading and/or trailing addons — an icon, a unit,
+a prefix, or a short action — inside one bordered shell that focuses as a unit.
+It is a token-only layout primitive that reuses the AEGIS Input shell, so grouped
+inputs match Text Field and Search Input.
+
+## When to use
+
+- **Do** use it to attach fixed context to an input: a currency symbol, a unit
+  ("kg", "USD"), a URL prefix ("https://"), a leading search or @ glyph.
+- **Do** keep addons short and glanceable.
+- **Don't** put the input's essential label in an addon — an addon is decoration,
+  not the accessible name. Give the input a real `label` / `aria-label`.
+- **Don't** use it for a full search field with a managed clear button — that is
+  **Search Input** — or for numeric steppers — that is **Number Input**.
+
+## Anatomy
+
+1. **InputGroup** — the shell. `size` is `sm` | `md` | `lg`; `invalid` paints the
+   error state; `disabled` dims and blocks the whole group. It is a
+   `role="group"`.
+2. **InputGroupInput** — the bare, transparent input that fills the remaining
+   space.
+3. **InputGroupAddon** — a leading (`align="start"`) or trailing (`align="end"`)
+   slot. By default it has a subtle muted fill and a divider against the input;
+   `plain` removes the fill and divider (ideal for a single icon).
+
+## Behavior
+
+- The whole shell shows the focus ring when the input inside is focused
+  (`focus-within`), so the group reads as one control.
+- Addons are non-interactive by default; if you place a button inside an addon,
+  it participates normally in tab order.
+- `invalid` and `disabled` are visual/interaction states on the shell; also set
+  the matching `aria-invalid` / `disabled` on the `InputGroupInput` for assistive
+  tech.
+
+## Accessibility
+
+- WCAG 2.2 AA: the input must have its own accessible name — a visible `<label>`
+  associated by `htmlFor`, or `aria-label` when the addon is purely decorative.
+- Decorative addon icons should be `aria-hidden`; meaningful unit text (e.g.
+  "kg") is fine to read as content but should also be reflected in the field's
+  label or help text so it is unambiguous.
+- The group is a `role="group"`; give it an `aria-label` when several groups sit
+  together and the context is not otherwise clear.
+
+### Keyboard map
+
+| Key | Action |
+| --- | --- |
+| Tab | Move into the input / onto any interactive addon |
+| (text entry) | Standard input editing |
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Shell border |
+| `--accent-strong` / `--accent-soft` | Focus-within border + 3px ring |
+| `--destructive` | Invalid border + focus ring |
+| `--muted` / `--muted-foreground` | Addon fill + text |
+| `--border` | Addon ↔ input divider |
+
+## API
+
+| Part | Key props |
+| --- | --- |
+| `InputGroup` | `size` (`sm` \| `md` \| `lg`), `invalid`, `disabled` |
+| `InputGroupInput` | standard `input` props (`type`, `placeholder`, `value`, …) |
+| `InputGroupAddon` | `align` (`start` \| `end`), `plain` |
+
+The public API is **closed**: no `className` / `style` on any part. Sizing is
+`size`; addon side is `align`; use `Box` / `Stack` for one-off layout.
