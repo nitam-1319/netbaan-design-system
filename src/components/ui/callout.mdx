@@ -1,0 +1,77 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Callout/Guidelines" />
+
+# Callout
+
+A prominent inline emphasis block for a single important aside — a tip, a
+heads-up, a caveat — most at home in documentation and long-form content. It
+bakes in a tone-appropriate leading icon and a left accent bar over a soft
+tinted surface, so it stands apart from surrounding prose.
+
+## When to use
+
+- **Do** use it to lift one aside out of running text: a tip, a warning, a note.
+- **Do** keep it to a sentence or two; a Callout is an aside, not a section.
+- **Don't** use it for transient, dismissible system messages — use a **Toast**.
+- **Don't** use it for a page-level status banner or one that needs actions and
+  composition — use an **Alert**.
+
+## Anatomy
+
+1. **Accent bar** — the coloured left border keyed to `tone`.
+2. **Icon** — a tone-appropriate leading glyph (overridable, or `icon={false}`).
+3. **Title** _(optional)_ — a bold heading.
+4. **Body** — the message, passed as `children`.
+
+## Tone
+
+| `tone` | Icon | Use |
+| --- | --- | --- |
+| `note` | 💡 | Neutral aside (default). |
+| `info` | ℹ️ | Helpful tip / context. |
+| `success` | ✔️ | Positive confirmation. |
+| `warning` | ⚠️ | Proceed with care. |
+| `danger` | ⛔ | Serious / irreversible consequence. |
+
+Colour reinforces the tone; the icon and copy carry the meaning so it never
+depends on colour alone.
+
+## Behavior
+
+- `title` is optional; without it the body sits alone next to the icon.
+- `icon` overrides the default glyph, and `icon={false}` removes it entirely.
+- Links inside the body inherit an underlined, medium-weight treatment.
+
+## Accessibility
+
+- The default icons are decorative (`aria-hidden`); meaning is carried by the
+  title/body text, not by colour or icon alone (WCAG 1.4.1).
+- A Callout is emphasized static content, not a live region — it does not
+  announce on change. For messages that must interrupt, use **Alert**
+  (`role="alert"`) or a **Toast**.
+- Text contrast for every tone meets WCAG AA in both themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--sev-low` | Info tone |
+| `--success` | Success tone |
+| `--warning` | Warning tone |
+| `--destructive` | Danger tone |
+| `--muted` / `--border` | Note tone surface / accent |
+| `--foreground` | Body text |
+
+## API
+
+`Callout` — renders an emphasis block with an icon, optional title, and body.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `tone` | `"note" \| "info" \| "success" \| "warning" \| "danger"` | `"note"` | Semantic colour + default icon. |
+| `title` | `ReactNode` | — | Bold heading. |
+| `icon` | `ReactNode \| false` | tone default | Override or hide the leading icon. |
+| `children` | `ReactNode` | — | The body content. |
+
+The public API is closed: there is no `className` or `style` prop.
