@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/MessageBubble/Guidelines" />
+
+# Message Bubble
+
+A single turn in a conversation — a user prompt, an assistant reply, or a system
+note. It aligns and colours itself by `author`, so a chat transcript reads at a
+glance, and it announces the speaker to assistive technology.
+
+## Overview
+
+Conversational and AI surfaces need a consistent turn. Message Bubble is that
+unit: give it an `author` and the content, and it places the bubble on the
+correct side with the correct surface. Compose many inside a **Conversation
+Thread** to build the full transcript.
+
+## Usage
+
+- **Do** use `user` for the person's turns, `assistant` for replies, and
+  `system` for inline notes (session started, context added).
+- **Do** keep one message per bubble.
+- **Don't** encode the speaker only through side or colour — the built-in spoken
+  label handles that; keep it.
+- **Don't** put interactive controls (feedback, tool calls) inside the text;
+  place them as siblings around the bubble.
+
+## Anatomy
+
+A full-width container (`data-slot="message-bubble"`, `data-author`) that aligns
+its child bubble (`message-bubble-body`). The body opens with an `sr-only`
+speaker label followed by the content.
+
+## Variants
+
+| `author` | Placement | Surface |
+| --- | --- | --- |
+| `user` | Inline-end | `bg-primary` on `text-primary-foreground`, tail at bottom inline-end. |
+| `assistant` | Inline-start | `bg-surface-2` + border, tail at bottom inline-start. |
+| `system` | Centred | Muted, small, no bubble fill. |
+
+## States
+
+Presentational — the bubble has no interactive state. Streaming/typing status is
+a separate **Typing / Streaming Indicator**; feedback is **Response Feedback**.
+
+## Behavior
+
+- Content preserves newlines (`whitespace-pre-wrap`) and wraps long, unbroken
+  tokens (`break-words`) rather than overflowing.
+- The bubble grows to its content up to a readable max width, then wraps.
+
+## Accessibility
+
+- Each bubble begins with an `sr-only` author label ("You" / "Assistant" /
+  "System"), so the speaker is announced, never inferred from side or colour
+  (WCAG 1.4.1). Override it with `srAuthorLabel` (e.g. a real name).
+- The tail corner uses **logical** radii (`rounded-ee`/`rounded-es`), so it
+  points at the sender correctly in both LTR and RTL.
+- Alignment uses flexbox main-start/end, which follows `direction`, so user vs
+  assistant sides swap automatically in RTL.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-primary` / `text-primary-foreground` | User bubble. |
+| `bg-surface-2` / `border-border` / `text-foreground` | Assistant bubble. |
+| `text-muted-foreground` | System note. |
+
+No colour or radius is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `author` | `"user" \| "assistant" \| "system"` | — | Speaker (alignment + colour + label). |
+| `srAuthorLabel` | `string` | You / Assistant / System | Override the announced speaker. |
+| `children` | `ReactNode` | — | The message content. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Conversation** and **LongContent** stories. In RTL the user and
+assistant sides mirror automatically, and the tail corners follow — no changes
+needed.
