@@ -1,0 +1,113 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/CopyButton/Guidelines" />
+
+# Copy to Clipboard
+
+A one-tap control for copying a value — a code snippet, an API key, an ID, a
+share link — to the clipboard, plus the `useCopyToClipboard` hook that powers
+it. On success the button briefly swaps its glyph to a check
+(`animate-check-pop`) and flips its accessible label to "Copied", so the
+confirmation is announced to assistive technology and not conveyed by the icon
+alone. After a short `timeout` it resets.
+
+## When to use
+
+- **Do** place a `CopyButton` beside anything a user will want verbatim: code
+  blocks, tokens, connection strings, invite links.
+- **Do** reach for `useCopyToClipboard` when you need copy behaviour on a
+  custom trigger (e.g. a menu item or a whole card).
+- **Don't** use it for rich content that must preserve formatting — the button
+  copies plain text.
+- **Don't** rely on colour alone to signal success; the label change carries
+  the meaning.
+
+## Anatomy
+
+A `<button>` containing a leading glyph (copy → check) and an optional text
+label. Icon-only when no `children` are supplied. `data-slot="copy-button"`
+marks the root and `data-copied` reflects the confirmed state for styling and
+tests.
+
+## Variants
+
+| `variant` | Use |
+| --- | --- |
+| `outline` (default) | Standalone control with a `border-strong` edge. |
+| `ghost` | Quiet, borderless — for dense toolbars and inline placements. |
+| `soft` | Filled `muted` chip when a little more presence is wanted. |
+
+## Sizes
+
+| `size` | Height |
+| --- | --- |
+| `sm` | 32px |
+| `md` | 40px (default) |
+| `lg` | 48px |
+
+Omitting `children` renders a square icon-only button at the same height.
+
+## States
+
+Resting, hover, focus (3px `accent-soft` ring + `accent-strong` border),
+`disabled`, and the transient **copied** state (check glyph in `success`,
+label → "Copied").
+
+## Behavior
+
+- `CopyButton` is self-contained: it owns its copied state via
+  `useCopyToClipboard`. Pressing it writes `value` to the clipboard.
+- `timeout` (default 2000ms) controls how long the confirmed state persists.
+- `onCopy(value)` fires after a successful write.
+- The hook is SSR-safe: it only writes when `navigator.clipboard` is available
+  and resolves `copy(text)` to a boolean so callers can handle failures.
+
+## Accessibility
+
+- Renders a native `<button type="button">`, so it is keyboard-focusable and
+  activates on Enter / Space.
+- The accessible name is "Copy" (or a custom `aria-label`) at rest and
+  "Copied" after a successful copy, announcing success without relying on the
+  icon or colour (WCAG 1.4.1).
+- The glyphs are decorative (`aria-hidden`); meaning lives in the label.
+- The check entrance animation respects `prefers-reduced-motion` via the app's
+  global motion settings.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `border-strong` | Resting outline border. |
+| `accent-soft` / `accent-strong` | Focus ring + focus border. |
+| `muted` / `border` | Hover and soft fills. |
+| `success` | The confirmed check glyph. |
+| `animate-check-pop` | Signature entrance for the check. |
+| `radius-lg` | Corner radius. |
+
+## API
+
+### `CopyButton`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Text written to the clipboard. Required. |
+| `variant` | `"outline" \| "ghost" \| "soft"` | `"outline"` | Visual style. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control height. |
+| `children` | `ReactNode` | — | Optional label; omit for icon-only. |
+| `copiedLabel` | `ReactNode` | `"Copied"` | Confirmed-state label. |
+| `timeout` | `number` | `2000` | Confirmed-state duration (ms). |
+| `onCopy` | `(value: string) => void` | — | Fires after a successful copy. |
+| `disabled` | `boolean` | `false` | Disable the button. |
+
+The API is closed: `className` and `style` are not accepted.
+
+### `useCopyToClipboard(options?)`
+
+Returns `{ copied, copy }`. `options`: `timeout` (ms, default 2000) and
+`onCopy(value)`. `copy(text)` returns a `Promise<boolean>` indicating success.
+
+## Examples
+
+Dark is the primary theme; all stories render inside a `.dark` surface. In RTL
+locales the glyph and label swap sides automatically because the button is a
+flex row that follows the writing direction.
