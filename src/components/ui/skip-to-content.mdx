@@ -1,0 +1,97 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SkipToContent/Guidelines" />
+
+# Skip to Content
+
+The "Skip to main content" bypass link required by WCAG 2.4.1 (Bypass Blocks).
+It is visually hidden until it receives keyboard focus, then pops into the
+top-start corner of the viewport as a proper AEGIS surface. Placed as the first
+focusable element on the page, it lets keyboard and screen-reader users jump past
+a repeated masthead / navigation straight to the main region.
+
+## When to use
+
+- **Do** render it once, as the very first element inside `<body>` / the app
+  root, on every page that has navigation before the main content.
+- **Do** point it at the page's main landmark and give that landmark
+  `tabIndex={-1}` so focus lands there.
+- **Don't** hide it with `display: none` or `visibility: hidden` — that removes
+  it from the tab order and defeats the purpose. It must be reachable by Tab.
+- **Don't** add several competing skip links unless the page genuinely has
+  multiple large bypass targets.
+
+## Anatomy
+
+A single anchor (`data-slot="skip-to-content"`) whose `href` is `#{targetId}`.
+It carries `sr-only` at rest and reveals itself on `:focus-visible` as an
+elevated `popover` surface with the standard AEGIS focus ring.
+
+## Pairing with the target
+
+```tsx
+<SkipToContent targetId="main-content" />
+{/* … masthead / nav … */}
+<main id="main-content" tabIndex={-1}>…</main>
+```
+
+The `tabIndex={-1}` on the target makes it programmatically focusable so that
+following the link moves *focus* (not just scroll position) into the main
+region.
+
+## Sizes
+
+`sm` / `md` (default) / `lg` control the revealed link's height and padding. The
+resting state is size-independent (it is visually hidden).
+
+## States
+
+Hidden (default, `sr-only`) and revealed-on-focus (fixed to the top-start
+corner, elevated surface, 3px `accent-soft` focus ring + `accent-strong`
+border).
+
+## Behavior
+
+- Presentational + navigational: activating it (Enter) follows the in-page
+  fragment to the target landmark.
+- Because the target has `tabIndex={-1}`, browsers move keyboard focus into it,
+  so the next Tab continues from the main content — not back at the top.
+- Revealed only on `:focus-visible`, so a mouse user never sees it.
+
+## Accessibility
+
+- Satisfies **WCAG 2.4.1 Bypass Blocks**: a keyboard mechanism to skip repeated
+  blocks of content.
+- It is a real `<a>` in the tab order — never removed from it — and is the first
+  focusable element so it is the first thing a keyboard user reaches.
+- The revealed state meets AA contrast on the `popover` surface in both themes
+  and has a clearly visible focus indicator.
+- Uses the logical `start` inset, so it pins to the correct corner in both LTR
+  and RTL.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `popover` / `popover-foreground` | Revealed link surface + text. |
+| `border-strong` | Resting border of the revealed link. |
+| `accent-soft` / `accent-strong` | Focus ring + focus border. |
+| `shadow-elevated` | Elevation of the revealed link. |
+| `radius-lg` | Corner radius. |
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `targetId` | `string` | `"main-content"` | `id` of the landmark to jump to (without `#`). |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Revealed link height / padding. |
+| `children` | `ReactNode` | `"Skip to main content"` | Link text. |
+
+The API is closed: `className`, `style`, and `href` are not accepted (`href` is
+derived from `targetId`).
+
+## Examples
+
+Dark is the primary theme; all stories render inside a `.dark` surface. Tab into
+the story preview to reveal the link, then press Enter to move focus to the main
+region.
