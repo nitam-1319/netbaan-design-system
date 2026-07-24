@@ -1,0 +1,85 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ChartLegend/Guidelines" />
+
+# Chart Legend
+
+The key that maps each series colour to its name. It reads the resolved series
+from the shared `ChartContainer` context, so a series shows the same colour and
+label in the legend as it does in the marks and the tooltip — with nothing to
+keep in sync by hand.
+
+## Overview
+
+Chart Legend is HTML, not SVG. Render it as a sibling of `ChartPlot` (typically
+above the plot) inside a `ChartContainer`. It renders one item per configured
+series: a colour swatch plus the series label. It is presentational and
+non-interactive.
+
+## Usage
+
+- **Do** declare the container's `series` — the legend is driven entirely by it.
+- **Do** place the legend near the plot it describes, inside the same
+  `ChartContainer`.
+- **Do** keep every series' label meaningful, since the label (not the swatch)
+  is what conveys identity to users who can't distinguish the colours.
+- **Don't** rely on the legend alone to make a chart accessible — also provide a
+  text or table alternative for the underlying values.
+
+## Anatomy
+
+A `role="list"` `<ul>` (`data-slot="chart-legend"`). Each `<li>`
+(`data-slot="chart-legend-item"`, `data-series`) holds an `aria-hidden` swatch
+(`data-slot="chart-legend-swatch"`, coloured from the series chart token) and a
+text label.
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `orientation` | `horizontal` (default), `vertical` | Row (wrapping) or stacked column. |
+| `size` | `sm`, `md` (default) | Text and swatch scale. |
+| `shape` | `square` (default), `dot`, `line` | Swatch glyph — `line` suits line charts. |
+
+## Behavior
+
+- The legend derives its items from the container's resolved `series`; if no
+  series is configured it renders nothing.
+- It is non-interactive by design. Toggling series visibility is a future
+  additive layer, because it must coordinate with the marks' render — it is not
+  a styling concern.
+
+## Accessibility
+
+- Meaning never rests on colour alone (WCAG 1.4.1): every item pairs the swatch
+  with a text label, and the swatch itself is `aria-hidden`.
+- The list is exposed with `role="list"` so assistive tech announces the number
+  of series and reads each label.
+- Labels use `text-muted-foreground` and meet AA contrast against the surface in
+  both Light and Dark themes.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1` … `--color-chart-5` | Swatch fill (via the series' resolved `colorVar`). |
+| `text-muted-foreground` | Legend label text. |
+
+The swatch colour is applied through the series' CSS custom property internally;
+the public API accepts no `className` or `style`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction. |
+| `size` | `"sm" \| "md"` | `"md"` | Text/swatch scale. |
+| `shape` | `"square" \| "dot" \| "line"` | `"square"` | Swatch glyph. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** (line chart with legend), **Shapes**, **Vertical**, and
+**Sizes** stories. Direction flows with the global toolbar; the row layout wraps
+and mirrors under RTL.
