@@ -1,0 +1,85 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/KeyboardShortcut/Guidelines" />
+
+# Keyboard Shortcut
+
+Renders a key chord from a combo string as a row of `Kbd` chips — `keys="Mod+K"`
+becomes ⌘ K on macOS and Ctrl K elsewhere. It resolves the platform "meta" key,
+maps common named keys to their glyphs, and pairs the visible symbols with a
+spelled-out, screen-reader-only label.
+
+## Overview
+
+Documenting shortcuts by hand drifts: ⌘ on one screen, "Cmd" on another, and
+symbols that read as gibberish to a screen reader. Keyboard Shortcut gives one
+canonical rendering. Pass a chord; it draws the chips and announces the chord in
+words.
+
+Built on the **Kbd** primitive, so each key inherits the physical-key styling.
+
+## Usage
+
+- **Do** use `Mod` for the primary modifier so the same declaration shows ⌘ on
+  macOS and Ctrl on Windows/Linux.
+- **Do** use it in menus, tooltips, command palettes, and shortcut cheat-sheets.
+- **Don't** hand-assemble `Kbd` chips for a shortcut — that loses the platform
+  resolution and the spoken label.
+- **Don't** rely on it to *bind* the shortcut; it only renders one.
+
+## Anatomy
+
+A `<span>` (`data-slot="keyboard-shortcut"`) containing an `aria-hidden` row of
+`Kbd` chips separated by `keyboard-shortcut-separator`, plus a visually hidden
+`sr-only` span with the spoken label.
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `platform` | `auto` (default), `mac`, `pc` | Which platform's keys to show. |
+| `size` | `sm`, `md` (default), `lg` | Chip size (forwarded to `Kbd`). |
+| `separator` | `ReactNode` | Glyph drawn between chips (default `"+"`). |
+
+## Behavior
+
+- `keys` accepts a `"Mod+Shift+P"` string or a `["Mod", "Shift", "P"]` array.
+- `Mod` resolves to ⌘ (mac) / Ctrl (pc). Named keys map to glyphs — `Shift` →
+  ⇧, `Enter` → ↵, `Escape` → esc, arrows → ↑↓←→. Unknown tokens render as-is
+  (single characters uppercased).
+- With `platform="auto"` the component renders the `pc` set on the first paint
+  and, after mount, corrects to the detected platform — so server and first
+  client render agree (no hydration mismatch).
+
+## Accessibility
+
+- The visible glyphs are `aria-hidden`; a spoken label (e.g. "Command Shift P")
+  is exposed via an `sr-only` span, so assistive tech announces the chord in
+  words instead of ambiguous symbols.
+- Meaning never depends on the glyphs alone.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `Kbd` chip tokens (`bg-muted`, `border-border`, `text-muted-foreground`) | Key chips. |
+| `text-text-faint` | The separator. |
+
+No colour is hard-coded; the chips inherit the `Kbd` tokens.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `keys` | `string \| string[]` | — | The chord (`"Mod+K"` or `["Mod","K"]`). |
+| `platform` | `"auto" \| "mac" \| "pc"` | `"auto"` | Key set to display. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Chip size. |
+| `separator` | `ReactNode` | `"+"` | Between-chip glyph. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Platforms**, **Chords**, and **InContext** stories. The chips work in
+both themes via the global toolbar; the chord order stays logical in RTL because
+key order is meaningful and does not mirror.
