@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FormSection/Guidelines" />
+
+# Form Section
+
+A titled region that groups related fields within a longer form — "Profile",
+"Notifications", "Danger zone". It gives a form visual rhythm and a correct
+document outline. Two layouts: `stacked` (header above the fields) and `aside`
+(header beside the fields on wide screens — the classic settings layout).
+
+## Overview
+
+Long forms need structure. Form Section provides a heading, an optional
+description, and a spaced body for the fields, so a settings or onboarding form
+reads as a sequence of clear, labelled groups.
+
+It is distinct from **Fieldset**: Fieldset is a semantic `<fieldset>`/`<legend>`
+*control group* with a native disabled cascade; Form Section is a *layout*
+region that can hold anything — plain fields, one or more Fieldsets, or custom
+content.
+
+## Usage
+
+- **Do** use it to break a multi-part form into scannable, titled groups.
+- **Do** set `headingLevel` to fit the surrounding document outline.
+- **Don't** use it to disable a group of controls together — use **Fieldset**.
+- **Don't** nest sections deeply; one level of grouping is almost always enough.
+
+## Anatomy
+
+A `<section>` (`data-slot="form-section"`) with an optional header
+(`form-section-header` → `form-section-title` heading + `form-section-description`)
+and a body (`form-section-body`) holding the fields. A titled section sets
+`aria-labelledby` to its heading, becoming a labelled landmark region.
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `layout` | `stacked` (default), `aside` | Header above the body, or beside it on `md+`. |
+| `headingLevel` | `2`, `3` (default), `4` | Heading element (`<h2>`/`<h3>`/`<h4>`). |
+
+## States
+
+Presentational — Form Section has no interactive state. Field states (invalid,
+disabled, etc.) belong to the controls placed inside it.
+
+## Behavior
+
+- `title` and `description` are optional; with neither, the section is a plain
+  spaced body (no landmark, no heading).
+- In `stacked` layout the body sits below the header with token spacing; in
+  `aside` layout a responsive grid puts the header in a fixed-width column and
+  the fields in the remaining space, collapsing to a single column below `md`.
+
+## Accessibility
+
+- A titled section is exposed as a `region` landmark named by its heading
+  (`aria-labelledby`), aiding screen-reader navigation between form groups.
+- `headingLevel` keeps the heading hierarchy correct within the page outline.
+- Layout uses logical grid flow, so `aside` mirrors correctly in RTL without
+  any change.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-foreground` | Section heading. |
+| `text-muted-foreground` | Description. |
+| grid/flex `gap-*` (spacing scale) | Spacing between header and fields. |
+
+No colour, spacing, or radius is hard-coded; all come from the token scale.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `ReactNode` | — | Heading + region accessible name. |
+| `description` | `ReactNode` | — | Supporting text under the title. |
+| `layout` | `"stacked" \| "aside"` | `"stacked"` | Header position. |
+| `headingLevel` | `2 \| 3 \| 4` | `3` | Heading element. |
+| `children` | `ReactNode` | — | The fields (or Fieldsets) in this section. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Stacked**, **Aside**, and **NoHeader** stories, each composing real
+AEGIS `TextField` / `Textarea` controls. The section works in both themes and
+directions via the global toolbar; in RTL the `aside` columns reverse
+automatically.
