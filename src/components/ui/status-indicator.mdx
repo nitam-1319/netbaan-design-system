@@ -1,0 +1,96 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/StatusIndicator/Guidelines" />
+
+# Status Indicator
+
+A bare presence / health dot, optionally with an inline label. Where
+**Status Pill** is a chip on a soft background, `StatusIndicator` is just the
+mark — light enough to tuck into an avatar corner, a table cell, a nav item, or
+a chart legend. `status` maps to a semantic colour; `pulse` and `ping` add
+motion for live states.
+
+## When to use
+
+- **Do** use it for presence (online / away / busy / offline) and for compact
+  health dots in dense UI.
+- **Do** give it a `label` — or rely on the built-in screen-reader text — so the
+  status is never conveyed by colour alone.
+- **Don't** use it when you need a bordered, padded chip with prominence — use a
+  **Status Pill**.
+- **Don't** use it for counts or dismissible tokens — use **Badge** or
+  **Tag / Chip**.
+
+## Anatomy
+
+A root `<span>` (`data-slot="status-indicator"`) holding a coloured dot
+(`status-indicator-dot`) and either a visible label (`status-indicator-label`)
+or a visually-hidden accessible name. When `ping` or `pulse` is set, an animated
+ring/overlay (`status-indicator-ping` / `status-indicator-pulse`) sits behind
+the dot.
+
+## Status
+
+| `status` | Meaning | Colour |
+| --- | --- | --- |
+| `online` (default) | Available / healthy | `success` |
+| `away` | Idle / degraded | `warning` |
+| `busy` | Do not disturb / error | `destructive` |
+| `offline` | Unavailable / inactive | `muted-foreground` |
+| `neutral` | Unknown | `muted-foreground` |
+| `accent` | In progress / informational | `primary` |
+
+## Sizes
+
+`sm` (8px dot), `md` (10px, default), `lg` (12px). The label text scales with
+the size.
+
+## States
+
+Static (default), `pulse` (the dot slowly fades to signal an ongoing state), and
+`ping` (an expanding ring for "online now"). `ping` takes precedence over
+`pulse` when both are set.
+
+## Behavior
+
+- Purely presentational — no internal state.
+- The dot uses `currentColor`, so the dot and any label always share the status
+  colour.
+- Motion (`animate-pulse-dot`, `animate-status-ping`) honours
+  `prefers-reduced-motion` via the app's global settings.
+
+## Accessibility
+
+- When a visible `label` is present it names the status.
+- With no visible label, a visually-hidden (`sr-only`) accessible name is
+  emitted — defaulting to a word for the `status` (e.g. "Busy") and overridable
+  via `srLabel` — so meaning never depends on colour (WCAG 1.4.1).
+- The dot and animated rings are decorative (`aria-hidden`).
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-success` / `text-warning` / `text-destructive` / `text-muted-foreground` / `text-primary` | Dot colour per `status` (via `currentColor`). |
+| `foreground` | Label text. |
+| `animate-pulse-dot` | Live/ongoing pulse. |
+| `animate-status-ping` | Expanding "online now" ring. |
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `status` | `"online" \| "away" \| "busy" \| "offline" \| "neutral" \| "accent"` | `"online"` | Semantic status → dot colour. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Dot (and label) size. |
+| `label` | `ReactNode` | — | Visible label beside the dot. |
+| `pulse` | `boolean` | `false` | Fade the dot for a live/ongoing state. |
+| `ping` | `boolean` | `false` | Expanding ring; overrides `pulse`. |
+| `srLabel` | `string` | status word | Accessible name when there is no visible label. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+Dark is the primary theme; all stories render inside a `.dark` surface. The
+indicator is a flex row, so the label sits after the dot in the current writing
+direction and mirrors correctly in RTL.
