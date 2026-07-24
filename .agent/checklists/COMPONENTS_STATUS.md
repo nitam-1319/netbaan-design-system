@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      77
+Components built:      78
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -102,6 +102,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 188b | skip-to-content | ✅ | ✅ | ✅ | PARTIAL | Recommended/Accessibility; token-only bypass link (WCAG 2.4.1); sr-only until :focus-visible then reveals as fixed top-start popover surface (shadow-elevated, border-strong, accent-soft ring); href derived from targetId (default main-content), closed API omits href; sm/md/lg revealed size; logical start inset (RTL-safe); pair with <main id tabIndex=-1>; play test asserts href + sr-only + tab focus; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 70b | stat-tile | ✅ | ✅ | ✅ | PARTIAL | Recommended/Data Display (dep Sparkline); token-only compound KPI tile (StatTile + Header/Label/Icon/Value/Unit/Delta/Caption/Chart) with internal size context (sm/md/lg); StatTileDelta decouples `trend` (arrow direction) from `sentiment` (success/destructive/muted colour) with sr-only trend word so meaning is never colour-only; card surface (bg-card, border-border, rounded-xl), tabular-nums value, Chart slot for inline Sparkline; closed API; not in conformance manifest; play test asserts value + sr trend; runner axes HUMAN_VERIFY_REQUIRED |
 | 74b | code-block | ✅ | ✅ | ✅ | PARTIAL | Recommended/Data Display (dep Copy to Clipboard); token-only read-only code surface (no syntax highlighting — out of scope, stated in mdx); optional filename/language header + language chip, optional line-number gutter (aria-hidden, select-none, text-faint), wrap vs horizontal-scroll, focusable keyboard-scrollable <pre> (accent-soft ring, role=group aria-label), composes CopyButton (ghost/sm) in header or floating top-end; trailing newline trimmed; surface bg-surface-2/header bg-surface-3, font-mono; sm/md; closed API; not in conformance manifest; play test asserts code + labelled copy button; runner axes HUMAN_VERIFY_REQUIRED |
+| 203b | no-results | ✅ | ✅ | ✅ | PARTIAL | Recommended/Empty & Loading States (dep Empty State); config-driven convenience over EmptyState for search/filter-returned-nothing (distinct from Empty State's nothing-yet); default SearchX icon, query-aware title/description, optional onClear → outline Button + children slot for extra actions; sm/default/lg forwarded to EmptyState; inherits role=status; data-slot=no-results; closed API; not in conformance manifest; play test asserts title + onClear fired; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;

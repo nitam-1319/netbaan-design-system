@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/NoResults/Guidelines" />
+
+# No Results
+
+The empty state for **"your search or filters matched nothing"** — distinct from
+**Empty State**, which covers "there's nothing here yet." `NoResults` is a thin,
+config-driven convenience over `EmptyState`: a default search-off icon, a
+query-aware title/description, and an optional **Clear** action.
+
+## When to use
+
+- **Do** use it when a query, filter, or facet returns zero rows from a set that
+  *could* contain matches.
+- **Do** pass the current `query` so the message can name what was searched.
+- **Do** wire `onClear` so users can escape a dead-end filter in one click.
+- **Don't** use it for a genuinely empty collection ("no projects yet") — use
+  **Empty State** with a create action.
+- **Don't** use it for errors ("failed to load") — use **Error State**.
+
+## Anatomy
+
+Composes `EmptyState`: an `EmptyStateIcon` (default `SearchX`), an
+`EmptyStateTitle`, an `EmptyStateDescription`, and — when `onClear` or `children`
+is provided — an `EmptyStateActions` row containing the clear **Button** and any
+extra actions. The root carries `data-slot="no-results"`.
+
+## Variants
+
+Content-driven rather than styled variants:
+
+- **With / without `query`** — the description names the term when present, or
+  falls back to a generic "adjust your search terms or filters."
+- **With / without a clear action** — `onClear` renders an outline Button;
+  omitting it hides the action row (unless `children` is supplied).
+
+## Sizes
+
+`sm`, `default`, `lg` — forwarded to `EmptyState`, scaling icon, spacing, and
+padding together.
+
+## States
+
+Presentational; the only interaction is the clear button (and any `children`
+actions), which behave as normal AEGIS `Button`s.
+
+## Behavior
+
+- No internal state — `onClear` is called on click; the parent owns the query.
+- The default description interpolates `query`; supplying `description` overrides
+  it entirely.
+
+## Accessibility
+
+- Inherits `EmptyState`'s `role="status"` so assistive tech announces the empty
+  result when it appears after a search.
+- The icon is decorative (`aria-hidden` via `EmptyStateIcon`); meaning lives in
+  the title and description.
+- The clear button is a real, focusable `Button` with a text label.
+
+## Design tokens
+
+Inherits every token from **Empty State** (`bg-muted` icon circle,
+`text-foreground` title, `text-muted-foreground` description) plus the outline
+**Button** tokens for the clear action. No colours are defined here.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Scale, forwarded to `EmptyState`. |
+| `query` | `string` | — | Search term woven into the default description. |
+| `title` | `ReactNode` | `"No results found"` | Heading. |
+| `description` | `ReactNode` | query-aware sentence | Supporting text. |
+| `icon` | `ReactNode` | `SearchX` | Icon glyph. |
+| `onClear` | `() => void` | — | When set, renders a clear button that calls this. |
+| `clearLabel` | `ReactNode` | `"Clear search"` | Clear button label. |
+| `children` | `ReactNode` | — | Extra action(s) after the clear button. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+Dark is the primary theme; switch theme and direction from the toolbar. The
+content is centered, so it mirrors cleanly in RTL and the Persian (Vazirmatn)
+font applies to the title and description.
