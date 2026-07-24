@@ -1,0 +1,106 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/CodeBlock/Guidelines" />
+
+# Code Block
+
+A read-only surface for displaying a snippet of code — monospace, token-themed,
+with an optional filename/language header, optional line numbers, horizontal
+scroll or soft-wrap, and a one-press copy button (the AEGIS **CopyButton**). Use
+it in docs, guides, logs, and API examples.
+
+It intentionally does **not** syntax-highlight the source: colour-coded tokens
+need a highlighting library and a language grammar, which is out of scope for the
+base component. It presents the code faithfully — exact whitespace, a
+keyboard-scrollable region, and an accessible copy affordance.
+
+## When to use
+
+- **Do** use it to show code, commands, config, or log output verbatim.
+- **Do** give it a `filename` and/or `language` for context, and keep `showCopy`
+  on so readers can grab the snippet.
+- **Do** enable `wrap` for prose-like or very long single lines; leave it off for
+  code where horizontal scroll preserves structure.
+- **Don't** use it for editable input — that's a **Textarea** or a code editor.
+- **Don't** paste secrets/tokens into a copyable block.
+
+## Anatomy
+
+- Root surface (`data-slot="code-block"`) — bordered, rounded, `bg-surface-2`.
+- Optional header (`code-block-header`) — filename at the start, a language chip
+  and the copy button at the end.
+- When there is no header, the copy button floats at the top-end corner
+  (`code-block-copy`).
+- Scroll region (`code-block-pre`) — a focusable `<pre>` holding a `<code>`; with
+  `showLineNumbers`, each line is a row with an `aria-hidden` number gutter.
+
+## Variants
+
+- **Header vs. bare** — providing `filename` or `language` renders the header;
+  otherwise the block is bare with a floating copy button.
+- **Line numbers** — `showLineNumbers` adds a non-selectable gutter.
+- **Wrap vs. scroll** — `wrap` soft-wraps long lines; the default scrolls
+  horizontally.
+
+## Sizes
+
+`sm` (text-xs) and `md` (text-sm, default). The block always uses the mono font
+token.
+
+## States
+
+Static content plus the copy button's own states: idle → **copied** (glyph swaps
+to a check with `animate-check-pop`, and the accessible label flips to "Copied").
+
+## Behavior
+
+- Presentational and read-only; no internal state beyond the copy button.
+- A single trailing newline is trimmed so the last line is never blank.
+- The `<pre>` is `tabIndex=0` so keyboard users can scroll a wide block; it shows
+  the AEGIS accent-soft focus ring when focused.
+- Line numbers are decorative and excluded from selection and the accessibility
+  tree, so copying selects only the code.
+
+## Accessibility
+
+- The scroll region is a labelled `group` (`aria-label`, default "Code",
+  overridable via `label`) and is keyboard-focusable/scrollable.
+- The copy button carries an accessible name ("Copy code" → "Copied") and
+  announces success by label, not colour alone (WCAG 1.4.1).
+- Line-number gutters are `aria-hidden` and `select-none`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-surface-2` | Code surface. |
+| `bg-surface-3` | Header strip. |
+| `border-border` | Surface + header borders. |
+| `font-mono` | Code typeface. |
+| `text-foreground` | Code text. |
+| `text-muted-foreground` | Filename + language chip. |
+| `text-text-faint` | Line-number gutter. |
+| `bg-muted` | Language chip fill. |
+| `ring-accent-soft` | Focus ring on the scroll region. |
+| `rounded-lg` | Surface radius. |
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `code` | `string` | — | Source to display, rendered verbatim. |
+| `language` | `string` | — | Language tag shown in the header chip. |
+| `filename` | `ReactNode` | — | Filename at the start of the header. |
+| `showLineNumbers` | `boolean` | `false` | Render a line-number gutter. |
+| `wrap` | `boolean` | `false` | Soft-wrap instead of horizontal scroll. |
+| `showCopy` | `boolean` | `true` | Show the copy-to-clipboard button. |
+| `size` | `"sm" \| "md"` | `"md"` | Code text size. |
+| `label` | `string` | `"Code"` | Accessible name for the scroll region. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+Dark is the primary theme; switch theme and direction from the toolbar. Line
+numbers use a logical `start` gutter and the copy button a logical `end` inset,
+so the block mirrors correctly in RTL (though the code itself stays LTR).
