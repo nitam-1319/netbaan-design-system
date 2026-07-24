@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Sparkline/Guidelines" />
+
+# Sparkline
+
+A word-sized chart that shows the *shape* of a trend inline — inside a table
+cell, a stat tile, or a list row — without axes, gridlines, or labels. Give it a
+`data` array of numbers and it draws a `line`, filled `area`, or `bar` chart
+scaled to fit its box. All colour comes from the semantic `tone` (the SVG paints
+with `currentColor`), so a sparkline always agrees with the value it annotates.
+
+## When to use
+
+- **Do** use a sparkline to convey direction and volatility at a glance beside a
+  headline number (requests, latency, spend).
+- **Do** keep it small — it is a glyph, not a full chart.
+- **Don't** use it when exact values, axes, or a legend matter; reach for a full
+  **Line Chart** / **Bar Chart** with a **Chart Container** instead.
+- **Don't** encode meaning in colour alone; pair it with the visible value.
+
+## Anatomy
+
+A single `<svg>` (`data-slot="sparkline"`) containing one of: a stroked path
+(`sparkline-line`), a filled path plus stroke (`sparkline-area`), or a row of
+rects (`sparkline-bar`). With fewer than two finite points it renders an empty,
+correctly-sized box (`data-empty`) so layout never jumps.
+
+## Variants
+
+| `variant` | Shape |
+| --- | --- |
+| `line` (default) | A single stroked trend line. |
+| `area` | The line with a soft `currentColor` fill beneath. |
+| `bar` | One bar per data point. |
+
+## Tone
+
+`accent` (default), `neutral`, `success`, `warning`, `danger`, `info` — each maps
+to an AEGIS colour token via `currentColor`.
+
+## Sizing
+
+`width` (default 100) and `height` (default 28) are intrinsic SVG user units;
+`strokeWidth` (default 2) sets the line/area weight. The chart uses
+`preserveAspectRatio="none"` so it stretches to whatever box you give it.
+
+## Behavior
+
+- Purely presentational and deterministic — the same `data` always yields the
+  same path. No internal state.
+- The series is normalised between its own min and max, so the trend fills the
+  vertical space regardless of absolute magnitude. Larger values sit higher.
+- Non-finite values (`NaN`, `Infinity`) are filtered out before plotting.
+
+## Accessibility
+
+- Provide `label` when the sparkline carries information on its own: the chart
+  becomes `role="img"` with that accessible name.
+- Omit `label` when the sparkline merely decorates an adjacent visible value;
+  it is then `aria-hidden` so screen readers announce the number, not the glyph
+  (avoids redundant, meaningless output).
+- Because meaning is carried by the value and label, colour is never the sole
+  channel (WCAG 1.4.1).
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-primary` / `text-success` / `text-warning` / `text-destructive` / `text-muted-foreground` | `tone` → `currentColor` for stroke, fill, and bars. |
+
+No colour is hard-coded; the SVG inherits `currentColor` from the `tone` class.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `data` | `number[]` | — | The series to plot (two or more numbers). |
+| `variant` | `"line" \| "area" \| "bar"` | `"line"` | Chart shape. |
+| `tone` | `"accent" \| "neutral" \| "success" \| "warning" \| "danger" \| "info"` | `"accent"` | Colour token. |
+| `width` | `number` | `100` | Intrinsic width (SVG units). |
+| `height` | `number` | `28` | Intrinsic height (SVG units). |
+| `strokeWidth` | `number` | `2` | Line / area stroke weight. |
+| `label` | `string` | — | Accessible name; when set the chart is `role="img"`, else `aria-hidden`. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+Dark is the primary theme; all stories render inside a `.dark` surface. A common
+pattern is a headline number, a decorative sparkline (`aria-hidden`), and a
+percentage delta on one baseline.
