@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FormActions/Guidelines" />
+
+# Form Actions
+
+The action row at the foot of a form — submit, cancel, and any secondary
+buttons. It standardises their alignment, spacing, and wrapping so every form
+ends the same way, and can pin itself to the bottom of a long, scrolling form.
+
+## Overview
+
+Forms accumulate inconsistency at the bottom: some right-align, some
+left-align, spacing drifts. Form Actions gives that row one contract — place
+your AEGIS `Button`s inside and choose an `align`. Primary action on the
+inline-end is the default.
+
+## Usage
+
+- **Do** put the form's buttons here, primary last (it lands on the inline-end
+  with `align="end"`).
+- **Do** use `align="between"` to separate a leading "Back" from trailing
+  "Cancel / Continue".
+- **Do** add `sticky` for long forms so the actions stay reachable while
+  scrolling.
+- **Don't** put non-action content here; it is a button row, not a footer.
+
+## Anatomy
+
+A single `role="group"` row (`data-slot="form-actions"`,
+`data-align="<align>"`) that lays its children out with flex, wrapping when
+space runs out. Buttons are provided by the consumer.
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `align` | `start`, `center`, `end` (default), `between` | Placement of the actions along the row. |
+| `divider` | `boolean` (default `false`) | Top border separating the row from the fields. |
+| `sticky` | `boolean` (default `false`) | Pin to the bottom of a scrolling form on a translucent bar. |
+
+## States
+
+Presentational — Form Actions has no state of its own. Button states (loading,
+disabled) live on the buttons inside it.
+
+## Behavior
+
+- Actions wrap to a new line when the row is too narrow, preserving spacing.
+- `sticky` positions the row at `bottom: 0` with a translucent, blurred surface
+  and a top border so content scrolling underneath stays legible.
+- Alignment is direction-aware: flexbox main-start/end follow `direction`, so
+  `end` is the right edge in LTR and the left edge in RTL automatically.
+
+## Accessibility
+
+- The row is a `group`, keeping the actions together for assistive tech.
+- Tab order follows DOM order — place the primary action last so it is the
+  final, and default, focus target (pair with a submit `Button`).
+- The sticky bar keeps ≥ AA contrast via a token-driven translucent background
+  plus a border; it never obscures focus outlines.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `border-border` | Divider / sticky top border. |
+| `bg-background` (with alpha) | Sticky bar surface. |
+| flex `gap-*` (spacing scale) | Space between actions. |
+
+No colour or spacing is hard-coded; all come from the token scale.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `align` | `"start" \| "center" \| "end" \| "between"` | `"end"` | Placement of the actions. |
+| `divider` | `boolean` | `false` | Top border above the row. |
+| `sticky` | `boolean` | `false` | Pin to the bottom while scrolling. |
+| `children` | `ReactNode` | — | The action `Button`s. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Alignments**, **WithDivider**, and **Sticky** stories, each composing
+real AEGIS `Button`s. The row works in both themes and directions via the global
+toolbar; in RTL the `end`/`between` placements mirror automatically.
