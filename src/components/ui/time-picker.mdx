@@ -1,0 +1,110 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/TimePicker/Guidelines" />
+
+# Time Picker
+
+A single-field control for entering a time of day. It wraps the native
+`input[type=time]`, so it inherits the platform's accessible time editing —
+segmented hour/minute (and optional seconds) fields you can spin with the arrow
+keys, type into directly, or open with the platform picker — while wearing the
+AEGIS Input shell. It is a sibling of **Text Field**, **Number Input**,
+**Password Input**, and **Search Input**, sharing the same shell (resting
+`border-strong`, `accent-strong` hover border, 3px `accent-soft` focus ring, and
+the 32 / 40 / 48px size scale) so time fields line up with every other input in
+a form.
+
+## When to use
+
+- **Do** use it to capture a specific time of day — a reminder, an appointment
+  slot, business hours, a schedule.
+- **Do** pair it with a **Date Picker** when both a date and a time are needed.
+- **Don't** use it for a duration (e.g. "2h 30m") — that is a **Number Input**
+  or a pair of fields, not a time of day.
+- **Don't** build a custom hour/minute dropdown when the native control already
+  provides an accessible, localized picker.
+
+## Anatomy
+
+1. **Label** _(optional)_ — persistent field name above the control.
+2. **Shell** — the bordered container (`border-strong`) holding the parts.
+3. **Clock icon** — the leading, decorative glyph marking the field as a time.
+4. **Input** — the native `type=time` control (hour / minute / optional seconds
+   segments plus the platform picker indicator).
+5. **Helper / error** — guidance below; swaps to a danger message when `error`
+   is set.
+
+## Sizes
+
+| `size` | Height |
+| --- | --- |
+| `sm` | 32px |
+| `md` | 40px (default) |
+| `lg` | 48px |
+
+## States
+
+Default, hover (`accent-strong` border), focus-within (3px `accent-soft` ring +
+accent border), disabled, and error (danger border + message). Whether the field
+shows a 12-hour (AM/PM) or 24-hour layout is decided by the user's locale, not by
+the component.
+
+## Behavior
+
+- **Controlled**: pass `value` + `onChange`. **Uncontrolled**: pass
+  `defaultValue`. Values use the native `HH:mm` (or `HH:mm:ss`) format regardless
+  of the displayed locale format.
+- **Range & granularity** come from native props: `min` and `max` constrain the
+  selectable range; `step` sets the increment. `step={60}` (default) steps whole
+  minutes; a sub-minute `step` (e.g. `step={1}`) exposes a seconds segment on
+  supporting platforms; `step={900}` steps 15 minutes.
+- It is a standard `input[type=time]`, so all native input props (`name`,
+  `required`, `readOnly`, `disabled`, `autoFocus`, …) apply.
+- Editing: arrow keys increment/decrement the focused segment, typing digits
+  fills segments and auto-advances, and the picker indicator opens the platform
+  picker. This behaviour is provided by the browser, not re-implemented.
+
+## Accessibility
+
+- The label is associated via `htmlFor`; helper/error text is linked through
+  `aria-describedby` and the control carries `aria-invalid` when `error` is set.
+- Native segment editing is fully keyboard-operable (Tab between segments, arrows
+  to change, digits to type) and announced by screen readers as a time control.
+- The leading clock glyph is `aria-hidden` (decorative); meaning is carried by
+  the label, not the icon or colour.
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes; contrast is verified for default, disabled, and error states in light
+  and dark.
+- Times read left-to-right by convention; the surrounding label, helper text,
+  and shell use logical properties so they mirror correctly in RTL.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Resting shell border |
+| `--accent-strong` | Hover / focus border |
+| `--accent-soft` | Focus ring |
+| `--background` | Shell fill |
+| `--destructive` | Error border + message |
+| `--muted-foreground` | Placeholder, helper text, icon |
+
+## API
+
+`TimePicker` — renders a labelled `input[type=time]` with a leading clock icon.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` / `defaultValue` | `string` | — | Controlled / uncontrolled value (`HH:mm` or `HH:mm:ss`). |
+| `onChange` | `(event) => void` | — | Native input change handler. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control height. |
+| `label` | `ReactNode` | — | Field label. |
+| `description` | `ReactNode` | — | Helper text. |
+| `error` | `ReactNode` | — | Validation message + error styling. |
+| `min` / `max` | `string` | — | Earliest / latest selectable time (`HH:mm`). |
+| `step` | `number` | `60` | Increment in seconds; sub-minute exposes seconds. |
+| `disabled` / `required` / `readOnly` | `boolean` | `false` | Field flags. |
+| `name` | `string` | — | Form field name. |
+
+The public API is closed: there is no `className` or `style` prop, and `type` is
+fixed to `time`.
