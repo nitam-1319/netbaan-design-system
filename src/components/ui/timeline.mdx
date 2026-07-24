@@ -1,0 +1,102 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Timeline/Guidelines" />
+
+# Timeline
+
+A vertical, ordered sequence of events — activity feeds, audit logs, change
+history, deployment records, onboarding progress. Built on a semantic
+`<ol>` / `<li>` structure so the ordering is exposed to assistive technology,
+each item draws a token-coloured marker and a connector line down to the next
+event. The connector is hidden on the last item so the rail terminates cleanly.
+
+## When to use
+
+- **Do** use a timeline for events that have a meaningful order in time.
+- **Do** keep each item scannable: a title, an optional timestamp, and a short
+  description.
+- **Don't** use it for a numbered set of *actions to complete* — that is the
+  **Stepper**.
+- **Don't** use it for unordered lists — use **List**.
+
+## Anatomy
+
+`Timeline` (`<ol>`) contains one or more `TimelineItem` (`<li>`). Each item is a
+two-column row: a **rail** (a coloured `timeline-marker` plus a
+`timeline-connector` line) and a **content** column holding any of
+`TimelineTitle`, `TimelineTime`, and `TimelineDescription`. An optional `marker`
+prop replaces the default dot with custom content such as an icon.
+
+## Tone
+
+The marker colour is set per item via `tone`: `accent` (default), `neutral`,
+`success`, `warning`, `danger`, `info`. Use it to encode the nature of the event
+(success = resolved, danger = failed) — but always keep the meaning in the
+text as well, never colour alone.
+
+## Sizes
+
+The default dot marker comes in `sm` / `md` (default) / `lg`. Icon markers use a
+fixed 24px slot regardless of `size`.
+
+## Behavior
+
+- Purely structural and presentational — no internal state, controlled or
+  otherwise.
+- The connector between items is drawn with a flex-filled 1px rail and is hidden
+  on the final item via a CSS selector on the root, so you never manage a
+  "last" flag by hand.
+- `TimelineTitle` and `TimelineTime` are polymorphic (Base UI `useRender`): swap
+  the rendered element with the `render` prop — e.g. render the title as a link,
+  or the time as a real `<time dateTime="…">`.
+
+## Accessibility
+
+- The ordered list (`<ol>`) conveys sequence to screen readers; each event is a
+  list item.
+- Markers and connectors are decorative (`aria-hidden`); all meaning lives in
+  the item's text content.
+- Use `TimelineTime` with a machine-readable `dateTime` attribute so the
+  timestamp is unambiguous.
+- Colour is never the only signal — the title/description carry the state
+  (WCAG 1.4.1).
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-primary` / `text-success` / `text-warning` / `text-destructive` / `text-muted-foreground` | Marker colour per `tone` (via `currentColor`). |
+| `border` | The connector rail hairline. |
+| `foreground` | Title text. |
+| `muted-foreground` | Time and description text. |
+
+## API
+
+### `Timeline`
+
+The `<ol>` root. Polymorphic via `render`. No styling props.
+
+### `TimelineItem`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `tone` | `"accent" \| "neutral" \| "success" \| "warning" \| "danger" \| "info"` | `"accent"` | Marker colour. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Dot marker size. |
+| `marker` | `ReactNode` | — | Custom marker (e.g. an icon) in place of the dot. |
+
+### `TimelineTitle` / `TimelineTime`
+
+Polymorphic content elements (`render` supported). `TimelineTime` renders a
+`<time>` by default.
+
+### `TimelineDescription`
+
+A muted `<p>` for supporting text.
+
+All parts have a closed API: `className` and `style` are not accepted.
+
+## Examples
+
+Dark is the primary theme; all stories render inside a `.dark` surface. Because
+the layout is a flex row that follows the writing direction, the rail moves to
+the right edge automatically in RTL locales.
