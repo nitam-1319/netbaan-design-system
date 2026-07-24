@@ -1,0 +1,98 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Axis/Guidelines" />
+
+# Axis
+
+A chart axis that draws inside `ChartPlot`. It reads the shared plot geometry
+from `useChart()`, so it always lines up with the marks: a baseline along one
+edge of the plot, evenly-spaced (or explicitly-placed) ticks, tick labels, and
+optional gridlines.
+
+## Overview
+
+Axis is presentational and deterministic — given the plot geometry and a tick
+source, it renders the same output every time. It carries no scale of its own;
+instead it accepts ticks in one of three forms and positions them along the
+plot edge. The data origin is the plot's **bottom-left**, so a vertical axis
+increases upward and a horizontal axis increases rightward — matching how marks
+read the same geometry.
+
+## Usage
+
+- **Do** place Axis inside a `ChartPlot`, alongside the marks, so it shares the
+  coordinate space.
+- **Do** use `categories` for a band (bar/column) axis and `domain` for a
+  continuous value axis.
+- **Do** widen the container `margin` on the side an axis sits so its labels
+  have room.
+- **Don't** try to draw an axis outside a Chart Container — `useChart()` throws.
+- **Don't** encode meaning in gridlines alone; they are a reading aid.
+
+## Anatomy
+
+A `data-slot="axis"` group (`aria-hidden`, `data-orientation`) containing an
+`axis-line` baseline, one `axis-tick` group per tick (a tick mark line plus a
+`<text>` label), optional `axis-grid` lines spanning the plot, and an optional
+`axis-label` title placed outside the ticks.
+
+## Tick sources (priority order)
+
+1. **`ticks`** — explicit `{ value, position }[]`; `position` is a 0–1 fraction
+   from the data origin (left for horizontal, bottom for vertical).
+2. **`categories`** — one band-centred tick per category, at `(i + 0.5) / n`.
+3. **`domain`** — a linear numeric `[min, max]` sampled into `tickCount` evenly
+   spaced ticks, each formatted through `format`.
+
+If none is supplied the axis renders just its baseline.
+
+## Orientation
+
+`bottom` (default) and `top` are horizontal; `left` and `right` are vertical.
+Tick marks and labels extend away from the plot (down/up, left/right). Vertical
+axis titles are rotated to read along the axis.
+
+## Accessibility
+
+- The axis group is `aria-hidden`: it is a visual reading aid, and the chart's
+  meaning is conveyed through the container's accessible name, the legend
+  (colour **and** text), and any text/table alternative for the values (WCAG
+  1.4.1). Axes should not be the only place a value is announced.
+- Tick labels use `text-muted-foreground` and meet AA contrast against the
+  surface in both themes; baselines/ticks use `stroke-border`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `stroke-border` | Axis baseline and tick marks. |
+| `stroke-border/50` | Gridlines (lighter than the baseline). |
+| `fill-muted-foreground` | Tick label text. |
+| `fill-foreground` | Axis title text. |
+
+Colour, weight, and spacing are token-driven; only geometric quantities
+(`tickSize`, tick positions) are numeric, derived from the shared plot area.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `orientation` | `"bottom" \| "left" \| "top" \| "right"` | `"bottom"` | Which plot edge. |
+| `ticks` | `{ value: ReactNode; position: number }[]` | — | Explicit ticks (highest priority). |
+| `categories` | `ReactNode[]` | — | Band-centred ticks (bar axes). |
+| `domain` | `[number, number]` | — | Linear numeric range → sampled ticks. |
+| `tickCount` | `number` | `5` | Ticks sampled from `domain`. |
+| `format` | `(value: number) => ReactNode` | `String` | Format a domain tick. |
+| `showGrid` | `boolean` | `false` | Gridlines across the plot at each tick. |
+| `showLine` | `boolean` | `true` | Draw the baseline. |
+| `showTicks` | `boolean` | `true` | Draw tick marks. |
+| `tickSize` | `number` | `6` | Tick-mark length (user units). |
+| `label` | `ReactNode` | — | Axis title, outside the ticks. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** (category + value axes with grid), **Orientations** (all
+four edges), **Formatted** (thousands formatter), and **ExplicitTicks**
+stories.
