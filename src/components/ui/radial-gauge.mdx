@@ -1,0 +1,111 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/RadialGauge/Guidelines" />
+
+# Radial Gauge
+
+A circular indicator for a single scalar value within a known range — a posture
+score, scan coverage, percent complete. It offers two shapes: a classic `gauge`
+(a 270° arc with a gap at the bottom) and a full `ring`. The filled arc is
+painted with `currentColor`, so its colour comes entirely from the semantic
+`tone`; the track and centre readout are token-driven too.
+
+## Overview
+
+Radial Gauge visualises "how far along" a value is on a fixed scale. It is
+deterministic and presentational — the same `value` always produces the same
+arc, with no internal state. The value is exposed to assistive technology
+through the ARIA `meter` role, so it is announced independently of colour.
+
+## Usage
+
+- **Do** use it for a bounded scalar metric where the range is meaningful
+  (0–100 score, 0–max coverage), especially in dashboards and summary tiles.
+- **Do** give it a `label` so the meter has an accessible name.
+- **Don't** use it for indeterminate or open-ended progress — use the
+  **Progress Bar** (`value={null}`) instead.
+- **Don't** use it to compare many series or show a trend over time — reach for
+  a **Sparkline** or a full chart.
+
+## Anatomy
+
+A `role="meter"` container (`data-slot="radial-gauge"`) holding an
+`aria-hidden` `<svg>` and, optionally, a centred readout
+(`data-slot="radial-gauge-label"`). Inside the SVG: a `radial-gauge-track` (the
+full arc/ring) and a `radial-gauge-value` (the filled portion). For a full ring
+at 100% the value is a `<circle>`; otherwise it is an arc `<path>`.
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `shape` | `gauge` (default), `ring` | 270° arc with a bottom gap, or a full circle. |
+| `tone` | `accent` (default), `success`, `warning`, `danger`, `neutral` | Arc colour via `currentColor`. |
+| `size` | `sm`, `md` (default), `lg` | 64 / 96 / 128 px box. |
+| `thickness` | `thin`, `regular` (default), `thick` | Arc weight. |
+
+## States
+
+The value is always clamped to `[min, max]`, so `0` renders an empty track and
+values at or above `max` render a full arc/ring. There is no disabled or
+interactive state — the gauge is read-only.
+
+## Behavior
+
+- Controlled by the `value` prop against `min` (default `0`) and `max`
+  (default `100`). The drawn fraction is `(value − min) / (max − min)`, clamped
+  to `[0, 1]`.
+- The centre shows a rounded percentage by default. Pass `valueLabel` to show a
+  custom string (e.g. `"A+"`, `"340"`), pass `showValue={false}` to hide it, or
+  pass `children` for fully custom centre content.
+- No animation, so there is nothing to reconcile with reduced-motion
+  preferences.
+
+## Accessibility
+
+- The container has `role="meter"` with `aria-valuenow`, `aria-valuemin`, and
+  `aria-valuemax`; `label` supplies `aria-label` and `valueLabel` supplies
+  `aria-valuetext`. Always provide a `label`.
+- The SVG and the centre readout are `aria-hidden` so the value is announced
+  once, through the meter, not duplicated.
+- Meaning is carried by the numeric value and label, never by colour alone
+  (WCAG 1.4.1). Arc and track meet AA contrast against the surface in both
+  themes.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-primary` / `text-success` / `text-warning` / `text-destructive` / `text-muted-foreground` | `tone` → `currentColor` for the value arc. |
+| `stroke-surface-3` | The unfilled track. |
+| `text-foreground` | The centre readout. |
+| `--font-heading` | Centre readout typeface. |
+
+No colour, radius, or shadow is hard-coded; the arc inherits `currentColor` from
+the `tone` class.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `number` | — | Current value (clamped to `[min, max]`). |
+| `min` | `number` | `0` | Range minimum. |
+| `max` | `number` | `100` | Range maximum. |
+| `shape` | `"gauge" \| "ring"` | `"gauge"` | Arc shape. |
+| `tone` | `"accent" \| "success" \| "warning" \| "danger" \| "neutral"` | `"accent"` | Colour token. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Box size. |
+| `thickness` | `"thin" \| "regular" \| "thick"` | `"regular"` | Arc weight. |
+| `label` | `string` | — | Accessible name (`aria-label`). |
+| `showValue` | `boolean` | `true` | Render the centre readout. |
+| `valueLabel` | `string` | — | Override centre text and `aria-valuetext`. |
+| `children` | `ReactNode` | — | Custom centre content. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+The gauge works in both themes and directions via the global Storybook toolbar.
+Because the arc is radially symmetric and the value is announced through the
+meter role, no layout changes are needed for RTL/Persian; only surrounding
+labels flow with direction. See the **Shapes**, **Tones**, **GradeRing**, and
+**CustomRange** stories.
