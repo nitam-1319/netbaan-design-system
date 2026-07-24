@@ -1,0 +1,116 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ChartContainer/Guidelines" />
+
+# Chart Container
+
+The foundation every AEGIS chart is built on. It establishes one shared
+coordinate space and one shared series palette so the marks, `Axis`,
+`ChartLegend`, and `ChartTooltip` composed inside it always agree — a series
+keeps the same colour and name wherever it appears, and everything lines up
+against the same plot geometry.
+
+## Overview
+
+Chart Container does not draw data itself. It provides, via context
+(`useChart()`):
+
+- **Geometry** — a fixed `width` × `height` coordinate space (SVG user units),
+  a `margin` gutter, and the derived inner plot area (`innerWidth` /
+  `innerHeight`). The chart scales fluidly to its parent's width through the SVG
+  `viewBox`, so it is responsive without measuring the DOM.
+- **Series palette** — an optional `series` config resolved to the five AEGIS
+  `--color-chart-*` tokens, keyed for O(1) lookup.
+
+`ChartPlot` draws the `<svg>` and translates its child group to the plot origin,
+so inside it `(0, 0)` is the top-left of the plot area. Marks and `Axis` live in
+`ChartPlot`; `ChartLegend` and `ChartTooltip` are HTML siblings under
+`ChartContainer`.
+
+## Usage
+
+- **Do** wrap every chart in a Chart Container and give it a `label` — that is
+  the chart's accessible name.
+- **Do** declare a `series` list so colours and labels stay consistent across
+  the marks, legend, and tooltip.
+- **Do** read geometry and colour from `useChart()` inside your mark components
+  rather than hard-coding coordinates or colours.
+- **Don't** pass raw pixel colours to marks — use the resolved `colorVar` from
+  the series context (a chart token).
+- **Don't** reach for a full Chart Container for a tiny inline trend — use
+  **Sparkline** instead.
+
+## Anatomy
+
+A `role="group"` `<figure>` (`data-slot="chart-container"`) named by `label`,
+wrapping a context provider. Inside: `ChartPlot` renders an `<svg role="img">`
+(`data-slot="chart-plot"`) with a translated plot group
+(`data-slot="chart-plot-area"`) that holds the marks and axes; optional HTML
+siblings hold the legend and tooltip.
+
+## Behavior
+
+- Geometry is deterministic — the same `width` / `height` / `margin` always
+  yield the same plot area. Fluid sizing is pure CSS (`viewBox` + `width:100%`),
+  so there is no resize observer and nothing to reconcile with reduced motion.
+- `series` colours auto-assign by declaration order (wrapping after five). Pin a
+  slot with `color: 1…5` when a series must keep a specific hue.
+- `useChart()` throws if called outside a `ChartContainer`, so mis-composed
+  charts fail loudly at development time.
+
+## Accessibility
+
+- The figure carries `role="group"` with `aria-label={label}`; the plot SVG is
+  `role="img"` with the same name, so assistive tech announces the chart as a
+  single named image. Always provide a meaningful `label`.
+- Colour never carries meaning alone (WCAG 1.4.1): pair charts with a
+  `ChartLegend` (colour **and** text) and, for data tables of the underlying
+  values, expose a text alternative near the chart.
+- The five chart tokens are chosen to remain distinguishable and to meet AA
+  contrast against the surface in both Light and Dark themes.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1` … `--color-chart-5` | Categorical series palette (via resolved `colorVar`). |
+| `text-foreground` | Default figure text colour (axis labels, etc.). |
+
+No colour, size, or spacing is hard-coded in a mark: geometry comes from the
+numeric `width` / `height` / `margin` props and colour from the chart tokens.
+
+## API
+
+### `ChartContainer`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name for the figure and plot SVG. Required. |
+| `width` | `number` | `640` | Outer coordinate width (SVG user units). |
+| `height` | `number` | `320` | Outer coordinate height (SVG user units). |
+| `margin` | `Partial<{ top; right; bottom; left }>` | `{12,16,32,44}` | Plot gutter for axes/labels. |
+| `series` | `ChartSeries[]` | `[]` | Series metadata → stable colour + label. |
+| `children` | `ReactNode` | — | `ChartPlot` plus HTML siblings (legend/tooltip). |
+
+`ChartSeries` = `{ key: string; label?: string; color?: 1 | 2 | 3 | 4 | 5 }`.
+
+### `ChartPlot`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | container `label` | Override the plot SVG accessible name. |
+| `children` | `ReactNode` | — | SVG marks and `Axis`, in plot coordinates. |
+
+### `useChart()`
+
+Returns `{ label, width, height, margin, innerWidth, innerHeight, series,
+seriesByKey }`. Use it inside marks, `Axis`, `ChartLegend`, and `ChartTooltip`.
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** (bars), **Palette** (all five tokens), **MultiSeries**
+(bars + line sharing one space), and **CustomMargin** stories. Theme and
+direction come from the global Storybook toolbar; because the plot is a
+symmetric coordinate space, only surrounding labels flow with direction.
