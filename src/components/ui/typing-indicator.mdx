@@ -1,0 +1,72 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/TypingIndicator/Guidelines" />
+
+# Typing / Streaming Indicator
+
+The "…is composing / streaming" affordance for a conversation: three dots that
+pulse in sequence with the signature `animate-pulse-dot` motion. It reads as a
+live `status` region carrying a screen-reader label (default "Typing…"), so
+assistive tech announces the activity while the dots convey it visually.
+
+## When to use
+
+- **Do** show it while an assistant reply is being generated or streamed, or
+  while another participant is composing.
+- **Do** place it where the next turn will appear — often inside an assistant
+  **Message Bubble**.
+- **Don't** use it as a general loading spinner for a page or button — use
+  **Spinner**.
+- **Don't** leave it mounted after the reply arrives; swap it for the message.
+
+## Anatomy
+
+1. **Status region** — the live `role="status"` wrapper.
+2. **Screen-reader label** — the announced text (visually hidden).
+3. **Dots** — three decorative, sequentially pulsing dots.
+
+## Sizes
+
+| `size` | Dot |
+| --- | --- |
+| `sm` | 4px |
+| `md` | 6px (default) |
+| `lg` | 8px |
+
+## Behavior
+
+- The three dots animate with staggered `animation-delay` offsets so the pulse
+  travels left-to-right, using the shared `animate-pulse-dot` keyframe.
+- Motion is gated behind `motion-safe:`, so it respects
+  `prefers-reduced-motion` (the dots simply rest when motion is reduced).
+- Colour is inherited via `bg-current`: on its own the indicator is
+  `muted-foreground`; inside an assistant **Message Bubble** it picks up the
+  bubble's text colour automatically.
+
+## Accessibility
+
+- The wrapper is a `role="status"` `aria-live="polite"` region, so the label is
+  announced without interrupting the user.
+- The visible dots are `aria-hidden`; meaning is carried entirely by the
+  screen-reader `label`, never by the animation or colour alone (WCAG 1.4.1).
+- Dot contrast follows the inherited text colour, which meets AA in both themes
+  wherever the surrounding text does.
+
+## Design tokens
+
+| Token / utility | Applies to |
+| --- | --- |
+| `--muted-foreground` | Default dot colour (via `text-muted-foreground`) |
+| `animate-pulse-dot` | Signature pulsing motion |
+| `currentColor` | Inherited dot fill inside coloured surfaces |
+
+## API
+
+`TypingIndicator` — a live status region with three pulsing dots.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Dot size. |
+| `label` | `string` | `"Typing…"` | Announced screen-reader text. |
+
+The public API is closed: there is no `className` or `style` prop.
