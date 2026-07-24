@@ -1,0 +1,102 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ErrorState/Guidelines" />
+
+# Error State
+
+The empty state for **"we couldn't load or do this"** — a failed fetch, a broken
+widget, a rejected action. It is a config-driven convenience over `EmptyState`:
+a warning glyph tinted with the `destructive` token, a title/description, an
+optional collapsed error `detail`, and a primary **Retry** action.
+
+It sits alongside two siblings and should not be confused with them:
+
+- **Empty State** — "there's nothing here yet" (offer a create action).
+- **No Results** — "your search/filter matched nothing" (offer a clear action).
+- **Error State** — "something failed" (offer a retry action). ← this one.
+
+## When to use
+
+- **Do** use it when an operation *failed* and the user can meaningfully retry or
+  recover.
+- **Do** pass a short, human `description` and put the raw technical string in
+  `detail` (kept visually secondary).
+- **Do** wire `onRetry` so recovery is one click.
+- **Don't** use it for an empty-but-healthy collection — that's **Empty State**.
+- **Don't** dump a full stack trace into `detail`; keep it to a line.
+
+## Anatomy
+
+Composes `EmptyState`: an `EmptyStateIcon` holding a destructive-tinted warning
+triangle, an `EmptyStateTitle`, an `EmptyStateDescription`, an optional
+`error-state-detail` mono chip, and — when `onRetry` or `children` is provided —
+an `EmptyStateActions` row with the primary Retry **Button** (a `RotateCw` glyph
++ label) and any extra actions. The root carries `data-slot="error-state"` and
+`role="alert"`.
+
+## Variants
+
+Content-driven:
+
+- **With / without `detail`** — the raw error line is optional and rendered as a
+  muted, truncated mono chip.
+- **With / without retry** — `onRetry` renders the primary button; omit it (and
+  `children`) to show a message-only error.
+
+## Sizes
+
+`sm`, `default`, `lg` — forwarded to `EmptyState`, scaling icon, spacing, and
+padding together.
+
+## States
+
+Presentational; the interactions are the Retry button and any `children`
+actions, which behave as normal AEGIS `Button`s.
+
+## Behavior
+
+- No internal state — `onRetry` is called on click; the parent owns the fetch.
+- The icon glyph is tinted `text-destructive` while the icon circle stays neutral
+  (`bg-muted`), so the failure reads without shouting.
+
+## Accessibility
+
+- The root is `role="alert"` (overriding `EmptyState`'s `status`), so screen
+  readers announce failures assertively when they appear.
+- The warning glyph is decorative (`aria-hidden` via `EmptyStateIcon`); the
+  meaning is in the title, description, and detail text — never colour alone.
+- Retry is a real, focusable `Button` with a text label.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-destructive` | Warning glyph tint. |
+| `bg-muted` | Icon circle + detail chip fill. |
+| `text-foreground` | Title (via `EmptyState`). |
+| `text-muted-foreground` | Description + detail. |
+| `font-mono` | Error detail chip. |
+
+Plus the primary **Button** tokens for the retry action. No new colours are
+defined here.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Scale, forwarded to `EmptyState`. |
+| `title` | `ReactNode` | `"Something went wrong"` | Heading. |
+| `description` | `ReactNode` | retry sentence | Supporting text. |
+| `icon` | `ReactNode` | destructive `TriangleAlert` | Icon glyph. |
+| `detail` | `ReactNode` | — | Raw error line in a muted mono chip. |
+| `onRetry` | `() => void` | — | When set, renders a primary retry button. |
+| `retryLabel` | `ReactNode` | `"Try again"` | Retry button label. |
+| `children` | `ReactNode` | — | Extra action(s) after retry. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+Dark is the primary theme; switch theme and direction from the toolbar. Content
+is centered and mirrors cleanly in RTL; the retry glyph sits before its label in
+the current writing direction.
