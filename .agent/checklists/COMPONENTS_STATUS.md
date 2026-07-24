@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      75
+Components built:      76
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -100,6 +100,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 72b | timeline | ✅ | ✅ | ✅ | PARTIAL | Recommended/Data Display; token-only semantic ol/li (Timeline/TimelineItem/TimelineTitle/TimelineTime/TimelineDescription); per-item tone marker (currentColor) sm/md/lg, optional icon marker, connector rail auto-hidden on last item via CSS; Title/Time polymorphic (useRender), Time renders <time>; markers/connectors aria-hidden (meaning in text); distinct from Stepper (events vs actions); not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 107b | status-indicator | ✅ | ✅ | ✅ | PARTIAL | Recommended/Feedback; token-only bare presence dot ± inline label (distinct from chip-based StatusPill); status online/away/busy/offline/neutral/accent → colour, sm/md/lg, pulse (animate-pulse-dot) + ping (animate-status-ping, overrides pulse); dot uses currentColor; no visible label → sr-only accessible name (srLabel override) so meaning never colour-only; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
 | 188b | skip-to-content | ✅ | ✅ | ✅ | PARTIAL | Recommended/Accessibility; token-only bypass link (WCAG 2.4.1); sr-only until :focus-visible then reveals as fixed top-start popover surface (shadow-elevated, border-strong, accent-soft ring); href derived from targetId (default main-content), closed API omits href; sm/md/lg revealed size; logical start inset (RTL-safe); pair with <main id tabIndex=-1>; play test asserts href + sr-only + tab focus; not in conformance manifest; runner axes HUMAN_VERIFY_REQUIRED |
+| 70b | stat-tile | ✅ | ✅ | ✅ | PARTIAL | Recommended/Data Display (dep Sparkline); token-only compound KPI tile (StatTile + Header/Label/Icon/Value/Unit/Delta/Caption/Chart) with internal size context (sm/md/lg); StatTileDelta decouples `trend` (arrow direction) from `sentiment` (success/destructive/muted colour) with sr-only trend word so meaning is never colour-only; card surface (bg-card, border-border, rounded-xl), tabular-nums value, Chart slot for inline Sparkline; closed API; not in conformance manifest; play test asserts value + sr trend; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;

@@ -1,0 +1,104 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/StatTile/Guidelines" />
+
+# Stat / KPI Tile
+
+A compact tile for a single headline metric — a label, a large value, an
+optional delta (trend + change), a supporting caption, and an optional inline
+`Sparkline`. Use it in dashboards, overview grids, and summary rows where a
+number needs to read at a glance with just enough context to interpret it.
+
+## When to use
+
+- **Do** use it to surface one key metric per tile in a KPI row or overview grid.
+- **Do** pair a value with a `StatTileDelta` so the reader sees direction and
+  magnitude of change, and a `StatTileCaption` for the comparison window.
+- **Do** set `sentiment` on the delta when a direction isn't inherently good or
+  bad (a rising error rate trends `up` but is `negative`).
+- **Don't** cram several metrics into one tile — use one tile per number.
+- **Don't** use it for tabular data with many rows/columns — use **Table** or
+  **Data Table**.
+
+## Anatomy
+
+A root `StatTile` (`role="group"`) provides a `size` context to its slot parts:
+
+- `StatTileHeader` — a row holding the label and an optional trailing `StatTileIcon`.
+- `StatTileLabel` — the metric name (muted).
+- `StatTileIcon` — a decorative glyph in a soft square.
+- `StatTileValue` — the large headline number (tabular figures), optionally with
+  an inline `StatTileUnit`.
+- `StatTileDelta` — trend arrow + change, coloured by `sentiment`.
+- `StatTileCaption` — supporting text (e.g. the comparison window).
+- `StatTileChart` — a slot for an inline `Sparkline`.
+
+## Sizes
+
+`sm`, `md` (default), `lg` — scales padding, label, and value type together via
+the internal size context, so a tile stays proportional at any size.
+
+## States
+
+The tile is presentational; its variation comes from the delta:
+
+- **Positive / negative / neutral** — the `sentiment` prop drives colour
+  (`success` / `destructive` / `muted-foreground`).
+- **Up / down / flat** — the `trend` prop drives the arrow glyph.
+
+## Behavior
+
+- No internal state — a pure layout/presentation composite.
+- `trend` (direction) and `sentiment` (good/bad) are **decoupled** so meaning is
+  never carried by colour alone. When `sentiment` is omitted it defaults from
+  `trend` (up→positive, down→negative, flat→neutral).
+- The optional chart is any AEGIS `Sparkline`; its `tone` should agree with the
+  metric's sentiment.
+
+## Accessibility
+
+- The root is a `group`; give it an accessible name in context where needed
+  (e.g. the surrounding heading) — the label text names the metric.
+- The delta emits a visually-hidden trend word ("Up" / "Down" / "No change",
+  overridable via `srTrendLabel`) so the trend is announced, not implied by the
+  arrow or colour (WCAG 1.4.1).
+- Icons and the sparkline are decorative (`aria-hidden` / a decorative sparkline);
+  the number and caption carry the meaning.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-card` / `text-card-foreground` | Tile surface. |
+| `border-border` | Tile hairline border. |
+| `rounded-xl` | Tile corner radius. |
+| `text-muted-foreground` | Label, caption, unit, neutral delta. |
+| `text-foreground` | Headline value. |
+| `text-success` / `text-destructive` | Positive / negative delta. |
+| `bg-muted` | Icon chip background. |
+
+## API
+
+### `StatTile`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Scales the tile and provides size context to slot parts. |
+
+### `StatTileDelta`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `trend` | `"up" \| "down" \| "flat"` | `"flat"` | Direction → arrow glyph. |
+| `sentiment` | `"positive" \| "negative" \| "neutral"` | derived from `trend` | Good/bad → colour. |
+| `srTrendLabel` | `string` | `"Up"` / `"Down"` / `"No change"` | Accessible trend word. |
+
+Slot parts (`StatTileHeader`, `StatTileLabel`, `StatTileIcon`, `StatTileValue`,
+`StatTileUnit`, `StatTileCaption`, `StatTileChart`) take their element's native
+props. The API is closed: `className` and `style` are not accepted on any part.
+
+## Examples
+
+Dark is the primary theme; switch theme and direction from the toolbar. The tile
+is a column of flex rows, so it mirrors cleanly in RTL (the label/icon row and
+the value/unit baseline both follow the writing direction).
