@@ -1,0 +1,89 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ResponseFeedback/Guidelines" />
+
+# Response Feedback
+
+A thumbs-up / thumbs-down control for rating an assistant response. It is a
+single-choice toggle: pick a rating, switch to the other, or press the active
+one again to clear it.
+
+## Overview
+
+AI surfaces need a lightweight way to capture "was this good?". Response
+Feedback is that control — two icon buttons that report `up`, `down`, or `null`
+when cleared, ready to wire to your telemetry.
+
+## Usage
+
+- **Do** place it beneath or beside an assistant **Message Bubble**.
+- **Do** treat `null` (cleared) as "no rating given".
+- **Don't** use it for multi-point ratings — reach for **Rating** (stars).
+- **Don't** rely on colour alone to show the choice; the pressed state is also
+  exposed via `aria-pressed` and the buttons keep their labels.
+
+## Anatomy
+
+A `role="group"` (`data-slot="response-feedback"`) containing two native
+buttons — `response-feedback-up` (ThumbsUp) and `response-feedback-down`
+(ThumbsDown) — each with an accessible label and `aria-pressed`.
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `size` | `sm`, `md` (default), `lg` | Button scale. |
+
+## States
+
+- **Idle** — muted glyphs on a transparent surface.
+- **Pressed up** — success-toned glyph on a soft success wash.
+- **Pressed down** — destructive-toned glyph on a soft destructive wash.
+- **Disabled** — both buttons dimmed and non-interactive.
+
+## Behavior
+
+- Controlled via `value` + `onValueChange`, or uncontrolled via `defaultValue`.
+- Selecting a rating replaces the previous one; selecting the active rating
+  again clears it to `null`. `onValueChange` fires with the resolved value each
+  time.
+
+## Accessibility
+
+- Native `<button>`s, so Tab/Enter/Space work out of the box.
+- Each button has a descriptive `aria-label` ("Good response" / "Bad response")
+  and `aria-pressed` reflecting selection — so state is not colour-only
+  (WCAG 1.4.1). The group is named via `groupLabel`.
+- The 3px `accent-soft` focus ring is visible in both themes.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-muted-foreground` | Idle glyphs. |
+| `text-success` + `color-mix(var(--success) …)` | Pressed up. |
+| `text-destructive` + `bg-destructive/12` | Pressed down. |
+| `ring-accent-soft` / `border-accent-strong` | Focus ring. |
+
+No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `"up" \| "down" \| null` | — | Controlled value. |
+| `defaultValue` | `"up" \| "down" \| null` | `null` | Uncontrolled initial value. |
+| `onValueChange` | `(v: "up" \| "down" \| null) => void` | — | Fires with the next value. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button scale. |
+| `groupLabel` | `string` | "Was this response helpful?" | Group accessible name. |
+| `upLabel` | `string` | "Good response" | Up button label. |
+| `downLabel` | `string` | "Bad response" | Down button label. |
+| `disabled` | `boolean` | — | Disable both buttons. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Sizes**, **PreselectedUp**, and **InContext** stories. The control
+works in both themes and directions via the global toolbar; the buttons keep
+their order in RTL (the pair is not directional).
