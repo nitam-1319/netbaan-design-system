@@ -1,0 +1,97 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SuggestionChips/Guidelines" />
+
+# AI Suggestion Chips
+
+A wrapping row of tappable prompt starters or quick replies for a conversational
+surface — "Summarise findings", "Show critical assets", "Draft a remediation".
+Each chip is the **interactive sibling of Tag**: the same compact chip
+silhouette, but a real `<button>` that fires `onSelect` and carries the AEGIS
+control focus ring.
+
+## When to use
+
+- **Do** offer 2–6 suggested prompts or quick replies beneath a composer or an
+  assistant turn, to lower the cost of the next action.
+- **Do** keep labels short and action-oriented.
+- **Don't** use it to display non-interactive metadata — that is **Tag**.
+- **Don't** use it for a single primary action — that is a **Button**.
+
+## Anatomy
+
+1. **Group** — the labelled, wrapping `role="group"` container.
+2. **Chip** — a `<button>` with an optional leading icon and a text label.
+
+## Sizes
+
+| `size` | Text |
+| --- | --- |
+| `sm` | 0.70rem |
+| `md` | 0.75rem (default) |
+| `lg` | 0.80rem |
+
+Chips inherit the group's `size` unless a `SuggestionChip` sets its own.
+
+## States
+
+Default, hover (`border-strong` + `muted` fill), focus-visible (3px
+`accent-soft` ring + accent border), and disabled (dimmed, non-interactive).
+`disabled` on the group disables every chip; a per-item `disabled` disables one.
+
+## Behavior
+
+- **Config-driven**: pass `items` (each `{ label, value?, icon?, disabled? }`)
+  and `onSelect(value, index)`. `value` defaults to the label when it is a
+  string.
+- **Composed**: omit `items` and render `SuggestionChip` children directly for
+  full control (custom content, individual handlers).
+- Chips are `type="button"`, so they never submit a surrounding form.
+
+## Accessibility
+
+- The container is a `role="group"` named by `label` (default "Suggestions"), so
+  the set is announced as a related group.
+- Each chip is a native `<button>` — fully keyboard operable (Tab to reach,
+  Enter/Space to activate) with a visible 3px `accent-soft` focus ring meeting
+  WCAG 2.2 focus appearance in both themes.
+- Leading icons are `aria-hidden`; the accessible name comes from the chip text.
+- The row wraps with `flex-wrap` and logical gap, so it reflows and mirrors
+  correctly in RTL; Persian labels render in Vazirmatn from the global theme.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border` | Resting chip border |
+| `--border-strong` | Hover border |
+| `--muted` | Hover fill |
+| `--accent-strong` | Focus border |
+| `--accent-soft` | Focus ring |
+| `--background` | Chip fill |
+| `--foreground` | Chip text |
+
+## API
+
+`SuggestionChips` — the labelled group; renders `items` or `SuggestionChip`
+children.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `SuggestionItem[]` | — | Config-driven chips. |
+| `onSelect` | `(value: string, index: number) => void` | — | Fired on chip activation. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Chip size (inherited by chips). |
+| `label` | `string` | `"Suggestions"` | Accessible group name. |
+| `disabled` | `boolean` | `false` | Disable every chip. |
+| `children` | `ReactNode` | — | `SuggestionChip`s when `items` is omitted. |
+
+`SuggestionChip` — one chip button.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `icon` | `ReactNode` | — | Leading decorative icon. |
+| `size` | `"sm" \| "md" \| "lg"` | inherited | Override the group size. |
+| `disabled` | `boolean` | `false` | Disable this chip. |
+| `onClick` | `(event) => void` | — | Native click handler. |
+
+The public API is closed: there is no `className` or `style` prop.
