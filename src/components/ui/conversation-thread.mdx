@@ -1,0 +1,79 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ConversationThread/Guidelines" />
+
+# Conversation Thread
+
+The container for a chat transcript — a vertical `log` of **Message Bubble**
+turns. It owns the transcript semantics (a labelled `role="log"` region with an
+optional polite live region for streamed replies) and the rhythm between turns
+(a tokened gap). Each turn's alignment and colour stay with the individual
+**Message Bubble**; the thread is only responsible for grouping and announcing
+them.
+
+## When to use
+
+- **Do** use it to lay out an assistant/user conversation, a support chat, or
+  any turn-by-turn transcript.
+- **Do** set `live="polite"` when assistant replies stream in, so new turns are
+  announced.
+- **Don't** use it for a single message — render a **Message Bubble** directly.
+- **Don't** use it as a general vertical stack — that is **Stack**.
+
+## Anatomy
+
+1. **Log region** — the labelled `role="log"` container.
+2. **Turns** — the child **Message Bubble**s, in chronological order.
+
+## Spacing
+
+`gap` sets the space between turns:
+
+| `gap` | Space |
+| --- | --- |
+| `sm` | 6px |
+| `md` | 12px (default) |
+| `lg` | 20px |
+
+## Behavior
+
+- The thread does **not** cap its own height or scroll. When the transcript
+  should scroll, compose it inside a **Scroll Area** (or any scroll container),
+  so height stays a layout decision rather than a baked-in style.
+- `live="polite"` wires an additions-only live region
+  (`aria-relevant="additions"`, `aria-atomic={false}`) — ideal for streamed
+  assistant replies. `live="off"` (default) leaves announcement to the
+  individual turns (each **Message Bubble** already carries a screen-reader
+  author label).
+
+## Accessibility
+
+- The container is a `role="log"` region named by `label` (default
+  "Conversation"), so assistive tech recognises it as a running transcript.
+- With `live="polite"`, appended turns are announced without interrupting; the
+  region is not atomic, so only the new turn is read, not the whole history.
+- Turn order follows DOM order; direction (LTR/RTL) is inherited, and each
+  bubble mirrors its own alignment. Persian content renders in Vazirmatn from
+  the global theme.
+
+## Design tokens
+
+The thread itself only consumes spacing tokens via the `gap` scale; all colour
+lives in the child **Message Bubble**s.
+
+| Token scale | Applies to |
+| --- | --- |
+| spacing (`gap-*`) | Space between turns |
+
+## API
+
+`ConversationThread` — a labelled `log` that stacks conversation turns.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `gap` | `"sm" \| "md" \| "lg"` | `"md"` | Space between turns. |
+| `label` | `string` | `"Conversation"` | Accessible name for the log region. |
+| `live` | `"off" \| "polite"` | `"off"` | Announce appended turns politely. |
+| `children` | `ReactNode` | — | The conversation turns (Message Bubbles). |
+
+The public API is closed: there is no `className` or `style` prop.
