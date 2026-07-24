@@ -1,0 +1,116 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/CurrencyInput/Guidelines" />
+
+# Currency Input
+
+A numeric money field. It edits as a plain number and, on blur, reformats to a
+grouped amount (e.g. `1,234.50`) behind a leading currency symbol; on focus it
+returns to the raw number so editing never fights a caret-jumping mask. The
+committed value is a real `number` (or `null` when empty), exposed through
+`onValueChange`. It is a sibling of **Text Field** and **Number Input**, wearing
+the AEGIS Input shell (resting `border-strong`, `accent-strong` hover border,
+3px `accent-soft` focus-within ring, and the 32 / 40 / 48px size scale) with a
+symbol adornment and an optional trailing unit.
+
+## Scope
+
+This component covers the **currency** case of the roadmap's "Currency / Masked
+Input" slot. A general-purpose mask engine (phone numbers, card numbers,
+arbitrary patterns) is a distinct, larger primitive with different caret and
+validation semantics, and is intentionally **not** bundled here (see
+`.agent/DECISIONS.md`). Reach for a dedicated masked input when that lands.
+
+## When to use
+
+- **Do** use it to capture a monetary amount — a price, budget, bid, or limit.
+- **Do** rely on the numeric `onValueChange` value for calculations; never parse
+  the formatted string yourself.
+- **Don't** use it for non-money numbers with steppers or units — use
+  **Number Input**.
+- **Don't** use it to mask phone or card numbers.
+
+## Anatomy
+
+1. **Label** _(optional)_ — persistent field name above the control.
+2. **Shell** — the bordered container (`border-strong`) holding the parts.
+3. **Symbol** — the leading currency glyph adornment (default `$`).
+4. **Input** — the right-aligned, tabular-figures numeric control.
+5. **Suffix** _(optional)_ — a trailing unit such as a currency code.
+6. **Helper / error** — guidance below; swaps to a danger message when `error`
+   is set.
+
+## Sizes
+
+| `size` | Height |
+| --- | --- |
+| `sm` | 32px |
+| `md` | 40px (default) |
+| `lg` | 48px |
+
+## States
+
+Default, hover (`accent-strong` border), focus-within (3px `accent-soft` ring +
+accent border), disabled, and error (danger border + message). Focus swaps the
+display to the raw editable number; blur restores the grouped format.
+
+## Behavior
+
+- **Controlled**: pass `value` (a `number | null`) + `onValueChange`.
+  **Uncontrolled**: pass `defaultValue`. `onValueChange` fires with the parsed
+  number (or `null`) as the user types.
+- **Formatting** is deterministic and prop-driven: `groupSeparator` (default
+  `,`), `decimalSeparator` (default `.`), and `decimals` (default `2`). It does
+  not depend on the runtime locale, so it renders identically everywhere.
+- **Editing** only permits digits, a single decimal mark, and a leading minus;
+  grouping is applied on blur, never mid-keystroke, so the caret never jumps.
+- **Clamping**: `min` / `max` clamp the committed value on blur.
+- **Forms**: pass `name` to emit a hidden input carrying the raw numeric value
+  for native submission.
+
+## Accessibility
+
+- The label is associated via `htmlFor`; helper/error text is linked through
+  `aria-describedby`, and the control carries `aria-invalid` when `error` is set.
+- `inputMode="decimal"` brings up the numeric keypad on touch devices.
+- The symbol and suffix adornments are decorative text within the shell; the
+  accessible name comes from the label.
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes; contrast is verified for default, disabled, and error states in light
+  and dark.
+- Numeric amounts read left-to-right; the label, helper text, and shell use
+  logical properties so they mirror correctly in RTL.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Resting shell border |
+| `--accent-strong` | Hover / focus border |
+| `--accent-soft` | Focus ring |
+| `--border` | Adornment dividers |
+| `--background` | Shell fill |
+| `--destructive` | Error border + message |
+| `--muted-foreground` | Symbol, suffix, placeholder, helper text |
+
+## API
+
+`CurrencyInput` — renders a labelled money field with a symbol adornment.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` / `defaultValue` | `number \| null` | — | Controlled / uncontrolled amount. |
+| `onValueChange` | `(value: number \| null) => void` | — | Fired with the parsed number. |
+| `symbol` | `ReactNode` | `"$"` | Leading currency adornment. |
+| `suffix` | `ReactNode` | — | Trailing unit (e.g. a currency code). |
+| `decimals` | `number` | `2` | Fraction digits when formatted. |
+| `groupSeparator` | `string` | `","` | Thousands separator. |
+| `decimalSeparator` | `string` | `"."` | Decimal mark. |
+| `min` / `max` | `number` | — | Clamp the committed value on blur. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control height. |
+| `label` / `description` / `error` | `ReactNode` | — | Label, helper, validation. |
+| `disabled` / `required` | `boolean` | `false` | Field flags. |
+| `name` | `string` | — | Hidden input for form submission. |
+
+The public API is closed: there is no `className` or `style` prop, and `type` is
+fixed to a numeric text control.

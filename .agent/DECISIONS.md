@@ -179,3 +179,20 @@ browser runner to verify it; shipping the correct single-select increment now �
 (2026-07-22c).
 Impact: A follow-up run adds a checkbox-backed multi-select group as an additive layer (not a fork of
 `ChoiceCard`). Until then, for multi-select compose `Checkbox` inside `Card`.
+
+## 2026-07-24 — Currency / Masked Input ships as Currency Input; generic mask deferred
+Status: accepted
+Decision: Roadmap slot #52 ("Currency / Masked Input") ships as **`currency-input.tsx`**, a numeric
+money field (deterministic group/decimal separators, blur-format / focus-raw so the caret never jumps,
+committed value is a real `number | null` via `onValueChange`). A general-purpose **mask engine**
+(phone, card, arbitrary pattern tokens) is NOT bundled in this component and is recorded as a separate
+future primitive.
+Reason: The two have different contracts — a currency field is a numeric value with formatting on
+display, whereas a mask is a per-character pattern with insert/delete caret bookkeeping and its own
+validation surface. Fusing them into one closed API would muddy both. Shipping the correct, verifiable
+currency increment now (with the scope stated in `currency-input.mdx`) beats a half-built universal
+mask with no browser runner to verify caret behaviour (safety rule #3). Mirrors Combobox (2026-07-23),
+Choice Card (2026-07-23b), DataTable (2026-07-22c).
+Impact: A later run may add a dedicated masked-input primitive (e.g. on a pattern spec) as an additive
+component; `currency-input` stays the money-specific field. The queue row for #52 is satisfied by
+`currency-input` with this carve-out noted.
