@@ -1,0 +1,114 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/TagInput/Guidelines" />
+
+# Tag Input
+
+A field for building a set of short tokens — labels, keywords, recipients, or
+filters. Committed values render as removable **Tag** chips inside the AEGIS
+Input shell, with a bare text input trailing them for the next entry. It is a
+sibling of **Text Field** and **Search Input**, sharing the shell (resting
+`border-strong`, `accent-strong` hover border, 3px `accent-soft` focus-within
+ring, and the 32 / 40 / 48px size scale), but it grows in height as chips wrap
+onto new rows.
+
+## When to use
+
+- **Do** use it when a field holds several independent short values the user
+  types themselves — tags, keywords, email recipients, allow-lists.
+- **Do** reach for it over a free-text field when each value should be edited or
+  removed individually.
+- **Don't** use it when the values come from a fixed known set — use a
+  **Combobox** (multi-select) or **Checkbox Group** so users pick rather than
+  type.
+- **Don't** use it for one value — that is a **Text Field**.
+
+## Anatomy
+
+1. **Label** _(optional)_ — persistent field name above the control.
+2. **Shell** — the bordered, wrapping container (`border-strong`) that is also a
+   labelled `group`.
+3. **Tags** — the committed values as removable `Tag` chips.
+4. **Input** — the trailing bare text input for the next entry.
+5. **Helper / error** — guidance below; swaps to a danger message when `error`
+   is set.
+
+## Sizes
+
+| `size` | Min height | Tag size |
+| --- | --- | --- |
+| `sm` | 32px | `sm` |
+| `md` | 40px (default) | `default` |
+| `lg` | 48px | `lg` |
+
+The shell is a **minimum** height; it expands as tags wrap.
+
+## States
+
+Default, hover (`accent-strong` border), focus-within (3px `accent-soft` ring +
+accent border), disabled (field and every remove affordance), and error (danger
+border + message). When `maxTags` is reached, further additions are ignored.
+
+## Behavior
+
+- **Controlled**: pass `value` (a `string[]`) + `onValueChange`.
+  **Uncontrolled**: pass `defaultValue`. `onValueChange` fires with the next
+  list on every add or remove.
+- **Add**: type and press a commit key (`addKeys`, default `["Enter"]`); values
+  are trimmed and empty entries ignored. `addOnBlur` also commits the pending
+  draft when the field loses focus.
+- **Remove**: click a chip's remove button, or press **Backspace** on an empty
+  input to remove the last tag.
+- **Duplicates**: rejected by default; set `allowDuplicates` to permit repeats.
+- **Cap**: `maxTags` stops additions once reached.
+- **Forms**: pass `name` to emit one hidden input per tag so the set posts with
+  a native `<form>` submission.
+
+## Accessibility
+
+- The shell is a `group` labelled by the visible label; the label is also
+  associated to the trailing input via `htmlFor`.
+- Each chip's remove control is a real `<button>` with an explicit
+  `aria-label` ("Remove <tag>"); the whole flow is keyboard-operable (type +
+  Enter to add, Backspace to remove the last, Tab to reach each remove button).
+- Helper/error text is linked through `aria-describedby`, and the input carries
+  `aria-invalid` when `error` is set.
+- Focus is a 3px `accent-soft` ring meeting WCAG 2.2 focus appearance in both
+  themes.
+- Layout uses logical properties and `flex-wrap`, so chips flow and mirror
+  correctly in RTL; Persian tags render in Vazirmatn from the global theme.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Resting shell border |
+| `--accent-strong` | Hover / focus border |
+| `--accent-soft` | Focus ring |
+| `--background` | Shell fill |
+| `--destructive` | Error border + message |
+| `--muted-foreground` | Placeholder, helper text |
+| `--secondary` | Default `Tag` chip fill |
+
+## API
+
+`TagInput` — renders a labelled, wrapping group of removable `Tag` chips plus a
+trailing text input.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` / `defaultValue` | `string[]` | — | Controlled / uncontrolled tag list. |
+| `onValueChange` | `(value: string[]) => void` | — | Fired with the next list. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control height + chip size. |
+| `label` | `ReactNode` | — | Field label. |
+| `description` | `ReactNode` | — | Helper text. |
+| `error` | `ReactNode` | — | Validation message + error styling. |
+| `placeholder` | `string` | — | Hint shown while there are no tags. |
+| `addKeys` | `string[]` | `["Enter"]` | Keys that commit the current draft. |
+| `addOnBlur` | `boolean` | `false` | Also commit the draft on blur. |
+| `allowDuplicates` | `boolean` | `false` | Permit repeated tag values. |
+| `maxTags` | `number` | — | Maximum number of tags. |
+| `disabled` / `required` | `boolean` | `false` | Field flags. |
+| `name` | `string` | — | Emits a hidden input per tag for form submission. |
+
+The public API is closed: there is no `className` or `style` prop.
