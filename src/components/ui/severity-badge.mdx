@@ -1,0 +1,97 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SeverityBadge/Guidelines" />
+
+# Severity Badge
+
+A severity marker for the five-level security scale — **Critical, High, Medium,
+Low, Info** — mapped onto the dedicated AEGIS `--sev-*` tokens. It is the
+severity-scoped sibling of **Badge**: where Badge carries generic status tones,
+Severity Badge encodes the ASM severity ladder so a finding's severity reads
+identically wherever it appears — finding cards, tables, filter chips.
+
+## Overview
+
+Security surfaces (attack-surface management, vulnerability lists) rank items by
+a fixed severity ladder. Severity Badge gives that ladder one canonical
+presentation, so the same level always looks the same. The level is spelled out
+as text with a leading dot, so severity is never conveyed by colour alone.
+
+## Usage
+
+- **Do** use it anywhere a finding, alert, or asset carries a
+  Critical/High/Medium/Low/Info rating.
+- **Do** keep the visible level text — screen-reader and colour-blind users rely
+  on it.
+- **Don't** use it for generic status (active/paused, success/error) — that is
+  **Badge** or **Status Pill**.
+- **Don't** invent new levels; the five-rung scale is the contract.
+
+## Anatomy
+
+A `<span>` (`data-slot="severity-badge"`, `data-severity="<level>"`) containing
+an optional dot marker (`data-slot="severity-badge-dot"`, `aria-hidden`) and the
+level label. Renders as any element via `render` for links/buttons.
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `severity` | `critical`, `high`, `medium`, `low`, `info` | Level → colour + default label. |
+| `appearance` | `soft` (default), `outline` | Tinted fill, or a bordered chip. |
+| `size` | `sm`, `default`, `lg` | Chip scale. |
+
+`soft` and `outline` both keep **coloured text on a safe background** (a faint
+wash of its own hue, or the surface) so contrast holds in both themes. A solid
+fill is intentionally omitted: several severity hues (amber, grey) cannot meet
+AA against white or dark text without per-level foreground tokens.
+
+## States
+
+Severity Badge is presentational. When rendered as an interactive element via
+`render` (a link/button), it shows the standard AEGIS focus ring.
+
+## Behavior
+
+- Fully controlled by `severity`; there is no internal state.
+- The visible label defaults to the capitalised level name; pass `children` to
+  extend it (e.g. `"Critical · CVSS 9.8"`).
+- `showDot={false}` removes the dot when the label alone is enough.
+
+## Accessibility
+
+- Severity is carried by the **text label**, not colour (WCAG 1.4.1); the dot is
+  `aria-hidden`.
+- `data-severity` exposes the level to tests and styling hooks without relying
+  on visual parsing.
+- Both appearances meet AA contrast for their coloured text in light and dark.
+- With `render`, the element keeps a visible focus state and correct semantics.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-sev-critical` / `text-sev-high` / `text-sev-medium` / `text-sev-low` / `text-sev-info` | Level text + dot (`bg-current`). |
+| `border-sev-*` | Outline appearance border. |
+| `color-mix(... var(--sev-*) ...)` | Soft appearance tinted fill. |
+
+No colour is hard-coded; every hue comes from a `--sev-*` token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `severity` | `"critical" \| "high" \| "medium" \| "low" \| "info"` | — | Severity level (required). |
+| `appearance` | `"soft" \| "outline"` | `"soft"` | Visual style. |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Chip scale. |
+| `showDot` | `boolean` | `true` | Render the leading dot marker. |
+| `children` | `ReactNode` | level name | Override the visible label. |
+| `render` | `ReactElement` | `<span />` | Element polymorphism (Base UI `useRender`). |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+The badge works in both themes and directions via the global toolbar. In RTL the
+dot leads the label on the inline-start edge automatically (flex + gap flow with
+direction). See the **Levels**, **Outline**, and **CustomLabel** stories.
