@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/LoadingOverlay/Guidelines" />
+
+# Loading Overlay
+
+A scrim that covers a region while it loads, centering an AEGIS **Spinner** (and
+an optional label) over the content beneath. Use it for in-place busy states — a
+panel refetching, a form submitting, a card recalculating — where the existing
+layout should stay put and simply be masked, rather than collapsing to a
+skeleton.
+
+## When to use
+
+- **Do** use it to mask a region during a short, indeterminate async operation
+  while keeping its content mounted (so layout doesn't jump).
+- **Do** use `fullscreen` for a blocking, page-level busy state.
+- **Don't** use it for first-load of an empty region — a **Skeleton** better
+  communicates the shape of incoming content.
+- **Don't** leave it open indefinitely; on failure swap to an **Error State**.
+
+## Anatomy
+
+- **Wrapping mode** (`children` provided) — a relative `loading-overlay-root`
+  wraps the content; the `loading-overlay` scrim is `absolute inset-0` over it.
+- **Bare mode** (no `children`) — the scrim renders alone and fills its nearest
+  positioned ancestor (or the viewport with `fullscreen`).
+- The scrim centers a `Spinner` and, unless `hideLabel`, a visible label.
+
+## Variants
+
+- **Wrapping vs. bare** — driven by whether you pass `children`.
+- **Scoped vs. `fullscreen`** — `absolute` over an ancestor vs. `fixed` over the
+  viewport.
+- **Plain vs. `blur`** — an optional `backdrop-blur-sm` behind the scrim.
+
+## Sizes
+
+`spinnerSize` forwards to the `Spinner` scale (`xs` · `sm` · `default` · `lg`
+(default) · `xl`).
+
+## States
+
+- **`open`** — controlled visibility. In wrapping mode the content stays mounted
+  and the scrim toggles; in bare mode the component renders nothing when closed.
+
+## Behavior
+
+- Controlled by `open` (default `true`); the parent owns the async lifecycle.
+- Wrapping mode keeps children mounted beneath the scrim so the region doesn't
+  reflow when loading toggles.
+- The scrim uses a translucent `bg-background/60` so context stays visible.
+
+## Accessibility
+
+- The scrim is `role="status"` with `aria-live="polite"` and `aria-busy="true"`,
+  so assistive tech announces the busy state when it appears.
+- The `Spinner` carries the accessible `label`; the visible label text is
+  `aria-hidden` to avoid a double announcement (meaning is never colour-only).
+- Because the covered content remains in the DOM, consider disabling underlying
+  controls while `open` so they aren't operated through the scrim.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-background/60` | Translucent scrim. |
+| `backdrop-blur-sm` | Optional blur behind the scrim. |
+| `text-muted-foreground` | Visible label. |
+| `Spinner` (`tone="primary"`) | Spinning indicator (`animate-spin`). |
+
+No new colours are defined here — the scrim reuses the `background` token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | `true` | Whether the scrim is shown. |
+| `label` | `string` | `"Loading"` | Accessible + visible label. |
+| `hideLabel` | `boolean` | `false` | Hide the visible label (stays accessible). |
+| `spinnerSize` | `"xs" \| "sm" \| "default" \| "lg" \| "xl"` | `"lg"` | Spinner size. |
+| `blur` | `boolean` | `false` | Blur the content behind the scrim. |
+| `fullscreen` | `boolean` | `false` | Cover the viewport (`fixed`) vs. the ancestor. |
+| `children` | `ReactNode` | — | Content to cover (enables wrapping mode). |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+Dark is the primary theme; switch theme and direction from the toolbar. The
+scrim and its centered spinner are symmetric, so the overlay is direction-neutral
+and renders identically in RTL.
