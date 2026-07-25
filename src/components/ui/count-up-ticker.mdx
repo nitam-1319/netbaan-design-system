@@ -1,0 +1,67 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Count-up Ticker/Guidelines" />
+
+# Count-up Ticker
+
+Animates a number from a start value up (or down) to a target, easing to a stop.
+Use it for KPI headlines, stat tiles, and dashboard counters where a brief count
+draws the eye to a figure as it lands.
+
+## When to use
+
+- **Do** use it for a headline metric that benefits from a moment of motion —
+  revenue, uptime, asset count.
+- **Do** keep the `duration` short (≈1–1.5s); a long count is more annoying than
+  impressive.
+- **Don't** use it for values that update frequently or in real time — the
+  animation restarts each time and reads as jitter. Show those as plain text.
+- **Don't** animate precise figures a user must read immediately (an account
+  balance on a transfer screen); the meaning shouldn't wait for the count.
+
+## Behavior
+
+- Counts from `from` (default 0) to `value` with an ease-out curve over
+  `duration` ms. When `value` changes, it animates from the current displayed
+  number to the new target.
+- **Reduced motion:** when the user prefers reduced motion, it snaps straight to
+  the target with no animation.
+- **`startOnView`:** set it to only begin counting once the ticker scrolls into
+  view (via `IntersectionObserver`); it falls back to counting immediately where
+  that API is unavailable.
+- **Formatting:** deterministic and locale-independent by default (comma
+  thousands, dot decimals, `decimals` places). Pass `format` for locale-specific
+  or custom output; add `prefix` / `suffix` for currency or unit affixes.
+
+## Accessibility
+
+- The animated digits are `aria-hidden` — a rapidly changing number is noise to
+  a screen reader. A visually-hidden copy of the **final** formatted value
+  (including `prefix` / `suffix`) carries the meaning, so assistive tech reads
+  the number once and correctly, never mid-count (WCAG 4.1.2).
+- Reduced-motion users get the value with no animation at all (WCAG 2.3.3).
+- `tabular-nums` keeps the digits from shifting width as they change.
+
+## Design tokens
+
+Colour is inherited (`currentColor`) so the ticker matches its surrounding text
+or stat tile — it introduces no colour of its own. Size steps map to the
+typography scale.
+
+## API
+
+`CountUpTicker` — renders a `<span>` with an animated and an sr-only value.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `number` | — | Target value to count to. |
+| `from` | `number` | `0` | Value to count from. |
+| `duration` | `number` | `1200` | Animation length in ms. |
+| `decimals` | `number` | `0` | Fixed decimal places. |
+| `prefix` | `ReactNode` | — | Content before the number (e.g. `$`). |
+| `suffix` | `ReactNode` | — | Content after the number (e.g. `%`). |
+| `format` | `(value: number) => string` | grouped | Override the number formatter. |
+| `size` | `"sm" \| "md" \| "lg" \| "xl" \| "inherit"` | `"inherit"` | Type size; `inherit` matches surrounding text. |
+| `startOnView` | `boolean` | `false` | Start counting when scrolled into view. |
+
+The public API is closed: there is no `className` or `style` prop.
