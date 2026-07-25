@@ -3,6 +3,7 @@ import { expect, fireEvent, screen, within } from "storybook/test"
 import * as React from "react"
 import { Copy, Download, Pencil, Share2, Star, Trash2 } from "lucide-react"
 
+import { cn } from "@/lib/utils"
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -44,14 +45,32 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** A dashed drop-zone-style area used across the stories as the trigger. */
-function TriggerArea({ label = "Right-click here" }: { label?: string }) {
+/**
+ * A dashed drop-zone-style area used across the stories as the trigger.
+ *
+ * NOTE: `ContextMenuTrigger` renders this via Base UI's `render` prop, which
+ * injects the `contextmenu` handler, ref and data attributes into the element.
+ * A custom render component MUST therefore forward its ref and spread the
+ * incoming props onto a real DOM node — otherwise the trigger is inert and the
+ * menu never opens.
+ */
+const TriggerArea = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<"div"> & { label?: string }
+>(function TriggerArea({ label = "Right-click here", className, ...props }, ref) {
   return (
-    <div className="border-border-strong text-muted-foreground flex h-40 w-72 select-none items-center justify-center rounded-lg border border-dashed text-sm">
+    <div
+      ref={ref}
+      className={cn(
+        "border-border-strong text-muted-foreground flex h-40 w-72 select-none items-center justify-center rounded-lg border border-dashed text-sm",
+        className
+      )}
+      {...props}
+    >
       {label}
     </div>
   )
-}
+})
 
 export const Default: Story = {
   render: () => (
@@ -149,8 +168,8 @@ export const RadioItems: Story = {
       <ContextMenu>
         <ContextMenuTrigger render={<TriggerArea label="Right-click to sort" />} />
         <ContextMenuContent>
-          <ContextMenuGroupLabel>Sort by</ContextMenuGroupLabel>
           <ContextMenuRadioGroup value={sort} onValueChange={setSort}>
+            <ContextMenuGroupLabel>Sort by</ContextMenuGroupLabel>
             <ContextMenuRadioItem value="name">Name</ContextMenuRadioItem>
             <ContextMenuRadioItem value="date">Date modified</ContextMenuRadioItem>
             <ContextMenuRadioItem value="size">Size</ContextMenuRadioItem>

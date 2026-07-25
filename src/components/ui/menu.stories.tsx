@@ -133,16 +133,18 @@ function CheckboxDemo() {
     <Menu>
       <MenuTrigger render={<Button variant="outline">View options</Button>} />
       <MenuContent>
-        <MenuGroupLabel>Show findings</MenuGroupLabel>
-        <MenuCheckboxItem
-          checked={showResolved}
-          onCheckedChange={setShowResolved}
-        >
-          Resolved
-        </MenuCheckboxItem>
-        <MenuCheckboxItem checked={showInfo} onCheckedChange={setShowInfo}>
-          Informational
-        </MenuCheckboxItem>
+        <MenuGroup>
+          <MenuGroupLabel>Show findings</MenuGroupLabel>
+          <MenuCheckboxItem
+            checked={showResolved}
+            onCheckedChange={setShowResolved}
+          >
+            Resolved
+          </MenuCheckboxItem>
+          <MenuCheckboxItem checked={showInfo} onCheckedChange={setShowInfo}>
+            Informational
+          </MenuCheckboxItem>
+        </MenuGroup>
       </MenuContent>
     </Menu>
   )
@@ -171,8 +173,8 @@ function RadioDemo() {
     <Menu>
       <MenuTrigger render={<Button variant="outline">Density</Button>} />
       <MenuContent>
-        <MenuGroupLabel>Row density</MenuGroupLabel>
         <MenuRadioGroup value={density} onValueChange={setDensity}>
+          <MenuGroupLabel>Row density</MenuGroupLabel>
           <MenuRadioItem value="compact">Compact</MenuRadioItem>
           <MenuRadioItem value="comfortable">Comfortable</MenuRadioItem>
           <MenuRadioItem value="spacious">Spacious</MenuRadioItem>

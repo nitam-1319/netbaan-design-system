@@ -280,3 +280,24 @@ which already matches the reference. Also added `storybook-static` to the ESLint
 `build-storybook` gate emits bundles with inline eslint-disable comments for rules our config doesn't
 load, which ESLint then flagged as "rule definition not found" — pre-existing gap, exposed by gate order.
 All gates green (tsc, build, lint, conformance 110/110, build-storybook) + browser-verified screenshot.
+
+## 2026-07-25e — ContextMenu/Menu story fixes: `render` components must forward ref+props; group labels must live inside a Group/RadioGroup
+Status: accepted
+Decision: Fixed two runtime breakages in the Menu-family stories (surfaced as "Context Menu isn't
+working" in Storybook).
+(1) ContextMenu's `TriggerArea` story helper was a plain function component passed to Base UI's
+`render` prop but it neither forwarded its ref nor spread incoming props onto a DOM node. Base UI
+injects the `contextmenu` handler, ref and data-attributes through `render`, so the trigger was inert
+and the menu never opened. Rewrote it as `React.forwardRef` that spreads `{...props}` and merges
+`className` (cn) onto the div.
+(2) `ContextMenuGroupLabel` / `MenuGroupLabel` (Base UI `Menu.GroupLabel`) require a `MenuGroupContext`
+— they must be nested inside a `Group` or `RadioGroup`. Three stories placed the label directly in the
+content (ContextMenu RadioItems, Menu RadioItems, Menu CheckboxItems), throwing Base UI error #31 and
+crashing the story render. Moved each label inside its `RadioGroup` (which provides the group context),
+and wrapped the checkbox story's label+items in a `MenuGroup`.
+Reason: Both are Base UI composition contracts, not component defects — `context-menu.tsx` / `menu.tsx`
+are unchanged. Documented here because both are easy-to-repeat gotchas: any custom element handed to a
+Base UI `render` prop must forward ref+props, and any `*GroupLabel` must sit within a group. Verified in
+a headless Chromium against the built Storybook (right-click opens every ContextMenu story; Menu
+checkbox/radio stories render and open without error #31). All gates green (tsc, lint, conformance
+110/110, build, build-storybook).
