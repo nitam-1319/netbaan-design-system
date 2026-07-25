@@ -7,6 +7,7 @@ npx tsc --noEmit
 npm run build
 npm run lint
 node .agent/scripts/verify-conformance.mjs <name>   # reference-fidelity gate (rules/REFERENCE_FIDELITY.md)
+npm run build-storybook   # compiles all stories + MDX (runs here; catches MDX/story errors)
 ```
 
 **Environment-dependent (only "passing" if actually executed this session):**
