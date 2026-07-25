@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Validation Message/Guidelines" />
+
+# Validation Message
+
+The line shown after a form control is validated — an error ("Enter a valid
+email"), a caution ("This username is unusual"), or a confirmation ("Username
+available"). It renders a `<p>` with a **live-region role** so assistive
+technology announces it as it appears, a leading tone icon, and the message
+text.
+
+## Validation Message vs Helper Text
+
+**Helper Text** is neutral guidance shown before and during input.
+**Validation Message** is the outcome of a check — shown after a rule passes or
+fails — and it is announced via a live region. Don't recolour helper text to
+signal an error; swap in (or add) a `ValidationMessage`.
+
+## Validation Message vs `FormField`'s `FieldError`
+
+`FormField`'s `FieldError` is bound to the Base UI `Field` context and shows /
+hides itself from the field's validity, auto-wiring `aria-describedby`.
+`ValidationMessage` carries no context — you control when it renders and set the
+`id` + control `aria-describedby` yourself. Use `FormField` for the wired path;
+use `ValidationMessage` when composing a field by hand. See
+`.agent/DECISIONS.md` (2026-07-25c).
+
+## Tone
+
+| `tone` | Meaning | Role | Colour |
+| --- | --- | --- | --- |
+| `error` | A rule failed; the value must change | `alert` (assertive) | `destructive` |
+| `warning` | Allowed but worth a second look | `alert` (assertive) | `warning` |
+| `success` | A check passed | `status` (polite) | `success` |
+
+`error` is the default. Never rely on colour or icon alone — the text always
+carries the meaning.
+
+## Anatomy
+
+A leading tone icon (`CircleAlert` / `TriangleAlert` / `CircleCheck`), decorative
+(`aria-hidden`), followed by the message text. Override the icon with `icon`, or
+pass `icon={false}` for text only.
+
+## Sizes
+
+| `size` | Text |
+| --- | --- |
+| `sm` | 0.7rem |
+| `md` | 0.75rem (default) |
+| `lg` | 0.875rem |
+
+## Behavior
+
+- Render it **conditionally** — mount it when the check resolves. Because the
+  root carries `role="alert"` (or `status`), mounting it announces the message.
+- `error` / `warning` announce assertively; `success` announces politely so it
+  doesn't interrupt.
+
+## Accessibility
+
+- Give it a stable `id` and set the control's `aria-describedby` to that `id`;
+  for `error`, also set `aria-invalid` on the control (WCAG 3.3.1, 3.3.3).
+- If a field shows both helper text and an error, reference both ids in
+  `aria-describedby` (helper first, error last).
+- The icon is `aria-hidden`; meaning is in the text, so it never depends on
+  colour or icon alone (WCAG 1.4.1).
+- Every tone's text meets WCAG AA contrast against the surface in both themes.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--destructive` | Error tone text + icon |
+| `--warning` | Warning tone text + icon |
+| `--success` | Success tone text + icon |
+
+## API
+
+`ValidationMessage` — renders a `<p role="alert" | "status">` with an icon and
+text.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `tone` | `"error" \| "warning" \| "success"` | `"error"` | Semantic tone; also sets the role. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Text and icon size. |
+| `icon` | `ReactNode \| false` | tone default | Override the leading icon, or hide it. |
+| `children` | `ReactNode` | — | The message text. |
+
+Standard attributes (`id`, …) pass through. The public API is closed: there is
+no `className` or `style` prop.
