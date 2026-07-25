@@ -50,7 +50,7 @@ const segmentVariants = cva(
     "relative inline-flex items-center justify-center gap-1.5 rounded-md font-medium whitespace-nowrap select-none",
     "text-muted-foreground transition-all outline-none",
     "hover:text-foreground",
-    "data-[pressed]:bg-background data-[pressed]:text-foreground data-[pressed]:shadow-elevated",
+    "data-[pressed]:bg-surface-3 data-[pressed]:text-foreground data-[pressed]:glass-panel",
     "focus-visible:ring-3 focus-visible:ring-accent-soft",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0"

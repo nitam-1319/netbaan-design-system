@@ -437,3 +437,43 @@ short word rendered in a token chip (`surface-3` / `muted-foreground`); selectio
 check + ARIA, never colour alone. Not in the conformance manifest (no reference page). All machine gates
 green (tsc, lint, build, conformance 114/114, build-storybook); browser story/axe/visual-regression
 HUMAN_VERIFY_REQUIRED (no sandbox runner), run in CI.
+## 2026-07-25k — Ground-up DNA re-audit: revert last round's over-corrections that drifted FROM the reference; fix broken --track; subtle neutral glass on cards
+Status: accepted
+Decision: A complete design-DNA extraction from every reference `.dc.html` (not just the component
+pages) plus two deep component-by-component audits found that parts of 2026-07-25f/h had over-corrected
+PAST the reference into a different look. Reverted those and fixed several real bugs.
+(1) **The reference has NO glassmorphism / NO backdrop-blur** — it even force-resets `backdrop-filter:
+none`. Every surface is a SOLID token fill; "depth" is layered solid surfaces (bg<card<surface<surface-2
+<surface-3) + hairline translucent borders + occasional NEUTRAL `--shadow`. So the accent-tinted
+`shadow-bloom`/`shadow-soft` I had put on resting cards/tiles/tabs was itself a drift. Replaced with a new
+`glass-panel` utility (`--glass`, baked per theme = a faint top inner highlight + a soft **neutral** drop)
+on Card default, StatTile, Tabs indicator, and the SegmentedControl active segment. This gives the subtle
+"glass panel" read the user asked for in a way that actually shows on a near-black canvas (edge highlight,
+not blur — true backdrop-blur is invisible on uniform dark), WITHOUT the non-reference purple bloom. The
+beam Card frame moved from `shadow-soft` → neutral `shadow-elevated` (the reference masthead uses `--shadow`).
+`shadow-soft` now remains only on the Primary button, whose reference explicitly has a softened colored
+shadow.
+(2) **Badge solid reverted to the reference rule.** The reference `.badge--solid` is FLAT `background:
+var(--tone)` + WHITE text, ink only on neutral (`--badge-solid-fg: #fff`). 2026-07-25f had changed it to a
+subtle gradient + near-black `--on-tone` ink — a drift. Reverted to `text-white bg-(--tone)`; neutral stays
+ink; accent solid keeps `bg-primary-solid` + white (the one AA-safe concession, ≈ the reference's #9373d9
+accent base but deep enough for white to clear AA in both themes). Trade-off: per the reference's own rule,
+white-on-light-tone solid badges (warning/success) fall below 4.5:1 — this now matches the reference; an
+accessible override remains available if the user re-prioritises AA over fidelity.
+(3) **`--track` token was undefined** — referenced by `tag.tsx` (resting chip remove-button) and needed by
+the toggle off-track. Defined per theme (`rgba(255,255,255,.10)` dark / `rgba(24,20,34,.14)` light, the
+reference values) + `--color-track`/`bg-track`. Switch off-track moved `bg-surface-3` (solid) → `bg-track`
+(the reference's translucent groove). Also fixed the SegmentedControl active segment, which filled with
+`bg-background` (the DARKEST token → read recessed under its `surface-2` track) → `bg-surface-3` (lighter =
+raised), and the small-size Toggle geometry (inset 2px / travel 16px; md/lg already correct at 3px).
+Reason: The user reported the system still "conflicts with the reference" and drifts toward generic/shadcn.
+The root causes were (a) my own prior accent-bloom + gradient-badge additions (not in the reference), and
+(b) genuine bugs (undefined token, inverted layering, geometry). Kept from prior rounds everything that IS
+faithful: the 145° `accent-fill` gradient on checkbox/radio/toggle/slider, the `var(--accent)`→`--primary`
+collision fixes + gate, the `border-strong`→`border-border-strong` sweep, `border-primary` focus borders.
+Impact: Cards/tiles/tabs/segments now use a neutral subtle glass, not a purple bloom; solid badges match
+the reference (flat + white). `--track`/`--glass` tokens + `glass-panel`/`bg-track` utilities added.
+Deliberately KEPT (documented deviation, in the user's favour): existing `backdrop-blur` on modal scrims /
+navbar / app-shell — the user explicitly likes the glass feel; the reference's no-blur is noted and these can
+be stripped on request. All gates green (tsc, lint, conformance 112/112, build, build-storybook); browser
+screenshots verified (neutral-glass cards, flat white solid badges, translucent toggle groove).

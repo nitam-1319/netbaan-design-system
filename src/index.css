@@ -64,6 +64,7 @@
     /* Fixed near-black ink for text on vivid solid tone fills (badges); AA on
        every tone. Same value in both themes (tone bg is theme-independent). */
     --color-on-tone: var(--on-tone);
+    --color-track: var(--track);
     --color-text-dim: var(--muted-foreground);
     --color-text-faint: var(--text-faint);
     --color-sev-critical: var(--sev-critical);
@@ -135,6 +136,10 @@
     /* Soft accent-tinted elevation (baked per theme; --accent here == primary purple). */
     --shadow-soft: 0 0 0 1px var(--border-strong), 0 12px 30px -12px rgba(124, 83, 212, 0.55);
     --shadow-bloom: 0 16px 42px -22px rgba(124, 83, 212, 0.38);
+    /* Off-track groove (reference --track): low-opacity ink on light. */
+    --track: rgba(24, 20, 34, 0.14);
+    /* Subtle glass-panel depth for light cards — crisp top highlight + soft violet-tinted drop. */
+    --glass: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 10px 30px -22px rgba(90, 68, 150, 0.16);
     /* Deep purple for text-bearing solid fills; white ≥ 4.5:1. */
     --primary-solid: #6a44c0;
     /* Near-black ink for text on solid tone fills. */
@@ -199,6 +204,13 @@
     /* Soft accent-tinted elevation (baked per theme; --accent here == primary purple). */
     --shadow-soft: 0 0 0 1px var(--border-strong), 0 12px 30px -12px rgba(147, 115, 217, 0.55);
     --shadow-bloom: 0 16px 42px -22px rgba(147, 115, 217, 0.5);
+    /* Off-track groove for the toggle + resting chip remove-button (reference --track):
+       a low-opacity translucent white/ink, so it reads as a muted groove on any surface. */
+    --track: rgba(255, 255, 255, 0.10);
+    /* Subtle "glass panel" depth for resting cards on the near-black canvas — a faint
+       top inner highlight + a soft NEUTRAL drop (no accent tint). True backdrop-blur is
+       invisible on a dark uniform bg, so the glass read comes from the edge highlight. */
+    --glass: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 30px -20px rgba(0, 0, 0, 0.55);
     /* Deep purple for text-bearing solid fills; white ≥ 4.5:1 on dark theme too. */
     --primary-solid: #7a52d0;
     /* Near-black ink for text on solid tone fills. */
@@ -252,6 +264,12 @@
 /* Subtle inner top highlight that lifts filled controls off the flat plane. */
 @utility highlight-top {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+/* Subtle glass-panel depth for resting cards/tiles — a faint top inner highlight
+   + a soft NEUTRAL drop (per theme via --glass). Replaces the non-reference
+   accent bloom; reads as understated glass on the near-black canvas. */
+@utility glass-panel {
+    box-shadow: var(--glass);
 }
 
 @layer base {

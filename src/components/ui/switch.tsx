@@ -21,13 +21,13 @@ import { cn } from "@/lib/utils"
  */
 
 const switchTrackVariants = cva(
-  "peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full p-[3px] outline-none transition-[background-color,box-shadow] duration-200 bg-surface-3 data-[checked]:accent-fill focus-visible:ring-[3px] focus-visible:ring-accent-soft aria-invalid:ring-[3px] aria-invalid:ring-destructive/30 disabled:cursor-not-allowed disabled:opacity-45 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
+  "peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full outline-none transition-[background-color,box-shadow] duration-200 bg-track data-[checked]:accent-fill focus-visible:ring-[3px] focus-visible:ring-accent-soft aria-invalid:ring-[3px] aria-invalid:ring-destructive/30 disabled:cursor-not-allowed disabled:opacity-45 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
   {
     variants: {
       size: {
-        sm: "h-[20px] w-9",
-        md: "h-[26px] w-11",
-        lg: "h-[30px] w-13",
+        sm: "h-[20px] w-9 p-[2px]",
+        md: "h-[26px] w-11 p-[3px]",
+        lg: "h-[30px] w-13 p-[3px]",
       },
     },
     defaultVariants: { size: "md" },
@@ -39,7 +39,7 @@ const switchThumbVariants = cva(
   {
     variants: {
       size: {
-        sm: "size-4 data-[checked]:translate-x-[14px]",
+        sm: "size-4 data-[checked]:translate-x-[16px]",
         md: "size-5 data-[checked]:translate-x-[18px]",
         lg: "size-6 data-[checked]:translate-x-[22px]",
       },

@@ -67,7 +67,7 @@ function TabsIndicator(
       data-slot="tabs-indicator"
       renderBeforeHydration
       className={cn(
-        "absolute top-1/2 left-0 z-0 h-7 -translate-y-1/2 rounded-md bg-surface-3 shadow-soft",
+        "absolute top-1/2 left-0 z-0 h-7 -translate-y-1/2 rounded-md bg-surface-3 glass-panel",
         "w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)]",
         "transition-[width,transform] duration-200 ease-out"
       )}

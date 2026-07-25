@@ -42,7 +42,7 @@ const useStatTileSize = () => React.useContext(StatTileContext).size
 /* ------------------------------------------------------------------ root -- */
 
 const statTileVariants = cva(
-  "flex flex-col rounded-xl border border-border bg-card text-card-foreground shadow-bloom",
+  "flex flex-col rounded-xl border border-border bg-card text-card-foreground glass-panel",
   {
     variants: {
       size: {

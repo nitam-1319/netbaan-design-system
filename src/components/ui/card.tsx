@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils"
  * pins to the top-right.
  *
  * Variants (matching the reference):
- *  - `default`  — resting content surface: hairline border + the soft, diffuse
- *                 accent bloom (`shadow-bloom`).
+ *  - `default`  — resting content surface: solid card + hairline border + a
+ *                 subtle neutral glass panel (`glass-panel`) — no accent bloom.
  *  - `elevated` — the deep overlay-grade `--shadow` for floating/featured cards.
  *  - `beam`     — the signature animated border: a rotating conic-gradient arc
  *                 revealed as a 1.5px frame around an inset panel (masthead beam).
@@ -25,7 +25,7 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-card rounded-xl border border-border shadow-bloom",
+        default: "bg-card rounded-xl border border-border glass-panel",
         elevated: "bg-card rounded-xl border border-border shadow-elevated",
         beam: "rounded-[18.5px] bg-card",
       },
@@ -43,7 +43,7 @@ function Card({ variant = "default", children, ...props }: CardProps) {
       <div
         data-slot="card"
         data-variant="beam"
-        className="relative isolate overflow-hidden rounded-[20px] bg-border-strong shadow-soft"
+        className="relative isolate overflow-hidden rounded-[20px] bg-border-strong shadow-elevated"
         {...props}
       >
         {/* Signature beam: rotating conic-gradient arc clipped to a 1.5px frame. */}
