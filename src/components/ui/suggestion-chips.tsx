@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils"
 const chipVariants = cva(
   cn(
     "inline-flex w-fit shrink-0 items-center gap-1 rounded-full border border-border bg-background font-medium whitespace-nowrap text-foreground transition-colors outline-none",
-    "hover:border-strong hover:bg-muted hover:text-foreground",
+    "hover:border-border-strong hover:bg-muted hover:text-foreground",
     "focus-visible:border-accent-strong focus-visible:ring-3 focus-visible:ring-accent-soft",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5"

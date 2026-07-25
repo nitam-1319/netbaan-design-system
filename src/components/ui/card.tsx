@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
  *
  * Variants (matching the reference):
  *  - `default`  — resting content surface: hairline border + the soft, diffuse
- *                 accent glow (`shadow-soft`).
+ *                 accent bloom (`shadow-bloom`).
  *  - `elevated` — the deep overlay-grade `--shadow` for floating/featured cards.
  *  - `beam`     — the signature animated border: a rotating conic-gradient arc
  *                 revealed as a 1.5px frame around an inset panel (masthead beam).

@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils"
 
 const skipLinkVariants = cva(
   cn(
-    "sr-only rounded-lg border border-strong bg-popover text-popover-foreground font-medium shadow-elevated transition-colors",
+    "sr-only rounded-lg border border-border-strong bg-popover text-popover-foreground font-medium shadow-elevated transition-colors",
     // Reveal on focus: pull it out of sr-only and pin it to the top-start corner.
     "focus-visible:not-sr-only focus-visible:fixed focus-visible:start-4 focus-visible:top-4 focus-visible:z-[100] focus-visible:inline-flex focus-visible:items-center",
     "outline-none focus-visible:border-accent-strong focus-visible:ring-3 focus-visible:ring-accent-soft"

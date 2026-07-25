@@ -36,7 +36,7 @@ const textareaVariants = cva(
   cn(
     "peer field-sizing-content w-full resize-y bg-clip-padding font-medium text-foreground placeholder:text-muted-foreground outline-none transition-[color,background-color,border-color,box-shadow] duration-150",
     "hover:border-accent-strong",
-    "focus-visible:border-accent focus-visible:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-soft",
+    "focus-visible:border-primary focus-visible:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-soft",
     "aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20",
     "read-only:bg-surface-3 read-only:text-muted-foreground",
     "disabled:pointer-events-none disabled:resize-none disabled:cursor-not-allowed disabled:opacity-50"
@@ -62,7 +62,7 @@ const textareaVariants = cva(
       state: {
         default: "",
         hover: "border-accent-strong",
-        focus: "border-accent bg-surface ring-[3px] ring-accent-soft",
+        focus: "border-primary bg-surface ring-[3px] ring-accent-soft",
         error: "border-destructive ring-[3px] ring-destructive/20",
         success: "border-success ring-[3px] ring-success/20",
         disabled: "pointer-events-none resize-none opacity-50",

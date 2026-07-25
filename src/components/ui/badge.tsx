@@ -25,7 +25,8 @@ const badgeVariants = cva(
       // Fill treatment — reads the tone via the `--tone` custom property below.
       variant: {
         soft: "text-(--tone) bg-[color-mix(in_oklch,var(--tone),transparent_86%)] border-[color-mix(in_oklch,var(--tone),transparent_76%)]",
-        solid: "text-white bg-(--tone) border-transparent",
+        solid:
+          "text-on-tone bg-[linear-gradient(145deg,var(--tone),color-mix(in_oklch,var(--tone),white_16%))] border-transparent",
         outline: "text-(--tone) bg-transparent border-(--tone)",
       },
       // Semantic hue — sets `--tone` to an AEGIS colour token (no literals).
@@ -50,7 +51,11 @@ const badgeVariants = cva(
     compoundVariants: [
       // Neutral steps off the card surface rather than a tinted wash / white fill.
       { tone: "neutral", variant: "soft", className: "bg-surface-3 border-border-strong" },
-      { tone: "neutral", variant: "solid", className: "bg-surface-3 text-foreground" },
+      { tone: "neutral", variant: "solid", className: "bg-none bg-surface-3 text-foreground" },
+      // Accent is the only tone whose colour flips per theme, so a single dark
+      // ink can't stay AA in both. Use white on the deep brand purple (faithful
+      // "white on purple") — passes AA in light and dark.
+      { tone: "accent", variant: "solid", className: "bg-none bg-primary-solid text-white" },
     ],
     defaultVariants: { tone: "neutral", variant: "soft", size: "md" },
   }

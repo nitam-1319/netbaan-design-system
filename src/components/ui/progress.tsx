@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
 const progressIndicatorVariants = cva("h-full w-full flex-1 transition-all", {
   variants: {
     tone: {
-      default: "bg-primary",
+      default: "accent-fill",
       success: "bg-success",
       warning: "bg-warning",
       critical: "bg-sev-critical",

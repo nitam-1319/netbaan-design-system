@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils"
 
 const groupVariants = cva(
   cn(
-    "flex w-full items-stretch overflow-hidden rounded-lg border border-strong bg-background text-foreground transition-colors",
+    "flex w-full items-stretch overflow-hidden rounded-lg border border-border-strong bg-background text-foreground transition-colors",
     "focus-within:border-accent-strong focus-within:ring-3 focus-within:ring-accent-soft",
     "has-data-[disabled]:pointer-events-none has-data-[disabled]:opacity-50",
     "data-[invalid]:border-destructive data-[invalid]:focus-within:ring-destructive/30"

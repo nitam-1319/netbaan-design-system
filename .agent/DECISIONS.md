@@ -348,3 +348,47 @@ virtualization, Combobox multi-select, static chart renderers, Carousel multi-pe
 image is shown at a time. Not in the conformance manifest (no reference page; follows the general design
 language). All machine gates green (tsc, lint, build, conformance 112/112, build-storybook); browser
 story/axe/visual-regression are HUMAN_VERIFY_REQUIRED (no sandbox runner) and run in CI.
+## 2026-07-25h — Reference-fidelity audit: restore the accent GRADIENT language, fix the --accent collision everywhere, fix text-on-primary contrast, add depth
+Status: accepted
+Decision: A three-agent audit against the reference `.dc.html` pages found the library had drifted
+"flat/solid/shadcn-like" for several converging reasons; fixed all of them.
+(1) **The `--accent` token collision was systemic, not just the button.** The reference names its brand
+purple `--accent`; here that name is the muted hover surface (#22202b) and the purple is `--primary`.
+Every `linear-gradient(145deg,var(--accent),var(--accent-strong))` (checkbox/indeterminate fill, radio
+dot, switch on-track) was rendering a muddy dark→purple gradient, and every focus/checked `border-accent`
+(checkbox, radio, text-field, textarea, select, form-field) plus radio's selected ring was painting the
+near-invisible #22202b instead of lighting up purple. Centralised the fill as a new `@utility accent-fill`
+(= `linear-gradient(145deg, var(--primary), var(--accent-strong))`) and switched all four fills to it;
+switched the borders to `border-primary`. Added a conformance gate forbidding bare `var(--accent)` in
+components so this collision cannot recur (it has now bitten twice).
+(2) **Flat fills → the reference's gradient/raised language.** slider fill and progress(default) → `accent-fill`;
+Tabs active indicator was `bg-background` (the DARKEST token → read as a recessed hole *below* its
+`surface-2` track) → `bg-surface-3` + `shadow-soft` so it sits raised; stat-tile had no elevation while
+peer Card does → added `shadow-bloom`.
+(3) **The `border-strong` typo swept the library.** ~13 input-shell components wrote `border-strong`
+(no such token → border-COLOR silently dropped, so resting outlines never rendered — a real flatness
+source) instead of `border-border-strong`. Fixed all.
+(4) **Text-on-primary contrast (WCAG AA).** dark-theme `--primary` #9373d9 gives white only ~3.7:1.
+Added `--primary-solid` (deep purple, baked per theme: #7a52d0 dark / #6a44c0 light; white ≥ 5.3:1) for
+text-bearing solid fills → message-bubble user turn and stepper "complete" disc. Badge `solid` was
+`text-white bg-(--tone)` failing AA on nearly every tone (warning 1.9:1, success 2.6:1, accent 2.75:1,
+danger 3.9:1) → now a subtle same-hue gradient + fixed near-black ink `--on-tone` #0c0b12 (AA on all
+tones, 5.0–10.2:1); the accent tone (the one tone whose colour flips per theme) is special-cased to white
+on `--primary-solid` to stay AA in both themes AND keep the reference's "white on purple" identity. Marks
+(checkbox/radio white check, switch on-glyph) only need 3:1 and were verified (≥3.69:1); the switch
+on-glyph was raised from `accent-strong` (2:1 on the white thumb) to `--primary` (3.69:1).
+Reason: The "flat/solid/shadcn" feel was the sum of these: the signature accent fill is a GRADIENT in the
+reference, and ours was either muddy (collision) or flat; resting borders were silently missing (typo);
+and one key surface (active tab) was inverted. Contrast was fixed with deepened purples / dark ink so it
+meets AA while keeping the purple-gradient identity — the reference's own white-on-light-purple is itself
+sub-AA, so faithful-AND-accessible required this adaptation (the user explicitly asked for both).
+Impact: 30 component files + tokens. New public surface: `Card`/badge behaviour unchanged; three new
+utilities (`accent-fill`, `highlight-top`, plus `bg-primary-solid`/`text-on-tone` colour utilities) and
+tokens `--primary-solid` / `--on-tone`. NOT changed: the muted `bg-accent` menu/nav/sidebar highlight
+surfaces — those intentionally use #22202b + `accent-foreground` for readable, AA-safe rows; converting
+them to purple would INTRODUCE contrast failures. Trade-off noted: non-accent solid badges (danger/critical
+reds) now use dark ink rather than the conventional white-on-red, because white fails AA on every one of
+our tone colours; dark ink is the consistent AA-guaranteed choice. Verified objectively with a WCAG
+contrast script (all fixed pairs pass) + browser screenshots (vivid purple gradients on checkbox/radio/
+switch/slider, readable gradient badges, raised active tab). All gates green (tsc, lint, conformance
+110/110 incl. the new gate, build, build-storybook).

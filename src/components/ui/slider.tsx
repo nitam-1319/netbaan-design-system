@@ -133,7 +133,7 @@ function Slider({
             data-slot="slider-indicator"
             className={cn(
               "rounded-full",
-              invalid ? "bg-destructive" : "bg-primary"
+              invalid ? "bg-destructive" : "accent-fill"
             )}
           />
           {Array.from({ length: thumbCount }).map((_, i) => (

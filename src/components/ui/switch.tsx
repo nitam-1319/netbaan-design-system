@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils"
  */
 
 const switchTrackVariants = cva(
-  "peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full p-[3px] outline-none transition-[background-color,box-shadow] duration-200 bg-surface-3 data-[checked]:bg-[linear-gradient(145deg,var(--accent),var(--accent-strong))] focus-visible:ring-[3px] focus-visible:ring-accent-soft aria-invalid:ring-[3px] aria-invalid:ring-destructive/30 disabled:cursor-not-allowed disabled:opacity-45 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
+  "peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full p-[3px] outline-none transition-[background-color,box-shadow] duration-200 bg-surface-3 data-[checked]:accent-fill focus-visible:ring-[3px] focus-visible:ring-accent-soft aria-invalid:ring-[3px] aria-invalid:ring-destructive/30 disabled:cursor-not-allowed disabled:opacity-45 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
   {
     variants: {
       size: {
@@ -98,7 +98,7 @@ function Switch({
             <Check
               aria-hidden
               strokeWidth={3}
-              className="hidden size-2.5 text-accent-strong in-data-[checked]:block"
+              className="hidden size-2.5 text-primary in-data-[checked]:block"
             />
             <span
               aria-hidden

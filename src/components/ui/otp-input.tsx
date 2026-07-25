@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils"
 
 const slotVariants = cva(
   cn(
-    "m-0 rounded-lg border border-strong bg-background text-center font-medium text-foreground tabular-nums transition-colors",
+    "m-0 rounded-lg border border-border-strong bg-background text-center font-medium text-foreground tabular-nums transition-colors",
     "outline-none",
     "hover:border-accent-strong",
     "focus:border-accent-strong focus:ring-3 focus:ring-accent-soft",

@@ -65,7 +65,7 @@ function FieldLabel(
 const fieldControlVariants = cva(
   cn(
     "border-border-strong bg-background text-foreground placeholder:text-muted-foreground dark:bg-surface-2/30 flex w-full rounded-lg border bg-clip-padding transition-all outline-none",
-    "focus-visible:border-accent focus-visible:ring-accent-soft focus-visible:ring-3",
+    "focus-visible:border-primary focus-visible:ring-accent-soft focus-visible:ring-3",
     "disabled:pointer-events-none disabled:opacity-50",
     "aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-invalid:ring-3 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
   ),

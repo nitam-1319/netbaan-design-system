@@ -50,7 +50,7 @@ const indicatorVariants = cva(
         md: "size-8 text-sm [&_svg]:size-4",
       },
       status: {
-        complete: "border-primary bg-primary text-primary-foreground",
+        complete: "border-transparent bg-primary-solid text-primary-foreground",
         current: "border-primary bg-background text-primary ring-accent-soft ring-[3px]",
         upcoming: "border-border-strong bg-background text-muted-foreground",
       },

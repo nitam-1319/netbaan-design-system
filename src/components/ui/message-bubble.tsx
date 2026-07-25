@@ -36,7 +36,7 @@ const bubbleVariants = cva(
   {
     variants: {
       author: {
-        user: "max-w-[min(42rem,85%)] rounded-2xl rounded-ee-sm bg-primary px-4 py-2.5 text-primary-foreground",
+        user: "max-w-[min(42rem,85%)] rounded-2xl rounded-ee-sm bg-primary-solid px-4 py-2.5 text-primary-foreground",
         assistant:
           "max-w-[min(42rem,85%)] rounded-2xl rounded-es-sm border border-border bg-surface-2 px-4 py-2.5 text-foreground",
         system:

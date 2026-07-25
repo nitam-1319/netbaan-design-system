@@ -34,7 +34,7 @@ const themeToggleVariants = cva(
   {
     variants: {
       variant: {
-        outline: "border-strong bg-background text-foreground hover:bg-muted",
+        outline: "border-border-strong bg-background text-foreground hover:bg-muted",
         ghost:
           "border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
         soft: "border-transparent bg-muted text-foreground hover:bg-border",

@@ -55,8 +55,8 @@ const selectTriggerVariants = cva(
   cn(
     "group/select-trigger flex w-full cursor-pointer items-center justify-between gap-2.5 text-start whitespace-nowrap text-foreground bg-clip-padding outline-none select-none transition-[color,background-color,border-color,box-shadow] duration-150",
     "hover:border-accent-strong",
-    "focus-visible:border-accent focus-visible:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-soft",
-    "data-[popup-open]:border-accent data-[popup-open]:bg-surface data-[popup-open]:ring-[3px] data-[popup-open]:ring-accent-soft",
+    "focus-visible:border-primary focus-visible:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-soft",
+    "data-[popup-open]:border-primary data-[popup-open]:bg-surface data-[popup-open]:ring-[3px] data-[popup-open]:ring-accent-soft",
     "aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20",
     "data-[disabled]:pointer-events-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
     "data-[placeholder]:text-muted-foreground",

@@ -32,6 +32,11 @@
         "pattern": "\\bbg-input\\b",
         "message": "shadcn default field-bg alias. Use `bg-surface-2` (the AEGIS field surface).",
         "severity": "error"
+      },
+      {
+        "pattern": "var\\(--accent\\)",
+        "message": "Bare var(--accent) is the muted hover SURFACE here (not the reference's brand purple). The purple lives in --primary. Use `var(--primary)` for accent fills/gradients, or the `accent-fill` utility. See DECISIONS 2026-07-25f.",
+        "severity": "error"
       }
     ],
     "focusRing": "accent-soft",

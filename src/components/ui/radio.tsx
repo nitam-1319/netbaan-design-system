@@ -51,8 +51,8 @@ const radioVariants = cva(
   cn(
     "peer relative flex shrink-0 items-center justify-center rounded-full border border-border-strong bg-surface-2 outline-none transition-[background-color,border-color,box-shadow] duration-150",
     "hover:border-accent-strong",
-    "data-[checked]:border-2 data-[checked]:border-accent",
-    "focus-visible:border-accent focus-visible:ring-[3px] focus-visible:ring-accent-soft",
+    "data-[checked]:border-2 data-[checked]:border-primary",
+    "focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-accent-soft",
     "aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20",
     "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45 data-[readonly]:cursor-default"
   ),
@@ -69,7 +69,7 @@ const radioVariants = cva(
 )
 
 const radioDotVariants = cva(
-  "block rounded-full bg-[linear-gradient(145deg,var(--accent),var(--accent-strong))] animate-dot-pop",
+  "block rounded-full accent-fill animate-dot-pop",
   {
     variants: {
       size: {
