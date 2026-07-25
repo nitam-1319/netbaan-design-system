@@ -76,7 +76,7 @@ function ChoiceCard({
     <RadioPrimitive.Root
       data-slot="choice-card"
       className={cn(
-        "group border-input bg-background relative flex flex-1 cursor-pointer items-start gap-3 rounded-lg border p-4 text-left transition-colors outline-none",
+        "group border-border-strong bg-background relative flex flex-1 cursor-pointer items-start gap-3 rounded-lg border p-4 text-left transition-colors outline-none",
         "hover:border-border-strong hover:bg-accent/40",
         "data-[checked]:border-primary data-[checked]:bg-accent-soft data-[checked]:ring-primary data-[checked]:ring-1",
         "focus-visible:ring-accent-soft focus-visible:ring-[3px]",
@@ -118,7 +118,7 @@ function ChoiceCard({
           data-slot="choice-card-indicator"
           aria-hidden="true"
           className={cn(
-            "border-input group-data-[checked]:border-primary group-data-[checked]:bg-primary mt-0.5 ml-auto flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors"
+            "border-border-strong group-data-[checked]:border-primary group-data-[checked]:bg-primary mt-0.5 ml-auto flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors"
           )}
         >
           <RadioPrimitive.Indicator className="flex items-center justify-center">
