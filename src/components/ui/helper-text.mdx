@@ -1,0 +1,79 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Helper Text/Guidelines" />
+
+# Helper Text
+
+A quiet line of muted text beneath a form control that explains its format,
+purpose, or constraints — "We'll never share your email", "8+ characters",
+"Use your work address". It renders a `<p>` and is associated with its control
+by pointing the control's `aria-describedby` at this element's `id`.
+
+## Helper Text vs Validation Message
+
+Helper text is **neutral guidance** shown before and during input. A
+**Validation Message** is a **failure state** shown after a rule is broken, with
+`role="alert"` so it is announced. Don't style helper text red to signal an
+error — swap it for a `ValidationMessage` (or render both, the error last).
+
+## Helper Text vs `FormField`'s `FieldDescription`
+
+`FormField`'s `FieldDescription` is bound to the Base UI `Field` context and
+auto-wires `aria-describedby`. `HelperText` carries no context — you set the
+`id` and the control's `aria-describedby` yourself. Use `FormField` for the
+wired path; use `HelperText` when composing a field by hand. See
+`.agent/DECISIONS.md` (2026-07-25c).
+
+## When to use
+
+- **Do** clarify the expected format, an example, or why a field is asked for.
+- **Do** keep it to a single short sentence.
+- **Don't** repeat the label, and don't hide critical instructions here that a
+  user must read to succeed — put those in the label or nearby.
+- **Don't** use it for error text — use a **Validation Message**.
+
+## Sizes
+
+| `size` | Text |
+| --- | --- |
+| `sm` | 0.7rem |
+| `md` | 0.75rem (default) |
+| `lg` | 0.875rem |
+
+Pair the helper size with the control and label size.
+
+## Behavior
+
+- Renders a `<p>` by default; swap the element with the `render` prop
+  (Base UI `useRender`) for composition — e.g. a `<span>` inline. `render` is
+  composition, not a styling hatch.
+- Presentational — it has no interactive behaviour.
+
+## Accessibility
+
+- Give it a stable `id` and set the control's `aria-describedby` to that `id`
+  so assistive tech reads the guidance with the field (WCAG 1.3.1, 3.3.2).
+- If a field has both helper text and an error, reference both ids in
+  `aria-describedby` (helper first, error last).
+- Muted text still meets WCAG AA contrast against the surface in both themes.
+- `disabled` only dims the text; disable the control separately.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--muted-foreground` | Helper text colour |
+
+## API
+
+`HelperText` — renders a `<p>` element (polymorphic via `render`).
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Text size. |
+| `disabled` | `boolean` | `false` | Dim the text to match a disabled control. |
+| `render` | `ReactElement` | `<p />` | Element to render (composition). |
+| `children` | `ReactNode` | — | The helper text. |
+
+Standard attributes (`id`, …) pass through. The public API is closed: there is
+no `className` or `style` prop.
