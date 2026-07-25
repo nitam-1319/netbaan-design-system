@@ -48,7 +48,7 @@ export const Default: Story = {
         </DialogHeader>
         <DialogFooter>
           <DialogClose render={<Button variant="ghost">Cancel</Button>} />
-          <DialogClose render={<Button variant="default">Mark remediated</Button>} />
+          <DialogClose render={<Button variant="primary">Mark remediated</Button>} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -54,7 +54,7 @@ type PaginationLinkProps = Omit<
   "className" | "style"
 > & {
   isActive?: boolean
-  size?: "icon" | "default"
+  size?: "icon" | "md"
 }
 
 function PaginationLink({
@@ -87,7 +87,7 @@ function PaginationPrevious({
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="default"
+      size="md"
       render={render}
       {...props}
     >
@@ -104,7 +104,7 @@ function PaginationNext({
   return (
     <PaginationLink
       aria-label="Go to next page"
-      size="default"
+      size="md"
       render={render}
       {...props}
     >

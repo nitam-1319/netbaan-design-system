@@ -4,63 +4,97 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * AEGIS — Button (Primitive tier, closed API)
+ * AEGIS — Button (Primitive tier, closed API, restored to reference)
  *
- * Public API is intentionally CLOSED: no `className` / `style` escape hatch.
- * All customization goes through semantic props (`variant`, `size`, …). One-off
- * layout belongs in the `Box`/`Stack` primitives (token-only), never here.
- * Element polymorphism is still available through Base UI's `render` prop.
- * See `.agent/rules/API_RULES.md` and `.agent/DECISIONS.md` (escape-hatch policy).
+ * Matches `.agent/references/spec/Button.dc.html`: seven variants, the sm/md/lg
+ * size scale (32/38/46px), a real loading state, the 3px accent-soft focus ring,
+ * and the signature Primary **beam** (a rotating conic-gradient border over an
+ * accent→surface gradient). Closed API — no `className`/`style`; polymorphism via
+ * `render`. Tokens only. See `.agent/rules/REFERENCE_FIDELITY.md`.
  */
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[var(--r,10px)] font-semibold whitespace-nowrap outline-none select-none transition-[filter,color,background-color,border-color] duration-150 focus-visible:ring-[3px] focus-visible:ring-accent-soft active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-[1.1em] [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
-        outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
-        ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
-        destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
+        primary: "border border-white/10 text-foreground",
+        secondary: "border border-border-strong bg-card text-foreground hover:brightness-110",
+        soft: "border border-transparent bg-accent-soft text-accent-strong hover:brightness-110",
+        outline: "border border-border-strong bg-transparent text-foreground hover:bg-muted",
+        ghost: "border border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
+        destructive: "border border-transparent bg-destructive text-white shadow-elevated hover:brightness-110",
+        link: "border border-transparent bg-transparent text-accent-strong underline underline-offset-[3px] hover:brightness-110",
       },
       size: {
-        default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
-        "icon-lg": "size-9",
+        sm: "h-8 text-xs [--r:10px]",
+        md: "h-[38px] text-[0.8rem] [--r:11px]",
+        lg: "h-[46px] text-sm [--r:13px]",
+        icon: "size-[38px] [--r:11px]",
+        "icon-sm": "size-8 [--r:10px]",
+        "icon-lg": "size-[46px] [--r:13px]",
       },
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
+    defaultVariants: { variant: "secondary", size: "md" },
   }
 )
 
-// Closed public API: strip the styling escape hatches from the primitive's props.
-type ButtonProps = Omit<ButtonPrimitive.Props, "className" | "style"> &
-  VariantProps<typeof buttonVariants>
+const contentPad: Record<string, string> = {
+  sm: "gap-1.5 px-3",
+  md: "gap-2 px-4",
+  lg: "gap-2 px-5",
+  icon: "",
+  "icon-sm": "",
+  "icon-lg": "",
+}
 
-function Button({ variant = "default", size = "default", ...props }: ButtonProps) {
+type ButtonProps = Omit<ButtonPrimitive.Props, "className" | "style"> &
+  VariantProps<typeof buttonVariants> & {
+    /** Shows a spinner, holds the label, and marks the control aria-busy. */
+    loading?: boolean
+  }
+
+function Button({
+  variant = "secondary",
+  size = "md",
+  loading = false,
+  disabled,
+  children,
+  ...props
+}: ButtonProps) {
+  const isPrimary = variant === "primary"
+  const pad = contentPad[size ?? "md"] ?? "gap-2 px-4"
+
   return (
     <ButtonPrimitive
       data-slot="button"
+      aria-busy={loading || undefined}
+      disabled={disabled || loading}
       className={cn(buttonVariants({ variant, size }))}
       {...props}
-    />
+    >
+      {isPrimary ? (
+        <>
+          {/* Signature beam: rotating conic-gradient revealed as a 1px border. */}
+          <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]">
+            <span className="absolute top-1/2 left-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin bg-[conic-gradient(from_0deg,transparent_0_68%,var(--accent)_84%,var(--accent-strong)_92%,transparent_100%)]" />
+          </span>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-px -z-10 rounded-[calc(var(--r,10px)-1px)] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--accent)_15%,var(--surface-2)),var(--surface-2))] group-hover/button:bg-[linear-gradient(180deg,color-mix(in_srgb,var(--accent)_22%,var(--surface-2)),var(--surface-2))]"
+          />
+        </>
+      ) : null}
+      <span className={cn("relative z-10 inline-flex items-center justify-center", pad)}>
+        {loading ? (
+          <span
+            aria-hidden
+            className="mr-2 inline-block size-3.5 animate-spin rounded-full border-2 border-current/40 border-t-current"
+          />
+        ) : null}
+        {children}
+      </span>
+    </ButtonPrimitive>
   )
 }
 
