@@ -392,3 +392,25 @@ our tone colours; dark ink is the consistent AA-guaranteed choice. Verified obje
 contrast script (all fixed pairs pass) + browser screenshots (vivid purple gradients on checkbox/radio/
 switch/slider, readable gradient badges, raised active tab). All gates green (tsc, lint, conformance
 110/110 incl. the new gate, build, build-storybook).
+
+## 2026-07-25i — Prompt Composer: bare textarea in an Input shell (not nested Textarea); text-only, attach via slot
+Status: accepted
+Decision: `prompt-composer.tsx` (roadmap #144, Recommended/AI Components, dep Textarea) ships as a
+token-only composer — the AEGIS Input shell (border-strong, `focus-within` accent border + accent-soft
+ring, sm/md/lg) wrapping a **bare auto-growing `<textarea>`** (`field-sizing-content`, capped at
+`max-h-48` then scrolls) plus a toolbar with a `leading` slot and a send `Button`. It reuses the
+Textarea's auto-sizing *technique* but does NOT nest the AEGIS `Textarea` component — that would
+double-shell (two borders/rings) and drag in field/label semantics the composer doesn't want. This
+mirrors the shell-with-bare-input precedent (Tag Input, Input Group), and is why the "dep: Textarea" is
+satisfied by reusing the behaviour, not the component.
+Reason: Enter-to-send + Shift+Enter-newline (IME `isComposing`-guarded), a trailing send button gated on
+trimmed-non-empty/loading/disabled, and a leading action slot are the composer's identity; a labelled
+form field is the wrong base. Controlled/uncontrolled value; `onSubmit` gets trimmed text and clears the
+field when uncontrolled.
+Impact: **Text composition only.** Attachments are a consumer-filled `leading` slot (pair with File
+Uploader — the composer manages no files); **slash-command menus, @mentions, and voice input** are
+deferred follow-ups (each is an additive layer — a popup listbox, a mention engine, a recorder). The
+send button is the AEGIS `Button` (primary, icon); accessibility puts the name on the textarea via
+`label` (no visible label) and links the counter via `aria-describedby` + `aria-live`. Not in the
+conformance manifest (no reference page). All machine gates green (tsc, lint, build, conformance 113/113,
+build-storybook); browser story/axe/visual-regression HUMAN_VERIFY_REQUIRED (no sandbox runner), run in CI.

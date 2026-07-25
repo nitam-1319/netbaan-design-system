@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Prompt Composer/Guidelines" />
+
+# Prompt Composer
+
+The message input for a chat or assistant surface: an auto-growing multi-line
+field in the AEGIS Input shell, with a send button, an optional leading action
+slot (attach, tools), an optional character counter, and Enter-to-send. It is
+the composing counterpart to the Conversation Thread and Message Bubble.
+
+## When to use
+
+- **Do** use it as the input row of a chat, assistant panel, or comment box
+  where a message is composed and sent.
+- **Do** provide a `label` — it is the input's accessible name (there is no
+  visible label by design).
+- **Don't** use it for single-line search or form fields; reach for Search Input
+  or Text Field. The composer is for free-form messages that may span lines.
+- **Don't** put unrelated form controls in the toolbar; keep it to composing
+  actions (attach, send).
+
+## Anatomy
+
+- **Shell** — the bordered, focus-within-highlighted container.
+- **Input** — a bare, auto-growing `<textarea>` (grows with content up to a max
+  height, then scrolls).
+- **Toolbar** — a `leading` slot at the inline-start (e.g. an attach Button) and,
+  at the inline-end, an optional counter and the send Button.
+
+## Behavior
+
+- **Auto-grow:** the field starts at one row and grows with content via
+  `field-sizing`, capped at a max height beyond which it scrolls.
+- **Enter to send:** with `submitOnEnter` (default), Enter sends and
+  **Shift+Enter** inserts a newline. IME composition is respected — Enter while
+  composing does not send. Set `submitOnEnter={false}` to require the button.
+- **Send guard:** the send button is disabled while the trimmed value is empty,
+  while `loading`, or while `disabled`. `onSubmit` receives the trimmed text and,
+  when uncontrolled, the field clears.
+- **Controlled or uncontrolled:** pass `value` + `onValueChange` to control the
+  text, or use `defaultValue`.
+- **Streaming:** set `loading` while a response streams — the send button shows a
+  spinner and holds submit.
+
+## Accessibility
+
+- The input carries an accessible name from `label` and, when a counter is
+  shown, an `aria-describedby` link to it; the counter is an `aria-live="polite"`
+  region so remaining length is announced as it changes.
+- The send button is a real `<button>` with a descriptive name (`Send message`);
+  it reflects its disabled state to assistive tech. The over-limit counter turns
+  `--destructive`, but the limit is also conveyed by the number itself, so
+  meaning never rests on colour alone (WCAG 1.4.1).
+- Focus lives on the textarea; the shell lights a 3px `accent-soft` ring on
+  `focus-within` in both themes.
+
+## Design tokens
+
+Colour, radius, and focus are token-driven: the shell uses `--surface-2` /
+`--border-strong`, focus switches to `--surface` with the `--accent` border and
+`--accent-soft` ring, the counter uses `--muted-foreground` (or `--destructive`
+over the limit), and the send button is the AEGIS `Button`. There are no
+hardcoded colours.
+
+## Scope
+
+Text composition only. **Attachments** are a `leading` slot you fill (the
+composer does not manage files — pair it with File Uploader), and **slash-command
+menus**, **@mentions**, and **voice input** are deferred follow-ups. Track them in
+`.agent/DECISIONS.md`.
+
+## API
+
+Closed API — no `className` or `style`.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Controlled text value. |
+| `defaultValue` | `string` | `""` | Uncontrolled initial value. |
+| `onValueChange` | `(value: string) => void` | — | Fires on every edit. |
+| `onSubmit` | `(value: string) => void` | — | Fires with the trimmed message on send. |
+| `label` | `string` | `"Message"` | Accessible name for the input. |
+| `placeholder` | `string` | `"Send a message…"` | Placeholder text. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Shell + control size. |
+| `loading` | `boolean` | `false` | Streaming: spinner on send, submit held. |
+| `disabled` | `boolean` | `false` | Disable the whole composer. |
+| `submitOnEnter` | `boolean` | `true` | Enter sends; Shift+Enter newlines. |
+| `sendLabel` | `string` | `"Send message"` | Accessible name for the send button. |
+| `leading` | `ReactNode` | — | Inline-start toolbar slot. |
+| `showCount` | `boolean` | `false` | Show a `count / maxLength` counter. |
+| `maxLength` | `number` | — | Character limit (native + counter). |
