@@ -1,0 +1,113 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DonutChart/Guidelines" />
+
+# Donut Chart
+
+A config-driven donut chart built on the AEGIS chart foundation. Give it a
+`label` and a `data` array of slices (`{ key, label?, value, color? }`); each
+slice becomes an annular segment sized by its share of the total, and a legend
+entry that carries the same colour and name. It composes `ChartContainer`
+(palette) and `ChartLegend`, so the ring and the legend always agree.
+
+## Overview
+
+Donut Chart shows a part-to-whole breakdown of a single dimension — severities,
+storage, budget split. The hole in the middle is sized by `innerRatio` and can
+carry a centre readout (by default the summed total), which is the donut's main
+advantage over a bare pie. For the solid form, use the sibling **Pie Chart**
+(`innerRatio: 0`).
+
+## Usage
+
+- **Do** use it for a handful of categories that sum to a meaningful whole (≤5–6
+  slices).
+- **Do** put the headline number in the centre (`centerLabel` / `centerSublabel`)
+  — a percentage, a total, a count.
+- **Don't** use it to compare many categories or track change over time — a
+  **Bar** or **Line** chart reads far more precisely.
+- **Don't** rely on slice colour alone to convey meaning; the legend pairs each
+  colour with a label.
+
+## Anatomy
+
+A `ChartContainer` (`role="group"`) wrapping an optional `ChartLegend` and a
+`ChartPlot` (`role="img"`). Inside the plot: a `donut-chart-marks` group holding
+one `donut-chart-slice` path per non-zero datum and an optional
+`donut-chart-center` readout group.
+
+## Variants
+
+Shape is continuous via `innerRatio` (0–0.95): a thin ring (`0.82`), a classic
+donut (`0.6`, the default), a thick donut (`0.45`), and — at `0` — a full pie
+(the **Pie Chart** preset). `padAngle` sets the gap between slices.
+
+## States
+
+Static renderer — no interactive state yet (see Scope). Visual configuration:
+`innerRatio`, `startAngle`, `padAngle`, `showCenterLabel`, and `showLegend`.
+
+## Behavior
+
+- **Angles** — each slice's sweep is `value / total × (360° − gaps)`. Zero-value
+  slices are skipped and take no gap.
+- **Colours** — each slice takes a palette slot by declaration order; pin one
+  with `color: 1…5`. The legend reads the same resolved palette.
+- **Centre readout** — shown for donuts (hidden automatically for a pie);
+  defaults to `valueFormat(total)` and can be overridden with `centerLabel`.
+- **Full circle** — a single 100 % slice is drawn as two arcs so the SVG arc
+  command never degenerates on a 360° sweep.
+
+## Scope & limitations
+
+This Donut Chart is a **static renderer**. A pointer/focus **hover tooltip** and
+segment selection/emphasis are deferred to a follow-up, following the
+honestly-scoped precedent in `DECISIONS.md` (DataTable, Combobox, Line Chart).
+Slice value labels drawn on the ring are out of scope — read values from the
+legend or a companion table.
+
+## Accessibility
+
+- The chart is announced through the container's accessible name (`label`) and
+  the legend pairs each colour with a text label, so identity never rests on
+  colour alone (WCAG 1.4.1). The centre readout is decorative (`aria-hidden`) —
+  put its meaning in `label` or an adjacent value.
+- Because a hover tooltip is not present, **provide a text or data-table
+  alternative** for the per-slice values near the chart.
+- The five chart tokens meet AA contrast against the surface in both themes.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1` … `--color-chart-5` | Slice fill and legend swatch (wraps after five slices). |
+| `--color-foreground` | Centre readout value. |
+| `--color-muted-foreground` | Centre sub-label and legend text. |
+
+No colour or size is hard-coded in a mark; geometry comes from the container and
+colour from the series palette.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name. Required. |
+| `data` | `{ key; label?; value; color? }[]` | — | One entry per slice. |
+| `innerRatio` | `number` | `0.6` | Hole size as a fraction of the outer radius (0 = pie). |
+| `startAngle` | `number` | `0` | Angle the first slice starts from (deg, clockwise from top). |
+| `padAngle` | `number` | `1.5` | Gap between slices (deg). |
+| `showCenterLabel` | `boolean` | `true` | Show the centre readout (donut only). |
+| `centerLabel` | `ReactNode` | formatted total | Centre readout content. |
+| `centerSublabel` | `ReactNode` | — | Small caption under the readout. |
+| `valueFormat` | `(v: number) => ReactNode` | `String` | Format the total. |
+| `showLegend` | `boolean` | `true` | Render the legend. |
+| `width` / `height` | `number` | `320` / `320` | Coordinate size. |
+| `margin` | `Partial<ChartMargin>` | small symmetric | Plot gutter. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** (severity breakdown with total), **Thin** / **Thick**
+(ratio range), **NoCenterLabel**, and **SingleValue** (full-circle) stories, each
+rendered in Light/Dark and LTR/RTL from the toolbar.
