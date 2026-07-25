@@ -196,3 +196,34 @@ Choice Card (2026-07-23b), DataTable (2026-07-22c).
 Impact: A later run may add a dedicated masked-input primitive (e.g. on a pattern spec) as an additive
 component; `currency-input` stays the money-specific field. The queue row for #52 is satisfied by
 `currency-input` with this carve-out noted.
+
+## 2026-07-25 — Area Chart is one component with three stack modes (covers Stacked Area #92)
+Status: accepted
+Decision: Roadmap slots #91 (Area Chart) and #92 (Stacked Area Chart) ship as a single
+`area-chart.tsx` with a `stackMode` prop: `overlap` (translucent bands from the zero baseline,
+default), `stacked` (opaque cumulative bands — the Stacked Area Chart), and `expand` (stack
+normalised so each x column sums to 1). Both queue rows are satisfied by this one file; #92 is not a
+separate on-disk component.
+Reason: Directly mirrors the accepted precedent that `bar-chart.tsx` handles both grouped and stacked
+columns in one file (#93 covers #94). The three modes differ only in how each series' lower/upper
+boundary is computed; forking them into separate components would duplicate the marks, extent, and
+axis wiring with no added capability. One config-driven surface keeps the API consistent with
+Line/Bar chart and keeps the stacking math in one place.
+Impact: `StackedAreaChart` is `AreaChart stackMode="stacked"`; a normalised/percentage stack is
+`stackMode="expand"`. If a future need can't be met by a mode, add another `stackMode` value, not a
+fork. Scope (static renderer; hover tooltip deferred) follows Line/Bar chart (2026-07-23 precedent).
+
+## 2026-07-25b — Donut & Pie are sibling static charts; on-slice value labels omitted
+Status: accepted
+Decision: `donut-chart.tsx` (#95) and `pie-chart.tsx` (#96) ship as sibling components on the chart
+foundation (ChartContainer palette + ChartLegend + own SVG arc/wedge marks). Donut carries a centre
+readout (default = formatted total) and an `innerRatio` (0 = pie); Pie is the solid form and can draw
+percentage labels OUTSIDE each slice. Neither draws value labels *inside* the wedge.
+Reason: A design system can't guarantee AA text contrast for a label painted on an arbitrary
+categorical slice colour, and the token rules forbid per-instance colour hacks. Outside labels sit on
+the surface (`--color-muted-foreground`), so contrast is deterministic; per-slice values otherwise
+come from the legend or a companion table. A single full-circle slice is drawn as two arcs so the SVG
+`A` command never degenerates on a 360° sweep.
+Impact: Both are static renderers — hover tooltip + slice selection/emphasis are deferred to a
+follow-up (browser-verified), following the honestly-scoped precedent (DataTable 2026-07-22c, Combobox
+2026-07-23, Line/Bar chart). Neither is in the conformance manifest.
