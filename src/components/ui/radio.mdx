@@ -5,36 +5,47 @@ import { Meta } from "@storybook/addon-docs/blocks"
 # Radio Group
 
 A set of mutually exclusive options where exactly one may be selected at a time.
-Built on the Base UI Radio Group + Radio primitives, so the accessible
-`role="radiogroup"` / `role="radio"` semantics, roving-tabindex keyboard
-navigation, and native form integration come from the primitive; AEGIS supplies
-the circle-and-dot visuals through tokens.
+Restored to the AEGIS reference: the sm/md/lg ring scale, the full state set, a
+`size` prop, and built-in `label` + `description` slots. Built on the Base UI
+Radio Group + Radio primitives, so the accessible `role="radiogroup"` /
+`role="radio"` semantics, roving-tabindex keyboard navigation, and native form
+integration come from the primitive; AEGIS supplies the circle-and-dot visuals
+through tokens. Every color and radius comes from a token; the public API is
+**closed** (no `className` / `style`).
 
 ## Overview
 
 Use a Radio Group when a user must pick **one** value from a small, visible set
-of options (typically 2–6). Every color and radius comes from an AEGIS token; the
-public API is closed (no `className` / `style`).
+of options (typically 2–6).
 
 ## Usage
 
 - **Do** use it for a short list of mutually exclusive choices that benefit from
   being visible at once (scan frequency, severity threshold, plan tier).
-- **Do** pair each item with a `<label>` so the whole row is a click target and
-  has an accessible name.
+- **Do** pass each item a `label` (and optional `description`) so the whole row
+  is a click target and has an accessible name.
+- **Do** pre-select a sensible default so the group is never empty.
 - **Don't** use a radio group for many options — use `Select` once the list grows
   past ~6 or needs scrolling.
 - **Don't** use it for independent on/off choices — that is `Checkbox` (multiple)
   or `Switch` (instant apply).
 
+## Sizes
+
+`sm` 16px ring · `md` 20px ring (default) · `lg` 24px ring. The selected ring
+draws a 2px accent border; the inner dot scales 7/9/11px with the ring.
+
 ## Anatomy
 
 1. **Group** (`RadioGroup`) — the `role="radiogroup"` container; owns the selected
    value and lays the items out vertically or horizontally.
-2. **Item** (`RadioGroupItem`) — the circular control; renders `role="radio"` plus
+2. **Ring** (`RadioGroupItem`) — the circular control; renders `role="radio"` plus
    a hidden input for form submission.
-3. **Indicator** — the inner dot, shown on the `data-[checked]` state.
-4. **Label** _(consumer-provided)_ — text describing the option.
+3. **Dot** — the concentric inner fill, shown only on the selected item; it pops
+   in with `animate-dot-pop`.
+4. **Focus ring** — a 3px `accent-soft` halo on keyboard focus.
+5. **Label / Description** _(optional slots)_ — the option text and an optional
+   secondary line.
 
 ## Variants
 
@@ -43,9 +54,9 @@ Layout is controlled by `orientation`: `vertical` (default, stacked) or
 
 ## States
 
-Default (unselected), Selected, Focus (visible ring), Disabled, and Disabled +
-Selected. `invalid` is reflected via `aria-invalid` (destructive ring) when the
-group is wired into a Form Field.
+Selected, Hover (border lifts to `accent-strong`), Focus (accent border + 3px
+accent-soft ring), Error (`aria-invalid` → destructive border/ring), Disabled
+(45% opacity, `not-allowed`), and Read-only (locked value).
 
 ## Behavior
 
@@ -62,22 +73,23 @@ group is wired into a Form Field.
 - Give the group an accessible name via `aria-label` or `aria-labelledby`.
 - Keyboard map: `Tab` (enter/leave group), `↑`/`↓`/`←`/`→` (move selection),
   `Space` (select focused).
-- Focus is always visible through the `--ring` focus ring; contrast holds in
+- Focus is always visible through the `accent-soft` focus ring; contrast holds in
   light and dark.
 
 ## Design tokens
 
 | Token | Applies to |
 | --- | --- |
-| `--input` | Item border + resting fill |
-| `--primary` | Selected fill + border |
-| `--primary-foreground` | Selected inner dot |
-| `--ring` | Focus ring |
-| `--destructive` | Invalid state ring/border |
+| `--surface-2` | Ring interior surface |
+| `--border-strong` | Unselected ring border |
+| `--accent` / `--accent-strong` | Selected ring + inner dot (gradient) |
+| `--accent-soft` | Focus ring |
+| `--destructive` | Error (invalid) state |
+| `animate-dot-pop` | Inner dot entrance |
 
-## API
+## API (closed)
 
-`RadioGroup`
+`RadioGroup` — `Omit<RadioGroupPrimitive, "className" | "style"> & { orientation }`.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -90,16 +102,20 @@ group is wired into a Form Field.
 | `required` | `boolean` | `false` | Requires a choice before submit. |
 | `readOnly` | `boolean` | `false` | Prevents changing the selection. |
 
-`RadioGroupItem`
+`RadioGroupItem` — `Omit<RadioPrimitive.Root, "className" | "style"> & { size, label?, description? }`.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `value` | `string` | — | The value this item represents (required). |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Ring size. |
+| `label` | `ReactNode` | — | Primary option text; renders a clickable row. |
+| `description` | `ReactNode` | — | Optional secondary helper line. |
 | `disabled` | `boolean` | `false` | Disables this item only. |
+| `readOnly` | `boolean` | `false` | Locks this item's value. |
 
 ## Examples
 
-- **Dark & Light:** switch the Storybook **Theme** toolbar — the circle, dot, and
+- **Dark & Light:** switch the Storybook **Theme** toolbar — the ring, dot, and
   focus ring track the active theme.
 - **RTL / Persian:** switch the **Locale** toolbar to فارسی; the horizontal layout
   and focus order mirror automatically because layout uses logical properties.

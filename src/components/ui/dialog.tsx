@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils"
 
 const dialogContentVariants = cva(
   [
-    "bg-popover text-popover-foreground ring-border-strong fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl p-6 shadow-[0_30px_80px_-24px_rgba(0,0,0,0.75)] ring-1 outline-none",
+    "bg-popover text-popover-foreground ring-border-strong fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl p-6 shadow-elevated ring-1 outline-none",
     "origin-[var(--transform-origin)] transition-[transform,opacity] duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
   ],
   {
@@ -94,7 +94,7 @@ function DialogContent({
             aria-label="Close"
             className={cn(
               "absolute top-4 right-4 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none",
-              "hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
+              "hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-accent-soft",
               "[&>svg]:size-4"
             )}
           >

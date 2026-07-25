@@ -4,71 +4,76 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 # Tag / Chip
 
-A compact label for categories, filters, and user-managed selections. A Tag can
-optionally be **dismissed** through a first-class `onRemove` affordance, which is
-what distinguishes it from `Badge` — a Badge is a purely decorative status
-marker, a Tag is content a user adds, filters by, or removes. Every color maps to
-an AEGIS token and the public API is closed (no `className` / `style`).
+A compact, interactive token for filters, selections, and user-managed labels.
+A Tag reads as content a user adds, toggles, or removes — which is what sets it
+apart from `Badge`, a purely decorative status marker. It can carry an accent
+`selected` state and an optional first-class dismiss button, enters with the
+`chip-pop` animation, and maps every color to an AEGIS token. The public API is
+closed (no `className` / `style`).
 
 ## Overview
 
-Use a Tag to represent a discrete value in a set: an applied filter, an assigned
-label, a selected option in a multi-select, or a keyword. Tags usually appear in
-groups and wrap onto multiple lines.
+Use a Tag for a discrete value in a set: an applied filter, an assigned label, a
+selected option in a multi-select, or a keyword. Tags usually appear in groups
+and wrap onto multiple lines.
 
 ## Usage
 
-- **Do** use it for applied filters, labels, or multi-select selections the user
-  can add and remove.
+- **Do** use it for filters, labels, or multi-select selections the user can
+  toggle, add, and remove.
+- **Do** render it as a `<button>` (via `render`) when the whole chip toggles a
+  filter or fires an action.
 - **Do** provide `removeLabel` when the tag text alone doesn't make the dismiss
   action clear (e.g. `removeLabel="Remove us-east-1"`).
-- **Don't** use a Tag as a status marker with no interaction — use `Badge`.
+- **Don't** use a Tag as a static status marker — use `Badge`.
 - **Don't** use a Tag as a primary action — use `Button`.
 
 ## Anatomy
 
-1. **Container** — the pill; sets background, border, radius, and padding.
-2. **Icon** _(optional)_ — a leading lucide glyph, auto-sized to `size-3`.
-3. **Label** — the tag text.
-4. **Dismiss button** _(optional)_ — a trailing `×` shown only when `onRemove`
-   is set; it is a real `<button>` with an accessible name.
+1. **Container** — the pill body; the primary target for select or activate.
+2. **Leading adornment** _(optional)_ — an icon or avatar, auto-sized per size.
+3. **Label** — the token text: a value, facet, or entity name.
+4. **Remove button** _(optional)_ — a trailing `×`, its own focusable control,
+   shown only when `onRemove` is set.
 
-## Variants
+## Sizes
 
-`default`, `primary`, `outline`, `muted`, and the severity-aligned `success` /
-`warning` / `destructive`. These mirror `Badge` so the two read as one family.
+`size` sets the height and padding: `sm` ≈ 22px · `md` ≈ 28px (default) · `lg` ≈
+34px.
 
 ## States
 
-Default, Hover (dismiss button highlights), Focus (visible ring on the dismiss
-button), and Disabled (dimmed, non-interactive). The dismiss affordance only
-exists when `onRemove` is provided.
+- **Resting** — `--surface-3` fill, strong border, dim text.
+- **Selected** — accent-soft fill, accent border and text (`selected`).
+- **Hover** (resting) — the border and text lift toward the accent.
+- **Focus** — a 3px `--accent-soft` ring with an accent border.
+- **Disabled** — dimmed and non-interactive.
 
 ## Behavior
 
-- A Tag is static unless `onRemove` is supplied; then a trailing dismiss button
-  appears and calls `onRemove` on click or keyboard activation.
+- A Tag is static unless made interactive. Pass `render={<button />}` to make the
+  whole chip a control (toggle `selected`), or `onRemove` to add a dismiss button.
 - `disabled` dims the tag and disables the dismiss button.
-- Removal state (which tags exist) is owned by the consumer — the Tag reports the
-  intent to remove; the parent updates its list.
+- Removal / selection state is owned by the consumer — the Tag reports intent;
+  the parent updates its list.
 
 ## Accessibility
 
 - The dismiss control is a native `<button>` with `aria-label` (`removeLabel`),
-  so it is focusable and operable with `Enter` / `Space`.
-- Keyboard map: `Tab` to the dismiss button, `Enter` / `Space` to remove.
+  focusable and operable with `Enter` / `Space`.
+- When the chip itself toggles, render it as a `<button>` so it is keyboard
+  operable; `selected` is exposed via `data-selected` for styling.
 - Meaning is carried by the label text, never color alone.
-- Focus is always visible via the `--ring` focus ring in light and dark.
+- Focus is always visible via the `--accent-soft` ring in light and dark.
 
 ## Design tokens
 
 | Token | Applies to |
 | --- | --- |
-| `--secondary` / `--primary` / `--muted` | Fill + text per variant |
-| `--border` | Outline variant hairline |
-| `--success` / `--warning` / `--destructive` | Status variants |
-| `--foreground` | Dismiss hover wash (`foreground/10`) |
-| `--ring` | Dismiss focus ring |
+| `--surface-3` / `--border-strong` | Resting fill + border |
+| `--accent-soft` / `--accent-strong` | Selected fill, text, border, focus ring |
+| `--track` | Remove-button backing (resting) |
+| `--muted-foreground` / `--foreground` | Label + hover text |
 
 ## API
 
@@ -76,16 +81,19 @@ exists when `onRemove` is provided.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `variant` | `"default" \| "primary" \| "outline" \| "muted" \| "success" \| "warning" \| "destructive"` | `"default"` | Visual/status style. |
-| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Padding + text size. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Padding + text size. |
+| `selected` | `boolean` | `false` | Accent-tinted "on" state for filter / choice chips. |
 | `onRemove` | `() => void` | — | When set, shows a dismiss button and fires on activation. |
 | `removeLabel` | `string` | `"Remove"` | Accessible label for the dismiss button. |
 | `disabled` | `boolean` | `false` | Dims and disables the tag + dismiss button. |
+| `render` | `ReactElement` | `<span />` | Compose the element (e.g. render as `<button>`). |
+
+The public API is closed: there is no `className` or `style` prop.
 
 ## Examples
 
 - **Dark & Light:** switch the Storybook **Theme** toolbar; fills, text, and the
-  dismiss ring track the active theme.
+  focus ring track the active theme.
 - **RTL / Persian:** switch the **Locale** toolbar to فارسی; the leading icon and
   trailing dismiss button swap sides automatically because spacing uses logical
-  properties and flex order.
+  properties.

@@ -4,60 +4,85 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 # Avatar
 
-A compact representation of a user or entity — a profile image with an automatic
-initials or icon fallback. Built on the Base UI `Avatar` primitive, which tracks
-the image loading status and swaps in the fallback on error or while loading. Sizes
-are CVA variants; all color comes from AEGIS tokens.
+Represents a person or entity with an image, initials, or icon. Built on the Base
+UI `Avatar` primitive so the image loading status is tracked and the fallback
+swaps in automatically. It always degrades gracefully — **image → initials →
+icon** — so identity never renders as a broken box. The public API is closed
+(no `className` / `style`); every color comes from an AEGIS token.
 
 ## When to use
 
-- **Do** use an avatar to identify a person, team, or asset owner in lists, tables,
-  and headers.
-- **Do** provide a meaningful `alt` on the image and a legible fallback (initials
-  or an icon).
-- **Don't** rely on the image alone to convey identity — always supply a fallback.
-- **Don't** use avatars as buttons without giving them an accessible name.
+- **Do** use an avatar to identify a person, team, or asset owner in lists,
+  tables, headers, comments, and stacked groups.
+- **Do** pass a `name` — it drives the initials, the seeded hue, and the
+  accessible label.
+- **Don't** rely on the image alone; the `name` guarantees a legible fallback.
+- **Don't** use an avatar as a button without giving it an accessible name.
 
 ## Anatomy
 
-1. **Root** — the circular clip; sets size, background (`--surface-2`), and border.
-2. **Image** — the `<img>`, object-fit cover; hidden until loaded.
-3. **Fallback** — initials or icon shown while loading or on error.
+1. **Container** — the circular or rounded-square frame that clips the content.
+2. **Image / fill** — the photo, or a name-seeded gradient behind the initials.
+3. **Initials** — one or two letters shown when no image is available.
+4. **Presence dot** — an optional `status` indicator pinned to the lower-right.
+5. **Ring** — an optional card + accent border marking the current user.
+
+## Sizes
+
+`size` sets the diameter: `xs` 24px · `sm` 32px · `md` 40px (default) · `lg` 64px
+· `xl` 88px. `shape` is `circle` (default) or `square` (a 28% radius) for org,
+team, or product marks.
+
+## Fallbacks & seeding
+
+The fallback chain runs image → initials → icon. Initials take the first letters
+of `name`; their fill is chosen by hashing `name` against a fixed eight-entry
+token palette, so the same person always gets the same hue and people spread
+evenly across the set. With no `name`, a neutral icon covers unknown or system
+entities.
+
+## Presence & ring
+
+`status` renders a lower-right dot: `online` (pings via `animate-status-ping`),
+`away`, `busy`, `offline`. `ring` adds a card-colored gap and an accent ring for
+the current user or a selection.
 
 ## Behavior
 
-| State | Result |
+| Condition | Result |
 | --- | --- |
-| Image loads | Image fades in and covers the root. |
-| Image missing / errors | Fallback renders (optionally after a `delay`). |
-| No image provided | Fallback renders immediately. |
-
-Sizes: `xs` (24px), `sm` (32px), `default` (36px), `lg` (44px), `xl` (56px).
+| `src` loads | Image fades in and covers the frame. |
+| `src` missing / errors | Initials (from `name`) render, else the icon. |
+| No `src` and no `name` | The neutral icon fallback renders. |
 
 ## Accessibility
 
-- The image's `alt` is the accessible name; use the person/entity name, not
-  "avatar".
-- The fallback text (initials) is visible to AT; keep it to 1–2 letters.
-- Avatar has no role or keyboard interaction on its own. If it triggers an action
-  (opening a profile), wrap it in a `button`/`link` with an accessible label.
-- Contrast: fallback text uses `--muted-foreground` on `--surface-2`, meeting 4.5:1
-  in both themes.
+- The avatar exposes a single accessible name via `role="img"` + `aria-label`
+  (the `name`); the fill, initials, and dot are decorative to AT.
+- The presence dot is `aria-hidden`; convey status in text where it matters.
+- The avatar has no role or keyboard interaction on its own — wrap it in a
+  `button` / link with a label if it triggers an action.
 
 ## Design tokens
 
 | Token | Applies to |
 | --- | --- |
-| `--surface-2` | Root background |
-| `--border` | Root hairline |
-| `--muted-foreground` | Fallback text |
+| `--primary` / `--chart-*` / `--accent-strong` | Seeded initials gradients |
+| `--surface-3` / `--border-strong` | Icon-fallback frame |
+| `--success` / `--warning` / `--destructive` / `--text-faint` | Presence dot |
+| `--card` | Dot border + ring offset |
+| `--primary` | Current-user ring |
 
 ## API
 
-| Part | Prop | Type | Default | Description |
-| --- | --- | --- | --- | --- |
-| `Avatar` | `size` | `"xs" \| "sm" \| "default" \| "lg" \| "xl"` | `"default"` | Diameter. |
-| `AvatarImage` | `src`, `alt`, … | `img` props | — | The picture; `alt` is the name. |
-| `AvatarFallback` | `delay` | `number` | — | Ms to wait before showing the fallback. |
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `string` | — | Person / entity name — initials, seeding, and label. |
+| `src` | `string` | — | Optional image; falls back to initials, then icon. |
+| `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Diameter. |
+| `shape` | `"circle" \| "square"` | `"circle"` | Frame shape (square = 28% radius). |
+| `status` | `"online" \| "away" \| "busy" \| "offline"` | — | Presence dot. |
+| `ring` | `boolean` | `false` | Current-user ring. |
 
-All parts accept `className` (merged via `cn()`) and carry a `data-slot`.
+The public API is closed: there is no `className` or `style` prop. Compose the
+element via `render`.

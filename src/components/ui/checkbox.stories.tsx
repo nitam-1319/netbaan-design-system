@@ -6,10 +6,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 const meta = {
   title: "Components/Checkbox",
   component: Checkbox,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: { layout: "centered" },
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "select", options: ["sm", "md", "lg"] },
+    disabled: { control: "boolean" },
+    indeterminate: { control: "boolean" },
+    label: { control: "text" },
+    description: { control: "text" },
+  },
   decorators: [
     (Story) => (
       <div className="flex min-h-24 items-center justify-center p-10 text-foreground">
@@ -34,12 +39,19 @@ export const Default: Story = {
 }
 
 export const WithLabel: Story = {
-  render: () => (
-    <label className="flex items-center gap-2.5 text-sm">
-      <Checkbox defaultChecked />
-      Notify me about critical findings
-    </label>
-  ),
+  args: {
+    defaultChecked: true,
+    label: "Enable audit logging",
+    description: "Records every access event for 90 days.",
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const box = canvas.getByRole("checkbox")
+    // The whole label row toggles the box.
+    await expect(box).toHaveAttribute("aria-checked", "true")
+    await userEvent.click(canvas.getByText("Enable audit logging"))
+    await expect(box).toHaveAttribute("aria-checked", "false")
+  },
 }
 
 export const Indeterminate: Story = {
@@ -51,14 +63,26 @@ export const Indeterminate: Story = {
   },
 }
 
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <Checkbox size="sm" defaultChecked label="Small — 16px box" />
+      <Checkbox size="md" defaultChecked label="Medium — 20px box (default)" />
+      <Checkbox size="lg" defaultChecked label="Large — 24px box" />
+    </div>
+  ),
+}
+
 export const States: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      <Checkbox aria-label="unchecked" />
-      <Checkbox defaultChecked aria-label="checked" />
-      <Checkbox indeterminate aria-label="indeterminate" />
-      <Checkbox disabled aria-label="disabled" />
-      <Checkbox disabled defaultChecked aria-label="disabled checked" />
+      <Checkbox label="Default (unchecked)" />
+      <Checkbox defaultChecked label="Checked" />
+      <Checkbox indeterminate label="Indeterminate" />
+      <Checkbox aria-invalid label="Error (required, unchecked)" />
+      <Checkbox readOnly defaultChecked label="Read-only (locked value)" />
+      <Checkbox disabled label="Disabled off" />
+      <Checkbox disabled defaultChecked label="Disabled on" />
     </div>
   ),
 }

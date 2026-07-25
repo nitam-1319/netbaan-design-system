@@ -80,7 +80,7 @@ function ErrorState({
       {hasActions && (
         <EmptyStateActions>
           {onRetry != null && (
-            <Button variant="default" size="sm" onClick={onRetry}>
+            <Button variant="primary" size="sm" onClick={onRetry}>
               <RotateCw />
               {retryLabel}
             </Button>

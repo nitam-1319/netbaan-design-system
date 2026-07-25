@@ -14,10 +14,12 @@ import {
 } from "@/components/ui/select"
 
 /**
- * The Select popup portals to `document.body`, so — as with Dialog, Popover and
- * Menu — the toolbar theme applied on the story wrapper does not reach it. A
- * `.dark` wrapper carries the theme onto the portalled content for these
- * stories; use the global Theme/Locale toolbar to preview the trigger.
+ * Select restored to `.agent/references/spec/Select.dc.html`: outline / filled /
+ * flush variants (default outline), the sm/md/lg size scale (32 / 42 / 48px), the
+ * open-focus accent ring + 180° chevron, the selected-row tint + check, and a menu
+ * that enters with `animate-menu-in` on the shared `shadow-elevated` surface.
+ *
+ * The popup portals to `document.body`; use the Theme / Locale toolbar to preview.
  */
 const meta = {
   title: "Components/Select",
@@ -28,10 +30,8 @@ const meta = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <div className="dark bg-background p-16 text-foreground">
-        <div className="w-64">
-          <Story />
-        </div>
+      <div className="w-64">
+        <Story />
       </div>
     ),
   ],
@@ -62,12 +62,16 @@ export const Default: Story = {
     const trigger = canvas.getByRole("combobox")
     await expect(trigger).toHaveTextContent("Select severity")
     await userEvent.click(trigger)
+    // Chevron rotates while the menu is open.
+    await expect(trigger).toHaveAttribute("data-popup-open")
     // Portalled listbox lands on document.body.
     const option = await screen.findByRole("option", { name: "High" })
     await userEvent.click(option)
     await expect(trigger).toHaveTextContent("High")
     // Popup closes on select.
-    await expect(screen.queryByRole("option", { name: "Low" })).not.toBeInTheDocument()
+    await expect(
+      screen.queryByRole("option", { name: "Low" })
+    ).not.toBeInTheDocument()
   },
 }
 
@@ -85,6 +89,48 @@ export const WithDefaultValue: Story = {
         ))}
       </SelectContent>
     </Select>
+  ),
+}
+
+export const Variants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-3">
+      {(["outline", "filled", "flush"] as const).map((variant) => (
+        <Select key={variant} defaultValue="high">
+          <SelectTrigger variant={variant}>
+            <SelectValue placeholder={`Variant: ${variant}`} />
+          </SelectTrigger>
+          <SelectContent>
+            {SEVERITIES.map((s) => (
+              <SelectItem key={s} value={s.toLowerCase()}>
+                {s}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ))}
+    </div>
+  ),
+}
+
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-3">
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <Select key={size}>
+          <SelectTrigger size={size}>
+            <SelectValue placeholder={`Size: ${size}`} />
+          </SelectTrigger>
+          <SelectContent>
+            {SEVERITIES.map((s) => (
+              <SelectItem key={s} value={s.toLowerCase()}>
+                {s}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ))}
+    </div>
   ),
 }
 
@@ -111,25 +157,29 @@ export const Grouped: Story = {
   ),
 }
 
-export const Sizes: Story = {
+export const Error: Story = {
+  name: "Error (invalid)",
   render: () => (
-    <div className="flex flex-col gap-3">
-      {(["sm", "default", "lg"] as const).map((size) => (
-        <Select key={size}>
-          <SelectTrigger size={size}>
-            <SelectValue placeholder={`Size: ${size}`} />
-          </SelectTrigger>
-          <SelectContent>
-            {SEVERITIES.map((s) => (
-              <SelectItem key={s} value={s.toLowerCase()}>
-                {s}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      ))}
-    </div>
+    <Select>
+      <SelectTrigger aria-invalid>
+        <SelectValue placeholder="Required field" />
+      </SelectTrigger>
+      <SelectContent>
+        {SEVERITIES.map((s) => (
+          <SelectItem key={s} value={s.toLowerCase()}>
+            {s}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole("combobox")).toHaveAttribute(
+      "aria-invalid",
+      "true"
+    )
+  },
 }
 
 export const Disabled: Story = {
@@ -166,31 +216,11 @@ export const DisabledItem: Story = {
   ),
 }
 
-export const Invalid: Story = {
-  render: () => (
-    <Select>
-      <SelectTrigger aria-invalid>
-        <SelectValue placeholder="Required field" />
-      </SelectTrigger>
-      <SelectContent>
-        {SEVERITIES.map((s) => (
-          <SelectItem key={s} value={s.toLowerCase()}>
-            {s}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  ),
-}
-
 function ControlledDemo() {
   const [value, setValue] = React.useState<string | null>("critical")
   return (
     <div className="flex flex-col gap-2">
-      <Select
-        value={value}
-        onValueChange={(v) => setValue(v as string | null)}
-      >
+      <Select value={value} onValueChange={(v) => setValue(v as string | null)}>
         <SelectTrigger>
           <SelectValue placeholder="Select severity" />
         </SelectTrigger>

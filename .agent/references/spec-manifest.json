@@ -55,14 +55,14 @@
       "notes": "Diameter xs24/sm32/md40/lg64/xl88. Fallback chain image->initials->icon. Name-seeded initials color (hash -> 8-pair palette). Presence dot (online pings). ring (current-user). AvatarGroup stack + +N overflow (max 4). square radius 28%."
     },
     "chip": {
-      "file": "chip.tsx",
+      "file": "tag.tsx",
       "reference": "spec/Chip.dc.html",
       "requiredSizes": ["sm", "md", "lg"],
       "signatureAnimation": "animate-chip-pop",
       "notes": "Not yet built. Removable token; chip-pop entrance. Follow reference when built."
     },
     "input": {
-      "file": "input.tsx",
+      "file": "text-field.tsx",
       "reference": "spec/Input.dc.html",
       "requiredVariants": ["outline", "filled", "flush"],
       "requiredSizes": ["sm", "md", "lg"],

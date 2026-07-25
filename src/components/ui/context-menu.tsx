@@ -90,7 +90,7 @@ function ContextMenuContent({
         <ContextMenuPrimitive.Popup
           data-slot="context-menu-content"
           className={cn(
-            "bg-popover text-popover-foreground ring-border-strong min-w-40 max-w-[calc(100vw-2rem)] rounded-lg p-1 text-sm shadow-[0_18px_50px_-18px_rgba(0,0,0,0.7)] ring-1 outline-none",
+            "bg-popover text-popover-foreground ring-border-strong min-w-40 max-w-[calc(100vw-2rem)] rounded-lg p-1 text-sm shadow-elevated ring-1 outline-none",
             "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
           )}
           {...props}

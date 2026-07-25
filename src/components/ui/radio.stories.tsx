@@ -6,10 +6,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio"
 const meta = {
   title: "Components/RadioGroup",
   component: RadioGroup,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: { layout: "centered" },
   tags: ["autodocs"],
+  argTypes: {
+    orientation: { control: "inline-radio", options: ["vertical", "horizontal"] },
+    disabled: { control: "boolean" },
+  },
   decorators: [
     (Story) => (
       <div className="flex min-h-24 items-center justify-center p-10 text-foreground">
@@ -25,18 +27,9 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: () => (
     <RadioGroup defaultValue="weekly" aria-label="Scan frequency">
-      <label className="flex items-center gap-2.5 text-sm">
-        <RadioGroupItem value="daily" />
-        Daily
-      </label>
-      <label className="flex items-center gap-2.5 text-sm">
-        <RadioGroupItem value="weekly" />
-        Weekly
-      </label>
-      <label className="flex items-center gap-2.5 text-sm">
-        <RadioGroupItem value="monthly" />
-        Monthly
-      </label>
+      <RadioGroupItem value="daily" label="Daily" />
+      <RadioGroupItem value="weekly" label="Weekly" />
+      <RadioGroupItem value="monthly" label="Monthly" />
     </RadioGroup>
   ),
   play: async ({ canvasElement }) => {
@@ -51,6 +44,38 @@ export const Default: Story = {
   },
 }
 
+export const WithDescription: Story = {
+  render: () => (
+    <RadioGroup defaultValue="standard" aria-label="Plan tier">
+      <RadioGroupItem
+        value="standard"
+        label="Standard plan"
+        description="Up to 10 seats, community support."
+      />
+      <RadioGroupItem
+        value="team"
+        label="Team plan"
+        description="Up to 50 seats, priority support."
+      />
+      <RadioGroupItem
+        value="enterprise"
+        label="Enterprise plan"
+        description="Unlimited seats, dedicated SLA."
+      />
+    </RadioGroup>
+  ),
+}
+
+export const Sizes: Story = {
+  render: () => (
+    <RadioGroup defaultValue="md" aria-label="Ring sizes">
+      <RadioGroupItem value="sm" size="sm" label="Small — 16px ring" />
+      <RadioGroupItem value="md" size="md" label="Medium — 20px ring (default)" />
+      <RadioGroupItem value="lg" size="lg" label="Large — 24px ring" />
+    </RadioGroup>
+  ),
+}
+
 export const Horizontal: Story = {
   render: () => (
     <RadioGroup
@@ -58,15 +83,9 @@ export const Horizontal: Story = {
       defaultValue="medium"
       aria-label="Severity threshold"
     >
-      <label className="flex items-center gap-2 text-sm">
-        <RadioGroupItem value="low" /> Low
-      </label>
-      <label className="flex items-center gap-2 text-sm">
-        <RadioGroupItem value="medium" /> Medium
-      </label>
-      <label className="flex items-center gap-2 text-sm">
-        <RadioGroupItem value="high" /> High
-      </label>
+      <RadioGroupItem value="low" label="Low" />
+      <RadioGroupItem value="medium" label="Medium" />
+      <RadioGroupItem value="high" label="High" />
     </RadioGroup>
   ),
 }
@@ -74,14 +93,8 @@ export const Horizontal: Story = {
 export const KeyboardNavigation: Story = {
   render: () => (
     <RadioGroup defaultValue="daily" aria-label="Scan frequency">
-      <label className="flex items-center gap-2.5 text-sm">
-        <RadioGroupItem value="daily" />
-        Daily
-      </label>
-      <label className="flex items-center gap-2.5 text-sm">
-        <RadioGroupItem value="weekly" />
-        Weekly
-      </label>
+      <RadioGroupItem value="daily" label="Daily" />
+      <RadioGroupItem value="weekly" label="Weekly" />
     </RadioGroup>
   ),
   play: async ({ canvasElement }) => {
@@ -98,18 +111,12 @@ export const KeyboardNavigation: Story = {
 export const States: Story = {
   render: () => (
     <RadioGroup defaultValue="on" aria-label="States demo">
-      <label className="flex items-center gap-2.5 text-sm">
-        <RadioGroupItem value="off" /> Unselected
-      </label>
-      <label className="flex items-center gap-2.5 text-sm">
-        <RadioGroupItem value="on" /> Selected
-      </label>
-      <label className="flex items-center gap-2.5 text-sm text-muted-foreground">
-        <RadioGroupItem value="disabled" disabled /> Disabled
-      </label>
-      <label className="flex items-center gap-2.5 text-sm text-muted-foreground">
-        <RadioGroupItem value="disabled-on" disabled /> Disabled + selected
-      </label>
+      <RadioGroupItem value="off" label="Unselected" />
+      <RadioGroupItem value="on" label="Selected" />
+      <RadioGroupItem value="invalid" aria-invalid label="Error (none picked)" />
+      <RadioGroupItem value="readonly" readOnly label="Read-only" />
+      <RadioGroupItem value="disabled" disabled label="Disabled off" />
+      <RadioGroupItem value="disabled-on" disabled label="Disabled on" />
     </RadioGroup>
   ),
 }
@@ -117,12 +124,8 @@ export const States: Story = {
 export const Disabled: Story = {
   render: () => (
     <RadioGroup defaultValue="weekly" disabled aria-label="Scan frequency">
-      <label className="flex items-center gap-2.5 text-sm text-muted-foreground">
-        <RadioGroupItem value="daily" /> Daily
-      </label>
-      <label className="flex items-center gap-2.5 text-sm text-muted-foreground">
-        <RadioGroupItem value="weekly" /> Weekly
-      </label>
+      <RadioGroupItem value="daily" label="Daily" />
+      <RadioGroupItem value="weekly" label="Weekly" />
     </RadioGroup>
   ),
 }

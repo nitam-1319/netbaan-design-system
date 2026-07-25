@@ -1,8 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect, userEvent, within } from "storybook/test"
+import { Search, Globe } from "lucide-react"
 
 import { TextField } from "@/components/ui/text-field"
 
+/**
+ * Text Field (Input) restored to `.agent/references/spec/Input.dc.html`: outline /
+ * filled / flush variants (default outline), the sm/md/lg size scale (32 / 40 /
+ * 48px), leading / trailing adornments, and the resting / hover / focus / error /
+ * success / disabled / read-only states. Focus lights an accent border with a 3px
+ * `accent-soft` ring; the resting border is `border-border-strong`.
+ */
 const meta = {
   title: "Components/TextField",
   component: TextField,
@@ -15,9 +23,25 @@ const meta = {
     placeholder: "api-gw-prod.netbaan.io",
   },
   argTypes: {
+    variant: {
+      control: "inline-radio",
+      options: ["outline", "filled", "flush"],
+    },
     size: {
       control: "inline-radio",
-      options: ["sm", "default", "lg"],
+      options: ["sm", "md", "lg"],
+    },
+    state: {
+      control: "select",
+      options: [
+        "default",
+        "hover",
+        "focus",
+        "error",
+        "success",
+        "disabled",
+        "readonly",
+      ],
     },
     disabled: { control: "boolean" },
     required: { control: "boolean" },
@@ -46,6 +70,83 @@ export const Default: Story = {
     await userEvent.type(input, "example.com")
     await expect(input).toHaveValue("example.com")
   },
+}
+
+export const Variants: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-4">
+      {(["outline", "filled", "flush"] as const).map((variant) => (
+        <TextField
+          key={variant}
+          {...args}
+          variant={variant}
+          label={`Variant: ${variant}`}
+          placeholder={`${variant} field`}
+        />
+      ))}
+    </div>
+  ),
+}
+
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-4">
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <TextField
+          key={size}
+          {...args}
+          size={size}
+          label={`Size: ${size}`}
+          placeholder={`${size} control`}
+        />
+      ))}
+    </div>
+  ),
+}
+
+export const States: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-4">
+      {(
+        [
+          "default",
+          "hover",
+          "focus",
+          "error",
+          "success",
+          "readonly",
+        ] as const
+      ).map((state) => (
+        <TextField
+          key={state}
+          {...args}
+          state={state}
+          label={`State: ${state}`}
+          defaultValue="acme-corp.com"
+        />
+      ))}
+    </div>
+  ),
+}
+
+export const WithAdornments: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-4">
+      <TextField
+        {...args}
+        label="Search assets"
+        placeholder="Search assets"
+        leadingIcon={<Search />}
+      />
+      <TextField
+        {...args}
+        label="Domain"
+        placeholder="acme-corp.com"
+        leadingIcon={<Globe />}
+        trailing={<span className="text-muted-foreground text-xs">.com</span>}
+      />
+    </div>
+  ),
 }
 
 export const WithError: Story = {
@@ -87,20 +188,13 @@ export const Disabled: Story = {
   },
 }
 
-export const Sizes: Story = {
-  render: (args) => (
-    <div className="flex flex-col gap-4">
-      {(["sm", "default", "lg"] as const).map((size) => (
-        <TextField
-          key={size}
-          {...args}
-          size={size}
-          label={`Size: ${size}`}
-          placeholder={`${size} control`}
-        />
-      ))}
-    </div>
-  ),
+export const ReadOnly: Story = {
+  args: {
+    name: "target",
+    readOnly: true,
+    defaultValue: "api-gw-prod.netbaan.io",
+    description: "This value is locked but still selectable.",
+  },
 }
 
 function NativeValidationDemo() {

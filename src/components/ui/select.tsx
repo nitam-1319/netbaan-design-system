@@ -2,23 +2,26 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Check, ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
 /**
- * AEGIS — Select (Interactive tier, closed API)
+ * AEGIS — Select (Interactive tier, closed API, restored to reference)
  *
- * A form control for choosing one value (or several, with `multiple`) from a
- * list, built on the Base UI Select primitive. Portalling, floating-engine
- * positioning, typeahead, roving focus, modal focus management, native form
- * integration (`name` / `required`) and outside-press / Escape dismissal are
- * handled by the primitive.
+ * Matches `.agent/references/spec/Select.dc.html`: the outline / filled / flush
+ * variants (default outline), the sm/md/lg size scale (32 / 42 / 48px, default
+ * md), the resting / placeholder / hover / open-focus / error / disabled states,
+ * a chevron that rotates 180° while open, a selected-row accent tint + check, and
+ * a floating menu that enters with the signature `animate-menu-in` and carries the
+ * shared `shadow-elevated` elevation. Built on the Base UI Select primitive —
+ * portalling, floating-engine positioning, typeahead, roving focus, modal focus
+ * management, native form integration and dismissal come from the primitive.
  *
- * Public API is CLOSED: no `className` / `style` on any part. Trigger sizing is
- * the semantic `size` prop; placement is semantic on `SelectContent`; layout
- * inside the surface belongs in `Box`/`Stack`. Element polymorphism stays
- * available through Base UI's `render` prop.
+ * Public API is CLOSED: no `className` / `style` on any part. Trigger treatment is
+ * the semantic `variant` / `size` props; placement is semantic on `SelectContent`;
+ * layout inside the surface belongs in `Box` / `Stack`. Element polymorphism stays
+ * available through Base UI's `render` prop. Tokens only.
  * See `.agent/rules/API_RULES.md` and `.agent/DECISIONS.md` (escape-hatch policy).
  */
 
@@ -50,23 +53,32 @@ function SelectValue(
 
 const selectTriggerVariants = cva(
   cn(
-    "group/select-trigger border-input bg-background text-foreground dark:bg-input/30 dark:hover:bg-input/50 inline-flex w-full items-center justify-between gap-2 rounded-lg border bg-clip-padding whitespace-nowrap transition-all outline-none select-none",
-    "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3",
-    "disabled:pointer-events-none disabled:opacity-50",
-    "aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-invalid:ring-3 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+    "group/select-trigger flex w-full cursor-pointer items-center justify-between gap-2.5 text-start whitespace-nowrap text-foreground bg-clip-padding outline-none select-none transition-[color,background-color,border-color,box-shadow] duration-150",
+    "hover:border-accent-strong",
+    "focus-visible:border-accent focus-visible:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-soft",
+    "data-[popup-open]:border-accent data-[popup-open]:bg-surface data-[popup-open]:ring-[3px] data-[popup-open]:ring-accent-soft",
+    "aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20",
+    "data-[disabled]:pointer-events-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
     "data-[placeholder]:text-muted-foreground",
-    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+    "[&_svg]:pointer-events-none [&_svg]:shrink-0"
   ),
   {
     variants: {
       size: {
-        sm: "h-7 px-2.5 text-[0.8rem]",
-        default: "h-8 px-2.5 text-sm",
-        lg: "h-9 px-3 text-sm",
+        sm: "h-8 rounded-[8px] px-3 text-xs",
+        md: "h-[42px] rounded-[9px] px-3.5 text-sm",
+        lg: "h-12 rounded-[11px] px-4 text-base",
+      },
+      variant: {
+        outline: "border border-border-strong bg-surface-2",
+        filled: "border border-transparent bg-surface-3",
+        flush:
+          "rounded-none border-0 border-b border-border-strong bg-transparent px-0.5",
       },
     },
     defaultVariants: {
-      size: "default",
+      variant: "outline",
+      size: "md",
     },
   }
 )
@@ -77,19 +89,19 @@ type SelectTriggerProps = Omit<
 > &
   VariantProps<typeof selectTriggerVariants>
 
-function SelectTrigger({ size, children, ...props }: SelectTriggerProps) {
+function SelectTrigger({ variant, size, children, ...props }: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
-      className={cn(selectTriggerVariants({ size }))}
+      className={cn(selectTriggerVariants({ variant, size }))}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon
         data-slot="select-icon"
-        className="text-muted-foreground"
+        className="text-muted-foreground transition-transform duration-150 group-data-[popup-open]/select-trigger:rotate-180 group-data-[popup-open]/select-trigger:text-accent-strong [&_svg]:size-4"
       >
-        <ChevronsUpDown aria-hidden />
+        <ChevronDown aria-hidden />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -127,15 +139,15 @@ function SelectContent({
       >
         <SelectPrimitive.ScrollUpArrow
           data-slot="select-scroll-up"
-          className="bg-popover text-muted-foreground flex h-6 cursor-default items-center justify-center rounded-t-lg"
+          className="bg-popover text-muted-foreground flex h-6 cursor-default items-center justify-center rounded-t-[11px]"
         >
           <ChevronUp aria-hidden className="size-4" />
         </SelectPrimitive.ScrollUpArrow>
         <SelectPrimitive.Popup
           data-slot="select-content"
           className={cn(
-            "bg-popover text-popover-foreground ring-border-strong max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-lg p-1 text-sm shadow-[0_18px_50px_-18px_rgba(0,0,0,0.7)] ring-1 outline-none",
-            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
+            "bg-popover text-popover-foreground ring-border-strong max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-[11px] p-1.5 text-sm shadow-elevated ring-1 outline-none",
+            "animate-menu-in origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0"
           )}
           {...props}
         >
@@ -143,7 +155,7 @@ function SelectContent({
         </SelectPrimitive.Popup>
         <SelectPrimitive.ScrollDownArrow
           data-slot="select-scroll-down"
-          className="bg-popover text-muted-foreground flex h-6 cursor-default items-center justify-center rounded-b-lg"
+          className="bg-popover text-muted-foreground flex h-6 cursor-default items-center justify-center rounded-b-[11px]"
         >
           <ChevronDown aria-hidden className="size-4" />
         </SelectPrimitive.ScrollDownArrow>
@@ -164,8 +176,9 @@ function SelectItem({ children, ...props }: SelectItemProps) {
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "text-popover-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
-        "relative flex w-full cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-8 pl-2 text-sm outline-none transition-colors",
+        "text-muted-foreground relative flex w-full cursor-default items-center justify-between gap-2.5 rounded-[7px] py-2 pr-2 pl-2.5 text-[0.8rem] font-medium outline-none transition-colors select-none",
+        "data-[highlighted]:bg-accent-soft data-[highlighted]:text-foreground",
+        "data-[selected]:bg-accent-soft data-[selected]:text-foreground",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
       )}
@@ -174,7 +187,7 @@ function SelectItem({ children, ...props }: SelectItemProps) {
       <SelectPrimitive.ItemText data-slot="select-item-text">
         {children}
       </SelectPrimitive.ItemText>
-      <span className="absolute right-2 flex size-4 items-center justify-center">
+      <span className="flex size-4 shrink-0 items-center justify-center text-accent-strong">
         <SelectPrimitive.ItemIndicator data-slot="select-item-indicator">
           <Check aria-hidden />
         </SelectPrimitive.ItemIndicator>
@@ -194,7 +207,7 @@ function SelectGroupLabel(
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-group-label"
-      className={cn("text-muted-foreground px-2 py-1.5 text-xs font-medium")}
+      className={cn("text-muted-foreground px-2.5 py-1.5 text-xs font-medium")}
       {...props}
     />
   )
@@ -226,4 +239,5 @@ export {
   SelectGroup,
   SelectGroupLabel,
   SelectSeparator,
+  selectTriggerVariants,
 }

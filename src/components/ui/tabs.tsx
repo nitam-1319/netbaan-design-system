@@ -47,7 +47,7 @@ function TabsTab(
       className={cn(
         "relative z-10 inline-flex h-7 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors outline-none select-none",
         "text-muted-foreground data-[selected]:text-foreground hover:text-foreground",
-        "focus-visible:ring-3 focus-visible:ring-ring/50",
+        "focus-visible:ring-3 focus-visible:ring-accent-soft",
         "disabled:pointer-events-none disabled:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
       )}
@@ -83,7 +83,7 @@ function TabsPanel(
     <TabsPrimitive.Panel
       data-slot="tabs-panel"
       className={cn(
-        "flex-1 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-md"
+        "flex-1 outline-none focus-visible:ring-3 focus-visible:ring-accent-soft rounded-md"
       )}
       {...props}
     />

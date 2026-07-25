@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button"
 
 const confirmDialogContentVariants = cva(
   [
-    "bg-popover text-popover-foreground ring-border-strong fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl p-6 shadow-[0_30px_80px_-24px_rgba(0,0,0,0.75)] ring-1 outline-none",
+    "bg-popover text-popover-foreground ring-border-strong fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl p-6 shadow-elevated ring-1 outline-none",
     "origin-[var(--transform-origin)] transition-[transform,opacity] duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
   ],
   {
@@ -193,7 +193,7 @@ function ConfirmDialogContent({
             onClick={() => onConfirm?.()}
             render={
               <Button
-                variant={tone === "destructive" ? "destructive" : "default"}
+                variant={tone === "destructive" ? "destructive" : "primary"}
                 size="sm"
                 disabled={confirmDisabled}
               />

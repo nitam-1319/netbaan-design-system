@@ -23,11 +23,11 @@ const ASSETS: Asset[] = [
   { id: "a5", host: "db.netbaan.io", type: "Database", severity: "high", findings: 9 },
 ]
 
-const severityVariant: Record<Asset["severity"], React.ComponentProps<typeof Badge>["variant"]> = {
-  critical: "destructive",
-  high: "warning",
-  medium: "secondary",
-  low: "muted",
+const severityVariant: Record<Asset["severity"], React.ComponentProps<typeof Badge>["tone"]> = {
+  critical: "critical",
+  high: "high",
+  medium: "medium",
+  low: "low",
 }
 
 const columns: DataTableColumn<Asset>[] = [
@@ -48,7 +48,7 @@ const columns: DataTableColumn<Asset>[] = [
   {
     id: "severity",
     header: "Severity",
-    cell: (row) => <Badge variant={severityVariant[row.severity]}>{row.severity}</Badge>,
+    cell: (row) => <Badge tone={severityVariant[row.severity]}>{row.severity}</Badge>,
     sortable: true,
     sortValue: (row) => row.severity,
   },

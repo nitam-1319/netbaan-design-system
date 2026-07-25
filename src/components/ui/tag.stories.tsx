@@ -1,7 +1,7 @@
 import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect, userEvent, within } from "storybook/test"
-import { Filter, Hash } from "lucide-react"
+import { Hash } from "lucide-react"
 
 import { Tag } from "@/components/ui/tag"
 
@@ -14,14 +14,13 @@ const meta = {
   tags: ["autodocs"],
   args: {
     children: "production",
+    size: "md",
   },
-  decorators: [
-    (Story) => (
-      <div className="flex min-h-24 items-center justify-center p-10 text-foreground">
-        <Story />
-      </div>
-    ),
-  ],
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm", "md", "lg"] },
+    selected: { control: "boolean" },
+    disabled: { control: "boolean" },
+  },
 } satisfies Meta<typeof Tag>
 
 export default meta
@@ -36,26 +35,22 @@ export const Default: Story = {
   },
 }
 
-export const Variants: Story = {
+export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-2">
-      <Tag variant="default">default</Tag>
-      <Tag variant="primary">primary</Tag>
-      <Tag variant="outline">outline</Tag>
-      <Tag variant="muted">muted</Tag>
-      <Tag variant="success">passing</Tag>
-      <Tag variant="warning">degraded</Tag>
-      <Tag variant="destructive">exposed</Tag>
+    <div className="flex items-center gap-2">
+      <Tag size="sm">small</Tag>
+      <Tag size="md">medium</Tag>
+      <Tag size="lg">large</Tag>
     </div>
   ),
 }
 
-export const Sizes: Story = {
+/** Resting vs. the accent-tinted `selected` state (filter / choice chips). */
+export const Selected: Story = {
   render: () => (
     <div className="flex items-center gap-2">
-      <Tag size="sm">sm</Tag>
-      <Tag size="default">default</Tag>
-      <Tag size="lg">lg</Tag>
+      <Tag>archived</Tag>
+      <Tag selected>active</Tag>
     </div>
   ),
 }
@@ -63,22 +58,42 @@ export const Sizes: Story = {
 export const WithIcon: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
-      <Tag variant="outline">
+      <Tag>
         <Hash /> internal
       </Tag>
-      <Tag variant="muted">
-        <Filter /> external-facing
+      <Tag selected>
+        <Hash /> tracked
       </Tag>
     </div>
   ),
 }
 
+/** A filter chip: render as a `<button>` and toggle `selected` on click. */
+export const Filter: Story = {
+  render: () => {
+    const [on, setOn] = React.useState(false)
+    return (
+      <Tag selected={on} render={<button type="button" />} onClick={() => setOn((v) => !v)}>
+        Active
+      </Tag>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const chip = canvas.getByRole("button", { name: "Active" })
+    await expect(chip).not.toHaveAttribute("data-selected")
+    await userEvent.click(chip)
+    await expect(chip).toHaveAttribute("data-selected")
+  },
+}
+
 export const Removable: Story = {
   render: () => {
     const [visible, setVisible] = React.useState(true)
-    if (!visible) return <span className="text-sm text-muted-foreground">Removed</span>
+    if (!visible)
+      return <span className="text-sm text-muted-foreground">Removed</span>
     return (
-      <Tag variant="primary" onRemove={() => setVisible(false)}>
+      <Tag selected onRemove={() => setVisible(false)}>
         production
       </Tag>
     )
@@ -104,7 +119,6 @@ export const RemovableGroup: Story = {
         {tags.map((t) => (
           <Tag
             key={t}
-            variant="outline"
             onRemove={() => setTags((prev) => prev.filter((x) => x !== t))}
             removeLabel={`Remove ${t}`}
           >
@@ -121,7 +135,7 @@ export const RemovableGroup: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <Tag variant="primary" disabled onRemove={() => {}}>
+    <Tag selected disabled onRemove={() => {}}>
       locked
     </Tag>
   ),

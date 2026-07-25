@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, waitFor, within } from "storybook/test"
+import { expect, within } from "storybook/test"
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar } from "@/components/ui/avatar"
 
 const meta = {
   title: "Components/Avatar",
@@ -10,51 +10,96 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  decorators: [
-    (Story) => (
-      <div className="flex min-h-24 items-center justify-center p-10">
-        <Story />
-      </div>
-    ),
-  ],
+  args: {
+    name: "Jane Doe",
+    size: "md",
+    shape: "circle",
+  },
+  argTypes: {
+    size: {
+      control: "inline-radio",
+      options: ["xs", "sm", "md", "lg", "xl"],
+    },
+    shape: { control: "inline-radio", options: ["circle", "square"] },
+    status: {
+      control: "inline-radio",
+      options: ["online", "away", "busy", "offline"],
+    },
+    ring: { control: "boolean" },
+  },
 } satisfies Meta<typeof Avatar>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const WithImage: Story = {
-  render: () => (
-    <Avatar>
-      <AvatarImage
-        src="https://i.pravatar.cc/80?img=12"
-        alt="Priya Nair"
-      />
-      <AvatarFallback>PN</AvatarFallback>
-    </Avatar>
-  ),
+export const Playground: Story = {
+  args: { status: "online" },
 }
 
-export const Fallback: Story = {
+export const Fallbacks: Story = {
   render: () => (
-    <Avatar>
-      <AvatarImage src="" alt="Sam Okonkwo" />
-      <AvatarFallback>SO</AvatarFallback>
-    </Avatar>
+    <div className="flex items-center gap-4">
+      <Avatar name="Ana Ruiz" src="https://i.pravatar.cc/120?img=5" />
+      <Avatar name="Ben Cho" />
+      <Avatar />
+    </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await waitFor(() => expect(canvas.getByText("SO")).toBeVisible())
+    // No image + a name → seeded initials.
+    await expect(canvas.getByText("BC")).toBeVisible()
+    // No image + no name → the neutral icon fallback, labelled "Avatar".
+    await expect(canvas.getByLabelText("Avatar")).toBeInTheDocument()
   },
 }
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex items-center gap-3">
-      {(["xs", "sm", "default", "lg", "xl"] as const).map((size) => (
-        <Avatar key={size} size={size}>
-          <AvatarFallback>{size.slice(0, 2).toUpperCase()}</AvatarFallback>
-        </Avatar>
+    <div className="flex items-center gap-4">
+      {(["xs", "sm", "md", "lg", "xl"] as const).map((size) => (
+        <Avatar key={size} name="Jane Doe" size={size} />
       ))}
     </div>
   ),
+}
+
+export const Shapes: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <Avatar name="Jane Doe" size="lg" shape="circle" />
+      <Avatar name="Aegis Co" size="lg" shape="square" />
+    </div>
+  ),
+}
+
+/** The `name` hash seeds a stable hue, so each person keeps one color. */
+export const SeededColors: Story = {
+  render: () => (
+    <div className="flex items-center gap-3">
+      {["Ana Ruiz", "Ben Cho", "Kai Ito", "Lea Von", "Mo Diaz", "Sky Poe"].map(
+        (name) => (
+          <Avatar key={name} name={name} />
+        )
+      )}
+    </div>
+  ),
+}
+
+export const Presence: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      {(["online", "away", "busy", "offline"] as const).map((status) => (
+        <Avatar key={status} name="Jane Doe" size="lg" status={status} />
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getAllByLabelText("Jane Doe")).toHaveLength(4)
+  },
+}
+
+/** The card + accent ring marks the current user or a selected avatar. */
+export const CurrentUser: Story = {
+  args: { size: "lg", ring: true, status: "online" },
 }

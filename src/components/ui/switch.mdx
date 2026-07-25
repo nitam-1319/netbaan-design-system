@@ -6,8 +6,9 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 An instant-apply on/off toggle. Built on the Base UI `Switch` primitive, which
 renders an accessible `role="switch"` control with a paired hidden `<input>` for
-form submission and full keyboard support. The track and thumb animate on the
-`data-[checked]` state using AEGIS tokens.
+form submission and full keyboard support. The track fills with the accent
+gradient when on and the muted `--surface-3` groove when off; the pure-white
+thumb (inset 3px) slides across on toggle, all in AEGIS tokens.
 
 ## When to use
 
@@ -20,8 +21,26 @@ form submission and full keyboard support. The track and thumb animate on the
 
 ## Anatomy
 
-1. **Root** — the track (`role="switch"`) plus a hidden input for forms.
-2. **Thumb** — the sliding knob that moves on toggle.
+1. **Track** — the pill (`role="switch"`) that fills with accent when on, muted
+   when off, plus a hidden input for forms.
+2. **Thumb** — the pure-white circle that slides between the two ends.
+3. **Focus ring** — a 3px accent-soft halo on keyboard focus.
+4. **Label** _(optional)_ — the setting name tied to the switch.
+5. **Description** _(optional)_ — a secondary line stating what it controls.
+
+## Sizes
+
+| Size | Track | Thumb |
+| --- | --- | --- |
+| `sm` | 36 × 20 | 16 |
+| `md` _(default)_ | 44 × 26 | 20 |
+| `lg` | 52 × 30 | 24 |
+
+## States
+
+`off` · `on` · `hover` · `focus` (3px accent-soft ring) · `disabled` (45%
+opacity, not-allowed) · `error` (`isInvalid` danger ring for an invalid required
+switch) · `loading` (thumb spinner, locked, `aria-busy`).
 
 ## Behavior
 
@@ -29,37 +48,46 @@ form submission and full keyboard support. The track and thumb animate on the
 | --- | --- |
 | Click / tap | Toggles state, fires `onCheckedChange`. |
 | `Space` / `Enter` | Toggles when focused. |
-| `disabled` | Non-interactive at 50% opacity. |
+| `loading` | Shows a thumb spinner and locks the switch (`aria-busy`). |
+| `disabled` | Non-interactive at 45% opacity. |
 
 Controlled via `checked` + `onCheckedChange`; uncontrolled via `defaultChecked`.
+Use `showIcons` to render a check (on) / bar (off) glyph in the thumb so state is
+never conveyed by colour alone.
 
 ## Accessibility
 
-- Exposes `role="switch"` with `aria-checked`.
-- Always give it a name — wrap in a `<label>`, or pass `aria-label` /
-  `aria-labelledby`.
-- Keyboard map: `Tab` to focus, `Space`/`Enter` to toggle. Focus shows the AEGIS
-  ring (`--ring`).
-- The hidden input carries `name`/`value` so the switch submits with forms.
+- Exposes `role="switch"` with `aria-checked`; a single natural `Tab` stop.
+- Always give it a name — pass `label`, wrap in a `<label>`, or set `aria-label`
+  / `aria-labelledby`.
+- Optional thumb glyphs and the announced `aria-checked` convey state without
+  relying on colour.
+- Focus shows a 3px accent-soft ring with ≥3:1 contrast.
 
 ## Design tokens
 
 | Token | Applies to |
 | --- | --- |
-| `--surface-3` | Off track |
-| `--primary` | On track |
-| `--background` | Thumb |
-| `--ring` | Focus ring |
+| `--surface-3` | Off track (muted groove) |
+| `--accent` → `--accent-strong` | On-track gradient |
+| `white` | Thumb |
+| `--accent-soft` | Focus ring |
+| `--destructive` | Invalid-required (error) ring |
 
 ## API
 
-`Switch` — Base UI `Switch.Root` props.
+Closed API — `className` and `style` are not accepted. Polymorphism via `render`.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `checked` | `boolean` | — | Controlled state. |
+| `checked` | `boolean` | — | Controlled on/off state. |
 | `defaultChecked` | `boolean` | `false` | Uncontrolled initial state. |
-| `onCheckedChange` | `(checked, details) => void` | — | Change handler. |
-| `disabled` | `boolean` | `false` | Disable interaction. |
+| `onCheckedChange` | `(checked, details) => void` | — | Fires immediately on toggle. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Track size. |
+| `showIcons` | `boolean` | `false` | Check / bar glyphs inside the thumb. |
+| `loading` | `boolean` | `false` | Thumb spinner, locked, `aria-busy`. |
+| `error` | `boolean` | `false` | Danger ring for an invalid required switch. |
+| `disabled` | `boolean` | `false` | Inert, non-interactive state. |
+| `label` | `ReactNode` | — | Setting name (renders the label row). |
+| `description` | `ReactNode` | — | Optional secondary helper line. |
 | `name` / `value` | `string` | — | Form submission identity. |
-| `className` | `string` | — | Merged onto the root via `cn()`. |

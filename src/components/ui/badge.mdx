@@ -4,62 +4,91 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 # Badge
 
-A small, non-interactive marker for counts, statuses, or short labels. Renders a
-`<span>` by default and composes onto any element (link, button) via the Base UI
-`render` prop. Every color maps to an AEGIS token.
+A small, read-only marker for a status, category, or count. Renders a `<span>`
+by default and composes onto any element (link, button) via the Base UI `render`
+prop. Every hue resolves from an AEGIS `--tone` token — nothing is hard-coded.
 
 ## When to use
 
-- **Do** use it to show a count ("3 CVEs"), a state ("Resolved"), or a category
-  tag next to a title.
-- **Do** use the severity-aligned `success` / `warning` / `destructive` variants
-  to signal status at a glance.
-- **Don't** use a badge as a primary action — reach for `Button`. If it must be
-  clickable (e.g. a filter chip), compose with `render={<a/>}` / `render={<button/>}`.
-- **Don't** put long text in a badge; keep it to a word or a number.
+- **Do** use it to label a status ("Active"), categorise, or show a count
+  ("3 CVEs") beside its content.
+- **Do** pair a leading `dot` with a status label so meaning survives in
+  monochrome.
+- **Don't** make a badge clickable, focusable, or removable — that is a `Chip`
+  or `Tag`. (Composing `render={<a/>}` for a linked label is the exception.)
+- **Don't** stuff a sentence into a badge; keep it to a word or a number.
+
+## Two axes
+
+A badge is defined by **tone** (the semantic hue) × **variant** (the fill
+treatment), plus a size.
+
+| Tone | Meaning |
+| --- | --- |
+| `accent` | Featured / new |
+| `neutral` _(default)_ | Draft / inactive |
+| `success` | Active / healthy |
+| `warning` | Pending / degraded |
+| `danger` | Failed / error |
+| `info` | Informational |
+| `low` · `medium` · `high` · `critical` | The ASM severity ramp (`--sev-*`) |
+
+| Variant | Treatment |
+| --- | --- |
+| `soft` _(default)_ | Tinted fill, tone-coloured text — the quietest. |
+| `solid` | Filled with the tone — reserve for one high-priority signal. |
+| `outline` | Bordered, transparent fill — light-weight on busy surfaces. |
 
 ## Anatomy
 
-1. **Container** — the pill; sets background, border, radius, and padding.
-2. **Icon** _(optional)_ — a leading lucide glyph, auto-sized to `size-3`.
-3. **Label** — the count or short text.
+1. **Container** — the pill; fill and text come from tone × variant. Per-size
+   radius 6 / 7 / 8px.
+2. **Adornment** _(optional)_ — a leading status `dot` (carries the signature
+   `animate-pulse-dot`) or a ~12px leading `icon`.
+3. **Label** — 1–2 words in sentence case, never wrapping.
+4. **Count** — pass `count` for a numeric variant clamped to `max` → "99+".
 
-## Behavior
+## Sizes
 
-| Variant | Meaning |
-| --- | --- |
-| `default` | Neutral accent marker on `--primary`. |
-| `secondary` / `muted` / `outline` | Low-emphasis labels. |
-| `success` / `warning` / `destructive` | Status mapped to AEGIS severity tokens. |
-
-Sizes: `sm`, `default`, `lg`.
+| Size | Height | Radius |
+| --- | --- | --- |
+| `sm` | 20px | 6px |
+| `md` _(default)_ | 24px | 7px |
+| `lg` | 28px | 8px |
 
 ## Accessibility
 
-- A badge is decorative by default and conveys meaning through text — avoid
-  color-only status; the label carries the meaning.
-- When rendered as a link/button via `render`, it inherits that element's role and
-  is keyboard-focusable with a visible focus ring (`--ring`).
-- For a numeric badge attached to a control, reference it with `aria-describedby`
-  or include the count in the control's accessible name.
+- The **label** carries the meaning; tone only reinforces it, never colour
+  alone.
+- A badge is not a control — it omits `role`/`tabindex` so assistive tech does
+  not announce it as actionable.
+- A `count` badge exposes the full value via `aria-label` (e.g. `128`) even when
+  the visible digits clamp to "99+".
+- When composed as a link/button via `render`, it inherits that element's
+  semantics and focus behaviour.
 
 ## Design tokens
 
-| Token | Applies to |
+| Token / utility | Role |
 | --- | --- |
-| `--primary` / `--primary-foreground` | Default fill + text |
-| `--secondary` / `--muted` | Low-emphasis fills |
-| `--success` / `--warning` / `--destructive` | Status variants |
-| `--border` | Outline variant hairline |
-| `--ring` | Focus ring when interactive |
+| `--tone` (per-tone `--accent-strong` / `--success` / `--sev-*` …) | Tone hue |
+| `color-mix(… var(--tone) …)` | Soft fill + border |
+| `--surface-3` / `--border-strong` | Neutral tone surface |
+| `--muted-foreground` | Neutral tone text |
+| `animate-pulse-dot` | Status-dot pulse |
 
 ## API
 
-`Badge`
+Closed API — `className` and `style` are not accepted. Polymorphism via `render`.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `variant` | `"default" \| "secondary" \| "outline" \| "muted" \| "success" \| "warning" \| "destructive"` | `"default"` | Visual/status style. |
-| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Padding + text size. |
-| `render` | `ReactElement \| (props, state) => ReactElement` | `<span/>` | Element to render as. |
-| `className` | `string` | — | Merged onto the element via `cn()`. |
+| `children` | `ReactNode` | — | The label (1–2 words). |
+| `tone` | `"accent" \| "neutral" \| "success" \| "warning" \| "danger" \| "info" \| "low" \| "medium" \| "high" \| "critical"` | `"neutral"` | Semantic hue. |
+| `variant` | `"soft" \| "solid" \| "outline"` | `"soft"` | Fill treatment. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Badge size. |
+| `dot` | `boolean` | `false` | Leading status dot (pulses). |
+| `icon` | `ReactNode` | — | Optional ~12px leading icon. |
+| `count` | `number` | — | Numeric count variant. |
+| `max` | `number` | `99` | Count clamp before "N+". |
+| `render` | `ReactElement` | `<span/>` | Element polymorphism (`useRender`). |

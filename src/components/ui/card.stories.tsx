@@ -66,7 +66,7 @@ export const WithActionAndFooter: Story = {
           <CardTitle>Coverage gap</CardTitle>
           <CardDescription>17 hosts are unmonitored.</CardDescription>
           <CardAction>
-            <Badge variant="warning">Action</Badge>
+            <Badge tone="warning">Action</Badge>
           </CardAction>
         </CardHeader>
         <CardContent>

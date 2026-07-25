@@ -4,11 +4,12 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 # Text Field
 
-The batteries-included single-line text input. A prop-driven convenience wrapper that
-composes the `FormField` family — label, control, helper text, and validation message —
-into one component for the common case. Built on the same Base UI `Field` primitive as
-`FormField`, so label association, `aria-describedby`, `aria-invalid`, and native
-validity all come for free.
+The single-line text input (the reference calls it **Input**), restored to
+`.agent/references/spec/Input.dc.html`. A prop-driven wrapper that composes the
+`FormField` family — label, control, helper text, and validation message — with the
+Input variant / size / state system and adornment slots. Built on the Base UI `Field`
+primitive, so label association, `aria-describedby`, `aria-invalid`, and native validity
+all come for free.
 
 ## Overview
 
@@ -30,15 +31,37 @@ bespoke error arrangement — compose the `FormField` parts directly instead.
 `TextField` renders a `FormField` containing, in order:
 
 1. **label** — the field's visible label (rendered when `label` is set).
-2. **control** — the `<input>`; sized with the semantic `size` prop
-   (`sm` / `default` / `lg`) and reflecting validity via `aria-invalid`.
+2. **control** — the `<input>`; styled with the semantic `variant` / `size` props and
+   reflecting validity via `aria-invalid`. Optional `leadingIcon` / `trailing`
+   adornments sit inside the field.
 3. **description** — optional helper text below the control.
 4. **error** — an optional validation message (shown whenever `error` is set).
+
+## Variants
+
+- **Outline** (default) — bordered (`border-border-strong`) on the `--surface-2` field.
+- **Filled** — a higher-contrast `--surface-3` fill for dense forms.
+- **Flush** — underline-only (bottom border, no radius) for inline / minimal UIs.
+
+## Sizes
+
+The `size` prop scales the control height: `sm` (32px), `md` (40px, default), `lg` (48px).
+
+## States
+
+Default, Hover (border lifts to `--accent-strong`), Focus (accent border + 3px
+`accent-soft` ring on a `--surface` background), Error (`--destructive` border + ring via
+`aria-invalid`), Success (`--success` border + ring), Disabled (50% opacity), and
+Read-only (`--surface-3` fill, dim text). The `state` prop can force any of these for
+documentation; real interaction states apply automatically. Each is demonstrated as a
+story.
 
 ## Behavior
 
 - **Controlled/uncontrolled:** mirrors a native input — `value` + `onValueChange`
   (or `onChange`) for controlled, `defaultValue` for uncontrolled.
+- **Adornments:** `leadingIcon` and `trailing` render decorative or interactive glyphs
+  inside the field; the control padding adjusts so the value never overlaps them.
 - **Validation:** for native-validity messages that appear/clear automatically, set
   `validationMode` and provide your own `FormField` + `FieldError match=…` composition;
   the flat `error` prop is for externally-controlled messages and should be paired with
@@ -58,22 +81,28 @@ bespoke error arrangement — compose the `FormField` parts directly instead.
 
 ## Tokens
 
-Inherits `FormField`'s tokens: `--input` / `--background` with a `--ring` focus ring and
-`--destructive` for the invalid state; `--foreground` label; `--muted-foreground` helper
-text; `--destructive` error text. No hardcoded colors, spacing, or radii — tokens only.
+The field surface is `--surface-2` (`--surface-3` filled) with a `border-border-strong`
+resting border; focus uses an `--accent` border and a 3px `--accent-soft` ring on a
+`--surface` background. Error uses `--destructive`, success uses `--success`, and
+placeholder / adornment glyphs use `--muted-foreground`. The label is `--foreground`,
+helper text `--muted-foreground`, error text `--destructive`. No hardcoded colors,
+spacing, or radii — tokens only.
 
 ## API
 
 | Prop | Type | Notes |
 | --- | --- | --- |
+| `variant` | `outline` \| `filled` \| `flush` | Visual treatment. Default `outline` |
+| `size` | `sm` \| `md` \| `lg` | Control height (32 / 40 / 48px). Default `md` |
+| `state` | `default` \| `hover` \| `focus` \| `error` \| `success` \| `disabled` \| `readonly` | Forced visual state (docs / testing) |
+| `leadingIcon` / `trailing` | `ReactNode` | Adornment slots inside the field |
 | `label` | `ReactNode` | Visible label |
 | `description` | `ReactNode` | Helper text |
 | `error` | `ReactNode` | Externally-controlled validation message |
-| `size` | `sm` \| `default` \| `lg` | Control height |
 | `name` | `string` | Native form field name |
-| `disabled` | `boolean` | Locks the field, dims the label |
+| `disabled` / `readOnly` | `boolean` | Inert / locked-value states |
 | `required` / `type` / `placeholder` / `pattern` / `value` / `defaultValue` / `onValueChange` | native input props | Passed to the control |
 | `validationMode` / `validate` | field root props | Native / custom validation |
 
 The public API is **closed**: no `className` / `style`. Customize through the semantic
-`size` prop; place layout between fields in `Box` / `Stack`.
+`variant` / `size` props; place layout between fields in `Box` / `Stack`.

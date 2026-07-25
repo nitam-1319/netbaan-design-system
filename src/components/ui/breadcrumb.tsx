@@ -56,7 +56,7 @@ function BreadcrumbLink({
     props: {
       "data-slot": "breadcrumb-link",
       className: cn(
-        "rounded-sm outline-none transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+        "rounded-sm outline-none transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-accent-soft"
       ),
       ...props,
     },

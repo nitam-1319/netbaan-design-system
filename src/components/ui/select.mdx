@@ -5,10 +5,10 @@ import { Meta } from "@storybook/addon-docs/blocks"
 # Select
 
 A form control for choosing one value — or several, with `multiple` — from a list of
-options. Built on the Base UI `Select` primitive, so portalling, floating-engine
-positioning, typeahead, roving focus, modal focus management, native form integration
-(`name` / `required` / `disabled`), and outside-press / Escape dismissal are all
-handled for us.
+options. Restored to `.agent/references/spec/Select.dc.html`. Built on the Base UI
+`Select` primitive, so portalling, floating-engine positioning, typeahead, roving focus,
+modal focus management, native form integration (`name` / `required` / `disabled`), and
+outside-press / Escape dismissal are all handled for us.
 
 ## Overview
 
@@ -18,7 +18,7 @@ current value (or a placeholder); the portalled listbox shows the options.
 
 ## When to use
 
-- **Do** use it for a single choice from ~5–20 known options that is part of a form
+- **Do** use it for a single choice from ~6–20 known options that is part of a form
   (severity, owner, plan, status).
 - **Don't** use it for two or three options where all should be visible at once — use a
   `Radio Group` or `Segmented Control`.
@@ -30,15 +30,34 @@ current value (or a placeholder); the portalled listbox shows the options.
 1. **Select** — the root; owns `value` state (controlled `value` / uncontrolled
    `defaultValue`), `open` state, and form props (`name`, `required`, `disabled`,
    `multiple`).
-2. **SelectTrigger** — the control that opens the listbox (`role="combobox"`); sized
-   with the semantic `size` prop (`sm` / `default` / `lg`). Renders a trailing chevron.
+2. **SelectTrigger** — the control that opens the listbox (`role="combobox"`); styled
+   with the semantic `variant` (`outline` / `filled` / `flush`) and `size` (`sm` /
+   `md` / `lg`) props. Renders a trailing chevron that rotates 180° while open.
 3. **SelectValue** — renders the selected item's label, or a `placeholder`.
-4. **SelectContent** — the portalled, positioned listbox with scroll arrows.
+4. **SelectContent** — the portalled, positioned listbox with scroll arrows. It enters
+   with the signature `animate-menu-in` on the shared `shadow-elevated` surface.
    Placement is semantic: `side`, `align`, `sideOffset`, `alignOffset`.
-5. **SelectItem** — an option (`role="option"`) with a check indicator when selected;
-   supports `disabled`.
+5. **SelectItem** — an option (`role="option"`); the selected row carries an accent tint
+   and a check indicator; supports `disabled`.
 6. **SelectGroup** / **SelectGroupLabel** — a labelled section of options.
 7. **SelectSeparator** — a non-focusable divider between sections.
+
+## Variants
+
+- **Outline** (default) — bordered (`border-border-strong`) on the `--surface-2` field.
+- **Filled** — a higher-contrast `--surface-3` fill for dense forms.
+- **Flush** — underline-only (bottom border, no radius) for inline / minimal UIs.
+
+## Sizes
+
+The `size` prop scales the trigger: `sm` (32px), `md` (42px, default), `lg` (48px).
+
+## States
+
+Default, Placeholder (dim hint), Hover (border lifts to `--accent-strong`), Open / focus
+(accent border + 3px `accent-soft` ring, chevron rotated, `--surface` background), Error
+(`--destructive` border + ring via `aria-invalid`), and Disabled (50% opacity, menu can't
+open). Each is demonstrated as a story.
 
 ## Behavior
 
@@ -55,7 +74,7 @@ current value (or a placeholder); the portalled listbox shows the options.
 
 ## Accessibility
 
-- Meets WCAG 2.2 AA: option text and the highlighted-row surface clear 4.5:1 in both
+- Meets WCAG 2.2 AA: option text and the selected-row surface clear contrast in both
   themes; the placeholder uses `--muted-foreground` which holds 4.5:1 on the trigger.
 - Roles are supplied by the primitive: the trigger is a `combobox` with
   `aria-haspopup="listbox"` / `aria-expanded`, the popup is a `listbox`, and items are
@@ -75,18 +94,19 @@ current value (or a placeholder); the portalled listbox shows the options.
 
 ## Tokens
 
-Trigger uses `--input` / `--background` with a `--ring` focus ring and `--destructive`
-for the invalid state; the popup uses `--popover` / `--popover-foreground` with a
-`--border-strong` ring; highlighted options use `--accent` / `--accent-foreground`;
-labels, chevrons, separators use `--muted-foreground` and `--border`. No hardcoded
-colors, spacing, or radii — tokens only.
+The trigger surface is `--surface-2` (`--surface-3` filled) with a `border-border-strong`
+resting border; open / focus uses an `--accent` border and a 3px `--accent-soft` ring on
+a `--surface` background. The popup uses `--popover` with a `--border-strong` ring and the
+shared `--shadow` elevation (`shadow-elevated`); the selected / highlighted row uses
+`--accent-soft` and the check uses `--accent-strong`. Invalid uses `--destructive`. No
+hardcoded colors, spacing, or radii — tokens only.
 
 ## API
 
 | Part | Key props | Notes |
 | --- | --- | --- |
 | `Select` | `value`, `defaultValue`, `onValueChange`, `open`, `defaultOpen`, `onOpenChange`, `name`, `required`, `disabled`, `readOnly`, `multiple` | Root; closed API |
-| `SelectTrigger` | `size` (`sm` \| `default` \| `lg`), `disabled`, `render` | `role="combobox"` |
+| `SelectTrigger` | `variant` (`outline` \| `filled` \| `flush`), `size` (`sm` \| `md` \| `lg`), `disabled`, `render` | `role="combobox"` |
 | `SelectValue` | `placeholder`, `children` (label formatter) | Shows current label |
 | `SelectContent` | `side`, `align`, `sideOffset`, `alignOffset` | Portalled listbox |
 | `SelectItem` | `value`, `disabled`, `label`, `render` | `role="option"` |
@@ -94,4 +114,4 @@ colors, spacing, or radii — tokens only.
 | `SelectSeparator` | `orientation` | Divider |
 
 The public API is **closed**: no `className` / `style` on any part. Customize through
-the semantic `size` prop and place one-off layout in `Box` / `Stack`.
+the semantic `variant` / `size` props and place one-off layout in `Box` / `Stack`.

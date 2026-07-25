@@ -5,30 +5,28 @@ import { SeverityBadge } from "@/components/ui/severity-badge"
 
 /**
  * Theme (Light/Dark) and direction (LTR/RTL) come from the global Storybook
- * toolbar. Demo layout uses plain HTML wrappers so no `className` is passed to
- * an AEGIS component.
+ * toolbar. Demo layout uses plain HTML wrappers so no `className` / `style` is
+ * ever passed to an AEGIS component.
  */
 const meta = {
   title: "Components/SeverityBadge",
   component: SeverityBadge,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: { layout: "centered" },
   tags: ["autodocs"],
   argTypes: {
-    severity: {
+    level: {
       control: "inline-radio",
       options: ["critical", "high", "medium", "low", "info"],
     },
-    appearance: { control: "inline-radio", options: ["soft", "outline"] },
-    size: { control: "inline-radio", options: ["sm", "default", "lg"] },
-    showDot: { control: "boolean" },
+    variant: { control: "inline-radio", options: ["soft", "solid", "outline"] },
+    size: { control: "inline-radio", options: ["sm", "md", "lg"] },
+    dot: { control: "boolean" },
   },
   args: {
-    severity: "critical",
-    appearance: "soft",
-    size: "default",
-    showDot: true,
+    level: "critical",
+    variant: "soft",
+    size: "md",
+    dot: true,
   },
 } satisfies Meta<typeof SeverityBadge>
 
@@ -50,11 +48,11 @@ export const Default: Story = {
 export const Levels: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-      <SeverityBadge severity="critical" />
-      <SeverityBadge severity="high" />
-      <SeverityBadge severity="medium" />
-      <SeverityBadge severity="low" />
-      <SeverityBadge severity="info" />
+      <SeverityBadge level="critical" />
+      <SeverityBadge level="high" />
+      <SeverityBadge level="medium" />
+      <SeverityBadge level="low" />
+      <SeverityBadge level="info" />
     </div>
   ),
 }
@@ -62,11 +60,23 @@ export const Levels: Story = {
 export const Outline: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-      <SeverityBadge severity="critical" appearance="outline" />
-      <SeverityBadge severity="high" appearance="outline" />
-      <SeverityBadge severity="medium" appearance="outline" />
-      <SeverityBadge severity="low" appearance="outline" />
-      <SeverityBadge severity="info" appearance="outline" />
+      <SeverityBadge level="critical" variant="outline" />
+      <SeverityBadge level="high" variant="outline" />
+      <SeverityBadge level="medium" variant="outline" />
+      <SeverityBadge level="low" variant="outline" />
+      <SeverityBadge level="info" variant="outline" />
+    </div>
+  ),
+}
+
+export const Solid: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+      <SeverityBadge level="critical" variant="solid" />
+      <SeverityBadge level="high" variant="solid" />
+      <SeverityBadge level="medium" variant="solid" />
+      <SeverityBadge level="low" variant="solid" />
+      <SeverityBadge level="info" variant="solid" />
     </div>
   ),
 }
@@ -74,22 +84,22 @@ export const Outline: Story = {
 export const Sizes: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-      <SeverityBadge severity="high" size="sm" />
-      <SeverityBadge severity="high" size="default" />
-      <SeverityBadge severity="high" size="lg" />
+      <SeverityBadge level="high" size="sm" />
+      <SeverityBadge level="high" size="md" />
+      <SeverityBadge level="high" size="lg" />
     </div>
   ),
 }
 
 export const WithoutDot: Story = {
-  args: { showDot: false, severity: "medium" },
+  args: { dot: false, level: "medium" },
 }
 
 export const CustomLabel: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-      <SeverityBadge severity="critical">Critical · CVSS 9.8</SeverityBadge>
-      <SeverityBadge severity="low">Low · CVSS 3.1</SeverityBadge>
+      <SeverityBadge level="critical">Critical · CVSS 9.8</SeverityBadge>
+      <SeverityBadge level="low">Low · CVSS 3.1</SeverityBadge>
     </div>
   ),
 }

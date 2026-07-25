@@ -124,7 +124,7 @@ function FirstRunOnboarding({
       {hasActions && (
         <EmptyStateActions>
           {onPrimary != null && (
-            <Button variant="default" size="lg" onClick={onPrimary}>
+            <Button variant="primary" size="lg" onClick={onPrimary}>
               {primaryLabel}
             </Button>
           )}

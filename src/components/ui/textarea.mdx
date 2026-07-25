@@ -4,99 +4,110 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 # Textarea
 
-The batteries-included multi-line text input — the sibling of `TextField`. A prop-driven
-convenience wrapper that composes the `FormField` family (label, control, helper text, and
-validation message) into one component for the common case. Built on the same Base UI `Field`
-primitive as `FormField`, so label association, `aria-describedby`, `aria-invalid`, and native
-validity all come for free. The only difference from `TextField` is that the control is a
-`<textarea>`, sized by height rather than a single line.
+The multi-line text input — the sibling of `TextField`, sharing the Input visual language
+from `.agent/references/spec/Input.dc.html`. A prop-driven wrapper that composes the
+`FormField` family (label, control, helper text, and validation message) with the Input
+variant / size / state system. Built on the same Base UI `Field` primitive as `FormField`,
+so label association, `aria-describedby`, `aria-invalid`, and native validity all come for
+free. The only difference from `TextField` is that the control is a `<textarea>` — sized
+by height, vertically resizable, and auto-growing to fit its content.
 
 ## Overview
 
-Reach for `Textarea` whenever you need a labelled multi-line input: scan notes, a justification,
-a message body, an exception rationale. Pass `label`, `description`, and `error` as props and the
-field wires itself up. When the flat API can't express the layout, compose the `FormField` parts
-directly instead.
+Reach for `Textarea` whenever you need a labelled multi-line input: scan notes, a
+justification, a message body, an exception rationale. Pass `label`, `description`, and
+`error` as props and the field wires itself up. When the flat API can't express the
+layout, compose the `FormField` parts directly instead.
 
 ## Usage
 
 - **Do** use it for free-form, multi-line text in a form.
-- **Do** set `rows` for a taller initial control, and let users drag the resize handle for more.
+- **Do** set `rows` for a taller initial control; the field auto-grows and stays
+  drag-resizable for more.
 - **Don't** use it for a single line — use `TextField`.
-- **Don't** use it to pick from a fixed list — use `Select`; or to filter a large list — use
-  `Combobox`.
+- **Don't** use it to pick from a fixed list — use `Select`; or to filter a large list —
+  use `Combobox`.
 
 ## Anatomy
 
 `Textarea` renders a `FormField` containing, in order:
 
 1. **label** — the field's visible label (rendered when `label` is set).
-2. **control** — the `<textarea>`; sized with the semantic `size` prop
-   (`sm` / `default` / `lg`, which sets the minimum height) and reflecting validity via
-   `aria-invalid`. Vertically resizable; resize is disabled while the control is `disabled`.
+2. **control** — the `<textarea>`; styled with the semantic `variant` / `size` props
+   (`size` sets the minimum height) and reflecting validity via `aria-invalid`.
+   Auto-grows to fit content and stays vertically resizable; resize is disabled while the
+   control is `disabled`.
 3. **description** — optional helper text below the control.
 4. **error** — an optional validation message (shown whenever `error` is set).
 
 ## Variants
 
-`Textarea` has no color variants; it presents a single neutral control that inherits its surface
-and border from `FormField`'s tokens. Expression is through the `size` prop and the field states.
+- **Outline** (default) — bordered (`border-border-strong`) on the `--surface-2` field.
+- **Filled** — a higher-contrast `--surface-3` fill for dense forms.
+- **Flush** — underline-only (bottom border, no radius) for inline / minimal UIs.
+
+## Sizes
+
+The `size` prop sets the minimum height: `sm`, `md` (default), `lg`.
 
 ## States
 
-Default, Focus (ring), Filled, Disabled (dimmed, non-resizable), Error / Invalid (`--destructive`
-border and ring via `aria-invalid`), and Required. Each is demonstrated as a story.
+Default, Hover (border lifts to `--accent-strong`), Focus (accent border + 3px
+`accent-soft` ring on a `--surface` background), Error (`--destructive` border and ring via
+`aria-invalid`), Success (`--success` border + ring), Disabled (dimmed, non-resizable), and
+Read-only (`--surface-3` fill, dim text). The `state` prop can force any of these for
+documentation; real interaction states apply automatically. Each is demonstrated as a
+story.
 
 ## Behavior
 
 - **Controlled/uncontrolled:** mirrors a native textarea — `value` + `onValueChange`
   (or `onChange`) for controlled, `defaultValue` for uncontrolled.
-- **Sizing:** `size` sets the minimum height; `rows` sets the initial visible rows; the user can
-  drag to resize vertically. Resizing is disabled when the field is `disabled`.
+- **Sizing:** `size` sets the minimum height; `rows` sets the initial visible rows; the
+  control auto-grows and the user can drag to resize vertically. Resizing is disabled when
+  the field is `disabled`.
 - **Validation:** for native-validity messages that appear/clear automatically, set
-  `validationMode` and compose the `FormField` parts with `FieldError match=…`; the flat `error`
-  prop is for externally-controlled messages and should be paired with `aria-invalid`.
-- **Forms:** `name` submits with a native `<form>`; `required` / `minLength` / `maxLength` drive
-  native validity; `disabled` locks the field and dims the label.
+  `validationMode` and compose the `FormField` parts with `FieldError match=…`; the flat
+  `error` prop is for externally-controlled messages and should be paired with
+  `aria-invalid`.
+- **Forms:** `name` submits with a native `<form>`; `required` / `minLength` / `maxLength`
+  drive native validity; `disabled` locks the field and dims the label.
 
 ## Accessibility
 
 - Meets WCAG 2.2 AA: label and control text clear 4.5:1 in both themes; helper text
   (`--muted-foreground`) and error text (`--destructive`) both hold 4.5:1.
 - The Base UI field associates the label (`htmlFor`), links helper and error text via
-  `aria-describedby`, and toggles `aria-invalid` — so the label and any error are announced with
-  the control. No manual `id` wiring is required. The control exposes the native `textbox` role
-  (multiline).
-- **Keyboard:** `Tab` focuses the control; typing edits it (including newlines with `Enter`);
-  clicking the label focuses the control; validation fires per `validationMode`.
+  `aria-describedby`, and toggles `aria-invalid` — so the label and any error are announced
+  with the control. No manual `id` wiring is required. The control exposes the native
+  `textbox` role (multiline).
+- **Keyboard:** `Tab` focuses the control; typing edits it (including newlines with
+  `Enter`); clicking the label focuses the control; validation fires per `validationMode`.
 
 ## Tokens
 
-Inherits `FormField`'s tokens: `--input` / `--background` with a `--ring` focus ring and
-`--destructive` for the invalid state; `--foreground` control text; `--muted-foreground` helper
-text; `--destructive` error text; `--radius` for the corner. No hardcoded colors, spacing, or
-radii — tokens only.
+The field surface is `--surface-2` (`--surface-3` filled) with a `border-border-strong`
+resting border; focus uses an `--accent` border and a 3px `--accent-soft` ring on a
+`--surface` background. Error uses `--destructive`, success uses `--success`, and
+placeholder text uses `--muted-foreground`. The label is `--foreground`, helper text
+`--muted-foreground`, error text `--destructive`. No hardcoded colors, spacing, or radii —
+tokens only.
 
 ## API
 
 | Prop | Type | Notes |
 | --- | --- | --- |
+| `variant` | `outline` \| `filled` \| `flush` | Visual treatment. Default `outline` |
+| `size` | `sm` \| `md` \| `lg` | Control minimum height. Default `md` |
+| `state` | `default` \| `hover` \| `focus` \| `error` \| `success` \| `disabled` \| `readonly` | Forced visual state (docs / testing) |
+| `rows` | `number` | Initial visible text rows |
 | `label` | `ReactNode` | Visible label |
 | `description` | `ReactNode` | Helper text |
 | `error` | `ReactNode` | Externally-controlled validation message |
-| `size` | `sm` \| `default` \| `lg` | Control minimum height |
-| `rows` | `number` | Initial visible text rows |
 | `name` | `string` | Native form field name |
-| `disabled` | `boolean` | Locks the field, dims the label, disables resize |
+| `disabled` / `readOnly` | `boolean` | Locks the field / locked-value state |
 | `required` / `placeholder` / `minLength` / `maxLength` / `value` / `defaultValue` / `onValueChange` | native textarea props | Passed to the control |
 | `validationMode` / `validate` | field root props | Native / custom validation |
 
-The public API is **closed**: no `className` / `style`. Customize through the semantic `size`
-prop; place layout between fields in `Box` / `Stack`.
-
-## Examples
-
-Stories cover Default, With Error, Required, Disabled, all Sizes, and In a Form. Use the toolbar to
-switch **Theme** (Dark / Light) and **Locale** (English LTR / فارسی RTL); the control mirrors
-direction and renders Persian text in Vazirmatn, and the resize handle flips to the leading corner
-under RTL automatically.
+The public API is **closed**: no `className` / `style`. Customize through the semantic
+`variant` / `size` props; place layout between fields in `Box` / `Stack`.

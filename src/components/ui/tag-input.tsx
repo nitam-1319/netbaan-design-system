@@ -46,7 +46,7 @@ const shellVariants = cva(
 
 const TAG_SIZE = {
   sm: "sm",
-  md: "default",
+  md: "md",
   lg: "lg",
 } as const
 

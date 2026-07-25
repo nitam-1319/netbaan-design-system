@@ -4,43 +4,60 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 # Checkbox
 
-An independent binary selection with a third, indeterminate ("mixed") state. Built
-on the Base UI `Checkbox` primitive, which provides `role="checkbox"`,
-`aria-checked` (including `"mixed"`), a paired hidden `<input>` for forms, and
-keyboard support. The box and indicator use AEGIS tokens.
+An independent binary selection with a third, indeterminate ("mixed") state.
+Restored to the AEGIS reference: the sm/md/lg box scale, the full state set, a
+`size` prop, and built-in `label` + `description` slots. Built on the Base UI
+`Checkbox` primitive, which provides `role="checkbox"`, `aria-checked`
+(including `"mixed"`), a paired hidden `<input>` for forms, and keyboard support.
+Every color and radius comes from an AEGIS token; the public API is **closed**
+(no `className` / `style`).
 
 ## When to use
 
 - **Do** use a checkbox for an independent on/off choice, or in a group where
   multiple options can be selected.
 - **Do** use the indeterminate state on a parent "select all" when only some
-  children are selected.
+  children are selected — never let a user set it directly.
+- **Do** keep labels affirmative so a check always means "on".
 - **Don't** use a checkbox for an instantly-applied setting — use a `Switch`.
 - **Don't** use single checkboxes for mutually exclusive options — use a
   `Radio Group`.
 
+## Sizes
+
+`sm` 16px box · `md` 20px box (default) · `lg` 24px box. Corner radius scales
+5/6/7px with the box; the mark scales with it.
+
 ## Anatomy
 
-1. **Root** — the box (`role="checkbox"`) plus a hidden input for forms.
-2. **Indicator** — renders when checked or indeterminate; shows a check or a
-   minus glyph respectively.
+1. **Control box** — the square (`role="checkbox"`) plus a hidden input for
+   forms; filled with the accent gradient when checked or indeterminate.
+2. **Mark** — a checkmark (checked) or a minus bar (indeterminate); it pops in
+   with `animate-check-pop`. Nothing renders when unchecked.
+3. **Focus ring** — a 3px `accent-soft` halo on keyboard focus.
+4. **Label** _(optional slot)_ — the primary option text; the whole row toggles
+   the box.
+5. **Description** _(optional slot)_ — a secondary line clarifying the option.
 
-## Behavior
+## States
 
-| State | `aria-checked` | Indicator |
+Default, Checked, Indeterminate, Hover (border lifts to `accent-strong`), Focus
+(accent border + 3px accent-soft ring), Error (`aria-invalid` → destructive
+border/ring), Disabled (45% opacity, `not-allowed`), and Read-only (locked
+value).
+
+| State | `aria-checked` | Mark |
 | --- | --- | --- |
 | Unchecked | `false` | none |
 | Checked | `true` | `Check` |
 | Indeterminate | `mixed` | `Minus` |
 
-The check vs. minus glyph is switched purely via the indicator's
-`data-[indeterminate]` state attribute — no runtime branching.
-
 ## Accessibility
 
 - Exposes `role="checkbox"` with `aria-checked` (`true` / `false` / `mixed`).
-- Always give it a name — wrap in a `<label>` or pass `aria-label`.
-- Keyboard map: `Tab` to focus, `Space` to toggle. Focus shows the AEGIS ring.
+- Always give it a name — pass `label`, wrap in a `<label>`, or set `aria-label`.
+- Keyboard map: `Tab` to focus, `Space` to toggle. Focus shows the AEGIS
+  `accent-soft` ring at ≥3:1 in both themes.
 - Invalid state is conveyed with `aria-invalid`, which tints the border/ring with
   `--destructive`.
 
@@ -48,22 +65,30 @@ The check vs. minus glyph is switched purely via the indicator's
 
 | Token | Applies to |
 | --- | --- |
-| `--input` | Unchecked border/fill |
-| `--primary` | Checked/indeterminate fill + border |
-| `--primary-foreground` | Glyph color |
-| `--ring` | Focus ring |
-| `--destructive` | Invalid state |
+| `--surface-2` | Unchecked box surface |
+| `--border-strong` | Unchecked box border |
+| `--accent` / `--accent-strong` | Checked / indeterminate fill (gradient) |
+| `--primary-foreground` | Check / bar mark color |
+| `--accent-soft` | Focus ring |
+| `--destructive` | Error (invalid) state |
+| `animate-check-pop` | Mark entrance |
 
-## API
+## API (closed)
 
-`Checkbox` — Base UI `Checkbox.Root` props.
+`Omit<CheckboxPrimitive.Root, "className" | "style"> & { size, label?, description? }`
+— no `className` / `style`. Element swaps go through `render`; one-off layout via
+`Box` / `Stack`.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Box size. |
+| `label` | `ReactNode` | — | Primary option text; renders a clickable row. |
+| `description` | `ReactNode` | — | Optional secondary helper line. |
 | `checked` | `boolean` | — | Controlled state. |
 | `defaultChecked` | `boolean` | `false` | Uncontrolled initial state. |
 | `indeterminate` | `boolean` | `false` | Mixed state. |
 | `onCheckedChange` | `(checked, details) => void` | — | Change handler. |
-| `disabled` | `boolean` | `false` | Disable interaction. |
+| `disabled` | `boolean` | `false` | Inert, non-interactive state. |
+| `readOnly` | `boolean` | `false` | Locked value that cannot be toggled. |
 | `name` / `value` | `string` | — | Form submission identity. |
-| `className` | `string` | — | Merged onto the root via `cn()`. |
+| `render` | `ReactElement` | — | Swap the rendered element (composition, not styling). |

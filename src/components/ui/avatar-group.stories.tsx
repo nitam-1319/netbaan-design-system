@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect, within } from "storybook/test"
 
 import { AvatarGroup } from "@/components/ui/avatar-group"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar } from "@/components/ui/avatar"
 
 const meta = {
   title: "Components/AvatarGroup",
@@ -14,38 +14,33 @@ const meta = {
   argTypes: {
     size: {
       control: "inline-radio",
-      options: ["xs", "sm", "default", "lg", "xl"],
+      options: ["xs", "sm", "md", "lg", "xl"],
     },
     max: { control: { type: "number", min: 1, max: 8 } },
   },
-  decorators: [
-    (Story) => (
-      <div className="p-8 text-foreground">
-        <Story />
-      </div>
-    ),
-  ],
 } satisfies Meta<typeof AvatarGroup>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-const people = ["AL", "BR", "CK", "DP", "EM", "FT"]
+const PEOPLE = ["Ana Ruiz", "Ben Cho", "Kai Ito", "Lea Von", "Mo Diaz", "Sky Poe"]
 
-function People({ size }: { size?: "xs" | "sm" | "default" | "lg" | "xl" }) {
+function People({
+  size,
+}: {
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
+}) {
   return (
     <>
-      {people.map((initials) => (
-        <Avatar key={initials} size={size}>
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
+      {PEOPLE.map((name) => (
+        <Avatar key={name} name={name} size={size} />
       ))}
     </>
   )
 }
 
 export const Default: Story = {
-  args: { max: 4 },
+  args: { max: 4, size: "md" },
   render: (args) => (
     <AvatarGroup {...args}>
       <People size={args.size ?? undefined} />
@@ -60,17 +55,12 @@ export const Default: Story = {
 }
 
 export const NoOverflow: Story = {
+  args: { size: "md" },
   render: (args) => (
-    <AvatarGroup {...args}>
-      <Avatar>
-        <AvatarFallback>AL</AvatarFallback>
-      </Avatar>
-      <Avatar>
-        <AvatarFallback>BR</AvatarFallback>
-      </Avatar>
-      <Avatar>
-        <AvatarFallback>CK</AvatarFallback>
-      </Avatar>
+    <AvatarGroup {...args} max={10}>
+      <Avatar name="Ana Ruiz" size={args.size ?? undefined} />
+      <Avatar name="Ben Cho" size={args.size ?? undefined} />
+      <Avatar name="Kai Ito" size={args.size ?? undefined} />
     </AvatarGroup>
   ),
 }
@@ -78,18 +68,11 @@ export const NoOverflow: Story = {
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      <AvatarGroup size="xs" max={4}>
-        <People size="xs" />
-      </AvatarGroup>
-      <AvatarGroup size="sm" max={4}>
-        <People size="sm" />
-      </AvatarGroup>
-      <AvatarGroup size="default" max={4}>
-        <People size="default" />
-      </AvatarGroup>
-      <AvatarGroup size="lg" max={4}>
-        <People size="lg" />
-      </AvatarGroup>
+      {(["xs", "sm", "md", "lg"] as const).map((size) => (
+        <AvatarGroup key={size} size={size} max={4}>
+          <People size={size} />
+        </AvatarGroup>
+      ))}
     </div>
   ),
 }
