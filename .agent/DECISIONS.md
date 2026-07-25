@@ -301,3 +301,27 @@ Base UI `render` prop must forward ref+props, and any `*GroupLabel` must sit wit
 a headless Chromium against the built Storybook (right-click opens every ContextMenu story; Menu
 checkbox/radio stories render and open without error #31). All gates green (tsc, lint, conformance
 110/110, build, build-storybook).
+
+## 2026-07-25f — Carousel: single-per-view horizontal only; multi-per-view + vertical axis deferred
+Status: accepted
+Decision: `carousel.tsx` (roadmap #75, Recommended/Data Display) ships as a token-only compound built
+on native CSS scroll-snap (there is no Base UI carousel primitive) — `Carousel` (region + state/keyboard/
+autoplay owner) / `CarouselContent` (the snap viewport, single Tab stop) / `CarouselItem` (one slide per
+view, `basis-full snap-start`) / `CarouselPrevious` / `CarouselNext` (compose the AEGIS `Button`) /
+`CarouselDots`. Active slide is the one nearest the viewport centre (measured by `getBoundingClientRect`,
+so it is RTL-safe and survives a manual flick). `loop` and `autoPlay` (pause on hover/focus, gated by
+reduced-motion and single-slide, interval floored at 1000ms) are opt-in. Navigation uses
+`scrollIntoView({ inline: "start", block: "nearest" })`, which is direction-correct in LTR and RTL
+without the browser `scrollLeft`-sign inconsistencies.
+Reason: **Multi-per-view** (peeking neighbour slides) needs a fractional slide width and **a vertical
+axis** needs a bounded viewport height — both are per-instance styling the closed API deliberately does
+not expose (API_RULES: no `className`/`style`). Rather than open a hatch or invent an arbitrary height
+token, both are deferred to a follow-up that can add first-class semantic props (e.g. `perView`,
+`orientation` + a `size` height scale) once the pattern is validated. This follows the honestly-scoped
+precedent (DataTable virtualization 2026-07-22c, Combobox multi-select 2026-07-23, static chart
+renderers). A hover tooltip / thumbnail-strip variant is likewise out of scope.
+Impact: Carousel is horizontal, one-slide-per-view. Not in the conformance manifest (no reference page;
+follows the general design language). Autoplay sets the viewport's `aria-live` to `off` so a moving
+carousel does not spam assistive tech; manual mode keeps it `polite`. All machine gates green (tsc, lint,
+build, conformance 111/111, build-storybook); browser story/axe/visual-regression are
+HUMAN_VERIFY_REQUIRED (no sandbox runner) and run in CI.

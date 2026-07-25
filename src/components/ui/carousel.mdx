@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Carousel/Guidelines" />
+
+# Carousel
+
+A horizontally-scrolling, snap-aligned slideshow for browsing a small set of
+peer items one at a time — hero banners, product galleries, onboarding
+highlights, a "what's new" row. It is built on native CSS scroll-snap, so touch,
+trackpad, and momentum scrolling work with no external engine; the buttons and
+dots drive the same viewport and stay in sync with manual scrolling.
+
+## When to use
+
+- **Do** use it for a handful of equally-important, glanceable items where
+  horizontal browsing feels natural (screenshots, featured cards, tips).
+- **Do** give users a way to reach every slide without the carousel — carousels
+  are easy to miss. Treat it as an enhancement, not the only path to content.
+- **Don't** hide primary navigation, critical settings, or long-form content in
+  a carousel; low slides beyond the first are rarely seen.
+- **Don't** autoplay content users need to read or act on. Reserve `autoPlay`
+  for ambient, non-essential rotation, and always pair it with `loop`.
+
+## Anatomy
+
+- **`Carousel`** — the labelled region; owns state, keyboard handling, and
+  autoplay. Provide a `label` describing the set.
+- **`CarouselContent`** — the scroll viewport; holds the slides and is the
+  keyboard-focusable element.
+- **`CarouselItem`** — one slide (one shown per view). Auto-labelled
+  "{n} of {total}"; override with `label`.
+- **`CarouselPrevious` / `CarouselNext`** — icon buttons that step the viewport
+  and disable at the ends (unless `loop`).
+- **`CarouselDots`** — one dot per slide; the active dot is highlighted and each
+  jumps to its slide.
+
+## Behavior
+
+- **Snap scrolling:** slides snap to the viewport start; the active slide is the
+  one nearest the viewport centre, so it stays correct after a manual flick.
+- **`loop`:** wraps past the last slide to the first (and before the first to the
+  last) for the buttons, dots, and autoplay; end buttons stay enabled.
+- **`autoPlay` / `interval`:** advances every `interval` ms (min 1000). It
+  **pauses on hover and while focus is inside** the carousel, and does not run at
+  all under reduced-motion or with a single slide.
+- **Keyboard:** with the viewport focused, `←` / `→` step slides (mirrored under
+  RTL), `Home` / `End` jump to the first / last slide.
+
+## Accessibility
+
+- The region has `role="region"` + `aria-roledescription="carousel"` and your
+  `label`, so assistive tech announces it as a named carousel (WAI-ARIA APG).
+- Each slide is a `group` with `aria-roledescription="slide"` and an
+  "{n} of {total}" name, giving position in the set.
+- The viewport is a single Tab stop (`tabIndex={0}`); its `aria-live` is
+  `polite` normally and switched to `off` during `autoPlay` so a moving carousel
+  doesn't spam the screen reader.
+- Every control is a real `<button>` with a descriptive accessible name
+  (`Previous slide`, `Next slide`, `Go to slide N`); the active dot carries
+  `aria-current`. Meaning never rests on colour alone (WCAG 1.4.1).
+- Focus rings use the 3px `accent-soft` token in both themes.
+
+## Design tokens
+
+Colour, radius, and motion are token-driven: the viewport rounds with
+`--radius-lg`, the active dot fills with `--primary` and inactive dots with
+`--border-strong`, focus rings use `--accent-soft`, and demo surfaces use the
+semantic palette. There are no hardcoded colours.
+
+## Scope
+
+One slide is shown per view. **Multi-per-view** (peeking neighbours) and a
+**vertical axis** are deferred: both need a styling surface the closed API
+doesn't expose (fractional slide width / a bounded viewport height) and are
+tracked as follow-ups in `.agent/DECISIONS.md`. A hover/scroll **thumbnail
+strip** is likewise out of scope for now.
+
+## API
+
+Closed API — no `className` or `style` on any part.
+
+### `Carousel`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | `"Carousel"` | Accessible name for the region. |
+| `loop` | `boolean` | `false` | Wrap around at the ends. |
+| `autoPlay` | `boolean` | `false` | Auto-advance (pauses on hover/focus, respects reduced-motion). |
+| `interval` | `number` | `5000` | Autoplay cadence in ms (min 1000). |
+
+### `CarouselItem`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | `"{n} of {total}"` | Override the slide's accessible name. |
+
+`CarouselContent`, `CarouselPrevious`, `CarouselNext`, and `CarouselDots` take no
+styling props; `CarouselPrevious` / `CarouselNext` accept a Button `variant`
+(default `secondary`).
