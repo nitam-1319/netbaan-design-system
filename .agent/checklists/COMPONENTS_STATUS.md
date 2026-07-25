@@ -7,7 +7,7 @@ runner axes (play tests, axe, visual regression) are `HUMAN_VERIFY_REQUIRED` bec
 no browser runner (Playwright build mismatch) — they run in CI. No row is `PASS` yet.
 
 ```
-Components built:      105
+Components built:      106
 Catalog (roadmap):     220   ← PROVISIONAL denominator (likely counts variants; DECISIONS.md 2026-07-19f)
 Variants / Stories / A11y-checks: computed by verify-inventory.mjs (separate counts, not one X/219)
 ```
@@ -130,6 +130,7 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 | 122b | field-label | ✅ | ✅ | ✅ | PARTIAL | Essential/Forms (#122); standalone context-free `Label` (`<label>` via useRender, polymorphic) — sibling of form-field's Field-bound `FieldLabel` (DECISIONS 2026-07-25c); associates via native htmlFor; required (`*` aria-hidden + sr-only "(required)") / optional ("(optional)") indicator in text not colour-only (WCAG 1.4.1), disabled dim, sm/md/lg; token-only (foreground/muted-foreground/destructive); not in conformance manifest; play test asserts htmlFor wiring + sr required text; runner axes HUMAN_VERIFY_REQUIRED |
 | 123b | helper-text | ✅ | ✅ | ✅ | PARTIAL | Essential/Forms (#123); standalone context-free `HelperText` (`<p>` via useRender, polymorphic) — neutral muted guidance under a control, associate via control's aria-describedby→id; sibling of form-field's Field-bound `FieldDescription` (DECISIONS 2026-07-25c); distinct from ValidationMessage (guidance not failure — no role=alert); sm/md/lg, disabled dim; token-only (muted-foreground, AA both themes); not in conformance manifest; play test asserts text + id for aria-describedby; runner axes HUMAN_VERIFY_REQUIRED |
 | 124b | validation-message | ✅ | ✅ | ✅ | PARTIAL | Essential/Forms (#124); standalone context-free `ValidationMessage` (`<p>` live region) — sibling of form-field's Field-bound `FieldError` (DECISIONS 2026-07-25c); tone error/warning→role=alert (assertive) + success→role=status (polite), leading tone icon (CircleAlert/TriangleAlert/CircleCheck) aria-hidden so meaning in text not colour/icon-only (WCAG 1.4.1), icon override/false, sm/md/lg; associate via control aria-describedby→id (+ aria-invalid for error); token-only (destructive/warning/success, AA both themes); not in conformance manifest; play test asserts role=alert+id+data-tone, success→role=status; runner axes HUMAN_VERIFY_REQUIRED |
+| 175b | theme-toggle | ✅ | ✅ | ✅ | PARTIAL | Recommended/Utilities (#175, dep Theme Provider — src/components/theme-provider.tsx); binary light↔dark button consuming useTheme; reads APPLIED appearance by observing `.dark` on `<html>` via MutationObserver (correct even when theme=system + live system changes, SSR-safe), calls setTheme(opposite); shows target-theme icon (Sun when dark / Moon when light, aria-hidden); outline/ghost/soft × sm/md/lg (32/40/48px), accent-soft focus ring, border-strong; icon-only always has accessible name "Switch to light/dark theme" (WCAG 1.4.1/4.1.2), optional visible label; three-way system picker → compose useTheme + SegmentedControl (mdx); closed API; not in conformance manifest; play test clicks + asserts data-theme flips + accessible name; runner axes HUMAN_VERIFY_REQUIRED |
 
 ## Queue (roadmap — build next)
 Pick the next item NOT already built (map its name to a kebab file, e.g. **Text Field → `text-field.tsx`**;

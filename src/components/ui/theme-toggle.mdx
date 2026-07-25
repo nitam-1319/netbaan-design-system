@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Theme Toggle/Guidelines" />
+
+# Theme Toggle
+
+A one-tap control that flips the app between light and dark. It reads the
+currently *applied* appearance from the document — so it stays correct even when
+the active theme is `system` — and calls the `ThemeProvider`'s `setTheme` to
+switch. It shows the icon of the theme it will switch **to** (a sun when the app
+is dark, a moon when light) and announces that action.
+
+## Requirements
+
+`ThemeToggle` must be rendered inside a **`ThemeProvider`** — it consumes the
+`useTheme` hook, and throws outside a provider (a deliberate, early failure, not
+a silent no-op). The provider owns applying the `dark` / `light` class to
+`<html>`, persisting the choice, and following the system preference; the toggle
+only requests a change.
+
+## When to use
+
+- **Do** place it in a top bar, settings menu, or footer as the primary way to
+  switch appearance.
+- **Do** give it a visible label (`children`) when it sits in a menu or a
+  settings list where an icon alone is ambiguous.
+- **Don't** use it to choose *system* — for a three-way light / dark / system
+  picker, compose `useTheme` with a **Segmented Control**. This atom is the
+  common binary switch.
+
+## Anatomy
+
+An icon-only button by default (sun / moon), or icon + `children` label. The
+icon reflects the **target** theme so it doubles as an affordance for the
+action.
+
+## Variants & sizes
+
+| `variant` | Use |
+| --- | --- |
+| `outline` | Default — `border-strong` outline on the surface. |
+| `ghost` | Chromeless, for dense bars. |
+| `soft` | Muted fill. |
+
+| `size` | Height |
+| --- | --- |
+| `sm` | 32px |
+| `md` | 40px (default) |
+| `lg` | 48px |
+
+## Behavior
+
+- Clicking toggles between light and dark. When the current theme is `system`,
+  it resolves the *applied* appearance first, then switches to the opposite
+  explicit theme.
+- The applied appearance is tracked by observing the `dark` class on `<html>`,
+  so the icon and label stay in sync with live system changes too.
+- SSR-safe: the observer only runs in the browser.
+
+## Accessibility
+
+- The button always has an accessible name describing the action — "Switch to
+  light theme" / "Switch to dark theme" — even when icon-only; the icon is
+  `aria-hidden` so meaning never depends on the glyph alone (WCAG 1.4.1, 4.1.2).
+- Pass a custom `aria-label` to localise or reword the action.
+- Focus shows the AEGIS 3px `accent-soft` ring; the control is keyboard
+  operable as a native `<button>`.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--border-strong` | Outline variant border |
+| `--muted` / `--muted-foreground` | Ghost / soft fills and text |
+| `--accent-strong` / `--accent-soft` | Focus ring |
+| `--foreground` | Icon / label colour |
+
+## API
+
+`ThemeToggle` — renders a `<button>`; requires a `ThemeProvider` ancestor.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `"outline" \| "ghost" \| "soft"` | `"outline"` | Visual style. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control height. |
+| `children` | `ReactNode` | — | Optional visible label; omit for icon-only. |
+| `aria-label` | `string` | action text | Override the announced action. |
+
+Standard `<button>` attributes (except `onClick`, which the toggle owns) pass
+through. The public API is closed: there is no `className` or `style` prop.
