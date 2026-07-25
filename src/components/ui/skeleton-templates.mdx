@@ -1,0 +1,73 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Skeleton Templates/Guidelines" />
+
+# Skeleton Templates
+
+Ready-made loading placeholders assembled from the `Skeleton` primitive, so you
+don't hand-place individual bars for every loading state. Drop in the template
+that matches the content you're waiting on and it renders a
+correctly-proportioned, animated placeholder that mirrors the real layout.
+
+| Template | Mirrors |
+| --- | --- |
+| `SkeletonText` | A paragraph — `lines` bars, last one shortened |
+| `SkeletonCard` | A card — optional media block, title, body lines |
+| `SkeletonList` | Rows of an optional avatar + two text lines |
+| `SkeletonTable` | A header row + a grid of cells (`rows` × `columns`) |
+
+## When to use
+
+- **Do** use a skeleton when you know the *shape* of the content that's coming
+  and the wait is short-to-medium — it reduces layout shift and perceived wait.
+- **Do** match the template (and its `lines` / `rows` / `columns`) to the real
+  content so the swap-in doesn't jump.
+- **Don't** use a skeleton for very long or indeterminate waits — use a
+  **Spinner** or **Loading Overlay** with a message.
+- **Don't** mix a skeleton with a spinner for the same region.
+
+## Behavior
+
+- Each template's root is a polite `role="status"` region with `aria-busy` and
+  an sr-only label; the individual bars are `aria-hidden` (they carry no
+  meaning). Screen-reader users hear the label once, not every bar.
+- Render the template while loading, then replace it wholesale with the real
+  content when the data resolves.
+- `SkeletonTable.columns` is a fixed set (2–6) mapped to static grid classes —
+  mirroring the `Grid` primitive — so there's no inline style and no risk of a
+  purged dynamic class.
+
+## Accessibility
+
+- The loading state is announced through the root's `role="status"` +
+  `aria-busy` and the sr-only `label`; customise the label per region (e.g.
+  "Loading results", "Loading profile") so multiple concurrent loaders are
+  distinguishable (WCAG 4.1.3).
+- The pulsing shapes never convey information — meaning arrives only with the
+  real content — so they are hidden from assistive tech.
+- Motion is the `Skeleton` pulse, which respects reduced-motion via the app's
+  global motion settings.
+
+## Design tokens
+
+Inherited from `Skeleton`:
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-3` | Placeholder bar fill (at 70% opacity) |
+
+Container chrome (card / table) uses `--card` and `--border`.
+
+## API
+
+All templates omit `className` / `style`; shape them with the semantic props.
+
+`SkeletonText` — `lines?` (default 3), `size?` `"sm" | "md" | "lg"` (default
+`"md"`), `lastLineShort?` (default true), `label?`.
+
+`SkeletonCard` — `media?` (default true), `lines?` (default 2), `label?`.
+
+`SkeletonList` — `rows?` (default 3), `avatar?` (default true), `label?`.
+
+`SkeletonTable` — `rows?` (default 4), `columns?` `2 | 3 | 4 | 5 | 6` (default
+4), `header?` (default true), `label?`.
