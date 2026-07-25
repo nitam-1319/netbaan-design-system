@@ -1,0 +1,114 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/PieChart/Guidelines" />
+
+# Pie Chart
+
+A config-driven pie chart built on the AEGIS chart foundation. Give it a `label`
+and a `data` array of slices (`{ key, label?, value, color? }`); each slice
+becomes a wedge sized by its share of the total, and a legend entry that carries
+the same colour and name. It composes `ChartContainer` (palette) and
+`ChartLegend`, so the pie and the legend always agree.
+
+## Overview
+
+Pie Chart shows a part-to-whole breakdown of a single dimension as a solid disc.
+It is the solid sibling of the **Donut Chart** — reach for the donut when you
+want a centre readout, and the pie when the emphasis is the slices themselves.
+With `showLabels`, a percentage is drawn just outside each slice, on the surface,
+so it keeps AA contrast regardless of the slice colour.
+
+## Usage
+
+- **Do** use it for a small number of categories that sum to a meaningful whole
+  (≤5–6 slices).
+- **Do** turn on `showLabels` when readers need approximate proportions at a
+  glance; small slivers below `labelThreshold` are skipped to avoid clutter.
+- **Don't** use it to compare many categories or track change over time — a
+  **Bar** or **Line** chart reads far more precisely.
+- **Don't** rely on slice colour alone; the legend pairs each colour with a
+  label.
+
+## Anatomy
+
+A `ChartContainer` (`role="group"`) wrapping an optional `ChartLegend` and a
+`ChartPlot` (`role="img"`). Inside the plot: a `pie-chart-marks` group holding
+one `pie-chart-slice` wedge per non-zero datum and optional `pie-chart-label`
+text nodes outside the disc.
+
+## Variants
+
+The pie is a solid disc; shape configuration is `startAngle` (rotate the whole
+pie) and `padAngle` (gap between slices). `showLabels` toggles the outside
+percentage labels. For a hole in the middle plus a centre readout, use the
+**Donut Chart**.
+
+## States
+
+Static renderer — no interactive state yet (see Scope). Visual configuration:
+`startAngle`, `padAngle`, `showLabels`, `labelThreshold`, and `showLegend`.
+
+## Behavior
+
+- **Angles** — each slice's sweep is `value / total × (360° − gaps)`. Zero-value
+  slices are skipped and take no gap.
+- **Colours** — each slice takes a palette slot by declaration order; pin one
+  with `color: 1…5`. The legend reads the same resolved palette.
+- **Labels** — drawn outside the disc at each slice's mid-angle, anchored by
+  side; slices below `labelThreshold` are omitted. When labels are on, the disc
+  shrinks slightly to keep them within the coordinate box.
+- **Full circle** — a single 100 % slice is drawn as two arcs so the SVG arc
+  command never degenerates on a 360° sweep.
+
+## Scope & limitations
+
+This Pie Chart is a **static renderer**. A pointer/focus **hover tooltip** and
+slice selection/emphasis are deferred to a follow-up, following the
+honestly-scoped precedent in `DECISIONS.md` (DataTable, Combobox, Line Chart).
+On-slice value labels (inside the wedge) are intentionally omitted — arbitrary
+slice colours can't guarantee text contrast — in favour of outside labels and the
+legend.
+
+## Accessibility
+
+- The chart is announced through the container's accessible name (`label`) and
+  the legend pairs each colour with a text label, so identity never rests on
+  colour alone (WCAG 1.4.1). Outside labels are decorative (`aria-hidden`).
+- Because a hover tooltip is not present, **provide a text or data-table
+  alternative** for the per-slice values near the chart.
+- The five chart tokens meet AA contrast against the surface in both themes;
+  outside labels use `--color-muted-foreground` on the surface (not on a slice),
+  so they stay legible.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1` … `--color-chart-5` | Slice fill and legend swatch (wraps after five slices). |
+| `--color-muted-foreground` | Outside slice labels and legend text. |
+
+No colour or size is hard-coded in a mark; geometry comes from the container and
+colour from the series palette.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name. Required. |
+| `data` | `{ key; label?; value; color? }[]` | — | One entry per slice. |
+| `startAngle` | `number` | `0` | Angle the first slice starts from (deg, clockwise from top). |
+| `padAngle` | `number` | `1.5` | Gap between slices (deg). |
+| `showLabels` | `boolean` | `false` | Draw a percentage outside each slice. |
+| `labelThreshold` | `number` | `0.04` | Hide labels for slices below this share. |
+| `labelFormat` | `(d, frac) => ReactNode` | rounded % | Format a slice's outside label. |
+| `showLegend` | `boolean` | `true` | Render the legend. |
+| `width` / `height` | `number` | `320` / `320` | Coordinate size. |
+| `margin` | `Partial<ChartMargin>` | small symmetric | Plot gutter. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** (four-way split), **WithLabels**, **TwoWay** (custom
+label formatter), **Rotated** (`startAngle` / `padAngle`), and **SingleValue**
+(full-circle) stories, each rendered in Light/Dark and LTR/RTL from the toolbar.
