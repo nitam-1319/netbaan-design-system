@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
  */
 
 const buttonVariants = cva(
-  "group/button relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[var(--r,10px)] font-semibold whitespace-nowrap outline-none select-none transition-[filter,color,background-color,border-color] duration-150 focus-visible:ring-[3px] focus-visible:ring-accent-soft active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-[1.1em] [&_svg]:shrink-0",
+  "group/button relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[var(--r,10px)] font-semibold whitespace-nowrap outline-none select-none transition-[filter,color,background-color,border-color,box-shadow] duration-150 focus-visible:focus-accent active:scale-[0.98] active:brightness-[0.94] disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-[1.1em] [&_svg]:shrink-0",
   {
     variants: {
       variant: {

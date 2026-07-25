@@ -477,3 +477,42 @@ Deliberately KEPT (documented deviation, in the user's favour): existing `backdr
 navbar / app-shell — the user explicitly likes the glass feel; the reference's no-blur is noted and these can
 be stripped on request. All gates green (tsc, lint, conformance 112/112, build, build-storybook); browser
 screenshots verified (neutral-glass cards, flat white solid badges, translucent toggle groove).
+
+## 2026-07-25l — Restore missing INTERACTIONS: card hover-lift + pointer spotlight, the masthead beam header, Button focus glow
+Status: accepted
+Decision: A dedicated interaction/motion audit (the prior audits only compared RESTING styles) found
+that several reference INTERACTIONS had never been implemented. Added them and documented the root cause.
+(1) **Card hover.** The reference `card()`/`hover()` (Home.dc.html) give clickable cards
+`transition:all .18s ease` + `style-hover="border-color:var(--accent);transform:translateY(-3px);
+box-shadow:var(--shadow)"` — a lift + accent border + shadow. This was entirely absent (no `translateY`
+hover existed anywhere in the library). Added a `Card interactive` prop: `hover:-translate-y-[3px]
+hover:border-primary hover:shadow-elevated` + a pointer-tracked accent spotlight (an `onMouseMove` writes
+`--mx/--my`; a `radial-gradient(...var(--accent-soft)...)` overlay follows the cursor and fades in on
+hover). NOTE: the literal cursor-follow is NOT in the `.dc.html` (the reference hover is the static lift);
+it was added per the user's explicit request, built from the reference's own accent-soft radial-glow
+vocabulary, layered on the exact reference lift.
+(2) **Masthead (beam page-header).** The reference masthead — a `beamSpin 6.5s` conic beam sweeping a page
+header behind an inset `--card` panel — appears on EVERY reference page but had no component (only a plain
+`AppShellHeader`). Built `masthead.tsx` (compound: Masthead / Content / Eyebrow / Brand / Breadcrumb /
+Title / Description / Actions) reproducing it. This is the "header with a moving light beam" the user
+flagged.
+(3) **Button focus + press.** Reference focus = `0 0 0 3px var(--accent-soft),0 6px 18px -8px var(--accent)`
+— the accent DROP-GLOW was dropped (only the ring rendered) and box-shadow wasn't transitioned. Added a
+`focus-accent` utility (ring + glow) + put box-shadow in the transition list + added the reference's
+`active:brightness-[0.94]` press-darken. Also: Menu/ContextMenu now use the `animate-menu-in` signature
+entrance (matching Select/the reference `menuIn`), and Badge gained an optional `pinging` dot (the
+reference live-status `statusPing`).
+Reason (ROOT CAUSE — why these were missed): my design-DNA extraction was RESTING-STATE + component-level.
+I grepped `style="…"`, colors, borders, shadows, gradients, tokens — but systematically ignored (a) the
+reference's `style-hover="…"` attributes and the JS `card()/hover()/badge()` style-builders, which is where
+HOVER/ACTIVE/FOCUS states live, and (b) page-COMPOSITION patterns (the masthead), which no single component
+"owned" so they fell through the component-by-component audits. The conformance gate checks static structure
+(variants/sizes/tokens/signature-animation presence), not interaction states or composition — so nothing
+flagged them. Fixed the process: REFERENCE_FIDELITY.md now has an "Interaction states & composition
+patterns" section mandating extraction+implementation of every `style-hover`, `<script>` state-builder,
+focus glow, transition, pointer effect, and page-level pattern.
+Impact: `Card` gains `interactive`; new `Masthead` component (+8 parts) & story; `focus-accent` utility;
+Button focus/active fidelity; Menu/ContextMenu entrance; Badge `pinging`. All gates green (tsc, lint,
+conformance 115/115, build, build-storybook); browser-verified (beam masthead, hovered card lift + pointer
+spotlight). Non-reference note: the pointer-follow spotlight is an enhancement in the reference's visual
+language, on top of the exact reference lift hover.

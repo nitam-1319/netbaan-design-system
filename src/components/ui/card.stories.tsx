@@ -149,3 +149,35 @@ export const Beam: Story = {
     await expect(canvas.getByText("Live scan")).toBeVisible()
   },
 }
+
+export const Interactive: Story = {
+  name: "Interactive (hover-lift + pointer glow)",
+  render: () => (
+    <div className="grid grid-cols-2 gap-4">
+      {[
+        { t: "Attack surface", d: "128 external services", n: "+12" },
+        { t: "Coverage", d: "94% of hosts monitored", n: "+3%" },
+      ].map((c) => (
+        <div key={c.t} className="w-72">
+          <Card interactive>
+            <CardHeader>
+              <CardTitle>{c.t}</CardTitle>
+              <CardDescription>{c.d}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-semibold tracking-tight">{c.n}</p>
+              <p className="text-muted-foreground text-sm">vs. last scan</p>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(
+      canvasElement.querySelector("[data-interactive='true']")
+    ).toBeInTheDocument()
+    await expect(canvas.getByText("Attack surface")).toBeVisible()
+  },
+}

@@ -35,9 +35,35 @@ const cardVariants = cva(
 )
 
 type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
-  VariantProps<typeof cardVariants>
+  VariantProps<typeof cardVariants> & {
+    /**
+     * Interactive (clickable) card. Matches the reference `card()`/`hover()`:
+     * on hover it lifts 3px, its border lights up to the accent, and it gains
+     * the elevation shadow — plus a subtle accent spotlight that follows the
+     * pointer across the surface. Resting cards stay static (the reference only
+     * animates its clickable nav cards).
+     */
+    interactive?: boolean
+  }
 
-function Card({ variant = "default", children, ...props }: CardProps) {
+function Card({
+  variant = "default",
+  interactive = false,
+  children,
+  onMouseMove,
+  ...props
+}: CardProps) {
+  // Pointer-tracked spotlight: write the local cursor position into --mx/--my
+  // (read by the radial-gradient overlay). Behaviour only — no public style API.
+  const handleMouseMove = interactive
+    ? (e: React.MouseEvent<HTMLDivElement>) => {
+        const r = e.currentTarget.getBoundingClientRect()
+        e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`)
+        e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`)
+        onMouseMove?.(e)
+      }
+    : onMouseMove
+
   if (variant === "beam") {
     return (
       <div
@@ -64,9 +90,21 @@ function Card({ variant = "default", children, ...props }: CardProps) {
     <div
       data-slot="card"
       data-variant={variant ?? "default"}
-      className={cn(cardVariants({ variant }))}
+      data-interactive={interactive || undefined}
+      onMouseMove={handleMouseMove}
+      className={cn(
+        cardVariants({ variant }),
+        interactive &&
+          "group/card relative cursor-pointer overflow-hidden transition-[transform,border-color,box-shadow] duration-[180ms] ease-out hover:-translate-y-[3px] hover:border-primary hover:shadow-elevated"
+      )}
       {...props}
     >
+      {interactive ? (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 bg-[radial-gradient(240px_circle_at_var(--mx,50%)_var(--my,50%),var(--accent-soft),transparent_60%)]"
+        />
+      ) : null}
       {children}
     </div>
   )

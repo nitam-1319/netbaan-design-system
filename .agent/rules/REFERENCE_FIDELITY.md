@@ -43,6 +43,34 @@ Dialog/Tooltip = interactive, DataTable = data) and the tokens in `AEGIS-CLAUDE.
 - **Radius** — chips/badges 6–8px · controls 9–11px · cards 14–18px · masthead 20px.
 - Motion honors `prefers-reduced-motion` (handled globally in `src/index.css`).
 
+## Interaction states & composition patterns — the drift blind-spot (READ THIS)
+Reference fidelity is **not** just the resting-state look. The reference encodes behavior in places
+a resting-CSS scan misses — these were the source of real, repeated misses (card hover-lift, the
+masthead beam header, the Button focus glow), so extracting them is mandatory:
+- **`style-hover="…"` attributes ARE the `:hover` state.** Grep every reference page for
+  `style-hover=` and reproduce it. Examples: cards →
+  `border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow)` (lift + accent
+  border + shadow); links/ghost → `border-color:var(--accent);color:var(--accent-strong)`; primary
+  button → `filter:brightness(1.08)`; active press → `filter:brightness(.94);transform:scale(.98)`.
+- **JS style-builder methods** (`card()`, `hover()`, `badge()`, `rowStyle`, etc. in the page
+  `<script>` blocks) define per-state styles — read them, not just the inline `style=`.
+- **Focus is more than the ring.** The Button focus is `0 0 0 3px var(--accent-soft),0 6px 18px -8px
+  var(--accent)` — the accent **drop-glow** is part of it (utility `focus-accent`).
+- **Transitions matter.** Interactive elements carry `transition:all .15s/.18s ease`; state changes
+  must animate, not snap. Put `box-shadow`/`border-color`/`transform` in the transition list.
+- **Pointer-driven effects & motion** — hover glows, sliding indicators, chevron rotation, beam
+  sweeps. If the reference moves, the implementation moves.
+- **Page-composition patterns need a home.** The reference **masthead** (a `beamSpin` beam sweeping a
+  page header) appears on every page — it lives in the `Masthead` component + `Card variant="beam"`.
+  When the reference shows a page/section-level pattern (masthead, hero, section header), it must map
+  to a real component, not fall through the gap because no single component "owns" it.
+- **Token note:** reference `--accent` = the brand purple = repo **`--primary`** (repo `--accent` is
+  the muted hover surface). The `var(--accent)` gate enforces this. See DECISIONS 2026-07-25f.
+
+When building OR reviewing a component, walk its reference page for every `style-hover`, every
+`<script>` state-builder, and every animation/transition — and confirm each has a home in the code.
+The conformance gate checks static structure; **interaction/motion fidelity is on you.**
+
 ## The gate (hard)
 ```bash
 node .agent/scripts/verify-conformance.mjs <name>   # gate the component you just built

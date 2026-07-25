@@ -65,6 +65,8 @@ type BadgeProps = Omit<useRender.ComponentProps<"span">, "className" | "style"> 
   VariantProps<typeof badgeVariants> & {
     /** Leading status dot in the tone colour; carries the signature pulse. */
     dot?: boolean
+    /** Upgrades the dot to a live/changing status — adds the `statusPing` ring. */
+    pinging?: boolean
     /** Optional ~12px leading category icon. */
     icon?: React.ReactNode
     /** Renders the numeric count variant instead of a label. */
@@ -78,6 +80,7 @@ function Badge({
   tone = "neutral",
   size = "md",
   dot = false,
+  pinging = false,
   icon,
   count,
   max = 99,
@@ -105,8 +108,18 @@ function Badge({
             <span
               data-slot="badge-dot"
               aria-hidden
-              className="size-1.5 shrink-0 animate-pulse-dot rounded-full bg-current"
-            />
+              className="relative flex size-1.5 shrink-0"
+            >
+              {pinging ? (
+                <span className="absolute inline-flex size-full animate-status-ping rounded-full bg-current" />
+              ) : null}
+              <span
+                className={cn(
+                  "relative inline-flex size-full rounded-full bg-current",
+                  !pinging && "animate-pulse-dot"
+                )}
+              />
+            </span>
           ) : null}
           {icon}
           {isCount ? countLabel : children}
