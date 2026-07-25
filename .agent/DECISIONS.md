@@ -325,3 +325,26 @@ follows the general design language). Autoplay sets the viewport's `aria-live` t
 carousel does not spam assistive tech; manual mode keeps it `polite`. All machine gates green (tsc, lint,
 build, conformance 111/111, build-storybook); browser story/axe/visual-regression are
 HUMAN_VERIFY_REQUIRED (no sandbox runner) and run in CI.
+
+## 2026-07-25g — Lightbox: config-driven over Dialog; single image, zoom/filmstrip/non-image media deferred
+Status: accepted
+Decision: `lightbox.tsx` (roadmap #119, Recommended/Overlays, dep Portal) ships as a config-driven
+convenience over the Base UI Dialog primitive (same pattern as `confirm-dialog.tsx` over AlertDialog):
+`Lightbox` takes an `images: {src,alt,caption?}[]` array plus an optional `trigger` and renders a
+full-screen modal viewer (Portal + Backdrop + Popup) with a counter, previous/next, captions, and
+keyboard nav. Open state (`open`/`defaultOpen`/`onOpenChange`) and the active index
+(`index`/`defaultIndex`/`onIndexChange`) are both controllable; navigation uses ← → (RTL-mirrored) +
+Home/End; prev/next compose the AEGIS `Button` and disable at the ends unless `loop`. It is intentionally
+**not** a compound of exported parts — the viewer chrome (toolbar/stage/caption) is fixed, so a config
+API keeps every lightbox identical (closed-API spirit) and avoids a parts explosion.
+Reason: A lightbox's layout is not something consumers should restyle; the value is a consistent viewer.
+The Dialog primitive already provides the hard parts (focus trap, scroll lock, aria-modal, Esc), so the
+component only adds index state + navigation + a11y announcement (sr-only `role=status` "Image n of N:
+{alt}" so SR users track position; the visible counter is `aria-hidden`).
+Impact: **Zoom / pan**, a **thumbnail filmstrip**, and **non-image media** (video, PDF) are deferred —
+each needs surface the config API doesn't model yet (gesture state, a strip sub-region, a media-type
+union) and would be additive props/parts in a follow-up (honestly-scoped precedent: DataTable
+virtualization, Combobox multi-select, static chart renderers, Carousel multi-per-view 2026-07-25f). One
+image is shown at a time. Not in the conformance manifest (no reference page; follows the general design
+language). All machine gates green (tsc, lint, build, conformance 112/112, build-storybook); browser
+story/axe/visual-regression are HUMAN_VERIFY_REQUIRED (no sandbox runner) and run in CI.

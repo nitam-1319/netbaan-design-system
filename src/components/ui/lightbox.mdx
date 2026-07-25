@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Lightbox/Guidelines" />
+
+# Lightbox
+
+A full-screen, modal viewer for inspecting an image at size and stepping through
+a small set — screenshots, evidence, a gallery of captures. It is a config-driven
+convenience over the Dialog: pass an `images` array and a `trigger`, and it
+handles the overlay, the current-image index, previous / next navigation, a
+position counter, and captions.
+
+## When to use
+
+- **Do** use it to enlarge thumbnails or attachments the user chose to inspect.
+- **Do** provide meaningful `alt` text for every image — it is the accessible
+  name and the screen-reader announcement as the user navigates.
+- **Don't** use it as a primary layout for content that should be on the page;
+  a lightbox is a temporary, focused detour.
+- **Don't** put actionable UI (forms, settings) inside it — use a Dialog for
+  that. The lightbox is for viewing.
+
+## Anatomy
+
+- **Trigger** — the element that opens the viewer (a thumbnail, a button).
+- **Backdrop** — a blurred, dimmed scrim over the page.
+- **Toolbar** — the position counter (`n / total`) and the close button.
+- **Stage** — the image, flanked by previous / next buttons when there is more
+  than one image.
+- **Caption** — optional text beneath the image.
+
+## Behavior
+
+- **Modal:** built on the Base UI Dialog primitive, so it traps focus, locks
+  page scroll, and closes on Escape or the close button.
+- **Navigation:** previous / next step the set and disable at the ends; with
+  `loop` they wrap and stay enabled.
+- **Controlled or uncontrolled:** `open` / `onOpenChange` and `index` /
+  `onIndexChange` make both open state and the active image controllable; omit
+  them and use `defaultOpen` / `defaultIndex`.
+- **Keyboard:** `←` / `→` step images (mirrored under RTL); `Home` / `End` jump
+  to the first / last image; `Esc` closes.
+
+## Accessibility
+
+- The viewer is a `role="dialog"` with `aria-modal` and an accessible name (the
+  `label`), announced as a dialog by assistive tech (WAI-ARIA APG).
+- A visually-hidden `role="status"` live region announces "Image n of total:
+  {alt}" politely each time the image changes, so screen-reader users track
+  position without seeing the counter.
+- Every control is a real `<button>` with a descriptive accessible name
+  (`Previous image`, `Next image`, `Close`); the visible counter is
+  `aria-hidden` because the live region already conveys it. Meaning never rests
+  on colour alone (WCAG 1.4.1).
+- Focus is trapped while open and restored to the trigger on close; focus rings
+  use the 3px `accent-soft` token in both themes.
+
+## Design tokens
+
+Colour, radius, and motion are token-driven: the backdrop uses
+`--color-background` at 90% with a blur, the image rounds with `--radius-lg` and
+sits on `--shadow-elevated`, the counter and caption use `--muted-foreground`,
+and the navigation buttons are the standard AEGIS `Button`. There are no
+hardcoded colours.
+
+## Scope
+
+A single image is shown at a time. **Zoom / pan**, a **thumbnail filmstrip**, and
+**non-image media** (video, PDF) are deferred follow-ups — each needs additional
+surface the closed config API doesn't yet model. Track them in
+`.agent/DECISIONS.md`.
+
+## API
+
+Closed API — no `className` or `style`.
+
+### `Lightbox`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `images` | `LightboxImage[]` | — | Images to browse: `{ src, alt, caption? }`. |
+| `trigger` | `ReactNode` | — | Element that opens the viewer. |
+| `open` | `boolean` | — | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Uncontrolled initial open state. |
+| `onOpenChange` | `(open: boolean) => void` | — | Open-state change handler. |
+| `index` | `number` | — | Controlled active image index. |
+| `defaultIndex` | `number` | `0` | Uncontrolled initial index. |
+| `onIndexChange` | `(index: number) => void` | — | Index change handler. |
+| `loop` | `boolean` | `false` | Wrap around at the ends. |
+| `label` | `string` | `"Image viewer"` | Accessible name for the viewer. |
+
+`LightboxImage` = `{ src: string; alt: string; caption?: ReactNode }`.
