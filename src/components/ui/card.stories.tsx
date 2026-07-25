@@ -95,3 +95,57 @@ export const WithActionAndFooter: Story = {
     ).toBeEnabled()
   },
 }
+
+export const Elevated: Story = {
+  render: () => (
+    <div className="w-80">
+      <Card variant="elevated">
+        <CardHeader>
+          <CardTitle>Featured finding</CardTitle>
+          <CardDescription>
+            Deep, overlay-grade elevation for a card that floats above content.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground text-sm">
+            Uses the signature <code>--shadow</code> token.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  ),
+}
+
+export const Beam: Story = {
+  name: "Beam (animated border)",
+  render: () => (
+    <div className="w-80">
+      <Card variant="beam">
+        <CardHeader>
+          <CardTitle>Live scan</CardTitle>
+          <CardDescription>
+            The signature rotating beam frames the card while work is in flight.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-3xl font-semibold tracking-tight">Running…</p>
+          <p className="text-muted-foreground text-sm">42 of 128 hosts scanned</p>
+        </CardContent>
+        <CardFooter>
+          <div className="flex w-full justify-end">
+            <Button variant="primary" size="sm">
+              View progress
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(
+      canvasElement.querySelector("[data-variant='beam']")
+    ).toBeInTheDocument()
+    await expect(canvas.getByText("Live scan")).toBeVisible()
+  },
+}

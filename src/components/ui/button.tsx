@@ -18,7 +18,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "border border-white/10 text-foreground",
+        primary: "text-foreground shadow-soft hover:brightness-[1.08]",
         secondary: "border border-border-strong bg-card text-foreground hover:brightness-110",
         soft: "border border-transparent bg-accent-soft text-accent-strong hover:brightness-110",
         outline: "border border-border-strong bg-transparent text-foreground hover:bg-muted",
@@ -75,13 +75,15 @@ function Button({
     >
       {isPrimary ? (
         <>
-          {/* Signature beam: rotating conic-gradient revealed as a 1px border. */}
+          {/* Signature beam: rotating conic-gradient revealed as a 1.5px border,
+              floated on the accent underglow (shadow-soft). Reference geometry:
+              200% square, 3.4s spin, 68/84/92% stops. */}
           <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]">
-            <span className="absolute top-1/2 left-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin bg-[conic-gradient(from_0deg,transparent_0_68%,var(--accent)_84%,var(--accent-strong)_92%,transparent_100%)]" />
+            <span className="absolute top-1/2 left-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin-fast bg-[conic-gradient(from_0deg,transparent_0_68%,var(--primary)_84%,var(--accent-strong)_92%,transparent_100%)]" />
           </span>
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-px -z-10 rounded-[calc(var(--r,10px)-1px)] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--accent)_15%,var(--surface-2)),var(--surface-2))] group-hover/button:bg-[linear-gradient(180deg,color-mix(in_srgb,var(--accent)_22%,var(--surface-2)),var(--surface-2))]"
+            className="pointer-events-none absolute inset-[1.5px] -z-10 rounded-[calc(var(--r,10px)-1.5px)] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--primary)_15%,var(--surface-2)),var(--surface-2))]"
           />
         </>
       ) : null}

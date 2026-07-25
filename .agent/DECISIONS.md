@@ -248,3 +248,35 @@ control's `aria-describedby`); `ValidationMessage` is a `<p>` with `role="alert"
 For a fully-wired field prefer `FormField`; reach for these atoms only when composing outside a `Field`.
 This is not duplication — the behaviour (context wiring) differs; the single-source rule is preserved
 because each rule (label typography, helper/error text style) still lives in one place per surface.
+
+## 2026-07-25d — Reference fidelity: brand purple lives in `--primary` (not `--accent`); soften shadows via baked accent-tinted tokens
+Status: accepted
+Decision: Three reference-fidelity fixes against `spec/Button.dc.html` (beam) and the masthead beam.
+(1) The AEGIS reference names its brand purple `--accent` (#9373d9 dark / #7c53d4 light). In our
+shadcn-derived token set that name is already taken by the muted hover-surface (dark #22202b); the
+purple lives in **`--primary`** — whose values match the reference's `--accent` *exactly*. So every
+signature beam/gradient/glow that the reference paints with `var(--accent)` must use **`var(--primary)`**
+here (keep `--accent-strong`/`--accent-soft`, which are already the purple family). Fixed the Primary
+button beam + inner gradient and the beam card arc, which were silently rendering the near-invisible
+muted surface instead of purple — the root cause of the "beam looks incomplete" report.
+(2) Primary button beam completed to reference: accent **underglow** (`shadow-soft`), beam spins at
+**3.4s** (`--animate-beam-spin-fast`; the 6.5s `--animate-beam-spin` stays for the slower masthead/card),
+1.5px inner inset (was 1px).
+(3) Softer, more diffuse shadows: added `shadow-soft` (hairline `border-strong` ring + accent bloom,
+for borderless elevated surfaces — Primary button, beam card) and `shadow-bloom` (ring-less, wider,
+extra-diffuse accent bloom for resting bordered surfaces). Default `Card` moved off the hard black
+`shadow-elevated` onto `shadow-bloom`; added `variant="elevated"` (opt-in deep `--shadow`) and
+`variant="beam"` (the animated conic-gradient border, masthead pattern: 1.5px frame over an inset panel).
+Reason: `color-mix(in srgb, var(--accent) 60%, transparent)` in a `box-shadow` is collapsed by
+Lightning CSS to the opaque `var(--accent)` (the translucency is dropped) — and the `--shadow-*` theme
+namespace rewrites shadow colors for `shadow-{color}` modifiers, mangling it too. So the soft shadows are
+**baked per-theme** as plain `--shadow-soft`/`--shadow-bloom` vars (translucent purple rgba, allowed in
+`index.css` — conformance only scans `src/components/ui`) and exposed via `@utility` reading a single
+`var()`, which Lightning emits verbatim. The color-mix in the button's *linear-gradient* is fine — Lightning
+keeps it there behind an `@supports` fallback; only the box-shadow+`transparent` case breaks.
+Impact: No public API change except `Card` gaining an optional `variant` ("default" | "elevated" | "beam",
+default "default"). Overlays (dialog/menu/popover/tooltip/toast) keep `shadow-elevated` = `--shadow`,
+which already matches the reference. Also added `storybook-static` to the ESLint global ignores: the
+`build-storybook` gate emits bundles with inline eslint-disable comments for rules our config doesn't
+load, which ESLint then flagged as "rule definition not found" — pre-existing gap, exposed by gate order.
+All gates green (tsc, build, lint, conformance 110/110, build-storybook) + browser-verified screenshot.

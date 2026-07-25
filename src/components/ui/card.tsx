@@ -1,4 +1,5 @@
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
@@ -10,19 +11,64 @@ import { cn } from "@/lib/utils"
  * `CardContent`, `CardFooter`) so any layout can be assembled. Colors are
  * AEGIS-token only; the header uses a container-query grid so an optional action
  * pins to the top-right.
+ *
+ * Variants (matching the reference):
+ *  - `default`  — resting content surface: hairline border + the soft, diffuse
+ *                 accent glow (`shadow-soft`).
+ *  - `elevated` — the deep overlay-grade `--shadow` for floating/featured cards.
+ *  - `beam`     — the signature animated border: a rotating conic-gradient arc
+ *                 revealed as a 1.5px frame around an inset panel (masthead beam).
  */
 
-function Card({
-  ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
+const cardVariants = cva(
+  "text-card-foreground flex flex-col gap-6 py-6",
+  {
+    variants: {
+      variant: {
+        default: "bg-card rounded-xl border border-border shadow-bloom",
+        elevated: "bg-card rounded-xl border border-border shadow-elevated",
+        beam: "rounded-[18.5px] bg-card",
+      },
+    },
+    defaultVariants: { variant: "default" },
+  }
+)
+
+type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
+  VariantProps<typeof cardVariants>
+
+function Card({ variant = "default", children, ...props }: CardProps) {
+  if (variant === "beam") {
+    return (
+      <div
+        data-slot="card"
+        data-variant="beam"
+        className="relative isolate overflow-hidden rounded-[20px] bg-border-strong shadow-soft"
+        {...props}
+      >
+        {/* Signature beam: rotating conic-gradient arc clipped to a 1.5px frame. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
+        >
+          <span className="absolute top-1/2 left-1/2 aspect-square w-[140%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin bg-[conic-gradient(from_0deg,transparent_0_74%,var(--primary)_85%,var(--accent-strong)_92%,transparent_100%)]" />
+        </span>
+        <div className={cn("relative m-[1.5px]", cardVariants({ variant }))}>
+          {children}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-border py-6 shadow-elevated"
-      )}
+      data-variant={variant ?? "default"}
+      className={cn(cardVariants({ variant }))}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 }
 
@@ -110,4 +156,5 @@ export {
   CardAction,
   CardContent,
   CardFooter,
+  cardVariants,
 }

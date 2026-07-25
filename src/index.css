@@ -76,13 +76,14 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 
     /* Signature elevation — resolves per theme via --shadow (deep in dark,
-       violet-tinted in light). Use `shadow-elevated` on cards/menus/overlays;
-       never hard-code a box-shadow literal. */
+       violet-tinted in light). Use `shadow-elevated` on floating overlays
+       (dialogs, menus, popovers); never hard-code a box-shadow literal. */
     --shadow-elevated: var(--shadow);
 
     /* Signature motion — AEGIS keyframes exposed as `animate-*` utilities.
        Honor prefers-reduced-motion (see the base layer below). */
     --animate-beam-spin: beamSpin 6.5s linear infinite;
+    --animate-beam-spin-fast: beamSpin 3.4s linear infinite;
     --animate-pulse-dot: pulseDot 1.8s ease-in-out infinite;
     --animate-check-pop: checkPop 0.2s ease;
     --animate-dot-pop: dotPop 0.2s ease;
@@ -124,6 +125,9 @@
     --success: #2fb680;
     --warning: #ecb22e;
     --shadow: 0 18px 50px -22px rgba(90, 68, 150, 0.32);
+    /* Soft accent-tinted elevation (baked per theme; --accent here == primary purple). */
+    --shadow-soft: 0 0 0 1px var(--border-strong), 0 12px 30px -12px rgba(124, 83, 212, 0.55);
+    --shadow-bloom: 0 16px 42px -22px rgba(124, 83, 212, 0.38);
 
     /* Severity scale (data / ASM) */
     --sev-critical: #f0506e;
@@ -181,6 +185,9 @@
     --success: #2fb680;
     --warning: #ecb22e;
     --shadow: 0 18px 50px -18px rgba(0, 0, 0, 0.7);
+    /* Soft accent-tinted elevation (baked per theme; --accent here == primary purple). */
+    --shadow-soft: 0 0 0 1px var(--border-strong), 0 12px 30px -12px rgba(147, 115, 217, 0.55);
+    --shadow-bloom: 0 16px 42px -22px rgba(147, 115, 217, 0.5);
 
     /* Severity scale */
     --sev-critical: #f0506e;
@@ -202,6 +209,21 @@
     --sidebar-accent-foreground: #eceaf2;
     --sidebar-border: rgba(255, 255, 255, 0.07);
     --sidebar-ring: #9373d9;
+}
+
+/* Soft accent-tinted elevation — the reference's softer shadows. Declared as
+   first-class utilities backed by per-theme --shadow-* vars (not --shadow-*
+   theme keys) so Tailwind/Lightning emit the value verbatim instead of
+   collapsing the translucent accent color to an opaque one.
+     shadow-soft  — hairline border-strong ring + accent bloom, for borderless
+                    elevated surfaces (Primary button, beam card).
+     shadow-bloom — ring-less, wide, extra-diffuse accent bloom for resting
+                    bordered surfaces (content cards). */
+@utility shadow-soft {
+    box-shadow: var(--shadow-soft);
+}
+@utility shadow-bloom {
+    box-shadow: var(--shadow-bloom);
 }
 
 @layer base {
