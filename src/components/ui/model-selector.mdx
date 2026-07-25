@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Model Selector/Guidelines" />
+
+# Model / Agent Selector
+
+A Select specialised for choosing an AI model or agent. Each option carries a
+name plus an optional icon, a one-line description, and a short badge (e.g.
+"Pro", "Beta"); options can be grouped by provider or tier. The trigger shows the
+chosen model's icon and name, and the menu shows the full detail so users can
+compare before switching.
+
+## When to use
+
+- **Do** use it wherever a surface lets users pick which model or agent handles
+  their request — a composer header, settings, a playground.
+- **Do** keep descriptions to a single, scannable line about the trade-off
+  (capability vs. speed vs. cost).
+- **Don't** use it for long, searchable lists of dozens of options; reach for
+  Combobox (type-ahead filtering) instead. This is for a curated handful.
+- **Don't** encode meaning in the badge colour alone — the badge is a short word.
+
+## Anatomy
+
+- **Trigger** — shows the selected model's icon + name (or the placeholder).
+- **Menu** — a row per model: icon, name, optional badge, and a description line;
+  the selected row shows a check.
+- **Groups** — when any option has a `group`, options are shown under group
+  headings separated by dividers.
+
+## Behavior
+
+- **Controlled or uncontrolled:** pass `value` + `onValueChange`, or use
+  `defaultValue`. `onValueChange` receives the option's `value`.
+- **Grouping** activates automatically when any option sets `group`; first-seen
+  order of both groups and members is preserved.
+- **Inheritance:** it is built on Select, so portalling, floating-engine
+  positioning, type-ahead, roving focus, keyboard selection, and native form
+  integration (`name`) all come from the primitive. `variant` / `size` / `side` /
+  `align` pass through to the Select trigger and menu.
+
+## Accessibility
+
+- The trigger is a `combobox`; the menu is a `listbox` of `option`s, wired by the
+  Base UI Select primitive (arrow keys, type-ahead, Enter/Escape, focus return).
+- Each option's accessible name is its label (plus badge and description text),
+  and the selected option is marked — selection state is conveyed by the check
+  and ARIA, never by colour alone (WCAG 1.4.1).
+- The trigger has an accessible name from `label`. Focus rings use the 3px
+  `accent-soft` token in both themes.
+
+## Design tokens
+
+Colour, radius, and motion are inherited from Select: the trigger uses
+`--surface-2` / `--border-strong` with an `--accent-strong` hover and
+`--accent-soft` focus ring; the menu is the `--popover` surface with
+`shadow-elevated`; descriptions use `--muted-foreground` and the badge sits on
+`--surface-3`. There are no hardcoded colours.
+
+## Scope
+
+Single selection of a curated list. **Type-ahead filtering** (use Combobox),
+**multi-model comparison**, and **inline usage / cost meters** are out of scope —
+compose Model Selector with those components rather than folding them in. Track
+follow-ups in `.agent/DECISIONS.md`.
+
+## API
+
+Closed API — no `className` or `style`.
+
+### `ModelSelector`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `models` | `ModelOption[]` | — | The selectable models / agents. |
+| `value` | `string` | — | Controlled selected value. |
+| `defaultValue` | `string` | — | Uncontrolled initial value. |
+| `onValueChange` | `(value: string) => void` | — | Selection handler. |
+| `placeholder` | `ReactNode` | `"Select a model"` | Trigger placeholder. |
+| `label` | `string` | `"Model"` | Accessible name for the trigger. |
+| `variant` | `"outline" \| "filled" \| "flush"` | `"outline"` | Trigger treatment. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Trigger size. |
+| `side` / `align` | Select placement | `"bottom"` / `"start"` | Menu placement. |
+| `disabled` | `boolean` | `false` | Disable the selector. |
+| `name` | `string` | — | Native form field name. |
+
+`ModelOption` = `{ value, label, description?, icon?, badge?, disabled?, group? }`.

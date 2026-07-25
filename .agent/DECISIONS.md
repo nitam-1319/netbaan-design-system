@@ -414,3 +414,26 @@ send button is the AEGIS `Button` (primary, icon); accessibility puts the name o
 `label` (no visible label) and links the counter via `aria-describedby` + `aria-live`. Not in the
 conformance manifest (no reference page). All machine gates green (tsc, lint, build, conformance 113/113,
 build-storybook); browser story/axe/visual-regression HUMAN_VERIFY_REQUIRED (no sandbox runner), run in CI.
+
+## 2026-07-25j — Model / Agent Selector: config-driven over Select; single-select curated list
+Status: accepted
+Decision: `model-selector.tsx` (roadmap #147, Recommended/AI Components, dep Select) ships as a
+config-driven convenience over the AEGIS `Select`: a `models` array
+(`{value,label,description?,icon?,badge?,disabled?,group?}`) drives the trigger and menu. The trigger
+shows the selected model's icon + name via a `SelectValue` function child (O(1) `byValue` Map lookup,
+placeholder fallback); each menu row is icon + label + optional uppercase badge chip + a muted
+description line, with the inherited selected check. Grouping activates automatically when any option
+sets `group` (first-seen order of groups and members preserved; dividers via `SelectSeparator` +
+`SelectGroup`/`SelectGroupLabel`). It composes the existing Select parts — it does NOT reimplement the
+listbox — so portalling, floating positioning, type-ahead, roving focus, keyboard, and native form
+(`name`) all come from the primitive; `variant`/`size`/`side`/`align` pass through.
+Reason: Picking a model/agent is a curated, single-select decision that benefits from per-row detail
+(capability/speed trade-off, tier badge) the bare Select rows don't express. A config API keeps every
+model picker identical and closed. Building on Select (not Combobox) is deliberate: this is a short,
+known list, not a searchable one.
+Impact: **Single selection of a curated list.** Type-ahead filtering (compose Combobox), multi-model
+comparison, and inline usage/cost meters are out of scope — compose rather than fold in. The badge is a
+short word rendered in a token chip (`surface-3` / `muted-foreground`); selection is conveyed by the
+check + ARIA, never colour alone. Not in the conformance manifest (no reference page). All machine gates
+green (tsc, lint, build, conformance 114/114, build-storybook); browser story/axe/visual-regression
+HUMAN_VERIFY_REQUIRED (no sandbox runner), run in CI.
