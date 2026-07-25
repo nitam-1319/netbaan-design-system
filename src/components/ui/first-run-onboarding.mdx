@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/First-run Onboarding/Guidelines" />
+
+# First-run Onboarding
+
+The welcoming first-run surface shown where content will eventually live but the
+user hasn't done anything yet — an empty workspace, a fresh project, a brand-new
+inbox. It turns a blank screen into an encouraging *get started* moment: a
+friendly title, a short description, an ordered checklist of next steps, and a
+primary call to action.
+
+## First-run Onboarding vs Empty State vs No Results
+
+All three fill a region with no content, but the intent differs:
+
+- **Empty State** — neutral "there's nothing here yet". Use for a list a user
+  cleared, or a section that's simply empty.
+- **No Results** — "your search / filters matched nothing". Use after a query.
+- **First-run Onboarding** — an intentional, encouraging welcome for a *new*
+  user or workspace, with concrete next steps. Use once, on first run.
+
+This component is a config-driven convenience over `EmptyState`, so it inherits
+its centered layout, sizing, and status semantics.
+
+## When to use
+
+- **Do** use it the first time a user lands on an empty core surface, to point
+  them at the two or three actions that unlock value.
+- **Do** keep `steps` to a short list (three or so) with action-oriented titles.
+- **Do** provide a primary action; add a secondary ("Skip for now", "Take a
+  tour") only when skipping is genuinely fine.
+- **Don't** re-show it once the user has data — switch to the real content (or a
+  neutral **Empty State** if they later empty it).
+
+## Anatomy
+
+An icon (default a rocket), a title, an optional description, an optional ordered
+`steps` checklist (each step: a leading glyph or auto number, a title, and
+optional description), and an actions row (primary + optional secondary +
+`children`).
+
+## Sizes
+
+`size` (`"sm" | "default" | "lg"`) is forwarded to `EmptyState` and scales the
+icon and padding. The steps list and buttons keep a consistent, legible scale.
+
+## Accessibility
+
+- Inherits `EmptyState`'s `role="status"`, so the welcome is announced politely
+  when it appears; the title renders as a heading for structure.
+- The steps are a real ordered list (`<ol>` / `<li>`), so their order and count
+  are conveyed to assistive tech; the leading number / glyph is `aria-hidden`
+  because the step title carries the meaning (WCAG 1.3.1, 1.4.1).
+- Actions are AEGIS `Button`s — keyboard operable with the standard focus ring;
+  the primary action is visually and programmatically first.
+
+## Design tokens
+
+Inherited from `EmptyState` and `Button`:
+
+| Token | Applies to |
+| --- | --- |
+| `--muted` / `--muted-foreground` | Icon chip, step numbers, descriptions |
+| `--foreground` | Title and step titles |
+| `--primary` | Primary action button |
+| `--border` | Outline (secondary) button |
+
+## API
+
+`FirstRunOnboarding` — renders an `EmptyState` with steps and actions.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` | `"default"` | Scale, forwarded to `EmptyState`. |
+| `title` | `ReactNode` | `"Welcome"` | Heading. |
+| `description` | `ReactNode` | — | Supporting text. |
+| `icon` | `ReactNode` | rocket | Leading glyph. |
+| `steps` | `OnboardingStep[]` | — | Ordered getting-started steps. |
+| `onPrimary` | `() => void` | — | Primary action; renders the primary button. |
+| `primaryLabel` | `ReactNode` | `"Get started"` | Primary button label. |
+| `onSecondary` | `() => void` | — | Secondary action; renders the outline button. |
+| `secondaryLabel` | `ReactNode` | `"Skip for now"` | Secondary button label. |
+| `children` | `ReactNode` | — | Extra action(s) after the buttons. |
+
+`OnboardingStep` — `{ title, description?, icon? }`. The public API is closed:
+there is no `className` or `style` prop.
