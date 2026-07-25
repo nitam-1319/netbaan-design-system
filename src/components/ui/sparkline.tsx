@@ -147,18 +147,25 @@ function Sparkline({
       )}
 
       {variant === "bar"
-        ? points.map(([x, y], i) => (
-            <rect
-              key={i}
-              data-slot="sparkline-bar"
-              x={(x - barW / 2).toFixed(2)}
-              y={y.toFixed(2)}
-              width={barW.toFixed(2)}
-              height={Math.max(1, baseY - y).toFixed(2)}
-              rx={1}
-              fill="currentColor"
-            />
-          ))
+        ? points.map(([, y], i) => {
+            // Bars occupy per-index SLOTS (width innerW/n) centred in the slot,
+            // NOT the line points (which sit on the plot edges) — otherwise the
+            // first and last bars overhang the viewBox and clip.
+            const slotW = (width - pad * 2) / safe.length
+            const cx = pad + (i + 0.5) * slotW
+            return (
+              <rect
+                key={i}
+                data-slot="sparkline-bar"
+                x={(cx - barW / 2).toFixed(2)}
+                y={y.toFixed(2)}
+                width={barW.toFixed(2)}
+                height={Math.max(1, baseY - y).toFixed(2)}
+                rx={1}
+                fill="currentColor"
+              />
+            )
+          })
         : (
             <path
               data-slot="sparkline-line"

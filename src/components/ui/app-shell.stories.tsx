@@ -50,7 +50,8 @@ const NavItem = ({
 
 export const Default: Story = {
   render: () => (
-    <AppShell className="h-[32rem]">
+    <div className="h-[32rem] overflow-hidden rounded-xl border border-border [&>[data-slot=app-shell]]:min-h-full">
+    <AppShell>
       <AppShellSidebar>
         <div className="border-sidebar-border flex h-14 items-center gap-2 border-b px-4">
           <ShieldAlert className="text-sidebar-primary size-5" />
@@ -79,6 +80,7 @@ export const Default: Story = {
         <AppShellFooter>Last scan 3h ago · 128 assets monitored</AppShellFooter>
       </AppShellMain>
     </AppShell>
+    </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -97,7 +99,8 @@ export const CollapsibleSidebar: Story = {
     const Demo = () => {
       const [collapsed, setCollapsed] = React.useState(false)
       return (
-        <AppShell className="h-[24rem]">
+        <div className="h-[24rem] overflow-hidden rounded-xl border border-border [&>[data-slot=app-shell]]:min-h-full">
+        <AppShell>
           <AppShellSidebar collapsed={collapsed}>
             <nav className="flex flex-col gap-1 p-3">
               <NavItem icon={LayoutDashboard} label="Dashboard" />
@@ -123,6 +126,7 @@ export const CollapsibleSidebar: Story = {
             </AppShellContent>
           </AppShellMain>
         </AppShell>
+        </div>
       )
     }
     return <Demo />

@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils"
 const shellVariants = cva(
   cn(
     "flex w-full items-stretch overflow-hidden rounded-lg border border-border-strong bg-background text-foreground transition-colors",
-    "focus-within:border-accent-strong focus-within:ring-3 focus-within:ring-accent-soft",
+    "focus-within:border-primary focus-within:ring-3 focus-within:ring-accent-soft",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     "data-[invalid]:border-destructive data-[invalid]:focus-within:ring-destructive/30"
   ),
@@ -60,9 +60,6 @@ const adornmentVariants = cva(
   }
 )
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-}
 
 type CurrencyInputProps = VariantProps<typeof shellVariants> & {
   /** Controlled numeric value (`null` = empty). Pair with `onValueChange`. */
@@ -153,11 +150,14 @@ function CurrencyInput({
 
   const parse = (raw: string): number | null => {
     if (raw.trim() === "") return null
-    const cleaned = raw
-      .split(escapeRegExp(groupSeparator))
-      .join("")
-      .replace(escapeRegExp(decimalSeparator), ".")
-      .replace(/[^0-9.-]/g, "")
+    // String.split/join match the separator LITERALLY (not as a regex), so pass
+    // the raw separators — regex-escaping them here would fail to match a "."
+    // group/decimal separator (the European format).
+    let cleaned = raw
+    if (groupSeparator) cleaned = cleaned.split(groupSeparator).join("")
+    if (decimalSeparator && decimalSeparator !== ".")
+      cleaned = cleaned.split(decimalSeparator).join(".")
+    cleaned = cleaned.replace(/[^0-9.-]/g, "")
     const n = Number.parseFloat(cleaned)
     return Number.isFinite(n) ? n : null
   }

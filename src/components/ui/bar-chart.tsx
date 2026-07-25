@@ -102,10 +102,18 @@ function computeYExtent(
   let hi = -Infinity
   for (const d of data) {
     if (stacked) {
-      let sum = 0
-      for (const k of seriesKeys) sum += toNumber(d[k])
-      if (sum > hi) hi = sum
-      if (sum < lo) lo = sum
+      // Positive and negative bars stack SEPARATELY in the render, so the
+      // domain must bound the positive stack top and the negative stack bottom
+      // independently (a net sum would clip mixed-sign categories).
+      let posSum = 0
+      let negSum = 0
+      for (const k of seriesKeys) {
+        const v = toNumber(d[k])
+        if (v >= 0) posSum += v
+        else negSum += v
+      }
+      if (posSum > hi) hi = posSum
+      if (negSum < lo) lo = negSum
     } else {
       for (const k of seriesKeys) {
         const v = toNumber(d[k])

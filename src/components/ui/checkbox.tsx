@@ -97,11 +97,11 @@ function Checkbox({ size = "md", label, description, id, ...props }: CheckboxPro
       )}
     >
       {box}
-      <span className="flex flex-col gap-0.5">
+      <span className="flex flex-col gap-0.5 peer-data-[disabled]:opacity-45">
         {label != null ? (
           <span
             data-slot="checkbox-label"
-            className="text-sm leading-none font-semibold text-foreground peer-data-[disabled]:text-text-faint"
+            className="text-sm leading-none font-semibold text-foreground"
           >
             {label}
           </span>

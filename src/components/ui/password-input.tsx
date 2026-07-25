@@ -124,7 +124,6 @@ function PasswordInput({
         {!hideReveal && (
           <button
             type="button"
-            tabIndex={-1}
             disabled={disabled}
             aria-label={visible ? "Hide password" : "Show password"}
             aria-pressed={visible}

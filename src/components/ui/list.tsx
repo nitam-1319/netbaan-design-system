@@ -29,7 +29,7 @@ const listVariants = cva("flex flex-col text-sm text-foreground", {
 })
 
 const listItemVariants = cva(
-  "flex items-center gap-3 outline-none data-[interactive]:cursor-pointer data-[interactive]:transition-colors data-[interactive]:hover:bg-muted data-[interactive]:focus-visible:bg-muted data-[interactive]:focus-visible:ring-2 data-[interactive]:focus-visible:ring-accent-soft data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+  "flex items-center gap-3 outline-none data-[interactive]:cursor-pointer data-[interactive]:transition-colors data-[interactive]:hover:bg-muted data-[interactive]:focus-visible:bg-muted data-[interactive]:focus-visible:ring-[3px] data-[interactive]:focus-visible:ring-accent-soft data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
   {
     variants: {
       density: {

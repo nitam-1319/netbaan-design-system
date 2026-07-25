@@ -24,7 +24,7 @@ const slotVariants = cva(
     "m-0 rounded-lg border border-border-strong bg-background text-center font-medium text-foreground tabular-nums transition-colors",
     "outline-none",
     "hover:border-accent-strong",
-    "focus:border-accent-strong focus:ring-3 focus:ring-accent-soft",
+    "focus:border-primary focus:ring-3 focus:ring-accent-soft",
     "data-[filled]:border-accent-strong",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
   ),

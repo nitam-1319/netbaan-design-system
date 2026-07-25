@@ -105,8 +105,9 @@ function PromptComposer({
     const trimmed = text.trim()
     if (trimmed.length === 0 || loading || disabled) return
     onSubmit?.(trimmed)
-    if (!isControlled) setUncontrolled("")
-  }, [text, loading, disabled, onSubmit, isControlled])
+    // Clear through setText so onValueChange fires for the reset-to-empty edit.
+    setText("")
+  }, [text, loading, disabled, onSubmit, setText])
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     onKeyDown?.(e)

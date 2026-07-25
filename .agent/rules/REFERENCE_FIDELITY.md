@@ -73,9 +73,16 @@ The conformance gate checks static structure; **interaction/motion fidelity is o
 
 ## The gate (hard)
 ```bash
+npm run verify                                      # typecheck + lint + conformance + tokens
 node .agent/scripts/verify-conformance.mjs <name>   # gate the component you just built
 node .agent/scripts/verify-conformance.mjs          # audit the whole library
+node .agent/scripts/verify-tokens.mjs               # dangling var(--*) references (undefined tokens)
 ```
+`verify-tokens.mjs` catches the recurring bug where a component uses `var(--foo)` that is
+defined by nobody (e.g. the old `--track` groove that rendered nothing) — it flags any `var(--x)`
+with no fallback that isn't in `src/index.css`, set by the component itself, or a known Base UI /
+Tailwind runtime var. Define the token, add a `var(--x, fallback)`, or add it to the RUNTIME
+allowlist in the script.
 It fails on: hard-coded shadow/color literals, the shadcn `ring-ring/50` focus ring, missing
 required variants/tones/sizes/shape/status, and a missing signature animation. A component is not
 done until it **conforms** (see `checklists/REVIEW_CHECKLIST.md`). Colors that must be literal live

@@ -173,7 +173,10 @@ function ComboboxContent({
 /* ------------------------------------------------------------------ List -- */
 
 function ComboboxList(
-  props: React.ComponentProps<typeof ComboboxPrimitive.List>
+  props: Omit<
+    React.ComponentProps<typeof ComboboxPrimitive.List>,
+    "className" | "style"
+  >
 ) {
   return <ComboboxPrimitive.List data-slot="combobox-list" {...props} />
 }

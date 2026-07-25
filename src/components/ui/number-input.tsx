@@ -88,6 +88,9 @@ function NumberInput({
   const reactId = React.useId()
   const fieldId = id ?? reactId
   const invalid = error != null
+  const descId = `${fieldId}-description`
+  const errId = `${fieldId}-error`
+  const describedBy = invalid ? errId : description != null ? descId : undefined
 
   return (
     <div data-slot="number-input" className="flex flex-col gap-1.5">
@@ -123,6 +126,7 @@ function NumberInput({
             data-slot="number-input-control"
             placeholder={placeholder}
             aria-invalid={invalid || undefined}
+            aria-describedby={describedBy}
             className={cn(
               "w-full min-w-0 flex-1 bg-transparent px-3 text-center tabular-nums outline-none",
               "placeholder:text-muted-foreground",
@@ -147,6 +151,7 @@ function NumberInput({
 
       {description != null && !invalid && (
         <p
+          id={descId}
           data-slot="number-input-description"
           className="text-muted-foreground text-xs"
         >
@@ -155,6 +160,7 @@ function NumberInput({
       )}
       {invalid && (
         <p
+          id={errId}
           data-slot="number-input-error"
           className="text-destructive text-xs font-medium"
         >

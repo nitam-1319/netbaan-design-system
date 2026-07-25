@@ -69,6 +69,7 @@ function Card({
       <div
         data-slot="card"
         data-variant="beam"
+        onMouseMove={onMouseMove}
         className="relative isolate overflow-hidden rounded-[20px] bg-border-strong shadow-elevated"
         {...props}
       >

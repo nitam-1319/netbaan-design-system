@@ -516,3 +516,44 @@ Button focus/active fidelity; Menu/ContextMenu entrance; Badge `pinging`. All ga
 conformance 115/115, build, build-storybook); browser-verified (beam masthead, hovered card lift + pointer
 spotlight). Non-reference note: the pointer-follow spotlight is an enhancement in the reference's visual
 language, on top of the exact reference lift hover.
+
+## 2026-07-25m — Library-wide verified bug sweep + a new token-integrity gate to stop regressions
+Status: accepted
+Decision: Ran a comprehensive 4-way parallel audit of ALL 115 components (each finding verified by
+reading the code, to avoid noise) plus built an automated token-integrity check. The library was mostly
+clean; fixed every verified defect:
+- **currency-input** parse used `escapeRegExp` on `String.split`/`replace` (which match LITERALLY, not as
+  regex), so a `.` group / `,` decimal (European format) never matched — `"1.234,50"` parsed to 1.234.
+  Fixed to literal split/join; verified US/EU/negative all parse correctly.
+- **password-input** reveal toggle had `tabIndex={-1}` → keyboard users could never unmask (WCAG 2.1.1).
+  Removed it.
+- **app-shell** all six parts leaked `className`/`style` and merged `className` — the only closed-API
+  violation in the library. Closed all six (`Omit<…,"className"|"style">`) + updated its stories.
+- **combobox** `ComboboxList` leaked `className`/`style` (renders a real listbox div). Closed it.
+- **number-input** description/error had no `id` and the input no `aria-describedby` → SR users never
+  heard the error. Wired both.
+- **checkbox / radio** disabled label never dimmed — `peer-data-[disabled]:text-text-faint` sat on a
+  span that isn't a peer sibling (dead selector). Moved the dim to the text wrapper (a true peer) as
+  `peer-data-[disabled]:opacity-45`, matching the reference's 45%-row-opacity disabled state.
+- **bar-chart** stacked y-extent used the NET per-category sum while the render stacks pos/neg
+  separately → mixed-sign categories overflowed the plot. Now bounds pos-stack-top and neg-stack-bottom
+  independently.
+- **sparkline** `bar` variant positioned bars on the line points (plot edges) → first/last bars clipped
+  the viewBox. Now laid out in per-index slots (browser-verified).
+- **prompt-composer** post-submit clear bypassed `onValueChange`; **card** `beam` branch dropped a caller
+  `onMouseMove`; **list** focus ring was 2px (→3px); **currency/search/otp** inputs lit the hover border
+  (accent-strong) on focus instead of the brand `border-primary`. All fixed.
+Anti-regression: added **`.agent/scripts/verify-tokens.mjs`** — an airtight gate that flags any
+`var(--x)` used with NO fallback that is defined by nobody (index.css, the component itself, or a known
+Base UI/Tailwind runtime var). This is the exact class of bug that kept recurring (the `--track` groove
+rendered nothing). Wired `npm run verify` = typecheck + lint + conformance + tokens, and documented it in
+REFERENCE_FIDELITY.md. A static invalid-CLASS check (e.g. `border-strong`) was evaluated and rejected as
+too false-positive-prone (it matches doc-comment prose); those are caught by the existing conformance
+hygiene + the parallel audits instead.
+Reason: The maintainer was overwhelmed by the volume of bugs/deviations. A verified full-library sweep
+plus an automated token gate converts "keep finding bugs by hand" into "the gate catches the recurring
+class automatically."
+Impact: 15 component fixes + the new gate. No public API changes except app-shell/combobox CLOSING their
+API (removing an unintended `className` hatch) — consumers passing `className` there now get a type error
+(correct per the closed-API decision 2026-07-19h). All gates green: typecheck, lint, conformance 115/115,
+token integrity, build, build-storybook; currency parse + sparkline browser/logic-verified.
