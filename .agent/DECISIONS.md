@@ -227,3 +227,24 @@ come from the legend or a companion table. A single full-circle slice is drawn a
 Impact: Both are static renderers — hover tooltip + slice selection/emphasis are deferred to a
 follow-up (browser-verified), following the honestly-scoped precedent (DataTable 2026-07-22c, Combobox
 2026-07-23, Line/Bar chart). Neither is in the conformance manifest.
+
+## 2026-07-25c — Forms atoms (Field Label / Helper Text / Validation Message) are context-free siblings of the Field-bound parts
+Status: accepted
+Decision: Roadmap slots #122 (Field Label), #123 (Helper Text), #124 (Validation Message) ship as
+standalone, context-free primitives in their own files — `field-label.tsx` (exports **`Label`**),
+`helper-text.tsx` (exports **`HelperText`**), `validation-message.tsx` (exports **`ValidationMessage`**).
+They are distinct from the Base UI `Field`-bound parts already living in `form-field.tsx`
+(`FieldLabel` / `FieldDescription` / `FieldError`), which auto-wire `htmlFor` / `aria-describedby` /
+`aria-invalid` / validity from the `Field.Root` context.
+Reason: Base UI's `Field.Label` / `Field.Description` / `Field.Error` require a `Field.Root` ancestor
+(they read field context and validity), so they cannot be used when composing a field by hand — a
+checkbox row, a control inside `Box`/`Stack`, or any layout `FormField` doesn't cover. The queue lists
+these as separate components; shipping context-free atoms fills that gap without touching `form-field`
+(safety rule #2: CREATE never rewrites). The standalone label is named `Label`, NOT `FieldLabel`, to
+avoid a same-name-two-meanings collision with the Field-bound part.
+Impact: `Label` associates via native `htmlFor`; `HelperText` is a plain `<p>` (associate via the
+control's `aria-describedby`); `ValidationMessage` is a `<p>` with `role="alert"` + `aria-live` and a
+`tone` (error default / warning / success). None wrap a Base UI part or sit in the conformance manifest.
+For a fully-wired field prefer `FormField`; reach for these atoms only when composing outside a `Field`.
+This is not duplication — the behaviour (context wiring) differs; the single-source rule is preserved
+because each rule (label typography, helper/error text style) still lives in one place per surface.
