@@ -1,0 +1,77 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Landmark Regions/Guidelines" />
+
+# Landmark Regions
+
+Thin semantic wrappers that give a page its ARIA **landmark** skeleton, so
+screen-reader and keyboard users can jump straight to the part they want. Each
+component renders the correct native element — meaning the landmark role is
+implicit and robust — and exposes a `label` where a name is needed to tell
+repeated landmarks apart.
+
+| Component | Element | Landmark role |
+| --- | --- | --- |
+| `Banner` | `<header>` | banner (at the top level) |
+| `Nav` | `<nav>` | navigation |
+| `Main` | `<main>` | main |
+| `Complementary` | `<aside>` | complementary |
+| `ContentInfo` | `<footer>` | contentinfo (at the top level) |
+| `Region` | `<section>` | region (only when named) |
+| `Search` | `<search>` | search |
+
+## When to use
+
+- **Do** wrap the major areas of a page so every piece of content sits inside
+  exactly one landmark, with no content orphaned between them.
+- **Do** give a `label` to any landmark that appears more than once — two
+  `Nav`s ("Primary", "Footer"), multiple `Complementary` rails, more than one
+  `Search`.
+- **Don't** render more than one `Main` per page.
+- **Don't** nest a `<header>`/`<footer>` inside `<main>`/`<article>`/`<section>`
+  expecting a banner/contentinfo landmark — those roles only apply at the top
+  level. Use `Region` for a named area inside content.
+
+## Layout is not their job
+
+These wrappers are **layout-neutral** — they set no colour, spacing, or flow.
+Put visual layout inside `Box` / `Stack` / `Grid` / `Container`, and let the
+landmark carry only structure. This keeps the closed API honest: there is no
+`className` escape hatch because the landmark isn't where styling belongs.
+
+## Behavior
+
+- Each renders its semantic element by default. `render` is available for the
+  rare case an element must change, but the default element *is* the semantics —
+  only swap it if you preserve the role.
+- `Region` renders a `<section>`, which is a landmark **only** when it has an
+  accessible name, so always pass `label` (or `aria-labelledby`).
+
+## Accessibility
+
+- Landmarks satisfy WCAG 1.3.1 (Info & Relationships) and 2.4.1 (Bypass Blocks)
+  by giving assistive tech a navigable structure; pair with **Skip to Content**.
+- Names come from `label` → `aria-label`; for a name that mirrors a visible
+  heading, pass `aria-labelledby` pointing at that heading's `id` instead.
+- Prefer a single `Main`; multiple same-type landmarks must each be uniquely
+  named.
+
+## Design tokens
+
+None — landmark regions carry no colour. Content inside them inherits the
+surface and text tokens from `Box` / `Stack` and the component library.
+
+## API
+
+Every component omits `className` / `style`. `Nav`, `Complementary`, `Region`,
+and `Search` accept:
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name (`aria-label`). Required when the landmark repeats; required for `Region`. |
+| `render` | `ReactElement` | semantic element | Element to render (composition — keep the role). |
+| `children` | `ReactNode` | — | The region's content. |
+
+`Main`, `Banner`, and `ContentInfo` take the same props minus `label`. Standard
+attributes for the underlying element (e.g. `id`, `aria-labelledby`) pass
+through.
