@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/AssetRow/Guidelines" />
+
+# Asset Row
+
+A dense row for a single discovered **asset** in an inventory — a host, domain,
+IP, or service — showing its name, type, key counts, a trend **Sparkline**
+(findings or exposure over time), and its highest finding severity. It composes
+the AEGIS **ListItem** with **Sparkline** and **Severity Badge**, so it drops
+straight into a **List**.
+
+## Overview
+
+Asset inventories are long. Asset Row makes each entry scannable: the name in
+monospace, a connectivity dot, the counts that matter, a word-sized trend, and a
+severity badge — all in one line, consistent from row to row.
+
+## Usage
+
+- **Do** stack several inside a **List** to form an asset inventory.
+- **Do** pass a `trend` series to show the direction of exposure at a glance.
+- **Do** set `severity` to the asset's highest open finding severity.
+- **Don't** use it for a full finding (that is **Finding / Vulnerability Card**)
+  or a remediation action (that is **Priority Action Item**).
+
+## Anatomy
+
+A **ListItem** (`data-slot="asset-row"`, `data-severity`) with a leading icon +
+connectivity dot, a content column (`ListItemContent`: the name as a link plus a
+type · findings meta line), an optional trend **Sparkline**
+(`asset-row-trend`, hidden below `sm`), a **Severity Badge**, and a trailing
+chevron when interactive.
+
+## Variants
+
+Presentation is fixed; `density` (inherited from ListItem) tunes row height.
+
+## States
+
+- **Static** — no link; inert row.
+- **Interactive** — with `href`: ListItem hover/focus, a name link, and a
+  trailing chevron (mirrored in RTL).
+- **Online / offline** — the connectivity dot (accent vs muted), when `online`
+  is provided.
+
+Type, findings, trend, severity, and the dot each collapse cleanly when omitted.
+
+## Behavior
+
+- The name is the row's link; the whole row shows the interactive affordance and
+  keyboard focus lands on the name link with a visible ring.
+- The sparkline's tone is derived from `severity` so the trend agrees with the
+  badge; it carries an accessible label only when `trendLabel` is set, otherwise
+  it is decorative beside the visible counts.
+- Findings pluralise ("1 finding" / "N findings"); the trend is hidden on narrow
+  viewports to protect the name.
+
+## Accessibility
+
+- Severity is text via the badge (WCAG 1.4.1); `data-severity` exposes it to
+  tests.
+- The sparkline is `aria-hidden` unless `trendLabel` is provided, avoiding
+  redundant/opaque announcements.
+- One link per row, named by the asset name; icons and the status dot are
+  `aria-hidden`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| ListItem tokens | Spacing, dividers, hover/focus. |
+| `bg-surface-3` / `text-muted-foreground` | Icon chip. |
+| `bg-success` / `bg-muted-foreground` | Online / offline dot. |
+| Sparkline tones + Severity Badge `--sev-*` | Trend + severity. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `ReactNode` | — | Asset name (required). |
+| `type` | `ReactNode` | — | Asset type / role. |
+| `severity` | `Severity` | — | Highest finding severity. |
+| `findings` | `number` | — | Open finding count. |
+| `trend` | `number[]` | — | Trend series → Sparkline. |
+| `trendLabel` | `string` | — | Accessible label for the trend. |
+| `online` | `boolean` | — | Connectivity status dot. |
+| `href` | `string` | — | Link; when set the name links + row is interactive. |
+| `density` | `"compact" \| "default" \| "comfortable"` | `"default"` | Row height. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Inventory**, **Static**, and **Minimal** stories. The row works in both
+themes and directions via the global toolbar; in RTL the icon leads, the chevron
+points inward, and the status dot flips edges automatically.
