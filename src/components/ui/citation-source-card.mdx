@@ -1,0 +1,96 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/CitationSourceCard/Guidelines" />
+
+# Citation / Source Card
+
+A card that attributes an AI answer to one of its **sources** — the retrieved
+document, page, or record behind a claim. It composes the AEGIS **Card**,
+inheriting the surface, border, and (when it links) the interactive lift and
+pointer spotlight, and lays out an ordinal marker, the source name, the title,
+and an optional supporting snippet.
+
+## Overview
+
+Grounded AI responses cite where their information came from. Citation Source
+Card standardises that citation so a reference list reads consistently and each
+entry is a single, obvious link to the source.
+
+## Usage
+
+- **Do** use it to render a retrieved source in a citations list or a RAG answer.
+- **Do** number entries with `index` when the answer references them inline
+  (\[1], \[2]).
+- **Do** include a short `snippet` — the excerpt that supports the claim.
+- **Don't** use it for a tool invocation — that is **Tool Call Block**. Don't use
+  it for generic content — that is **Card**.
+
+## Anatomy
+
+A **Card** (`data-slot="citation-source-card"`) containing an ordinal chip
+(`citation-source-card-index`) or source glyph, the source name
+(`citation-source-card-source`), the title (`citation-source-card-title`, a
+stretched link when `href` is set), and an optional snippet
+(`citation-source-card-snippet`).
+
+## Variants
+
+Presentation is fixed. The meaningful axis is **interactive vs static**: with
+`href` the whole card is a link (Card `interactive`); without it the card is
+inert.
+
+## States
+
+- **Static** — no link; resting surface.
+- **Interactive** — with `href`: hover lift + accent border + spotlight (Card),
+  and a focus ring on the stretched link.
+
+Missing `source` or `snippet` collapse cleanly; without `index` a document glyph
+takes the corner.
+
+## Behavior
+
+- The title is the single link; a stretched `::after` overlay makes the entire
+  card the hit target while keeping one accessible name.
+- `target="_blank"` automatically adds `rel="noreferrer"`.
+- The snippet clamps to three lines so cards stay uniform in a list.
+
+## Accessibility
+
+- Exactly one link per card, named by the title — no duplicate or ambiguous link
+  text.
+- The focus ring renders on the stretched overlay, so keyboard focus is visible
+  across the whole card.
+- Icons (document, external-link) are `aria-hidden`; all meaning is in text.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Card `default` tokens | Surface, border, interactive lift + spotlight. |
+| `bg-accent-soft` / `text-accent-strong` | Ordinal chip. |
+| `bg-muted` / `text-muted-foreground` | Source glyph + source name. |
+| `text-foreground` | Title. |
+| `ring-accent-soft` | Focus ring on the stretched link. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `ReactNode` | — | Source title (required). |
+| `href` | `string` | — | Link; when set the whole card is clickable. |
+| `source` | `ReactNode` | — | Publisher / domain. |
+| `snippet` | `ReactNode` | — | Supporting excerpt (clamped to 3 lines). |
+| `index` | `number` | — | Ordinal marker in the corner chip. |
+| `icon` | `ReactNode` | `FileText` | Leading glyph when no `index`. |
+| `target` | `string` | — | Anchor target (adds `rel` for `_blank`). |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **NonInteractive**, **WithoutSnippet**, and **List** stories. The card
+works in both themes and directions via the global toolbar; in RTL the ordinal
+chip and text column swap edges automatically via logical properties.
