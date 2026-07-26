@@ -1,0 +1,101 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Upload Progress/Guidelines" />
+
+# Upload Progress
+
+The progress readout for a single upload: a label row (an optional file name + a
+percent), a determinate or indeterminate `Progress` bar toned by status, and a
+meta row (`loaded / total`, an ETA, or an error message). Optional inline controls
+— pause, resume, cancel, retry — appear only when their callback is supplied.
+Colors are AEGIS tokens only, and the public API is **closed** — no `className` or
+`style`.
+
+## Overview
+
+Use Upload Progress as the focused progress widget for an in-flight transfer — a
+toast, a compact uploader footer, or the body of a `FileCard`. For the full file
+identity (thumbnail, kind, remove) use **File Card**, which reuses the same
+`Progress`; for a whole queue use **File List** or **File Uploader**.
+
+## Usage
+
+- **Do** keep `value` in sync with real progress, and pass `loadedBytes` /
+  `totalBytes` so users see how much is left.
+- **Do** use `indeterminate` (or `value={null}`) while the total is unknown
+  (preparing, hashing), then switch to a determinate value.
+- **Do** drive `status` through the lifecycle; controls are shown only when they
+  make sense (`pause` while uploading, `resume` while paused/queued, `retry` on
+  error, `cancel` any time before success).
+- **Do** put a plain-language `errorMessage` on failure and offer `onRetry`.
+- **Don't** rely on the bar tone alone to signal success/error — the trailing
+  glyph and the meta / error text carry it for assistive tech.
+
+## Anatomy
+
+1. **upload-progress** — the wrapper (carries `data-status`).
+2. **upload-progress-header** — the `upload-progress-name`, the status glyph, the
+   `upload-progress-percent`, and the control buttons
+   (`upload-progress-pause` / `-resume` / `-retry` / `-cancel`).
+3. **Progress** — the Base UI-backed bar (`role="progressbar"`), toned by status.
+4. **upload-progress-meta** — `loaded / total · ETA`, or the error message.
+
+## Variants, sizes & status
+
+One layout; the size axis is **size** (`sm`, `md`), controlling the internal gap.
+**status** (`queued` / `uploading` / `paused` / `success` / `error`) tones the bar
+(accent / success / critical) and selects the trailing glyph and which controls
+render.
+
+## States
+
+- **Queued** — accent bar; a `resume` control if provided.
+- **Uploading** — accent bar, percent, ETA, `pause` / `cancel`.
+- **Paused** — accent bar held; `resume` / `cancel`.
+- **Success** — success-toned full bar, a check glyph, no controls.
+- **Error** — critical-toned bar, an alert glyph, the `errorMessage`, `retry` / `cancel`.
+
+## Accessibility
+
+- The bar is a real `role="progressbar"` (Base UI Progress primitive) with an
+  `aria-label` (`"Uploading {name}"` when `name` is a string) and correct
+  `aria-valuenow` / `aria-valuemin` / `aria-valuemax`; the indeterminate state
+  omits `aria-valuenow`.
+- Every control is a labelled `<button>` reachable by keyboard, showing the AEGIS
+  3px `accent-soft` focus ring; the control glyphs and status glyphs are
+  `aria-hidden`.
+- WCAG 2.2 AA contrast holds in both themes: `--foreground` name, `--text-faint`
+  meta, `--destructive` on error, and each toned fill against `--surface-3` track.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus across the control buttons. |
+| `Enter` / `Space` | Activate the focused control (`onPause` / `onResume` / `onRetry` / `onCancel`). |
+
+## Tokens
+
+Name `--foreground`; percent `--muted-foreground`; meta `--text-faint`; error
+`--destructive`; success glyph `--success`; bar track `--surface-3`; fill accent
+(`accent-fill`) / `--success` / `--sev-critical`; control focus ring
+`--accent-soft`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `number \| null` | `0` | Percent complete (0–100); `null` ⇒ indeterminate. |
+| `name` | `ReactNode` | — | Optional file name in the label row. |
+| `status` | `"queued" \| "uploading" \| "paused" \| "success" \| "error"` | `"uploading"` | Lifecycle status. |
+| `loadedBytes` | `number` | — | Bytes uploaded so far (meta line). |
+| `totalBytes` | `number` | — | Total bytes (meta line). |
+| `remainingLabel` | `ReactNode` | — | Estimated time remaining. |
+| `errorMessage` | `ReactNode` | — | Meta text when `status="error"`. |
+| `showPercent` | `boolean` | `true` | Show the numeric percent. |
+| `indeterminate` | `boolean` | `false` | Force the sliding bar. |
+| `onPause` / `onResume` / `onCancel` / `onRetry` | `() => void` | — | Show the matching control. |
+| `size` | `"sm" \| "md"` | `"md"` | Size scale. |
+
+The public type is `Omit<React.ComponentProps<"div">, "className" | "style">` plus
+the props above — no styling escape hatch.
