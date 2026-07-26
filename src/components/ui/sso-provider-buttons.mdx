@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SSO Provider Buttons/Guidelines" />
+
+# SSO Provider Buttons
+
+Third-party and enterprise sign-in buttons for an authentication surface. Use a
+single `SSOProviderButton` or a stacked `SSOProviderButtons` group. Each button
+pairs a provider mark with a "Continue with …" label and is built on the same
+Base UI Button primitive and `buttonVariants` as the AEGIS **Button**, so
+tokens, focus ring, and interaction states are identical — only the width and
+the leading mark differ.
+
+## When to use
+
+- **Do** offer SSO as the primary path when your users authenticate through
+  Google, GitHub, Microsoft, Apple, GitLab, or a corporate identity provider.
+- **Do** keep the provider list short and ordered by how often your users pick
+  each one; the most common provider goes first.
+- **Don't** mix SSO buttons with the credential form's submit button styling in
+  a way that hides which one is primary — give the form's primary action the
+  `primary` Button variant and keep SSO on `secondary` / `outline`.
+- **Don't** use these for generic actions; they are sign-in affordances.
+
+## Anatomy
+
+A provider button is a leading **mark** plus a **label**. The mark is a
+monochrome glyph that inherits `currentColor`, and the label defaults to
+`Continue with {provider}`. The group (`SSOProviderButtons`) is a labelled
+`role="group"` that stacks the buttons vertically (default) or horizontally.
+
+## Providers
+
+Built-in provider keys: `google`, `github`, `microsoft`, `apple`, `gitlab`,
+`email`, `sso` (generic single sign-on), and `saml` (your organization). Supply
+a custom provider as a `{ label, icon }` object — for example a brand that
+requires its own full-colour logo, passed through the `icon` slot.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `provider` | key or `{ label, icon }` | — | Required. |
+| `variant` | `secondary \| outline \| ghost` | `secondary` | No `primary` — SSO is a secondary path. |
+| `size` | `sm \| md \| lg` | `md` | Matches the Button size scale. |
+| `fullWidth` | `boolean` | `true` | Buttons fill the container by default. |
+| `label` | `string \| node` | `Continue with {provider}` | `{provider}` is substituted with the name. |
+
+### Group props
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `providers` | array | — | Required. Keys and/or custom marks, in order. |
+| `orientation` | `vertical \| horizontal` | `vertical` | |
+| `onSelectProvider` | `(provider) => void` | — | Fires with the activated provider. |
+| `groupLabel` | `string` | `Sign in with a provider` | Accessible name for the group. |
+
+## Behavior
+
+Each button is a native `<button>` (via the Base UI Button primitive), so click,
+`Enter`, and `Space` all activate it. The group forwards activation through
+`onSelectProvider(provider)`; you can also wire an `onClick` per button.
+
+## Accessibility
+
+- Every button has a text label, so the accessible name is always meaningful —
+  the mark is decorative (`aria-hidden`) and never the sole label.
+- The group is a labelled `role="group"`, so assistive tech announces the set.
+- Focus uses the AEGIS 3px `accent-soft` ring inherited from Button; contrast
+  meets WCAG 2.2 AA in both Light and Dark themes because the marks and text use
+  `currentColor` over token surfaces.
+- Keyboard: `Tab` between buttons, `Enter` / `Space` to activate.
+
+## Internationalization / RTL
+
+The mark leads on the logical start, so the layout mirrors correctly under
+`dir="rtl"`. Provide translated labels via `label` (the `{provider}` token still
+substitutes the provider name) and a translated `groupLabel`.
+
+## Tokens
+
+Colour comes entirely from Button's token-driven variants (`bg-card`,
+`border-border-strong`, `text-foreground`, `text-muted-foreground`, the
+`accent-soft` focus ring). Provider marks are monochrome and inherit
+`currentColor` — no hard-coded brand hex. If a brand's guidelines require its
+official full-colour logo, pass it through a custom provider's `icon`.
