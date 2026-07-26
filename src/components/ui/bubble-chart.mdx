@@ -1,0 +1,85 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/BubbleChart/Guidelines" />
+
+# Bubble Chart
+
+A scatter chart with a third dimension: each point's `size` is encoded as the
+bubble's **area** (radius ∝ √size), so magnitude reads honestly. It shares the
+**Scatter Plot** model and the AEGIS chart foundation — linear x/y **Axis**,
+**Chart Legend**, token palette — and adds an area-proportional radius scale.
+
+## Overview
+
+When two axes aren't enough, a bubble encodes a third value by size. This chart
+does it correctly (area, not radius, ∝ value) so viewers don't overestimate large
+bubbles.
+
+## Usage
+
+- **Do** use it for three-variable relationships (x, y, magnitude).
+- **Do** group points into `series` to colour by category.
+- **Do** tune `minRadius` / `maxRadius` for the density of your data.
+- **Don't** use it when the third dimension is categorical — colour by series
+  with **Scatter Plot** instead.
+
+## Anatomy
+
+A **Chart Container** + **Chart Plot** with left/bottom **Axis**, per-series
+bubble groups (`data-slot="bubble-series"`) of area-scaled circles
+(`bubble-point`), and a **Chart Legend**.
+
+## Variants
+
+Presentation is fixed; toggles include `showGrid`, `showXAxis`, `showYAxis`,
+`showLegend`, and the radius range.
+
+## States
+
+Presentational and deterministic — the same data always renders the same chart.
+
+## Behavior
+
+- Radius uses `r = minRadius + (maxRadius − minRadius)·√(normalised size)`, so
+  **area** is proportional to value.
+- Within a series, larger bubbles draw first so small ones stay visible.
+- Bubbles are translucent so overlaps remain readable.
+- Static renderer — a hover tooltip is deferred (documented, per chart precedent).
+
+## Accessibility
+
+- The plot is an accessible `role="img"` named by `label`; the legend pairs colour
+  with text (WCAG 1.4.1).
+- Size encodes a value that colour/legend cannot convey — provide the underlying
+  numbers in a table for exactness.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1..5` | Bubble colours. |
+| Axis tokens | Axes + grid. |
+
+No colour is hard-coded; every hue comes from the AEGIS chart palette.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name (required). |
+| `series` | `BubbleSeries[]` | — | Series with `{x,y,size}` points (required). |
+| `xDomain` / `yDomain` | `[number, number]` | derived | Fixed axis ranges. |
+| `minRadius` / `maxRadius` | `number` | `6` / `28` | Bubble radius range. |
+| `showGrid` / `showXAxis` / `showYAxis` | `boolean` | `true` | Axis chrome. |
+| `showLegend` | `boolean` | `>1 series` | Legend visibility. |
+| `tickCount` | `number` | `5` | Axis ticks. |
+| `xFormat` / `yFormat` | `(v: number) => ReactNode` | — | Tick formatters. |
+| `width` / `height` | `number` | `640` / `400` | Coordinate size. |
+
+`BubbleSeries` is `{ key, label?, color?, points: {x,y,size}[] }`. The API is
+closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **SingleSeries** story. The chart scales fluidly to its container and
+works in both themes via the global toolbar.
