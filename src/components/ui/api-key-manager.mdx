@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ApiKeyManager/Guidelines" />
+
+# API Key Manager
+
+The list panel for a user's **API keys**: each row shows the key name, its
+scopes, a masked secret with a reveal toggle and one-press copy, metadata
+(created / last used), and a revoke action. It composes the AEGIS **List** /
+**ListItem**, **Button**, **Badge**, and the **Copy Button**.
+
+## Overview
+
+Developer settings need a safe, consistent way to view and manage API keys. This
+component masks secrets by default, reveals them per-row on demand, copies them in
+one press, and keeps revoke a deliberate action.
+
+## Usage
+
+- **Do** use it in developer/settings surfaces to manage API keys.
+- **Do** pass a non-secret `prefix` for a recognisable masked display.
+- **Do** handle `onRevoke(id)` to delete the key server-side.
+- **Don't** use it for login sessions — that is **Device / Session List**.
+
+## Anatomy
+
+A bordered **List** (`data-slot="api-key-manager"`) of rows
+(`api-key-manager-item`, `data-revealed`): a key glyph, a content column (name +
+scope **Badges**, the masked/revealed value `api-key-manager-value`, and a
+created · last-used meta line), and an action cluster (reveal toggle, **Copy
+Button**, revoke). An empty state (`api-key-manager-empty`) shows when there are
+no keys.
+
+## Variants
+
+Presentation is fixed. `revealable` toggles the per-row reveal button.
+
+## States
+
+- **Masked** (default) — prefix + bullets.
+- **Revealed** — the full secret (`data-revealed`), toggled per row.
+- **Empty** — a bordered placeholder with `emptyLabel`.
+
+Scopes, created, and last-used each collapse cleanly when omitted.
+
+## Behavior
+
+- Reveal state is local to each row and never leaves the component.
+- The copy button always copies the real `value`, whether masked or revealed.
+- `onRevoke` receives the key `id`; the list is presentational (the caller removes
+  the key from `keys`).
+
+## Accessibility
+
+- The reveal, copy, and revoke controls are real buttons with descriptive
+  `aria-label`s incorporating the key name when it's a string.
+- The value is rendered in a `<code>` element; the key glyph is `aria-hidden`.
+- Copy feedback ("Copied") is announced by the Copy Button.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| List / ListItem tokens | Surface, dividers, spacing. |
+| `bg-surface-3` / `text-muted-foreground` | Key glyph chip + masked value. |
+| Badge `neutral` | Scope chips. |
+| `text-destructive` | Revoke glyph. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `keys` | `ApiKey[]` | — | API keys to list. |
+| `onRevoke` | `(id: string) => void` | — | Revoke callback. |
+| `revealable` | `boolean` | `true` | Show the per-row reveal toggle. |
+| `revokeLabel` | `ReactNode` | `"Revoke"` | Used in the revoke accessible name. |
+| `emptyLabel` | `ReactNode` | default | Empty-state message. |
+
+`ApiKey` is `{ id, name, value, prefix?, scopes?, created?, lastUsed? }`. The API
+is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **NotRevealable** and **Empty** stories. The panel works in both themes
+and directions via the global toolbar; in RTL the key glyph leads and the action
+cluster flips to the inline-start edge automatically.
