@@ -64,15 +64,13 @@ function RemediationVelocity({
   height = 260,
   ...props
 }: RemediationVelocityProps) {
-  const totals = data.reduce(
-    (acc, row) => {
-      acc.opened += toNumber(row[openedKey])
-      acc.resolved += toNumber(row[resolvedKey])
-      return acc
-    },
-    { opened: 0, resolved: 0 }
-  )
-  const net = totals.resolved - totals.opened
+  let totalOpened = 0
+  let totalResolved = 0
+  for (const row of data) {
+    totalOpened += toNumber(row[openedKey])
+    totalResolved += toNumber(row[resolvedKey])
+  }
+  const net = totalResolved - totalOpened
   const trend = net > 0 ? "up" : net < 0 ? "down" : "flat"
   const label = typeof title === "string" ? title : "Remediation velocity"
 

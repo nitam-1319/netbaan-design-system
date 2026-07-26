@@ -23,6 +23,7 @@ const meta = {
     onTimeout: { action: "timeout" },
   },
   args: {
+    open: false,
     countdownSeconds: 60,
     title: "Your session is about to expire",
   },

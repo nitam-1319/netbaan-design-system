@@ -74,12 +74,11 @@ function ReasoningTrace({
     <div data-slot="reasoning-trace" data-status={status} {...props}>
       <Accordion
         variant="separated"
-        openMultiple
         value={value}
         defaultValue={isControlled ? undefined : defaultValue}
         onValueChange={
           onOpenChange
-            ? (v: string[]) => onOpenChange(v.includes(ITEM_VALUE))
+            ? (value) => onOpenChange((value as unknown[]).includes(ITEM_VALUE))
             : undefined
         }
       >

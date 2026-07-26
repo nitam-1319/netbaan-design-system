@@ -1,5 +1,3 @@
-import * as React from "react"
-
 import { RadialGauge, type RadialGaugeProps } from "@/components/ui/radial-gauge"
 
 /**
