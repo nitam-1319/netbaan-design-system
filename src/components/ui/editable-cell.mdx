@@ -1,0 +1,78 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/EditableCell/Guidelines" />
+
+# Editable Cell
+
+A table-cell wrapper that makes a value editable in place — the data-grid
+companion to **Inline Edit**. It composes Inline Edit and tunes it for a cell: a
+compact size, full-cell alignment, and a stable hit target.
+
+## Overview
+
+Data grids often let users edit values directly. Editable Cell standardises that
+inside tables — click the value, edit, commit — matching the Inline Edit
+interaction the rest of the app uses.
+
+## Usage
+
+- **Do** place it inside your own `<td>` / `TableCell` in a **Table** / **Data
+  Table**.
+- **Do** pass the column name as `label` (it names the field and edit trigger).
+- **Do** use `align="end"` for numeric columns.
+- **Don't** use it as a standalone field — that is **Text Field** or **Inline
+  Edit**.
+
+## Anatomy
+
+An alignment wrapper (`data-slot="editable-cell"`, `data-align`) containing an
+**Inline Edit** sized for a cell.
+
+## Variants
+
+Presentation is fixed; `align` (start · center · end) and `size` (sm default · md
+· lg) tune fit.
+
+## States
+
+Inherited from Inline Edit: display, editing, empty, disabled.
+
+## Behavior
+
+- All editing behaviour comes from Inline Edit: click to edit, Enter commits,
+  Escape cancels; controlled (`value` + `onValueChange`) or uncontrolled
+  (`defaultValue`).
+- Defaults to `sm` for row density; alignment flows to both the display value and
+  the editor.
+
+## Accessibility
+
+- Inherits Inline Edit's labelled trigger ("Edit {label}") and field
+  (`aria-label`), keyboard commit/cancel, and focus ring.
+- `data-align` exposes alignment to tests/styling hooks.
+
+## Design tokens
+
+Inherits **Inline Edit** / **Text Field** / **Button** tokens (field treatment,
+focus ring, hover). No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Controlled value. |
+| `defaultValue` | `string` | — | Initial value (uncontrolled). |
+| `onValueChange` | `(value: string) => void` | — | Commit callback. |
+| `label` | `string` | — | Field + trigger name / column name (required). |
+| `placeholder` | `string` | — | Empty-state placeholder. |
+| `align` | `"start" \| "center" \| "end"` | `"start"` | Cell alignment. |
+| `size` | `"sm" \| "md" \| "lg"` | `"sm"` | Field scale. |
+| `disabled` | `boolean` | `false` | Disable editing. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **NumericEnd**, **InTable**, and **Disabled** stories. The cell works in
+both themes and directions via the global toolbar; in RTL alignment and the
+editor flow from the correct edge automatically.
