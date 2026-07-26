@@ -1,0 +1,80 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Marquee/Guidelines" />
+
+# Marquee
+
+A continuously scrolling strip of content — logos, testimonials, tickers — that
+loops seamlessly. The content is repeated and each copy translates by its own
+width plus the gap, so the row snaps back invisibly and reads as an endless belt.
+
+## Overview
+
+Marquees add movement to otherwise static rows (trusted-by logos, rolling stats).
+This one standardises the effect with token-scaled speed, either axis and
+direction, a pause-on-hover affordance, and an automatic reduced-motion fallback.
+
+## Usage
+
+- **Do** use it for decorative, non-essential looping content.
+- **Do** raise `repeat` when the content is narrower than its container so the
+  belt stays full.
+- **Do** keep `pauseOnHover` on when items are interactive or readable.
+- **Don't** put critical, one-time, or focusable-in-sequence content in a marquee.
+
+## Anatomy
+
+An `overflow-hidden` `data-slot="marquee"` track (with `data-direction`) holding
+`repeat` identical, animated copies of the content. Only the first copy is in the
+accessibility tree; the rest are `aria-hidden`.
+
+## Variants
+
+- `direction` — `left` · `right` · `up` · `down` (axis + direction).
+- `speed` — `fast` (10s) · `default` (20s) · `slow` (40s).
+- `gap` — spacing between items and repeats (`none`/`sm`/`md`/`lg`).
+- `repeat` — number of copies (min 2).
+
+## States
+
+- **Running** — the default; the belt scrolls.
+- **Paused** — on hover when `pauseOnHover` is set.
+- **Reduced motion** — animation is disabled; the strip sits still.
+
+## Behavior
+
+- The content is duplicated; each copy animates by `-(100% + gap)` so successive
+  copies fill the vacated space with no visible seam.
+- `right` / `down` reverse the animation; vertical directions switch the axis.
+- Under `prefers-reduced-motion` the animation is removed entirely.
+
+## Accessibility
+
+- Duplicated copies are `aria-hidden`, so screen readers announce the content
+  once, not once per repeat.
+- Motion is decorative and pauses on hover; reduced-motion users get a static
+  strip. Avoid placing content here that must be reached in tab order.
+
+## Design tokens
+
+Motion uses the token-scaled `animate-marquee` / `animate-marquee-vertical`
+utilities (AEGIS keyframes in `index.css`); no colour is introduced.
+`motion-reduce:animate-none` honours the OS preference.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Content to scroll (required). |
+| `direction` | `"left" \| "right" \| "up" \| "down"` | `"left"` | Axis + direction. |
+| `speed` | `"fast" \| "default" \| "slow"` | `"default"` | Loop speed. |
+| `pauseOnHover` | `boolean` | `true` | Pause while hovered. |
+| `gap` | `"none" \| "sm" \| "md" \| "lg"` | `"md"` | Spacing between items/repeats. |
+| `repeat` | `number` | `2` | Copies of the content (min 2). |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (leftward), **Reverse** (rightward), and **Vertical**. Works in
+both themes and directions via the global toolbar.

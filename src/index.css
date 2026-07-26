@@ -99,6 +99,8 @@
     --animate-status-ping: statusPing 1.9s ease-out infinite;
     --animate-menu-in: menuIn 0.14s ease;
     --animate-spin: spin 0.7s linear infinite;
+    --animate-marquee: marquee 20s linear infinite;
+    --animate-marquee-vertical: marqueeVertical 20s linear infinite;
 }
 
 /* Light theme (AEGIS light palette) */
@@ -347,6 +349,14 @@
 }
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - var(--marquee-gap, 0px))); }
+}
+@keyframes marqueeVertical {
+    from { transform: translateY(0); }
+    to { transform: translateY(calc(-100% - var(--marquee-gap, 0px))); }
 }
 
 /* Respect reduced-motion: disable the AEGIS signature animations. */
