@@ -1,0 +1,95 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SessionTimeoutModal/Guidelines" />
+
+# Session Timeout Modal
+
+A modal that warns the user their session is about to expire and offers an
+explicit choice: **extend it, or sign out now**. It composes the AEGIS **Dialog**
+(focus trap, backdrop, ARIA), **Button** (actions), and **Progress** (a draining
+countdown bar), and runs a per-second countdown while open.
+
+## Overview
+
+Idle-timeout policies protect accounts but shouldn't drop work without warning.
+This modal gives the user a clear, time-boxed decision before the session ends,
+with the remaining time always visible.
+
+## Usage
+
+- **Do** open it when idle detection crosses the warning threshold.
+- **Do** handle `onExtend` (refresh the session) and `onLogout` / `onTimeout`
+  (end it).
+- **Do** keep `countdownSeconds` short enough to be urgent, long enough to react.
+- **Don't** use it for a generic confirmation — that is **Confirmation Dialog**.
+
+## Anatomy
+
+A **Dialog** (`data-slot="session-timeout-modal"`, `data-tone`, close button
+hidden) with a clock icon, title, description, a countdown block
+(`session-timeout-modal-countdown`: a live "M:SS" readout +
+**Progress** bar), and a footer with **Log out** and **Stay signed in** buttons.
+
+## Variants
+
+Presentation is fixed; tone is derived from the remaining fraction (≤50%
+warning, ≤25% critical) and drives the progress bar and `data-tone`.
+
+## States
+
+- **Counting** — the bar drains and the readout ticks down each second.
+- **Warning / critical** — tone escalates as time runs low.
+- **Timed out** — at zero, `onTimeout` fires once so the caller can sign the user
+  out.
+
+The countdown resets whenever the modal (re)opens.
+
+## Behavior
+
+- Controlled via `open` + `onOpenChange`.
+- A `setInterval` decrements the remaining time only while open and is cleared on
+  close/unmount; `onTimeout` fires exactly once at zero.
+- Both actions call their callback and then request close via `onOpenChange`.
+- The close (✕) affordance is hidden so the choice is explicit; Dialog's
+  Escape/outside-press still routes through `onOpenChange`.
+
+## Accessibility
+
+- Inherits Dialog's focus trap, `role="dialog"`, `aria-modal`, and initial focus.
+- Remaining time is real text in an `aria-live="polite"` region and mirrored by
+  the labelled progressbar, so urgency is announced independently of colour
+  (WCAG 1.4.1).
+- Actions are real buttons with clear labels.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Dialog tokens | Surface, backdrop, ring. |
+| `bg-accent-soft` / `text-accent-strong` | Header clock chip. |
+| Progress tones (`default`/`warning`/`critical`) | Countdown bar. |
+| `text-foreground` / `text-muted-foreground` | Title, copy, readout. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | — | Controlled open state (required). |
+| `onOpenChange` | `(open: boolean) => void` | — | Open/close request. |
+| `countdownSeconds` | `number` | `60` | Countdown length. |
+| `onExtend` | `() => void` | — | Stay-signed-in callback. |
+| `onLogout` | `() => void` | — | Sign-out callback. |
+| `onTimeout` | `() => void` | — | Fired once at zero. |
+| `title` | `ReactNode` | default copy | Heading. |
+| `description` | `ReactNode` | default copy | Supporting copy. |
+| `extendLabel` / `logoutLabel` | `ReactNode` | defaults | Action labels. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **ShortCountdown** and **AlwaysOpen** stories. The modal works in both
+themes and directions via the global toolbar; in RTL the header, readout, and
+actions flow from the inline-start edge automatically.
