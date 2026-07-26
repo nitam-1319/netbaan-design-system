@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DeviceSessionList/Guidelines" />
+
+# Device / Session List
+
+The "where you're signed in" panel: a list of active sessions across a user's
+devices, each showing the device, browser/OS, location, last-active time, a
+**Current** marker for this session, and a per-row revoke action. It composes the
+AEGIS **List** / **ListItem**, **Badge**, and **Button**.
+
+## Overview
+
+Account-security settings let users audit and revoke their active sessions. This
+component standardises that panel: one scannable row per session, the current one
+clearly marked and protected from self-revocation.
+
+## Usage
+
+- **Do** use it in account/security settings to list active sessions.
+- **Do** mark the current session with `current: true` — it renders the badge and
+  hides its revoke button.
+- **Do** handle `onRevoke(id)` to terminate the selected session.
+- **Don't** use it as a generic list — that is **List**. Don't use it for API
+  keys — that is **API Key Manager**.
+
+## Anatomy
+
+A bordered **List** (`data-slot="device-session-list"`) of rows
+(`device-session-list-item`, `data-current`): a device glyph (desktop/mobile/
+tablet), a content column (device name + a **Current** badge, browser/OS, and a
+location · last-active meta line), and a revoke **Button** on non-current rows. An
+empty state (`device-session-list-empty`) shows when there are no sessions.
+
+## Variants
+
+Presentation is fixed. The device `type` selects the leading glyph; `current`
+toggles the badge and revoke button.
+
+## States
+
+- **Current** — badge shown, no revoke.
+- **Revocable** — other sessions show an outline revoke button.
+- **Empty** — a bordered placeholder with `emptyLabel`.
+
+Browser, location, and last-active each collapse cleanly when omitted.
+
+## Behavior
+
+- `onRevoke` receives the session `id`; the list itself is presentational (the
+  caller removes the session from `sessions`).
+- The revoke button gets a descriptive `aria-label` ("Revoke — {device}") when the
+  device name is a string.
+
+## Accessibility
+
+- The current session is conveyed with a text badge (WCAG 1.4.1), not colour
+  alone; `data-current` exposes it to tests.
+- Each revoke button is a real, labelled button; device glyphs and the location
+  pin are `aria-hidden`.
+- Rows are a semantic list (`role="list"`) via List.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| List / ListItem tokens | Surface, dividers, spacing. |
+| `bg-surface-3` / `text-muted-foreground` | Device glyph chip. |
+| Badge `success` | Current marker. |
+| Button `outline` | Revoke action. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `sessions` | `DeviceSession[]` | — | Active sessions to list. |
+| `onRevoke` | `(id: string) => void` | — | Revoke callback. |
+| `currentLabel` | `ReactNode` | `"Current"` | Current-session badge label. |
+| `revokeLabel` | `ReactNode` | `"Revoke"` | Revoke button label. |
+| `emptyLabel` | `ReactNode` | default | Empty-state message. |
+
+`DeviceSession` is `{ id, device, type?, browser?, location?, lastActive?,
+current? }`. The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **SingleSession** and **Empty** stories. The list works in both themes
+and directions via the global toolbar; in RTL glyphs lead and the revoke button
+flips to the inline-start edge automatically.
