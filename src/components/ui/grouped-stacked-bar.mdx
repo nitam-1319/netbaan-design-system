@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/GroupedStackedBar/Guidelines" />
+
+# Grouped / Stacked Bar
+
+The multi-series sibling of `BarChart`: a config-driven convenience that makes the
+grouped-vs-stacked choice a single explicit `mode` prop instead of a boolean flag.
+
+## Overview
+
+`BarChart` already lays multiple series out side-by-side or stacked via its
+`stacked` boolean. Grouped / Stacked Bar names that decision — `mode="grouped"` vs
+`mode="stacked"` — so a comparison chart reads as one obvious component and the two
+layouts are equally discoverable. This mirrors the `StackedAreaChart` ↔ `AreaChart`
+convenience precedent.
+
+Reach for **grouped** when the point is comparing series against each other within
+each category (opened vs resolved per week), and **stacked** when the category
+total *and* its composition both matter (findings by severity per month).
+
+## Usage
+
+- **Do** choose `grouped` to compare series, `stacked` to show a total and its
+  parts.
+- **Do** give each series a palette slot so the legend and bars agree.
+- **Don't** stack series that aren't parts of one total — group them instead.
+
+## Anatomy
+
+A `ChartContainer` (geometry + palette) wrapping a `ChartLegend` and a `ChartPlot`
+with a linear left `Axis` (zero-baseline), the `bar-chart-bar` rects, and a bottom
+`Axis` with band-centred category ticks — all inherited from `BarChart`.
+
+## Behavior
+
+- `grouped` splits each category band into one bar per series; `stacked` draws one
+  column per category with the series stacked (positive and negative bars stack
+  independently so mixed-sign categories aren't clipped).
+- Everything else — `yDomain`, `bandPadding`, axis/grid/legend toggles, sizing — is
+  forwarded to `BarChart` unchanged.
+- Static, deterministic renderer — a hover tooltip is deferred to the same
+  follow-up as the other AEGIS charts.
+
+## Accessibility
+
+- The plot is a named `img` (`label`); the legend pairs each series' colour with
+  its text label, so series identity is never colour-only (WCAG 1.4.1).
+- Provide a data table alternative for the full underlying values.
+
+## Design tokens
+
+Inherits the chart palette (`--color-chart-1…5`) and axis/legend tokens from the
+chart foundation. No hard-coded colour, shadow, or ring.
+
+## Scope
+
+Grouped and stacked (columns) ship here. Horizontal bars remain out of scope on
+`BarChart`. A hover tooltip is a deferred follow-up.
+
+## API
+
+Every `BarChart` prop is accepted **except** `stacked` (replaced by `mode`), plus:
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `mode` | `"grouped" \| "stacked"` | `"grouped"` | Side-by-side vs stacked layout. |
+| `label` | `string` | — | Accessible chart name. Required. |
+| `data` | `object[]` | — | Row data (one row per category). Required. |
+| `xKey` | `string` | — | Field naming each category. Required. |
+| `series` | `{ key; label?; color? }[]` | — | One entry per series. Required. |
+| `yDomain` | `[number, number]` | — | Fixed y range (else derived, includes 0). |
+| `bandPadding` | `number` | `0.7` | Fraction of each band filled by bars. |
+| `showGrid` / `showXAxis` / `showYAxis` / `showLegend` | `boolean` | see `BarChart` | Axis + grid + legend toggles. |
+| `yFormat` | `(value) => ReactNode` | — | Format y-axis ticks. |
+| `width` / `height` | `number` | `640` / `320` | Outer coordinate size. |
+
+The API is closed: `className`, `style`, and `stacked` are not accepted.
+
+## Examples
+
+See the **Grouped** and **Stacked** stories (same data, both layouts) and
+**TwoSeries** (opened vs resolved). Works in both themes and directions.
