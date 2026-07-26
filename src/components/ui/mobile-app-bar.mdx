@@ -1,0 +1,103 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Mobile App Bar/Guidelines" />
+
+# Mobile App Bar
+
+The compact top bar for small screens: a leading control (back / menu), a screen
+title, and a few trailing actions, pinned to the top edge with a top safe-area
+inset so it clears the notch / status bar. It is the mobile sibling of `Navbar` —
+both render a landmark `<header>` (banner) in the same slot-part, token-only,
+closed-API shape — but where `Navbar` carries a horizontal primary-navigation list
+for wide layouts, the App Bar is the three-zone (leading · title · trailing) header
+of a single mobile screen.
+
+## Overview
+
+Use a mobile app bar as the persistent header of a mobile view: it names the
+current screen and holds the one or two most relevant actions, with a leading
+affordance to go back or open navigation. On wide layouts, prefer `Navbar`.
+
+## When to use
+
+- **Do** use it as the top header of a mobile screen, with a back or menu leading control.
+- **Do** keep trailing actions to one or two icon buttons; overflow into a `Menu` / `Action Sheet`.
+- **Don't** use it for horizontal primary navigation across a desktop app — use `Navbar`.
+- **Don't** use it for bottom-anchored tab navigation — use `Bottom Navigation`.
+
+## Anatomy
+
+1. **MobileAppBar** — the landmark `<header>` (banner); owns `size` and `placement`.
+2. **MobileAppBarLeading** — the inline-start zone (back / menu icon button).
+3. **MobileAppBarTitle** — the screen title; truncates, `align` start/center, polymorphic via `render` (e.g. `<h1>`).
+4. **MobileAppBarActions** — the inline-end zone (trailing icon actions).
+
+## Variants
+
+`MobileAppBar` exposes `size` — `sm`, `default`, `lg` (48 / 56 / 64 px content
+row, each plus the top safe-area inset) — and `placement` — `sticky` (default),
+`fixed`, or `static`. `MobileAppBarTitle` exposes `align` — `start` (default,
+Material idiom) or `center` (iOS idiom). There is no color variant; the bar takes
+the `surface` token.
+
+## States
+
+The bar itself is static chrome. Leading and trailing controls inherit `Button`
+states (hover / focus-visible / active / disabled). A long title truncates with an
+ellipsis rather than wrapping.
+
+## Behavior
+
+- **Pinning:** `sticky` keeps the bar at the top of its scroll container; `fixed`
+  pins it to the viewport (pair with top padding on the scroll region); `static`
+  leaves it in flow.
+- **Truncation:** the title fills the space between the leading and trailing zones
+  and truncates; the leading and trailing zones never shrink.
+- **Safe area:** the bar reserves `env(safe-area-inset-top)` as top padding so its
+  content sits below the status bar / notch.
+
+## Accessibility
+
+- The bar is a `<header>` landmark (banner). Render the title as the screen's
+  heading via `render={<h1 />}` so assistive tech exposes the page name.
+- Every icon-only control in the leading/trailing zones must carry an `aria-label`
+  (e.g. "Back", "Search", "More options"); the underlying `Button` enforces the
+  focus ring.
+- Keyboard: controls are reached in DOM order with `Tab`; `Enter` / `Space`
+  activate the focused control.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+The layout is built from logical flow: the leading zone sits at the inline-start,
+actions at the inline-end (`ms-auto`), the title aligns with `text-start`, and the
+bar uses logical padding — so leading, title, and trailing mirror correctly under
+RTL with Vazirmatn. Use a mirrored back glyph (`ChevronLeft` becomes visually
+end-pointing under RTL via the direction context) for the back affordance.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface` | Bar background (translucent, blurred) |
+| `--border` | Bottom divider |
+| `--foreground` | Title text |
+| `--muted` / `--muted-foreground` | Ghost icon buttons |
+| `--accent-soft` / `--ring` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `MobileAppBar` | `size` | `"sm" \| "default" \| "lg"` | `"default"` | Content row height. |
+| `MobileAppBar` | `placement` | `"sticky" \| "fixed" \| "static"` | `"sticky"` | How the bar is pinned. |
+| `MobileAppBarTitle` | `align` | `"start" \| "center"` | `"start"` | Title alignment. |
+| `MobileAppBarTitle` | `render` | `ReactElement` | `<span>` | Element to render as (e.g. `<h1>`). |
+
+The public API is closed: no `className` / `style`. Every part carries a
+`data-slot`, and element polymorphism is available on the title through `render`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm the
+leading control, title, and trailing actions mirror correctly with Vazirmatn.
