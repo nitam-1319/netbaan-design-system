@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/NotificationCenter/Guidelines" />
+
+# Notification Center
+
+An edge-anchored panel that lists a user's **notifications** — each with a title,
+optional description, timestamp, and a dismiss control — plus a header unread
+count and a "mark all read" action. It composes the AEGIS **Drawer**, **List** /
+**ListItem**, **Badge**, and **Button**.
+
+## Overview
+
+Apps accumulate events — findings, scans, renewals. Notification Center gives
+them one consistent, dismissible home that slides in over the page without fully
+interrupting it, with unread items clearly distinguished.
+
+## Usage
+
+- **Do** open it from a bell button in the app bar (pass it as `trigger`).
+- **Do** handle `onNotificationClick` (navigate), `onDismiss` (remove), and
+  `onMarkAllRead`.
+- **Do** sort unread first before passing `notifications`.
+- **Don't** use it for transient confirmations — that is **Toast**.
+
+## Anatomy
+
+A **Drawer** (`data-slot="notification-center"`) with a header (bell + title + an
+unread **Badge** count + a "Mark all read" **Button**) over a scrollable body: a
+divided **List** of rows (`notification-center-item`, `data-read`) each with an
+unread dot, content (title/description/time), and a dismiss button
+(`notification-center-dismiss`); or an empty state
+(`notification-center-empty`).
+
+## Variants
+
+Presentation is fixed; `side` (right · left · top · bottom, default `right`)
+chooses where the panel slides from.
+
+## States
+
+- **Unread** — accent dot + stronger title weight/colour.
+- **Read** — no dot, muted title (`data-read`).
+- **Empty** — a centred bell + `emptyLabel`.
+
+The unread badge and "Mark all read" button only appear when there are unread
+items (and `onMarkAllRead` is provided).
+
+## Behavior
+
+- Controlled via `open` + `onOpenChange`; the optional `trigger` element opens it.
+- Row activation fires `onNotificationClick(id)`; the dismiss button stops
+  propagation and fires `onDismiss(id)` so it never also triggers the row.
+- The list is presentational — the caller updates `notifications` in response to
+  the callbacks.
+
+## Accessibility
+
+- Inherits Drawer's focus trap, `role="dialog"`, `aria-modal`, and Escape /
+  outside-press dismissal.
+- Unread is conveyed by the dot **and** text weight (WCAG 1.4.1), and exposed via
+  `data-read`.
+- The dismiss control is a labelled button; the bell glyphs are `aria-hidden`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Drawer tokens | Surface, backdrop, ring, slide. |
+| List / ListItem tokens | Rows, dividers, hover/focus. |
+| `bg-primary` | Unread dot. |
+| Badge `accent` | Unread count. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Text hierarchy. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `notifications` | `Notification[]` | — | Items to list. |
+| `open` | `boolean` | — | Controlled open state. |
+| `onOpenChange` | `(open: boolean) => void` | — | Open/close callback. |
+| `trigger` | `ReactElement` | — | Element that opens the panel. |
+| `title` | `ReactNode` | `"Notifications"` | Panel title. |
+| `onNotificationClick` | `(id: string) => void` | — | Row activation. |
+| `onDismiss` | `(id: string) => void` | — | Dismiss a row. |
+| `onMarkAllRead` | `() => void` | — | Mark-all-read action. |
+| `side` | `"right" \| "left" \| "top" \| "bottom"` | `"right"` | Slide-in edge. |
+| `emptyLabel` | `ReactNode` | default | Empty-state message. |
+
+`Notification` is `{ id, title, description?, time?, read? }`. The API is closed:
+`className` and `style` are not accepted.
+
+## Examples
+
+See the **AllRead** and **Empty** stories. The panel works in both themes and
+directions via the global toolbar; in RTL a `right` panel visually anchors to the
+inline-start edge and content flows accordingly.
