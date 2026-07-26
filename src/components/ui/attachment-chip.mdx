@@ -1,0 +1,104 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Attachment Chip/Guidelines" />
+
+# Attachment Chip
+
+A compact, inline chip that stands in for an attached file — a kind glyph, the
+file name, an optional size, and an optional dismiss button. It shares the AEGIS
+chip language with `Tag` but is **file-aware**: it derives its icon from the file
+name or MIME type through `@/lib/file`, so the same file shows the same glyph
+everywhere. Colors, borders, and the focus ring are AEGIS tokens only, and the
+public API is **closed** — no `className` or `style`.
+
+## Overview
+
+Use an Attachment Chip inline, wherever a file is referenced in the flow of other
+content: the attachments under a chat message, the files tacked onto a form field,
+a comment's enclosures. It is deliberately small. For a richer block presentation
+(thumbnail, meta line, actions, progress) use **File Card**; for a managed vertical
+set use **File List**; to collect files use **Dropzone** / **File Uploader**.
+
+## Usage
+
+- **Do** pass `bytes` so users see the file size; it is formatted with `formatBytes`.
+- **Do** provide `onRemove` when the attachment can be detached, and keep the
+  default accessible `removeLabel` meaningful.
+- **Do** set `loading` while a file uploads and `invalid` when it is rejected —
+  and explain _why_ in adjacent text, never by color alone.
+- **Do** use `render` to make the chip a link (`render={<a href="…" download />}`)
+  when the file is downloadable.
+- **Don't** put multiple interactive controls inside the chip beyond the single
+  dismiss button; richer actions belong on a File Card.
+- **Don't** rely on the glyph to convey the file type to assistive tech — the
+  name (with extension) is the source of truth; the glyph is decorative.
+
+## Anatomy
+
+1. **attachment-chip** — the chip surface (`--surface-3` fill, `--border-strong`
+   hairline) and the element `render` targets.
+2. **kind glyph** — a decorative (`aria-hidden`) Lucide icon chosen from the file
+   kind, or the spinner (`loading`) / alert (`invalid`) glyph.
+3. **attachment-chip-name** — the truncating file name (with a native `title`).
+4. **attachment-chip-size** — the optional monospaced size suffix.
+5. **attachment-chip-remove** — the optional circular dismiss button.
+
+## Variants & sizes
+
+There is a single visual treatment; the only size axis is **size** (`sm`, `md`),
+which scales padding, text, glyph, and the dismiss button. The `loading`,
+`invalid`, and `disabled` props select semantic states rather than styles.
+
+## States
+
+- **Default** — `--surface-3` fill, `--border-strong` hairline, foreground name.
+- **Focus** — the AEGIS 3px `accent-soft` ring + `accent-strong` border (when the
+  chip is rendered as a focusable element).
+- **Loading** (`loading`) — an accent spinner replaces the kind glyph.
+- **Invalid** (`invalid`) — destructive border, text, and an alert glyph.
+- **Disabled** (`disabled`) — dimmed to 45% and non-interactive.
+
+## Accessibility
+
+- WCAG 2.2 AA contrast holds in both Light and Dark themes: foreground name on
+  `--surface-3`, and destructive text meets AA in the invalid state.
+- The dismiss button is a real `<button>` with an accessible name (`removeLabel`),
+  reachable and operable by keyboard (Tab, then Enter/Space), showing the AEGIS
+  focus ring. Its `X` glyph is `aria-hidden`.
+- The kind / status glyphs are decorative and hidden from assistive tech; the file
+  name carries the meaning.
+- When `render` makes the chip a link, it becomes keyboard-focusable and exposes
+  the AEGIS focus ring automatically.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus to the dismiss button (and to the chip itself if it is a link). |
+| `Enter` / `Space` | Activate the focused dismiss button (fires `onRemove`). |
+
+## Tokens
+
+Surface `--surface-3`; border `--border-strong`; name `--foreground`; size text
+`--text-faint`; dismiss track `--track`; focus ring `--accent-soft` + border
+`--accent-strong`; invalid `--destructive`; spinner `--accent-strong`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `string` | — | File name shown in the chip (required). |
+| `bytes` | `number` | — | File size in bytes; rendered as a human-readable suffix. |
+| `mimeType` | `string` | — | MIME type, used with `name` to pick the glyph. |
+| `kind` | `FileKind` | inferred | Force a specific kind / glyph. |
+| `icon` | `ReactNode \| false` | inferred | Replace or omit the leading glyph. |
+| `size` | `"sm" \| "md"` | `"md"` | Size scale. |
+| `loading` | `boolean` | `false` | Show a spinner in place of the glyph. |
+| `invalid` | `boolean` | `false` | Destructive treatment + alert glyph. |
+| `disabled` | `boolean` | `false` | Dim + disable the dismiss affordance. |
+| `onRemove` | `() => void` | — | Show a dismiss button and fire on activate. |
+| `removeLabel` | `string` | `"Remove attachment"` | Accessible label for the dismiss button. |
+| `render` | `ReactElement` | `<span />` | Element the chip renders as (Base UI `render`). |
+
+The public type is `Omit<useRender.ComponentProps<"span">, "className" | "style">`
+plus the props above — there is no styling escape hatch.
