@@ -51,6 +51,7 @@ function PullToRefresh({
   const startY = React.useRef<number | null>(null)
   const [pull, setPull] = React.useState(0)
   const [refreshing, setRefreshing] = React.useState(false)
+  const [dragging, setDragging] = React.useState(false)
 
   const maxPull = threshold * 1.6
   const ready = pull >= threshold
@@ -61,7 +62,10 @@ function PullToRefresh({
   const onPointerDown = (e: React.PointerEvent) => {
     if (disabled || refreshing) return
     const el = scrollRef.current
-    if (el && el.scrollTop <= 0) startY.current = e.clientY
+    if (el && el.scrollTop <= 0) {
+      startY.current = e.clientY
+      setDragging(true)
+    }
   }
 
   const onPointerMove = (e: React.PointerEvent) => {
@@ -78,6 +82,7 @@ function PullToRefresh({
   const endPull = () => {
     if (startY.current == null) return
     startY.current = null
+    setDragging(false)
     if (pull >= threshold && !refreshing) {
       setRefreshing(true)
       Promise.resolve(onRefresh()).finally(() => {
@@ -121,7 +126,7 @@ function PullToRefresh({
         className="h-full overflow-auto overscroll-contain"
         style={{
           transform: offset ? `translateY(${offset}px)` : undefined,
-          transition: startY.current == null ? "transform 200ms ease-out" : undefined,
+          transition: dragging ? undefined : "transform 200ms ease-out",
         }}
       >
         {children}

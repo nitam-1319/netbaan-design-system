@@ -15,6 +15,8 @@ const meta = {
   component: FieldArray,
   parameters: { layout: "padded" },
   tags: ["autodocs"],
+  // Stories render self-contained demos; these satisfy the required props type.
+  args: { renderItem: () => null, newItem: () => "" },
   decorators: [
     (Story) => (
       <div style={{ maxWidth: 480 }}>

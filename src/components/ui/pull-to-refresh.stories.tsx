@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, within } from "storybook/test"
+import { expect, within, fn } from "storybook/test"
 
 import { PullToRefresh } from "@/components/ui/pull-to-refresh"
 import { List, ListItem } from "@/components/ui/list"
@@ -20,6 +20,7 @@ const meta = {
     onRefresh: { action: "refresh" },
   },
   args: {
+    onRefresh: fn(),
     threshold: 72,
     disabled: false,
     children: (
