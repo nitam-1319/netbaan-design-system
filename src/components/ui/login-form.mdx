@@ -1,0 +1,76 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Login Form/Guidelines" />
+
+# Login Form
+
+A complete credential sign-in form assembled from AEGIS parts: **Form Provider**
+(a real `<form>` with Enter-to-submit), a **Text Field** for the identifier, a
+**Password Input**, an optional remember/forgot row, the submit **Button**, and
+an optional set of **SSO Provider Buttons** above a divider. Fields are
+controlled internally, and `onSubmit` hands you the typed values.
+
+## When to use
+
+- **Do** use it as the drop-in sign-in surface for an app or a modal.
+- **Do** offer SSO above the credential form when you support it — it is the
+  path most users prefer.
+- **Don't** rebuild the field styling by hand; this form already composes the
+  token-driven fields and inherits their states and a11y wiring.
+- **Don't** put unrelated actions in the form — keep it to authentication.
+
+## Anatomy
+
+A **title** + **description**, an optional **SSO** block and divider, an optional
+form-level **error** (Alert), then the **email** field, the **password** field
+with an inline forgot link, an optional **remember-me** checkbox, and the
+**submit** button. A **footer** slot holds the sign-up prompt.
+
+## Behavior
+
+- The email, password, and remember values are held in local state; `onSubmit`
+  receives `{ email, password, remember }` once local validation passes.
+- Local validation flags empty email/password on submit. Supply `errors` to show
+  server-side field errors or a form-level message (rendered as a destructive
+  Alert); server errors take precedence over local ones.
+- `submitting` shows the button's loading spinner and locks the inputs.
+- The forgot affordance is a link when `forgotHref` is set, otherwise a button
+  calling `onForgotPassword`.
+
+## API
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `onSubmit` | `(values) => void` | — | `{ email, password, remember }`. |
+| `defaultEmail` | `string` | `""` | Prefill. |
+| `errors` | `{ email?, password?, form? }` | — | Server / external errors. |
+| `providers` | `ProviderKey[]` | — | Renders SSO buttons + divider. |
+| `onProviderSelect` | `(provider) => void` | — | SSO selection. |
+| `submitting` | `boolean` | `false` | Loading + locked. |
+| `showRemember` | `boolean` | `true` | Remember-me checkbox. |
+| `onForgotPassword` / `forgotHref` | `() => void` / `string` | — | Forgot affordance. |
+| `footer` | `node` | — | e.g. a sign-up prompt. |
+
+## Accessibility
+
+- Built on a native `<form>`, so `Enter` submits and the submit button is a real
+  `type="submit"`.
+- Every field has an associated visible label; the password label is wired to
+  the input with `htmlFor` so the forgot link can share the row without breaking
+  the association.
+- Field errors set `aria-invalid` and render linked messages (never colour
+  alone); the form-level error uses `role="alert"`.
+- Focus rings are the 3px `accent-soft` ring; contrast meets WCAG 2.2 AA in both
+  themes.
+
+## Internationalization / RTL
+
+Every label is a prop, and the layout — the forgot link, the SSO row, the
+remember checkbox — mirrors under `dir="rtl"` because the composed parts use
+logical properties.
+
+## Tokens
+
+Text uses `text-foreground` / `text-muted-foreground` / `text-text-faint`;
+composed fields, buttons, checkbox, and Alert are all token-driven; the divider
+uses `bg-border` and links use `text-accent-strong`. No hard-coded colour.
