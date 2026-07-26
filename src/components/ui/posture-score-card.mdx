@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/PostureScoreCard/Guidelines" />
+
+# Posture Score Card
+
+The headline "how secure are we" tile: a large **Radial Gauge** showing a posture
+score out of a maximum, an optional letter grade, a period-over-period delta, and
+a caption. It composes the AEGIS **Card** with **Radial Gauge**, **Badge**, and
+**Stat Tile Delta**, so every hue and affordance is inherited from the system.
+
+## Overview
+
+Security dashboards lead with a single posture number. Posture Score Card gives
+that number the weight it deserves — a colour-coded gauge, the grade, and whether
+things are getting better or worse — in one card.
+
+## Usage
+
+- **Do** use it as the hero metric of an ASM dashboard or report.
+- **Do** pass `previousScore` to show the trend delta.
+- **Do** pass `grade` when your scoring maps to letters.
+- **Don't** use it for a plain KPI — that is **Stat / KPI Tile**. Don't use it for
+  a bare gauge — that is **Radial Gauge**.
+
+## Anatomy
+
+A **Card** (`data-slot="posture-score-card"`, `data-tone`) with a header (label +
+optional grade **Badge**) over a centred **Radial Gauge**
+(`posture-score-card-gauge`), an "out of N" note, a **Stat Tile Delta**, and an
+optional caption.
+
+## Variants
+
+Presentation is fixed; `size` (the gauge scale, default `lg`) is the only knob.
+Tone is derived from the score, not chosen.
+
+## States
+
+- **Tone by score** — ≥90 success, ≥70 accent, ≥50 warning, <50 danger; the ring,
+  grade badge, and overall `data-tone` follow it.
+- **Trend** — improved (up), declined (down), or flat, from `previousScore`.
+
+Grade, delta, and caption each collapse cleanly when their inputs are omitted.
+
+## Behavior
+
+- `score` is clamped to `[0, max]`; the gauge fills to it and the centre shows the
+  rounded score (not a percent).
+- The delta is `score − previousScore`, rounded, with a sign; its direction sets
+  the arrow and sentiment.
+- All values are deterministic reflections of the props — no internal state.
+
+## Accessibility
+
+- The gauge exposes `role="meter"` with `aria-valuenow` / `aria-valuemax`, so the
+  score is announced independently of colour (WCAG 1.4.1).
+- The delta carries a screen-reader trend label ("Improved"/"Declined"/"No
+  change"), so the trend never depends on the arrow/colour alone.
+- `data-tone` exposes the tier to tests and styling hooks.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Card `default` tokens | Surface + border. |
+| Radial Gauge tones | Gauge arc by score tier. |
+| Badge tones | Grade pill. |
+| Stat Tile Delta tokens (`success`/`destructive`) | Trend colour. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `score` | `number` | — | Posture score (required). |
+| `max` | `number` | `100` | Maximum score. |
+| `label` | `ReactNode` | `"Security posture"` | Card label + gauge name. |
+| `grade` | `string` | — | Letter grade badge. |
+| `previousScore` | `number` | — | Prior score → delta. |
+| `caption` | `ReactNode` | — | Supporting caption. |
+| `size` | `"sm" \| "md" \| "lg"` | `"lg"` | Gauge scale. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Strong**, **AtRisk**, **NoTrend**, and **Tiers** stories. The card
+works in both themes and directions via the global toolbar; the gauge and
+readouts are direction-agnostic, and the grade badge flips edges in RTL.
