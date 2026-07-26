@@ -1,0 +1,93 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/File List/Guidelines" />
+
+# File List
+
+A managed vertical set of files. It renders one `FileCard` per item with real
+list semantics (`role="list"` / `listitem`), an optional header (a `title` and a
+`N files · total size` summary), and an empty state. Per-item removal is wired
+through a single `onRemove(id)` callback, so the parent owns the array. Colors are
+AEGIS tokens only, and the public API is **closed** — no `className` or `style`.
+
+## Overview
+
+Use a File List wherever a set of files is shown and managed together: an uploads
+queue, an attachments panel, a stored-files view, a review step. Rows are
+described by **data** (`files`), not markup, so every row is a consistent
+`FileCard`. For a single file use **File Card**; for inline references use
+**Attachment Chip**; to collect files use **Dropzone** / **File Uploader**.
+
+## Usage
+
+- **Do** give each item a stable `id`; it is the React key and the argument passed
+  to `onRemove`.
+- **Do** drive each item's `status` / `progress` / `errorMessage` from your upload
+  state so the list doubles as a queue.
+- **Do** set `removable` and provide `onRemove` together; an item can opt out of a
+  dismiss button with `removable: false` on the item.
+- **Do** supply an `emptyState` (e.g. a dashed placeholder) so the region never
+  collapses to nothing.
+- **Don't** paginate very long lists here; wrap the File List in a `ScrollArea` or
+  switch to a virtualized table for hundreds of rows.
+- **Don't** put the list's own remove logic inside it — it is controlled; the
+  parent mutates `files`.
+
+## Anatomy
+
+1. **file-list** — the wrapper.
+2. **file-list-header** — the optional `file-list-title` and the right-aligned
+   `file-list-summary` (`N files · total`).
+3. **file-list-items** — the `role="list"` container; each child is a
+   `file-list-item` (`role="listitem"`) wrapping a `FileCard`.
+4. **file-list-empty** — the `emptyState`, shown when `files` is empty.
+
+## Variants & sizes
+
+One layout; the size axis is **size** (`sm`, `md`), forwarded to every `FileCard`
+and controlling the row gap. `removable`, `showSummary`, and `disabled` toggle
+behaviour, not styling.
+
+## Accessibility
+
+- The items container is a real list (`role="list"`) with an accessible name from
+  `label` (or a string `title`); each row is a `listitem`, so assistive tech
+  announces position and count.
+- Each row is a `FileCard`: labelled dismiss buttons, a labelled `progressbar`
+  for uploads, decorative glyphs hidden from assistive tech.
+- The summary is plain text; it complements, and never replaces, the per-row
+  information.
+- WCAG 2.2 AA contrast holds in both themes (inherited from `FileCard`).
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus across each row's actions and dismiss button, top to bottom. |
+| `Enter` / `Space` | Activate the focused dismiss button (fires `onRemove(id)`). |
+
+## Tokens
+
+Title `--foreground`; summary `--text-faint`; rows inherit `FileCard` tokens
+(`--card`, `--border`, `--surface-3`, `--accent-*`, `--destructive`, `--success`).
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `files` | `FileListItem[]` | — | Files to render, in order (required). |
+| `title` | `ReactNode` | — | Optional heading above the list. |
+| `showSummary` | `boolean` | `true` | Show the `N files · total` summary. |
+| `removable` | `boolean` | `false` | Show a dismiss button on each row. |
+| `onRemove` | `(id: string) => void` | — | Called with an item id on removal. |
+| `removeLabel` | `string` | `"Remove file"` | Accessible label for row dismiss buttons. |
+| `emptyState` | `ReactNode` | — | Rendered when `files` is empty. |
+| `label` | `string` | `title` | Accessible name for the list region. |
+| `disabled` | `boolean` | `false` | Dim + disable every row. |
+| `size` | `"sm" \| "md"` | `"md"` | Size scale, forwarded to each `FileCard`. |
+
+`FileListItem` = `{ id, name, bytes?, mimeType?, kind?, thumbnailSrc?,
+description?, status?, progress?, errorMessage?, removable? }`.
+
+The public type is `Omit<React.ComponentProps<"div">, "className" | "style">`
+plus the props above — no styling escape hatch.
