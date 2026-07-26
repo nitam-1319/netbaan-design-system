@@ -1,0 +1,96 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/File Preview/Guidelines" />
+
+# File Preview
+
+A framed preview of a single file. For an image it shows the picture in a media
+frame that (when `zoomable`) opens a full-screen `Lightbox` on click or keyboard;
+for any other file it shows a large kind glyph. A footer bar carries the name, a
+meta line (size · kind), and an optional trailing `action`. Colors are AEGIS
+tokens only, and the public API is **closed** — no `className` or `style`.
+
+## Overview
+
+Use a File Preview where a file deserves a visual: a media-library tile, an
+attachment preview, a detail pane, a confirmation step. For an inline reference use
+**Attachment Chip**; for a compact row use **File Card**; to collect files use
+**Dropzone** / **File Uploader**.
+
+## Usage
+
+- **Do** pass `src` and an image `mimeType` (or `kind="image"`) to show the
+  picture; leave `zoomable` on so users can open it full-screen.
+- **Do** give a meaningful `alt` (defaults to `name`) and an optional `caption`
+  for the Lightbox.
+- **Do** pick an `aspect` (`square`, `video`, `wide`) that suits the layout, and
+  use `action` for a download / more-options control.
+- **Do** use it for non-image files too — it renders the kind glyph and the same
+  footer.
+- **Don't** rely on the hover "Preview" hint for discoverability alone; the frame
+  is a real, labelled button reachable by keyboard.
+- **Don't** pass `className`; compose previews inside a `Grid` or `Stack`.
+
+## Anatomy
+
+1. **file-preview** — the framed surface (`--surface-2` fill, hairline `--border`).
+2. **file-preview-trigger** / **file-preview-frame** — the media area: a labelled
+   button (zoomable image, `aria-haspopup="dialog"`) or a static frame (non-image
+   glyph / non-zoomable image), on a `--surface-3` backing.
+3. **Lightbox** — the full-screen viewer opened by the trigger (open state owned by
+   File Preview).
+4. **file-preview-footer** — the `file-preview-name`, the `file-preview-meta`
+   (`size · Kind`), and the optional `action`.
+
+## Variants & sizes
+
+The size axis is **size** (`sm`, `md`, `lg`), scaling the footer padding and text;
+the **aspect** axis (`square`, `video`, `wide`) sets the media frame ratio. Image
+vs non-image and `zoomable` select the frame behaviour, not a style.
+
+## Accessibility
+
+- A zoomable image frame is a real `<button>` with an accessible name
+  (`"Preview {alt}"`) and `aria-haspopup="dialog"`, reachable by keyboard and
+  showing the AEGIS 3px inset `accent-soft` focus ring; `Enter` / `Space` open the
+  Lightbox, which manages focus, `Esc`, and arrow navigation.
+- The hover "Preview" hint and the non-image kind glyph are decorative
+  (`aria-hidden`); the image `alt` and the file name carry the meaning.
+- WCAG 2.2 AA contrast holds in both themes: `--foreground` name, `--muted-
+  foreground` meta, and the scrim-backed hint uses `--foreground` over a
+  `--background/65` scrim.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus to the preview trigger, then the footer `action`. |
+| `Enter` / `Space` | Open the Lightbox (zoomable image) or activate the action. |
+| `Esc`, `←` / `→` | Handled by the Lightbox once open. |
+
+## Tokens
+
+Frame `--surface-2` + `--border`; media backing `--surface-3`; name
+`--foreground`; meta `--muted-foreground`; focus ring `--accent-soft`; hover scrim
+`--background`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `string` | — | File name in the footer (required). |
+| `src` | `string` | — | Image URL; shown when the kind is image. |
+| `bytes` | `number` | — | Size in bytes; drives the meta line. |
+| `mimeType` | `string` | — | MIME type, used with `name` to pick the kind. |
+| `kind` | `FileKind` | inferred | Force a specific kind. |
+| `alt` | `string` | `name` | Alt text for the image + Lightbox. |
+| `caption` | `ReactNode` | — | Lightbox caption. |
+| `aspect` | `"square" \| "video" \| "wide"` | `"video"` | Media frame ratio. |
+| `zoomable` | `boolean` | `true` | Open a Lightbox on image activation. |
+| `hideFooter` | `boolean` | `false` | Hide the name/meta/action bar. |
+| `action` | `ReactNode` | — | Trailing footer control. |
+| `disabled` | `boolean` | `false` | Dim + disable interaction. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size scale. |
+
+The public type is `Omit<React.ComponentProps<"div">, "className" | "style">` plus
+the props above — no styling escape hatch.
