@@ -1,0 +1,77 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScrollReveal/Guidelines" />
+
+# Scroll Reveal
+
+Animates its children into view as they enter the viewport — a subtle fade plus
+directional slide — so sections arrive with intent instead of popping in. Motion
+is disabled automatically under `prefers-reduced-motion`.
+
+## Overview
+
+Entrance motion adds polish to marketing and dashboard pages. Scroll Reveal
+standardises it: one wrapper, token-scaled timing, and a respectful reduced-motion
+fallback.
+
+## Usage
+
+- **Do** use it for section/card entrances on long or landing pages.
+- **Do** stagger siblings with incremental `delay`.
+- **Don't** overuse it on dense, frequently-updated UIs.
+- **Don't** use it to defer *rendering* — that is **Lazy Loader**.
+
+## Anatomy
+
+A wrapper (`data-slot="scroll-reveal"`, `data-revealed`) that transitions its
+children's opacity and transform when it enters view.
+
+## Variants
+
+- `from` — slide origin (up · down · left · right · none).
+- `speed` — fast · default · slow (token-scaled durations).
+- `delay` — ms offset, for staggering.
+
+## States
+
+- **Hidden** — pre-reveal: `opacity-0` + directional offset.
+- **Revealed** — `data-revealed`: full opacity, no offset.
+
+With `once={false}` it re-hides when scrolled away.
+
+## Behavior
+
+- An `IntersectionObserver` toggles the revealed state as the wrapper enters/exits
+  the viewport; `once` (default) keeps it revealed.
+- Without `IntersectionObserver`, content renders revealed (no animation).
+- `prefers-reduced-motion` disables the transition and transform entirely.
+
+## Accessibility
+
+- Children always render and are in the accessibility tree regardless of reveal
+  state — reveal is purely visual.
+- Reduced-motion users get an instant, non-animated appearance.
+
+## Design tokens
+
+Motion uses token-scaled `duration-*` transition utilities; no colour is
+introduced. `motion-reduce:*` guards honour the OS preference.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Content to reveal (required). |
+| `from` | `"up" \| "down" \| "left" \| "right" \| "none"` | `"up"` | Slide origin. |
+| `speed` | `"fast" \| "default" \| "slow"` | `"default"` | Transition duration. |
+| `delay` | `number` | `0` | Reveal delay (ms). |
+| `once` | `boolean` | `true` | Reveal only once. |
+| `rootMargin` | `string` | `"0px 0px -10% 0px"` | Trigger margin. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **FromLeft** and **Staggered** stories. It works in both themes and
+directions via the global toolbar; in RTL the left/right slide origins follow the
+visual axis.
