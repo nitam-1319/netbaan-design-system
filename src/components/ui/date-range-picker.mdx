@@ -1,0 +1,93 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DateRangePicker/Guidelines" />
+
+# Date Range Picker
+
+The start/end sibling of `Date Picker`: an AEGIS Input-shell trigger showing the
+chosen range that opens a `Popover` with the same month grid, extended to pick two
+endpoints.
+
+## Overview
+
+Where `Date Picker` selects one day, Date Range Picker selects a span. It reuses the
+from-scratch calendar (Base UI has no calendar primitive) — a real `role="grid"`
+with month navigation and arrow-key roving focus — and adds two-endpoint selection
+with the in-between days highlighted. You own the value; it emits a `{ start, end }`
+of local-midnight dates once both ends are chosen.
+
+## Usage
+
+- **Do** keep the emitted `{ start, end }` in your state (both are local midnight).
+- **Do** bound the selectable span with `minDate` / `maxDate`.
+- **Don't** rely on the click order — endpoints picked out of order are swapped so
+  `start` is always on or before `end`.
+- **Don't** use it for a single day — that is `Date Picker`.
+
+## Anatomy
+
+A `Popover` trigger (native `button` in the Input shell, showing `start – end`) → a
+`data-slot="date-range-picker"` popover: a month-navigation header, a weekday
+`columnheader` row, and a 6×7 `role="grid"` of day `gridcell` buttons.
+
+## Behavior
+
+- Click a day to set the start (any prior range clears); click a second day to set
+  the end — the range commits, `onValueChange` fires, and the popover closes.
+- Endpoints picked out of order are swapped automatically.
+- Endpoints render filled with the primary token; the days between them take the
+  `accent-soft` surface. Both endpoints and in-between days are `aria-selected`.
+- Controlled via `value` + `onValueChange`, or uncontrolled via `defaultValue`.
+
+## Keyboard
+
+Identical to `Date Picker`: `←` `→` `↑` `↓` move by day/week, `Home` / `End` to week
+edges, `PageUp` / `PageDown` change month, `Enter` / `Space` set the focused day as
+the next endpoint. Focus roves via a single `tabIndex=0` day.
+
+## Accessibility
+
+- The trigger has an accessible name (`label`, default "Choose date range") and
+  reflects `invalid` via `aria-invalid`.
+- The grid is a labelled `role="grid"`; each day is a `gridcell` with a full spoken
+  date and `aria-selected`, so the range is conveyed to assistive tech, not by
+  colour alone (WCAG 1.4.1).
+- The `Popover` manages focus and dismisses on `Esc` / outside press.
+
+## Design tokens
+
+Trigger shell matches `Date Picker` (`border-border-strong` + `accent-soft` focus,
+destructive when `invalid`). Endpoints: `bg-primary` / `text-primary-foreground`;
+in-range days: `bg-accent-soft`. Inherits the `Popover` surface. No hard-coded
+colour, shadow, or ring.
+
+## Scope
+
+Single-panel two-endpoint selection ships here. A live hover-preview of the
+in-progress range (before the second click) is browser-verification-heavy and is a
+deferred follow-up; a dual-month panel is likewise out of scope for now.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `DateRange \| null` | — | Controlled `{ start, end }`. |
+| `defaultValue` | `DateRange \| null` | `null` | Uncontrolled initial range. |
+| `onValueChange` | `(range \| null) => void` | — | Fires once both ends are chosen. |
+| `defaultMonth` | `Date` | today | Month shown when opened empty. |
+| `minDate` / `maxDate` | `Date` | — | Selectable range (inclusive). |
+| `placeholder` | `string` | `"Pick a date range"` | Trigger text when empty. |
+| `label` | `string` | `"Choose date range"` | Trigger accessible name. |
+| `locale` | `string` | runtime | BCP-47 locale for formatting. |
+| `weekStartsOn` | `number` | `0` | First weekday (0 = Sunday). |
+| `formatDate` | `(date) => string` | medium date | Endpoint value format. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Trigger size. |
+| `disabled` | `boolean` | `false` | Disable the control. |
+| `invalid` | `boolean` | `false` | Paint invalid + set `aria-invalid`. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (pick Jun 10 → Jun 15), **OutOfOrder** (later day first, auto-swap),
+**Preselected**, and **Sizes**. Works in both themes and directions.
