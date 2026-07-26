@@ -1,0 +1,75 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FolderTree/Guidelines" />
+
+# Folder Tree
+
+A file-system view built on **Tree View**: it maps a typed `items` tree of files
+and folders into tree nodes, assigning folder icons and file-type icons (code,
+image, doc, generic) by extension.
+
+## Overview
+
+File managers and repo browsers need a tree that *looks* like files. Folder Tree
+adds file-awareness (type icons, folder handling) on top of Tree View's
+interaction and ARIA, so you pass a file structure and get a correct file tree.
+
+## Usage
+
+- **Do** use it for file/folder browsers, repo trees, and upload targets.
+- **Do** set each entry's `type` (`"folder"` / `"file"`) and, optionally,
+  `extension`.
+- **Don't** use it for non-file hierarchies — that is **Tree View** directly.
+
+## Anatomy
+
+A **Tree View** (`data-slot="folder-tree"`) whose nodes carry file-type icons.
+Folders with children keep Tree View's open/close folder glyph; empty folders get
+a folder icon; files get a code/image/doc/generic icon by extension.
+
+## Variants
+
+Presentation is fixed; icons are derived from `type` and `extension` (or the
+extension parsed from a string `name`).
+
+## States
+
+Inherited from Tree View: expanded/collapsed, selected, hover, focus.
+
+## Behavior
+
+- Extension is taken from `extension`, else parsed from a string `name`.
+- Code (`ts`, `tsx`, `css`, `json`, …), image (`png`, `svg`, …), and doc (`md`,
+  `pdf`, …) extensions map to distinct glyphs; anything else is a generic file.
+- All expand/select/keyboard behaviour comes from Tree View.
+
+## Accessibility
+
+- Inherits Tree View's full ARIA tree (`role="tree"`/`treeitem`/`group`,
+  `aria-expanded`/`aria-selected`), focus ring, and keyboard navigation.
+- File-type icons are `aria-hidden`; the name carries the meaning.
+
+## Design tokens
+
+Inherits **Tree View**'s tokens (accent-soft selection, muted hover, foreground /
+muted-foreground / text-faint text). No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `FolderNode[]` | — | File-system entries (required). |
+| `label` | `string` | `"Files"` | Tree accessible name. |
+| `expandedIds` / `defaultExpandedIds` | `string[]` | — / `[]` | Expansion (controlled / initial). |
+| `onExpandedChange` | `(ids: string[]) => void` | — | Expansion callback. |
+| `selectedId` | `string` | — | Controlled selection. |
+| `onSelectionChange` | `(id: string) => void` | — | Selection callback. |
+
+`FolderNode` is `{ id, name, type: "folder" | "file", extension?, children? }`.
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **FullyExpanded** story. The tree works in both themes and directions via
+the global toolbar; indentation and chevrons mirror in RTL (inherited from Tree
+View).
