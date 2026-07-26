@@ -1,0 +1,112 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/File Card/Guidelines" />
+
+# File Card
+
+A block presentation of a single file: a thumbnail (for images) or a kind glyph,
+the file name, a meta line (size · kind, or a custom description / error), an
+optional determinate upload bar, a status affordance, and optional trailing
+actions or a dismiss button. It builds on the AEGIS card surface and reuses the
+`Progress` component for the uploading state, so cards, lists, and standalone
+Upload Progress all read the same. Colors and borders are AEGIS tokens only, and
+the public API is **closed** — no `className` or `style`.
+
+## Overview
+
+Reach for a File Card when a file needs room and context — a review step before
+submitting, an attachments panel, an uploads queue, a settings page listing
+stored documents. For an inline reference, use **Attachment Chip**; for a managed
+vertical set, use **File List** (which composes File Cards); to collect files, use
+**Dropzone** / **File Uploader**.
+
+## Usage
+
+- **Do** pass `bytes` and let the default `size · Kind` meta line render, or set a
+  custom `description`.
+- **Do** drive the `status` prop through the file's lifecycle
+  (`idle` → `uploading` → `success` / `error`), pairing `uploading` with
+  `progress` and `error` with a plain-language `errorMessage`.
+- **Do** provide `thumbnailSrc` for image files so users recognise them at a glance.
+- **Do** use `actions` for extra controls (download, retry) and `onRemove` for
+  detaching — both are keyboard-reachable.
+- **Don't** convey status by the border tint alone; the status glyph and the meta
+  / error text carry it for assistive tech.
+- **Don't** pass `className` to nest layout — a File Card owns fixed chrome by
+  design (closed API); compose several inside a `FileList` or a `Stack`.
+
+## Anatomy
+
+1. **file-card** — the card surface (`--card` fill, hairline `--border`, neutral
+   glass), holding the whole row.
+2. **file-card-tile** — the leading `--surface-3` tile showing the image
+   `thumbnailSrc` or the kind glyph.
+3. **file-card-body** — the name (`file-card-name`, truncating) and the meta line
+   (`file-card-meta`), plus the optional `Progress` (`file-card-progress`).
+4. **file-card-trailing** — the status glyph, any `actions`, and the optional
+   dismiss button (`file-card-remove`).
+
+## Variants, sizes & status
+
+One visual treatment; the size axis is **size** (`sm`, `md`), scaling padding and
+the tile. **status** (`idle` / `uploading` / `success` / `error`) selects the
+trailing affordance and border treatment; **selected** adds the accent border +
+3px ring; **disabled** dims to 55% and blocks interaction.
+
+## States
+
+- **Idle** — resting card surface, name + `size · Kind` meta.
+- **Uploading** — an accent spinner and a determinate `Progress` bar at `progress`%.
+- **Success** — a success check glyph.
+- **Error** — destructive-tinted border, an alert glyph, and the `errorMessage`.
+- **Selected** — accent border + `accent-soft` ring.
+
+## Accessibility
+
+- WCAG 2.2 AA contrast holds in Light and Dark: foreground name on `--card`,
+  `--muted-foreground` meta, and `--destructive` error text all meet AA.
+- The uploading `Progress` is a real `role="progressbar"` (from the Base UI
+  Progress primitive) with an `aria-label` naming the file and correct
+  `aria-valuenow` / `aria-valuemin` / `aria-valuemax`.
+- The dismiss button and any `actions` are real, labelled `<button>`s reachable by
+  keyboard, showing the AEGIS focus ring; status and kind glyphs are `aria-hidden`.
+- The thumbnail image is decorative (`alt=""`, `aria-hidden`); the file name is the
+  accessible source of truth.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus across the trailing actions and the dismiss button. |
+| `Enter` / `Space` | Activate the focused button (`actions` / `onRemove`). |
+
+## Tokens
+
+Surface `--card` + `--border` + `glass-panel`; tile `--surface-3`; name
+`--foreground`; meta `--muted-foreground`; selected border `--accent-strong` +
+ring `--accent-soft`; error `--destructive`; success glyph `--success`; uploading
+spinner + progress fill accent (`accent-fill`).
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `string` | — | File name (required). |
+| `bytes` | `number` | — | Size in bytes; drives the default meta line. |
+| `mimeType` | `string` | — | MIME type, used with `name` to pick the glyph/label. |
+| `kind` | `FileKind` | inferred | Force a specific kind. |
+| `icon` | `ReactNode \| false` | inferred | Replace the glyph, or omit the tile. |
+| `thumbnailSrc` | `string` | — | Image preview URL for the tile. |
+| `description` | `ReactNode` | `size · Kind` | Override the meta line. |
+| `status` | `"idle" \| "uploading" \| "success" \| "error"` | `"idle"` | Lifecycle status. |
+| `progress` | `number` | — | Upload percent (0–100) for the `uploading` state. |
+| `errorMessage` | `ReactNode` | — | Meta text shown when `status="error"`. |
+| `selected` | `boolean` | `false` | Accent border + ring. |
+| `disabled` | `boolean` | `false` | Dim + disable interaction. |
+| `actions` | `ReactNode` | — | Extra trailing controls (composition slot). |
+| `onRemove` | `() => void` | — | Show a dismiss button and fire on activate. |
+| `removeLabel` | `string` | `"Remove file"` | Accessible label for the dismiss button. |
+| `size` | `"sm" \| "md"` | `"md"` | Size scale. |
+
+The public type is `Omit<React.ComponentProps<"div">, "className" | "style">`
+plus the props above — no styling escape hatch.
