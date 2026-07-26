@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/AnimatePresence/Guidelines" />
+
+# Animate Presence
+
+The low-level mount/unmount orchestrator. It keeps a single child in the DOM
+through its **leave** transition and then removes it, so an element can animate
+out as well as in. Most product code reaches for the **Fade / Slide / Scale**
+presets (which are built on this); use Animate Presence directly when you need to
+drive a custom leave animation from CSS.
+
+## Overview
+
+React unmounts synchronously, so a naive `{open && <X/>}` can never play an exit
+animation — the node is gone before any transition runs. Animate Presence solves
+that by holding the child mounted for a `duration` after `present` turns false,
+flipping a `data-state` to `"closed"` so CSS can animate it out first.
+
+## Usage
+
+- **Do** match `duration` to the child's CSS transition duration.
+- **Do** drive the child's enter/leave purely from `data-[state=open]` /
+  `data-[state=closed]` utilities.
+- **Don't** rely on `transitionend` — removal is time-driven (deterministic and
+  testable) by design.
+- **Don't** pass more than one child; wrap multiple nodes in a single element.
+
+## Anatomy
+
+A logic-only wrapper — it renders **no element of its own**. It clones its single
+child, injecting `data-state="open" | "closed"`, and provides the same value via
+context (`useAnimatePresence()`).
+
+## Variants
+
+- `present` — desired visibility; toggling to `false` plays the leave transition.
+- `duration` — ms the child stays mounted after closing (match the CSS duration).
+- `appear` — also animate the very first mount (default off).
+
+## States
+
+- **open** — `data-state="open"`: settled, fully visible.
+- **closed** — `data-state="closed"`: entering or leaving; the child's CSS
+  animates between the two.
+
+## Behavior
+
+- On `present → true` the child mounts `closed`, then flips to `open` on the next
+  animation frame so the enter transition runs.
+- On `present → false` the child flips to `closed` and unmounts after `duration`.
+- With `appear={false}` (default) a child that is present on first mount appears
+  instantly (no enter animation).
+
+## Accessibility
+
+- Presence purely mirrors your `present` state; it adds no ARIA of its own —
+  semantics belong to the child (e.g. a dialog or alert).
+- The child should guard its motion with `motion-reduce:*`; with reduced motion
+  the leave still happens, just without the transition.
+
+## Design tokens
+
+No colour is introduced. Timing is expressed with token-scaled `duration-*`
+utilities on the child; `motion-reduce:*` honours the OS preference.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `present` | `boolean` | — | Whether the child should be present (required). |
+| `children` | `ReactElement` | — | A single element to keep mounted through its leave (required). |
+| `duration` | `number` | `200` | Ms to keep the child mounted after `present` turns false. |
+| `appear` | `boolean` | `false` | Play the enter transition on the first mount too. |
+
+`useAnimatePresence()` returns the current `"open" | "closed"` state for nested
+consumers. The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** story (toggle in/out) and **AppearOnMount** (animates on first
+render). It works in both themes and directions via the global toolbar.
