@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ColorPicker/Guidelines" />
+
+# Color Picker
+
+A trigger swatch that opens a Popover with HSL controls — hue, saturation, and
+lightness sliders plus an optional preset row — and echoes the chosen colour live.
+
+## Overview
+
+Colour is modelled as `{ h, s, l }` and emitted both as that object and as a
+ready `hsl(…)` CSS string, so there is no hex parsing and nothing to keep in
+sync. The picking surface is three labelled native range sliders — keyboard
+operable and announced as sliders — branded with the `--primary` token, with a
+spectrum gradient on the hue track.
+
+## Usage
+
+- **Do** use it for choosing an arbitrary colour (a label colour, a theme accent,
+  a chart override).
+- **Do** provide `presets` for the common choices in your product.
+- **Do** control it (`value` + `onValueChange`) when the colour lives in your
+  state; otherwise use `defaultValue`.
+- **Don't** use it to pick from a *fixed* small set — a swatch group or Select is
+  clearer there.
+- **Don't** pass `className` / `style`; the API is closed.
+
+## Anatomy
+
+A `color-picker-trigger` (swatch + `hsl(…)` readout) opening a
+`color-picker-panel`: a large preview, the Hue / Saturation / Lightness sliders,
+and an optional `color-picker-presets` group of swatch buttons.
+
+## Variants
+
+- `size` — `sm` · `md` · `lg` trigger swatch.
+- `presets` — optional preset swatches.
+
+## States
+
+- **Closed / Open** — the Popover manages focus and dismissal.
+- **Disabled** — trigger is inert and dimmed.
+
+## Behavior
+
+- Controlled via `value` + `onValueChange`, or uncontrolled via `defaultValue`
+  (default `{ h: 217, s: 90, l: 60 }`).
+- Each slider updates one channel; the preview, readout, and trigger swatch track
+  the value. Presets replace all three channels at once.
+- The saturation and lightness tracks recolour to reflect the current hue.
+
+## Accessibility
+
+- Sliders are labelled native `<input type="range">` — full keyboard support and
+  a `slider` role with min/max/value.
+- The trigger's accessible name includes the current colour string, so the choice
+  is announced, not conveyed by the swatch alone.
+- Preset buttons are labelled with their colour string.
+
+## Design tokens
+
+Chrome is token-only: trigger `bg-card` + `border-border-strong`, panel from the
+Popover surface, swatch/preview rings `border-strong`, sliders branded via
+`accent-color: var(--primary)`, focus via the shared accent ring. The colour
+values themselves are user data (HSL), not design tokens.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `{ h, s, l }` | — | Controlled colour. |
+| `defaultValue` | `{ h, s, l }` | `{217,90,60}` | Uncontrolled initial colour. |
+| `onValueChange` | `(value, css) => void` | — | Change handler (object + `hsl()` string). |
+| `presets` | `HSL[]` | `[]` | Preset swatches. |
+| `label` | `string` | `"Choose colour"` | Trigger accessible name. |
+| `disabled` | `boolean` | `false` | Disable the trigger. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Trigger swatch size. |
+
+The API is closed: `className` and `style` are not accepted. The 2-D
+saturation/value square and eyedropper are deferred additive layers.
+
+## Examples
+
+See **Default** (with presets), **Controlled** (state echoed below, with a play
+test opening the panel and asserting the three sliders + preset group), and
+**Disabled**. Works in both themes and directions.
