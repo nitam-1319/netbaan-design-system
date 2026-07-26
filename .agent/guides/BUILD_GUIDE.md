@@ -67,8 +67,15 @@ If an end-of-run gate fails, fix it, re-run, and push the fix — **never end a 
 the end.) Do NOT run `npm run build` / `build-storybook` after every component — that repeated cost is
 what was capping each run to a handful of components.
 
+The end-of-run gates are **compile/lint only**. In a recurring build run, do **NOT** run or green the
+Storybook **interaction (play-test) suite**, and do **NOT** edit existing/neighbor components to make
+that suite pass — that is a library-wide REFACTOR/REVIEW job that will consume the whole session (a
+past run built only 6 components because it spent the rest greening ~19 existing stories). Fix only
+compile failures your own new components introduced; log any pre-existing red as a REVIEW finding.
+
 Storybook / play-test / a11y-runner gates: see `../rules/TESTING_RULES.md` — they are only
-"passing" if you actually ran them this session. Otherwise tag `human-verify`.
+"passing" if you actually ran them this session. Otherwise tag `human-verify`. Greening them is a
+dedicated REVIEW task, never part of a build run.
 
 ## Commit rules — Conventional Commits
 Good:

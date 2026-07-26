@@ -581,3 +581,26 @@ convert its full token budget into components.
 Impact: applies to every future scheduled run (they read `.agent/` fresh each run). Pairs with the
 schedule change (more, shorter-interval runs). Machine gates unchanged in substance — same checks, just
 re-timed (fast ones per component, heavy ones once per run).
+
+## 2026-07-26a — Build runs must STAY IN LANE: no play-test-suite greening, no neighbor edits mid-run
+Status: accepted
+Decision: A manual run built only 6 new components (file-management category) and then spent the rest
+of its session context greening the whole Storybook **interaction (play-test) suite** — commit
+"green the Storybook interaction suite (561/561)" rewrote 27 files across ~19 PRE-EXISTING components
+(dialog, menu, popover, select, toast, segmented-control, carousel, …) and even added test-runner deps
+to package.json. That diversion (not the token budget) is why throughput cratered: the account had
+tokens left, but the session's CONTEXT was consumed by a library-wide maintenance pass, so few new
+components got built. It also violated CREATE rule #2 (don't rewrite neighbors).
+Tightened the loop docs so a build run stays in its lane:
+- `prompts/recurring-build.md`: added a "STAY IN YOUR LANE" section — build only NEW components; do NOT
+  run/green the Storybook interaction (play-test) suite; do NOT edit existing/neighbor components; do
+  NOT touch package.json/deps unless a new component needs one; log pre-existing red as a ONE-LINE
+  REVIEW finding and keep building. End-of-run gates are COMPILE-only (tsc/build/build-storybook), and
+  a run only fixes compile failures IT introduced (pre-existing failures → REVIEW note, not a fix).
+- `guides/BUILD_GUIDE.md`: same clarification on the end-of-run gate.
+Reason: the earlier throughput fixes (no checkpoint stop, batch heavy gates) worked — the run built 6
+in one category without stopping — but a new sink appeared: voluntary library-wide test-suite greening
+inside a build run. Suite greening is valuable but is a dedicated REVIEW task, not part of CREATE; it
+must not steal a build run's context.
+Impact: future recurring runs convert their full context into new components; play-test-suite
+maintenance is deferred to explicit REVIEW work. No component/API change — docs only.

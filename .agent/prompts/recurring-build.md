@@ -5,6 +5,21 @@ No human is online during this run: do **not** pause to "request review" — mak
 decisions and keep building. Work **CONTINUOUSLY** until the session's token/context budget is
 nearly spent or the queue is empty. Never leave a component half-finished.
 
+## STAY IN YOUR LANE — build new components, nothing else
+This run's ONLY job is to build the next **new** components. Do not let anything else consume the
+budget:
+- **Do NOT green / run / set up the Storybook interaction (play-test) suite.** Those runner tests
+  are `human-verify` / CI (see `../rules/TESTING_RULES.md`); running and greening the whole suite
+  (editing dozens of existing stories) will eat the entire session and is why past runs built only a
+  handful of components. Your gates are the **compile** gates below — nothing more.
+- **Do NOT edit or "fix up" existing/neighbor components** (their `.tsx`, `.stories.tsx`, or `.mdx`).
+  That is REFACTOR/REVIEW work, forbidden in CREATE (AGENT.md rule 2). If you notice a problem in an
+  existing component or the suite is red from earlier work, write **ONE line** in the run report as a
+  REVIEW finding and keep building — do not fix it now.
+- **Do NOT modify `package.json` / dependencies** unless a NEW component you are building genuinely
+  needs a new runtime dependency.
+- Every unit of budget goes to the next new component, not to maintenance.
+
 Loop (repeat — keep building one component after another):
 1. Enter **CREATE** mode (`component-create.md`) for the next unchecked component in
    `../checklists/COMPONENTS_STATUS.md`, honoring priority and dependencies.
@@ -28,7 +43,11 @@ Stop the loop only when one of these is true:
   cannot be fixed. Stop and report it as `BLOCKED`.
 
 End of run (ALWAYS, before finishing):
-- Run the **end-of-run heavy gates ONCE**: `npm run lint && npm run build && npm run build-storybook`.
-  If any fail, fix, re-run, and push — **never end a run with a red branch.**
+- Run the **end-of-run COMPILE gates ONCE**: `npm run lint && npm run build && npm run build-storybook`.
+  These are compile/lint checks (build-storybook COMPILES stories + MDX). Fix only failures caused by
+  the components **you built this run**; if a failure is pre-existing (from an earlier run), record it
+  as a REVIEW finding and leave it — do not embark on a suite-wide fix. **Do NOT** run the vitest /
+  Storybook interaction (play-test) suite here — that is not a build-run gate.
+- Never end a run with a branch that fails the **compile** gates for your own new components.
 - Emit the standard run report (`../AGENT.md` §6): components built this run, review-checkpoint
   notes, and anything left `BLOCKED`.
