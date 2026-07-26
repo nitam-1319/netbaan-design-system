@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Beam Glow/Guidelines" />
+
+# Beam / Glow Effect
+
+The system's signature **accent beam** — the rotating conic-gradient edge that
+makes the Primary `Button` and `Floating Action Button` read as lit-from-within —
+extracted as a reusable decorative frame. Wrap any content to give it the same
+animated beam border (a spinning conic gradient clipped to a thin ring by an inset
+surface mask), optionally over a diffuse accent glow (`shadow-bloom`).
+
+## Overview
+
+Use it to draw the eye to one raised, active surface — an upsell card, a live
+feed, a "new" pill, a hero CTA. It is intentionally a scarce, high-emphasis motif:
+one beam on a screen reads as special; several at once read as noise.
+
+## When to use
+
+- **Do** use it to highlight a single most-important surface per view.
+- **Do** pair it with `glow` for a hero/CTA moment; drop the glow for a subtler edge.
+- **Don't** wrap routine content or many items — the motif loses its meaning.
+- **Don't** put essential information only in the beam; it is decorative.
+
+## Anatomy
+
+1. **BeamGlow** — the frame; owns a real surface (the inset mask) so the beam
+   always reads as a border.
+2. **Beam layers** (`aria-hidden`) — the clipped, spinning conic gradient and the
+   inset surface mask that leaves only the beam-width ring visible.
+3. **Content** — your children, rendered on the surface with `size` padding.
+
+## Variants
+
+`radius` — `sm`, `md` (default), `lg`, `full` (a beam pill) — sets the corner
+radius. `size` — `none`, `sm`, `md` (default), `lg` — sets the inner padding.
+`speed` — `default` or `fast` — picks the beam-spin motion token. `glow` adds the
+`shadow-bloom` accent bloom. `active` (default `true`) toggles the rotation.
+
+## States
+
+The frame is decorative chrome. `active={false}` shows the ring without rotation;
+`prefers-reduced-motion` does the same automatically (see below). Content inside
+inherits its own component states.
+
+## Behavior
+
+- **Beam:** a `conic-gradient` fill on an oversized square spins via the
+  `animate-beam-spin` / `animate-beam-spin-fast` tokens; an inset surface mask
+  clips it to a `--beam-w` (1.5px) ring.
+- **Glow:** `glow` applies `shadow-bloom`, the ring-less diffuse accent bloom.
+- **Surface:** the frame owns its surface, so the beam reads as a border over any
+  content — transparent or opaque.
+
+## Accessibility
+
+- The effect is purely decorative: both beam layers are `aria-hidden`, and the
+  frame contributes no role or label — the content inside carries all meaning.
+- **Reduced motion:** the spin uses `motion-reduce:animate-none`, so users who
+  request reduced motion get a static beam ring instead of rotation, with no loss
+  of information.
+- Ensure the content inside meets WCAG 2.2 AA contrast on the beam surface in both
+  Light and Dark themes (the mask blends the surface toward the accent only ~10%).
+
+## RTL / i18n
+
+The frame is radially symmetric — a centred, rotating conic gradient — so it is
+direction-agnostic and needs no RTL handling. Content inside follows its own
+components' RTL behaviour.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--primary` / `--accent-strong` | Beam conic-gradient stops |
+| `--surface-2` | Inset surface mask (beam reads as a border over it) |
+| `--animate-beam-spin` / `--animate-beam-spin-fast` | Beam rotation timing |
+| `--shadow-bloom` (`shadow-bloom`) | Optional accent glow |
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `radius` | `"sm" \| "md" \| "lg" \| "full"` | `"md"` | Corner radius (`full` = beam pill). |
+| `size` | `"none" \| "sm" \| "md" \| "lg"` | `"md"` | Inner content padding. |
+| `speed` | `"default" \| "fast"` | `"default"` | Beam rotation speed. |
+| `glow` | `boolean` | `false` | Add the `shadow-bloom` accent glow. |
+| `active` | `boolean` | `true` | Animate the beam (static ring when `false`). |
+| `render` | `ReactElement` | `<div>` | Element to render the frame as. |
+
+The public API is closed: no `className` / `style`. The frame carries
+`data-slot="beam-glow"` and its content `data-slot="beam-glow-content"`.
+
+## Examples
+
+Switch the toolbar **Theme** between Light and Dark to confirm the beam and glow
+hold up on both canvases, and enable OS "Reduce motion" to see the ring stop
+rotating.
