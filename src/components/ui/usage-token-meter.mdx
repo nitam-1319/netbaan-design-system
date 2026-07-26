@@ -1,0 +1,96 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/UsageTokenMeter/Guidelines" />
+
+# Usage / Token Meter
+
+A readout of how much of a bounded budget has been consumed — LLM **context
+tokens** against a window, monthly **spend** against a quota, **requests**
+against a rate limit. It composes the AEGIS **Progress** bar with a labelled
+header, a `used / limit` readout, and a percentage, escalating the bar's tone as
+usage approaches the ceiling.
+
+## Overview
+
+AI surfaces constantly show consumption against a hard ceiling. Usage Token Meter
+standardises that display so pressure is legible at a glance: the bar fills, the
+readout gives exact numbers, and the tone shifts from accent to warning to
+critical as the budget runs down.
+
+## Usage
+
+- **Do** use it for any consumed-vs-ceiling quantity (tokens, spend, requests,
+  storage).
+- **Do** tune `warnAt` / `criticalAt` to the risk profile of the budget.
+- **Do** pass a `formatValue` for currency or custom units.
+- **Don't** use it for indeterminate progress (a running task) — that is
+  **Progress** with `value={null}`, or **Upload Progress**.
+
+## Anatomy
+
+A wrapper (`data-slot="usage-token-meter"`, `data-tone`) containing a header row
+(a **Progress** label + a monospace `used / limit unit (percent)` readout,
+`data-slot="usage-token-meter-value"`) above the **Progress** track.
+
+## Variants
+
+Tone is derived, not chosen: `default` below `warnAt`, `warning` from `warnAt`,
+`critical` from `criticalAt`. There is no manual variant — the meter's colour
+always reflects real usage.
+
+## States
+
+- **Default** — usage below the warning threshold (accent bar).
+- **Warning** — at/above `warnAt` (warning bar).
+- **Critical** — at/above `criticalAt` (critical bar).
+
+`used` is clamped to `[0, limit]` so the bar never overflows even if a caller
+passes an over-limit value.
+
+## Behavior
+
+- Fully controlled by `used` / `limit`; there is no internal state.
+- The readout uses compact notation (1.2K, 128K) by default; override with
+  `formatValue`.
+- Percentage is rounded for display; the underlying progressbar carries the exact
+  `aria-valuenow` / `aria-valuemax`.
+
+## Accessibility
+
+- The value is announced by the underlying `role="progressbar"` with
+  `aria-valuenow` = used and `aria-valuemax` = limit — independent of colour.
+- The numeric readout is real text, so exact figures are available to everyone;
+  tone is reinforcement only (WCAG 1.4.1).
+- `data-tone` exposes the escalation level to tests and styling hooks.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `accent-fill` (Progress default tone) | Nominal usage bar. |
+| `bg-warning` / `bg-sev-critical` (Progress tones) | Escalated bars. |
+| `bg-surface-3` | Progress track. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Readout. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `used` | `number` | — | Amount consumed (required). |
+| `limit` | `number` | — | Budget ceiling (required). |
+| `label` | `ReactNode` | — | Header label. |
+| `unit` | `string` | `"tokens"` | Unit noun after the readout. |
+| `warnAt` | `number` | `0.75` | Fraction at which tone → warning. |
+| `criticalAt` | `number` | `0.9` | Fraction at which tone → critical. |
+| `showValue` | `boolean` | `true` | Show the `used / limit` readout. |
+| `formatValue` | `(n: number) => string` | compact | Number formatter. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Nearing**, **Critical**, **Spend** (currency), **ValueOnly**, and
+**Thresholds** stories. The meter works in both themes and directions via the
+global toolbar; in RTL the label and readout swap edges automatically.
