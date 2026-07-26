@@ -36,9 +36,10 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 export const Providers: Story = {
-  render: (args) => (
+  render: ({ variant, size }) => (
     <SSOProviderButtons
-      {...args}
+      variant={variant}
+      size={size}
       providers={["google", "github", "microsoft", "apple", "gitlab"]}
       onSelectProvider={fn()}
     />
@@ -66,9 +67,10 @@ export const Sizes: Story = {
 }
 
 export const Horizontal: Story = {
-  render: (args) => (
+  render: ({ variant, size }) => (
     <SSOProviderButtons
-      {...args}
+      variant={variant}
+      size={size}
       orientation="horizontal"
       fullWidth={false}
       providers={["google", "github", "apple"]}
@@ -106,10 +108,11 @@ export const Disabled: Story = {
  */
 export const RTLPersian: Story = {
   name: "RTL (Persian)",
-  render: (args) => (
+  render: ({ variant, size }) => (
     <div dir="rtl">
       <SSOProviderButtons
-        {...args}
+        variant={variant}
+        size={size}
         providers={["google", "github"]}
         label="ادامه با {provider}"
         groupLabel="ورود با ارائه‌دهنده"
@@ -121,11 +124,12 @@ export const RTLPersian: Story = {
 
 /** Activating a provider button fires `onSelectProvider` with its key. */
 export const SelectInteraction: Story = {
-  render: (args) => {
+  render: ({ variant, size }) => {
     const onSelectProvider = fn()
     return (
       <SSOProviderButtons
-        {...args}
+        variant={variant}
+        size={size}
         providers={["google", "github"]}
         onSelectProvider={onSelectProvider}
       />
