@@ -1,0 +1,118 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Bottom Sheet/Guidelines" />
+
+# Bottom Sheet
+
+A surface that slides up from the bottom edge of the viewport — the mobile idiom
+for secondary tasks, option lists, and detail panels that a centered `Dialog`
+would interrupt too heavily on a small screen. It is a specialised, always-bottom
+sibling of `Drawer`: both wrap the Base UI `Dialog` primitive, so the portal,
+backdrop, focus trap, scroll lock, `role="dialog"` / `aria-modal`, and Escape /
+outside-press dismissal are handled for us. The Bottom Sheet adds the mobile
+affordances a generic drawer doesn't — a rounded top, a grabber handle,
+snap-style `height` steps, and a bottom safe-area inset.
+
+## Overview
+
+Reach for a bottom sheet on touch and narrow layouts when the user needs a
+focused surface that stays connected to the page context — a share menu, a set of
+row actions, a filter panel — reachable within thumb distance. Like a dialog it
+traps focus and blocks the background, so reserve it for moments that warrant that
+focus rather than transient feedback.
+
+## When to use
+
+- **Do** use it for mobile action menus, option pickers, and compact detail panels.
+- **Do** use `height="full"` for a near-full-screen sheet that still reads as
+  dismissible (rounded top, grabber).
+- **Don't** use it for a short confirmation — use a `Dialog` (or `Confirmation Dialog`).
+- **Don't** use it for transient, non-blocking feedback — use a `Toast`.
+- **Don't** use it as a side panel on wide layouts — use a `Drawer`.
+
+## Anatomy
+
+1. **BottomSheet** — the root; owns `open` state.
+2. **BottomSheetTrigger** — the control that opens the sheet (usually renders a `Button`).
+3. **BottomSheetContent** — the portalled backdrop + bottom-anchored panel; owns `height`, the grabber, and the close button.
+4. **BottomSheetHeader / BottomSheetTitle / BottomSheetDescription** — the accessible heading and supporting text.
+5. **BottomSheetBody** — the scrollable content region.
+6. **BottomSheetFooter** — the action row.
+7. **BottomSheetClose** — any control that dismisses the sheet.
+
+## Variants
+
+`BottomSheetContent` exposes one sizing prop, `height` — `sm`, `default`, `lg`,
+`full` — which caps how tall the sheet rises (35 / 60 / 85 / 95 dvh); the steps
+read like snap points, and the body scrolls once its content exceeds the cap. Two
+booleans toggle affordances: `showGrabber` (the top handle, default `true`) and
+`showClose` (the corner close button, default `true`). There is no color variant;
+intent is carried by the buttons inside.
+
+## States
+
+Closed, Opening / Open (slide-and-fade up from the bottom edge), and Closing
+(slide-and-fade back down). The backdrop fades in tandem. Triggers and close
+controls inherit `Button` states.
+
+## Behavior
+
+- **Controlled:** pass `open` + `onOpenChange`. **Uncontrolled:** pass `defaultOpen`.
+- **Dismissal:** Escape, a click on the backdrop, or any `BottomSheetClose` closes it.
+- **Focus:** on open, focus moves into the sheet (first tabbable element); on
+  close, it returns to the trigger. Focus is trapped while open.
+- **Scroll:** background scroll is locked; long content scrolls inside `BottomSheetBody`.
+- **Grabber:** the handle is a visual affordance only. A drag-to-dismiss /
+  drag-between-snap-points gesture is pointer-driven and browser-verified, so it
+  is deferred to a follow-up; today the sheet dismisses via Escape / outside-press
+  / close.
+
+## Accessibility
+
+- Roles: the panel is `role="dialog"` with `aria-modal="true"`, labelled by
+  `BottomSheetTitle` (`aria-labelledby`) and described by `BottomSheetDescription`
+  (`aria-describedby`).
+- Keyboard map: `Tab` / `Shift+Tab` cycle within the trapped focus scope, `Escape`
+  closes, `Enter` / `Space` activate the focused control.
+- Always include a `BottomSheetTitle`; the visible close button carries
+  `aria-label="Close"`, and the grabber is `aria-hidden` (decorative).
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+The sheet is vertically anchored (`inset-x-0 bottom-0`), so it is symmetric under
+RTL. Header text uses logical alignment (`text-start`) and reserves inline-end
+padding (`pe-8`) for the close button, which itself is pinned with the logical
+`end-4` inset — so header, close button, and footer actions all mirror correctly
+under RTL with Vazirmatn.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Sheet surface + text |
+| `--background` | Backdrop tint |
+| `--border-strong` | Surface ring |
+| `--shadow` (`shadow-elevated`) | Panel elevation |
+| `--muted` / `--muted-foreground` | Grabber, close button, body text |
+| `--accent-soft` / `--ring` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `BottomSheet` | `open` / `defaultOpen` | `boolean` | — | Open state (controlled / uncontrolled). |
+| `BottomSheet` | `onOpenChange` | `(open, details) => void` | — | Open-state change handler. |
+| `BottomSheet` | `modal` | `boolean \| "trap-focus"` | `true` | Whether the sheet blocks the background. |
+| `BottomSheetContent` | `height` | `"sm" \| "default" \| "lg" \| "full"` | `"default"` | Height cap the sheet rises to. |
+| `BottomSheetContent` | `showGrabber` | `boolean` | `true` | Render the top grabber handle. |
+| `BottomSheetContent` | `showClose` | `boolean` | `true` | Render the corner close button. |
+| `BottomSheetClose` | `render` | `ReactElement` | — | Element to render as the close control. |
+
+The public API is closed: no `className` / `style`. Every part carries a
+`data-slot`, and element polymorphism is available through `render`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm the
+header, grabber, close button, and footer actions mirror correctly with Vazirmatn.
