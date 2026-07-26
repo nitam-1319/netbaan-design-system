@@ -1,0 +1,80 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/RolePermissionSelector/Guidelines" />
+
+# Role / Permission Selector
+
+A grouped permission matrix: resources or categories, each with a set of togglable
+permissions and a tri-state "select all". Use it to compose a role out of
+fine-grained permissions.
+
+## Overview
+
+Roles are usually easier to reason about as a checklist of what they can do,
+grouped by resource. This selector standardises that: it takes your permission
+groups and a flat array of the selected values, and emits the next array whenever
+a box is toggled — leaving storage and role naming to you.
+
+## Usage
+
+- **Do** group permissions by resource (Assets, Findings, Users…).
+- **Do** use `description` to disambiguate similar permissions.
+- **Do** mark permissions the current admin can't grant as `disabled`.
+- **Don't** encode mutually exclusive choices here — use radios for those.
+
+## Anatomy
+
+A labelled `role="group"` containing one `section` per group: a header with a
+tri-state select-all `Checkbox` (the group label) over an indented list of
+permission `Checkbox`es (label + optional description).
+
+## Variants
+
+- `size` — `sm` · `md` row density.
+
+## States
+
+- **Unchecked / Checked** — per permission.
+- **Group all / none / mixed** — the select-all reflects the group: checked when
+  all selectable permissions are on, `indeterminate` when only some are.
+- **Disabled** — a permission (or the whole selector) is non-interactive; disabled
+  permissions are excluded from select-all math.
+
+## Behavior
+
+- Controlled via `value` + `onValueChange` (a flat `string[]`), or uncontrolled
+  via `defaultValue`.
+- The group select-all toggles every **selectable** permission in that group;
+  disabled ones are never changed.
+- Each change emits the complete next selection array.
+
+## Accessibility
+
+- Real `Checkbox`es throughout: keyboard operable, AEGIS focus rings, and
+  `aria-checked` including `mixed` for the tri-state select-all.
+- Each group is a labelled `section`; the whole control is a labelled `group`.
+- State is conveyed by the checkmark and label text, never colour alone.
+
+## Design tokens
+
+Composes AEGIS `Checkbox` (accent fill, `border-strong` resting) and a
+`border-border` group divider. No hard-coded colour.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `groups` | `PermissionGroup[]` | — | Groups of permissions (required). |
+| `value` | `string[]` | — | Controlled selection. |
+| `defaultValue` | `string[]` | `[]` | Uncontrolled initial selection. |
+| `onValueChange` | `(value: string[]) => void` | — | Selection change handler. |
+| `disabled` | `boolean` | `false` | Disable the whole selector. |
+| `size` | `"sm" \| "md"` | `"md"` | Row density. |
+
+`PermissionGroup`: `{ key; label; permissions: { value; label; description?; disabled? }[] }`.
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (controlled, mixed select-all) and **Uncontrolled**
+(`defaultValue`). Works in both themes and directions.
