@@ -1,0 +1,95 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ToolCallBlock/Guidelines" />
+
+# Tool Call Block
+
+A structured record of a single **tool / function invocation** made by an agent —
+the tool name, the arguments it was called with, the result it returned, and the
+call's status. Arguments and result render through the AEGIS **Code Block**
+(monospace, copyable, scrollable) and status through a **Badge**, so the block
+reuses the library's affordances rather than reinventing them.
+
+## Overview
+
+Agentic AI surfaces need to show *what the model did*, not just what it said.
+Tool Call Block gives each invocation a consistent, inspectable presentation:
+a header with the function name and outcome, and code sections for the JSON in
+and out.
+
+## Usage
+
+- **Do** use it to render a function/tool call in a conversation or run log.
+- **Do** pass `args` / `result` as objects — they're pretty-printed as JSON.
+- **Do** set `status="pending"` while the call is in flight.
+- **Don't** use it for the model's prose reasoning — that is **Reasoning Trace**.
+  Don't use it for a plain snippet — that is **Code Block**.
+
+## Anatomy
+
+A bordered surface (`data-slot="tool-call-block"`, `data-status`) with a header
+(wrench glyph, `tool-call-block-name`, optional description, and a
+`tool-call-block-status` **Badge**) over a body containing an **Arguments**
+section (`tool-call-block-args`) and, when present, a **Result** section
+(`tool-call-block-result`), each a **Code Block**.
+
+## Variants
+
+Presentation is fixed; the meaningful axis is `status` (pending · success ·
+error), which drives the header badge's icon, label, and tone.
+
+## States
+
+- **Pending** — accent badge with a spinning glyph and "Running".
+- **Success** — success badge with a check and "Succeeded".
+- **Error** — danger badge with an ✕ and "Failed".
+
+Empty arguments render an explicit "No arguments"; a missing result hides the
+Result section entirely.
+
+## Behavior
+
+- Objects passed to `args` / `result` are pretty-printed with two-space JSON;
+  strings pass through verbatim (use `language` to tag them, e.g. `sql`).
+- Each code section inherits Code Block's copy button, horizontal scroll, and
+  keyboard-scrollable region.
+- The header, name, and status are static reflections of the props — no internal
+  state.
+
+## Accessibility
+
+- Status is conveyed by an icon **and** a text label ("Running"/"Succeeded"/
+  "Failed"), never colour alone (WCAG 1.4.1); `data-status` exposes it to tests.
+- Code regions are keyboard-focusable and labelled ("Tool arguments" / "Tool
+  result") via Code Block.
+- The tool name is real monospace text, announced directly.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-card` / `border-border` / `bg-surface-3` | Surface, border, header. |
+| `bg-accent-soft` / `text-accent-strong` | Header tool glyph. |
+| Badge tones (`accent` / `success` / `danger`) | Status pill. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Text hierarchy. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `name` | `string` | — | Invoked tool / function name (required). |
+| `args` | `unknown` | — | Arguments (object → JSON, or string). |
+| `result` | `unknown` | — | Result (object → JSON, or string). |
+| `status` | `"pending" \| "success" \| "error"` | `"success"` | Call outcome. |
+| `language` | `string` | `"json"` | Language tag for the code sections. |
+| `description` | `ReactNode` | — | One-line description of the call. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Running**, **Failed**, **StringArgs** (SQL), and **NoArguments**
+stories. The block works in both themes and directions via the global toolbar; in
+RTL the header content and status badge swap edges automatically.
