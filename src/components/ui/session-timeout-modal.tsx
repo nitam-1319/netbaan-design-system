@@ -63,38 +63,6 @@ function SessionTimeoutModal({
   extendLabel = "Stay signed in",
   logoutLabel = "Log out",
 }: SessionTimeoutModalProps) {
-  const [remaining, setRemaining] = React.useState(countdownSeconds)
-
-  // Run the countdown only while the modal is open; reset on (re)open.
-  React.useEffect(() => {
-    if (!open) {
-      setRemaining(countdownSeconds)
-      return
-    }
-    setRemaining(countdownSeconds)
-    const id = setInterval(() => {
-      setRemaining((r) => (r <= 1 ? 0 : r - 1))
-    }, 1000)
-    return () => clearInterval(id)
-  }, [open, countdownSeconds])
-
-  // Fire onTimeout exactly once when the countdown hits zero.
-  const timedOut = React.useRef(false)
-  React.useEffect(() => {
-    if (!open) {
-      timedOut.current = false
-      return
-    }
-    if (remaining === 0 && !timedOut.current) {
-      timedOut.current = true
-      onTimeout?.()
-    }
-  }, [open, remaining, onTimeout])
-
-  const fraction = countdownSeconds > 0 ? remaining / countdownSeconds : 0
-  const tone: "default" | "warning" | "critical" =
-    fraction <= 0.25 ? "critical" : fraction <= 0.5 ? "warning" : "default"
-
   const handleExtend = () => {
     onExtend?.()
     onOpenChange?.(false)
@@ -110,7 +78,6 @@ function SessionTimeoutModal({
         size="sm"
         showClose={false}
         data-slot="session-timeout-modal"
-        data-tone={tone}
       >
         <div className="flex items-start gap-3 text-left">
           <span
@@ -132,29 +99,10 @@ function SessionTimeoutModal({
           </div>
         </div>
 
-        <div
-          data-slot="session-timeout-modal-countdown"
-          className="flex flex-col gap-1.5"
-        >
-          <div className="flex items-baseline justify-between">
-            <span className="text-xs font-medium text-muted-foreground">
-              Signing out in
-            </span>
-            <span
-              data-slot="session-timeout-modal-remaining"
-              aria-live="polite"
-              className="font-mono text-sm font-semibold tabular-nums text-foreground"
-            >
-              {formatDuration(remaining)}
-            </span>
-          </div>
-          <Progress
-            value={remaining}
-            max={countdownSeconds}
-            tone={tone}
-            aria-label="Time remaining before automatic sign-out"
-          />
-        </div>
+        {/* The countdown lives in a child that mounts fresh each time the dialog
+            opens (the portal only renders when open), so its state initialises to
+            the full duration without any effect/render-phase reset. */}
+        <SessionCountdown seconds={countdownSeconds} onTimeout={onTimeout} />
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -166,6 +114,65 @@ function SessionTimeoutModal({
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+function SessionCountdown({
+  seconds,
+  onTimeout,
+}: {
+  seconds: number
+  onTimeout?: () => void
+}) {
+  const [remaining, setRemaining] = React.useState(seconds)
+
+  // Tick down once per second while mounted; the setState is inside the interval
+  // callback (not the effect body), so it is event-driven, not synchronous.
+  React.useEffect(() => {
+    const id = setInterval(() => {
+      setRemaining((r) => (r <= 1 ? 0 : r - 1))
+    }, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  // Fire onTimeout exactly once when the countdown reaches zero.
+  const timedOut = React.useRef(false)
+  React.useEffect(() => {
+    if (remaining === 0 && !timedOut.current) {
+      timedOut.current = true
+      onTimeout?.()
+    }
+  }, [remaining, onTimeout])
+
+  const fraction = seconds > 0 ? remaining / seconds : 0
+  const tone: "default" | "warning" | "critical" =
+    fraction <= 0.25 ? "critical" : fraction <= 0.5 ? "warning" : "default"
+
+  return (
+    <div
+      data-slot="session-timeout-modal-countdown"
+      data-tone={tone}
+      className="flex flex-col gap-1.5"
+    >
+      <div className="flex items-baseline justify-between">
+        <span className="text-xs font-medium text-muted-foreground">
+          Signing out in
+        </span>
+        <span
+          data-slot="session-timeout-modal-remaining"
+          aria-live="polite"
+          className="font-mono text-sm font-semibold tabular-nums text-foreground"
+        >
+          {formatDuration(remaining)}
+        </span>
+      </div>
+      <Progress
+        value={remaining}
+        max={seconds}
+        tone={tone}
+        aria-label="Time remaining before automatic sign-out"
+      />
+    </div>
   )
 }
 

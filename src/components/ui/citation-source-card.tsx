@@ -1,7 +1,6 @@
 import * as React from "react"
 import { ExternalLink, FileText } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Card, CardContent } from "@/components/ui/card"
 
 /**

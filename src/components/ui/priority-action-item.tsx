@@ -1,7 +1,6 @@
 import * as React from "react"
 import { ChevronRight, Layers } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { ListItem, ListItemContent } from "@/components/ui/list"
 import { SeverityBadge, type Severity } from "@/components/ui/severity-badge"
 
