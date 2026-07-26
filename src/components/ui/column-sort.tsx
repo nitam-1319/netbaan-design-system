@@ -121,7 +121,7 @@ const alignClass: Record<ColumnSortAlign, string> = {
   end: "text-end justify-end",
 }
 
-type ThProps = Omit<React.ComponentProps<"th">, "className" | "style" | "children">
+type ThProps = Omit<React.ComponentProps<"th">, "className" | "style" | "children" | "align">
 
 export interface SortableColumnHeaderProps extends ThProps {
   /** Column name — the header text and the trigger's accessible name. */

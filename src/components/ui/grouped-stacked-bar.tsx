@@ -1,5 +1,3 @@
-import * as React from "react"
-
 import { BarChart, type BarChartProps } from "@/components/ui/bar-chart"
 
 /**

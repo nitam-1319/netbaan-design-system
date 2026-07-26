@@ -1,5 +1,3 @@
-import * as React from "react"
-
 import { AreaChart, type AreaChartProps } from "@/components/ui/area-chart"
 
 /**

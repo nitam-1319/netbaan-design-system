@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import * as React from "react"
 import { expect, userEvent, waitFor, within } from "storybook/test"
 
 import {
@@ -80,11 +79,18 @@ function SelectableTable() {
   )
 }
 
+const STUB_ARGS = {
+  state: { checked: false, indeterminate: false },
+  onToggleAll: () => {},
+}
+
 export const Default: Story = {
+  args: STUB_ARGS,
   render: () => <SelectableTable />,
 }
 
 export const Interactive: Story = {
+  args: STUB_ARGS,
   render: () => <SelectableTable />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)

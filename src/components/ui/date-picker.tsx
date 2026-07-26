@@ -141,26 +141,6 @@ function DatePicker({
   const [open, setOpen] = React.useState(false)
 
   const anchor = selected ?? (defaultMonth ? startOfDay(defaultMonth) : startOfDay(new Date()))
-  const [view, setView] = React.useState<Date>(makeDay(anchor.getFullYear(), anchor.getMonth(), 1))
-  const [focusDay, setFocusDay] = React.useState<Date>(anchor)
-  const focusRef = React.useRef(false)
-  const dayRefs = React.useRef<Map<string, HTMLButtonElement>>(new Map())
-
-  // Re-anchor the view + keyboard focus to the selection each time the popover opens.
-  React.useEffect(() => {
-    if (!open) return
-    const a = selected ?? (defaultMonth ? startOfDay(defaultMonth) : startOfDay(new Date()))
-    setView(makeDay(a.getFullYear(), a.getMonth(), 1))
-    setFocusDay(a)
-  }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // After a keyboard move, focus the button for the focused day.
-  React.useEffect(() => {
-    if (!open || !focusRef.current) return
-    focusRef.current = false
-    const key = keyOf(focusDay)
-    dayRefs.current.get(key)?.focus()
-  }, [focusDay, view, open])
 
   const fmt = React.useMemo(
     () =>
@@ -169,69 +149,11 @@ function DatePicker({
     [formatDate, locale]
   )
 
-  const monthLabel = React.useMemo(
-    () => view.toLocaleDateString(locale, { month: "long", year: "numeric" }),
-    [view, locale]
-  )
-
-  const weekdays = React.useMemo(() => {
-    // Any Sunday as a reference, then rotate to `weekStartsOn`.
-    const ref = makeDay(2024, 11, 1) // 2024-12-01 is a Sunday
-    return Array.from({ length: 7 }, (_, i) =>
-      addDays(ref, (weekStartsOn + i) % 7).toLocaleDateString(locale, { weekday: "short" })
-    )
-  }, [locale, weekStartsOn])
-
-  const grid = React.useMemo(
-    () => buildMonthGrid(view.getFullYear(), view.getMonth(), weekStartsOn),
-    [view, weekStartsOn]
-  )
-
-  const isDisabledDay = React.useCallback(
-    (d: Date) => (minDate && isBefore(d, startOfDay(minDate))) || (maxDate && isBefore(startOfDay(maxDate), d)),
-    [minDate, maxDate]
-  )
-
   function commit(next: Date) {
     const day = startOfDay(next)
     if (!isControlled) setInternal(day)
     onValueChange?.(day)
     setOpen(false)
-  }
-
-  function moveFocus(next: Date) {
-    const clamped = clampDay(next, minDate, maxDate)
-    focusRef.current = true
-    if (clamped.getMonth() !== view.getMonth() || clamped.getFullYear() !== view.getFullYear()) {
-      setView(makeDay(clamped.getFullYear(), clamped.getMonth(), 1))
-    }
-    setFocusDay(clamped)
-  }
-
-  function onGridKeyDown(e: React.KeyboardEvent) {
-    switch (e.key) {
-      case "ArrowRight":
-        e.preventDefault(); moveFocus(addDays(focusDay, 1)); break
-      case "ArrowLeft":
-        e.preventDefault(); moveFocus(addDays(focusDay, -1)); break
-      case "ArrowDown":
-        e.preventDefault(); moveFocus(addDays(focusDay, 7)); break
-      case "ArrowUp":
-        e.preventDefault(); moveFocus(addDays(focusDay, -7)); break
-      case "Home":
-        e.preventDefault(); moveFocus(addDays(focusDay, -((focusDay.getDay() - weekStartsOn + 7) % 7))); break
-      case "End":
-        e.preventDefault(); moveFocus(addDays(focusDay, 6 - ((focusDay.getDay() - weekStartsOn + 7) % 7))); break
-      case "PageUp":
-        e.preventDefault(); moveFocus(addMonths(focusDay, -1)); break
-      case "PageDown":
-        e.preventDefault(); moveFocus(addMonths(focusDay, 1)); break
-      case "Enter":
-      case " ":
-        e.preventDefault()
-        if (!isDisabledDay(focusDay)) commit(focusDay)
-        break
-    }
   }
 
   return (
@@ -260,98 +182,168 @@ function DatePicker({
       </PopoverTrigger>
 
       <PopoverContent side="bottom" align="start">
-        <div data-slot="date-picker" className="flex w-64 flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Previous month"
-              onClick={() => setView(addMonths(view, -1))}
-            >
-              <ChevronLeft aria-hidden className="rtl:rotate-180" />
-            </Button>
-            <span data-slot="date-picker-month" className="text-sm font-semibold text-foreground">
-              {monthLabel}
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Next month"
-              onClick={() => setView(addMonths(view, 1))}
-            >
-              <ChevronRight aria-hidden className="rtl:rotate-180" />
-            </Button>
-          </div>
-
-          <div
-            role="grid"
-            aria-label={monthLabel}
-            data-slot="date-picker-grid"
-            className="flex flex-col gap-1"
-            onKeyDown={onGridKeyDown}
-          >
-            <div role="row" className="grid grid-cols-7">
-              {weekdays.map((w, i) => (
-                <span
-                  key={i}
-                  role="columnheader"
-                  aria-label={w}
-                  className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground"
-                >
-                  {w.slice(0, 2)}
-                </span>
-              ))}
-            </div>
-
-            {Array.from({ length: 6 }).map((_, week) => (
-              <div key={week} role="row" className="grid grid-cols-7 gap-1">
-                {grid.slice(week * 7, week * 7 + 7).map((day) => {
-                  const outside = day.getMonth() !== view.getMonth()
-                  const isSelected = isSameDay(day, selected)
-                  const isFocusDay = isSameDay(day, focusDay)
-                  const dayDisabled = isDisabledDay(day)
-                  return (
-                    <button
-                      key={keyOf(day)}
-                      ref={(el) => {
-                        if (el) dayRefs.current.set(keyOf(day), el)
-                        else dayRefs.current.delete(keyOf(day))
-                      }}
-                      type="button"
-                      role="gridcell"
-                      aria-selected={isSelected}
-                      aria-label={day.toLocaleDateString(locale, {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                      tabIndex={isFocusDay ? 0 : -1}
-                      disabled={dayDisabled}
-                      data-outside={outside || undefined}
-                      data-selected={isSelected || undefined}
-                      onClick={() => commit(day)}
-                      className={cn(
-                        "flex h-9 items-center justify-center rounded-md text-sm tabular-nums transition-colors outline-none",
-                        "hover:bg-muted focus-visible:ring-3 focus-visible:ring-accent-soft",
-                        "disabled:pointer-events-none disabled:opacity-40",
-                        outside && "text-muted-foreground",
-                        !outside && "text-foreground",
-                        isSelected && "bg-primary text-primary-foreground hover:bg-primary"
-                      )}
-                    >
-                      {day.getDate()}
-                    </button>
-                  )
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Fresh mount per open (Popover unmounts on close) → initial view/focus
+            come from state initializers, so no re-anchor effect is needed. */}
+        <MonthCalendar
+          anchor={anchor}
+          selected={selected}
+          minDate={minDate}
+          maxDate={maxDate}
+          locale={locale}
+          weekStartsOn={weekStartsOn}
+          onSelect={commit}
+        />
       </PopoverContent>
     </Popover>
+  )
+}
+
+/* ----------------------------------------------------------- month calendar -- */
+
+type MonthCalendarProps = {
+  anchor: Date
+  selected: Date | null
+  minDate?: Date
+  maxDate?: Date
+  locale?: string
+  weekStartsOn: number
+  onSelect: (day: Date) => void
+}
+
+function MonthCalendar({
+  anchor,
+  selected,
+  minDate,
+  maxDate,
+  locale,
+  weekStartsOn,
+  onSelect,
+}: MonthCalendarProps) {
+  const [view, setView] = React.useState<Date>(makeDay(anchor.getFullYear(), anchor.getMonth(), 1))
+  const [focusDay, setFocusDay] = React.useState<Date>(anchor)
+  const focusRef = React.useRef(false)
+  const dayRefs = React.useRef<Map<string, HTMLButtonElement>>(new Map())
+
+  // After a keyboard move, focus the button for the focused day (DOM effect only).
+  React.useEffect(() => {
+    if (!focusRef.current) return
+    focusRef.current = false
+    dayRefs.current.get(keyOf(focusDay))?.focus()
+  }, [focusDay, view])
+
+  const monthLabel = React.useMemo(
+    () => view.toLocaleDateString(locale, { month: "long", year: "numeric" }),
+    [view, locale]
+  )
+  const weekdays = React.useMemo(() => {
+    const ref = makeDay(2024, 11, 1) // 2024-12-01 is a Sunday
+    return Array.from({ length: 7 }, (_, i) =>
+      addDays(ref, (weekStartsOn + i) % 7).toLocaleDateString(locale, { weekday: "short" })
+    )
+  }, [locale, weekStartsOn])
+  const grid = React.useMemo(
+    () => buildMonthGrid(view.getFullYear(), view.getMonth(), weekStartsOn),
+    [view, weekStartsOn]
+  )
+  const isDisabledDay = React.useCallback(
+    (d: Date) => (minDate && isBefore(d, startOfDay(minDate))) || (maxDate && isBefore(startOfDay(maxDate), d)),
+    [minDate, maxDate]
+  )
+
+  function moveFocus(next: Date) {
+    const clamped = clampDay(next, minDate, maxDate)
+    focusRef.current = true
+    if (clamped.getMonth() !== view.getMonth() || clamped.getFullYear() !== view.getFullYear()) {
+      setView(makeDay(clamped.getFullYear(), clamped.getMonth(), 1))
+    }
+    setFocusDay(clamped)
+  }
+
+  function onGridKeyDown(e: React.KeyboardEvent) {
+    switch (e.key) {
+      case "ArrowRight": e.preventDefault(); moveFocus(addDays(focusDay, 1)); break
+      case "ArrowLeft": e.preventDefault(); moveFocus(addDays(focusDay, -1)); break
+      case "ArrowDown": e.preventDefault(); moveFocus(addDays(focusDay, 7)); break
+      case "ArrowUp": e.preventDefault(); moveFocus(addDays(focusDay, -7)); break
+      case "Home": e.preventDefault(); moveFocus(addDays(focusDay, -((focusDay.getDay() - weekStartsOn + 7) % 7))); break
+      case "End": e.preventDefault(); moveFocus(addDays(focusDay, 6 - ((focusDay.getDay() - weekStartsOn + 7) % 7))); break
+      case "PageUp": e.preventDefault(); moveFocus(addMonths(focusDay, -1)); break
+      case "PageDown": e.preventDefault(); moveFocus(addMonths(focusDay, 1)); break
+      case "Enter":
+      case " ":
+        e.preventDefault()
+        if (!isDisabledDay(focusDay)) onSelect(focusDay)
+        break
+    }
+  }
+
+  return (
+    <div data-slot="date-picker" className="flex w-64 flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <Button type="button" variant="ghost" size="icon-sm" aria-label="Previous month" onClick={() => setView(addMonths(view, -1))}>
+          <ChevronLeft aria-hidden className="rtl:rotate-180" />
+        </Button>
+        <span data-slot="date-picker-month" className="text-sm font-semibold text-foreground">
+          {monthLabel}
+        </span>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label="Next month" onClick={() => setView(addMonths(view, 1))}>
+          <ChevronRight aria-hidden className="rtl:rotate-180" />
+        </Button>
+      </div>
+
+      <div role="grid" aria-label={monthLabel} data-slot="date-picker-grid" className="flex flex-col gap-1" onKeyDown={onGridKeyDown}>
+        <div role="row" className="grid grid-cols-7">
+          {weekdays.map((w, i) => (
+            <span key={i} role="columnheader" aria-label={w} className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground">
+              {w.slice(0, 2)}
+            </span>
+          ))}
+        </div>
+
+        {Array.from({ length: 6 }).map((_, week) => (
+          <div key={week} role="row" className="grid grid-cols-7 gap-1">
+            {grid.slice(week * 7, week * 7 + 7).map((day) => {
+              const outside = day.getMonth() !== view.getMonth()
+              const isSelected = isSameDay(day, selected)
+              const isFocusDay = isSameDay(day, focusDay)
+              const dayDisabled = isDisabledDay(day)
+              return (
+                <button
+                  key={keyOf(day)}
+                  ref={(el) => {
+                    if (el) dayRefs.current.set(keyOf(day), el)
+                    else dayRefs.current.delete(keyOf(day))
+                  }}
+                  type="button"
+                  role="gridcell"
+                  aria-selected={isSelected}
+                  aria-label={day.toLocaleDateString(locale, {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                  tabIndex={isFocusDay ? 0 : -1}
+                  disabled={dayDisabled}
+                  data-outside={outside || undefined}
+                  data-selected={isSelected || undefined}
+                  onClick={() => onSelect(day)}
+                  className={cn(
+                    "flex h-9 items-center justify-center rounded-md text-sm tabular-nums transition-colors outline-none",
+                    "hover:bg-muted focus-visible:ring-3 focus-visible:ring-accent-soft",
+                    "disabled:pointer-events-none disabled:opacity-40",
+                    outside ? "text-muted-foreground" : "text-foreground",
+                    isSelected && "bg-primary text-primary-foreground hover:bg-primary"
+                  )}
+                >
+                  {day.getDate()}
+                </button>
+              )
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

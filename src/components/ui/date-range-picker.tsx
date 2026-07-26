@@ -145,28 +145,8 @@ function DateRangePicker({
   const selected = isControlled ? normalize(value) : internal
 
   const [open, setOpen] = React.useState(false)
-  // The first endpoint of an in-progress selection (null = start a new range).
-  const [anchorStart, setAnchorStart] = React.useState<Date | null>(null)
 
   const anchor = selected?.start ?? (defaultMonth ? startOfDay(defaultMonth) : startOfDay(new Date()))
-  const [view, setView] = React.useState<Date>(makeDay(anchor.getFullYear(), anchor.getMonth(), 1))
-  const [focusDay, setFocusDay] = React.useState<Date>(anchor)
-  const focusRef = React.useRef(false)
-  const dayRefs = React.useRef<Map<string, HTMLButtonElement>>(new Map())
-
-  React.useEffect(() => {
-    if (!open) return
-    const a = selected?.start ?? (defaultMonth ? startOfDay(defaultMonth) : startOfDay(new Date()))
-    setView(makeDay(a.getFullYear(), a.getMonth(), 1))
-    setFocusDay(a)
-    setAnchorStart(null)
-  }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  React.useEffect(() => {
-    if (!open || !focusRef.current) return
-    focusRef.current = false
-    dayRefs.current.get(keyOf(focusDay))?.focus()
-  }, [focusDay, view, open])
 
   const fmt = React.useMemo(
     () =>
@@ -174,6 +154,89 @@ function DateRangePicker({
       ((d: Date) => d.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" })),
     [formatDate, locale]
   )
+
+  function commit(range: DateRange) {
+    if (!isControlled) setInternal(range)
+    onValueChange?.(range)
+    setOpen(false)
+  }
+
+  const triggerText = selected ? `${fmt(selected.start)} – ${fmt(selected.end)}` : placeholder
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        render={
+          <button
+            type="button"
+            disabled={disabled}
+            aria-label={label}
+            aria-invalid={invalid || undefined}
+            className={cn(
+              "flex w-72 items-center gap-2 rounded-lg border border-border-strong bg-background px-3 text-start text-foreground transition-colors",
+              "hover:border-accent-strong focus-visible:border-accent-strong focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent-soft",
+              "disabled:pointer-events-none disabled:opacity-50",
+              invalid && "border-destructive focus-visible:ring-destructive/30",
+              shellSize[size]
+            )}
+          />
+        }
+      >
+        <Calendar aria-hidden className="shrink-0 text-muted-foreground" />
+        <span className={cn("flex-1 truncate", !selected && "text-muted-foreground")}>{triggerText}</span>
+      </PopoverTrigger>
+
+      <PopoverContent side="bottom" align="start">
+        {/* Fresh mount per open (Popover unmounts on close) → view/focus/anchor
+            state come from initializers, so no re-anchor effect is needed. */}
+        <RangeCalendar
+          anchor={anchor}
+          selected={selected}
+          minDate={minDate}
+          maxDate={maxDate}
+          locale={locale}
+          weekStartsOn={weekStartsOn}
+          onComplete={commit}
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+/* ----------------------------------------------------------- range calendar -- */
+
+type RangeCalendarProps = {
+  anchor: Date
+  selected: DateRange | null
+  minDate?: Date
+  maxDate?: Date
+  locale?: string
+  weekStartsOn: number
+  onComplete: (range: DateRange) => void
+}
+
+function RangeCalendar({
+  anchor,
+  selected,
+  minDate,
+  maxDate,
+  locale,
+  weekStartsOn,
+  onComplete,
+}: RangeCalendarProps) {
+  const [view, setView] = React.useState<Date>(makeDay(anchor.getFullYear(), anchor.getMonth(), 1))
+  const [focusDay, setFocusDay] = React.useState<Date>(anchor)
+  // The first endpoint of an in-progress selection (null = start a new range).
+  const [anchorStart, setAnchorStart] = React.useState<Date | null>(null)
+  const focusRef = React.useRef(false)
+  const dayRefs = React.useRef<Map<string, HTMLButtonElement>>(new Map())
+
+  React.useEffect(() => {
+    if (!focusRef.current) return
+    focusRef.current = false
+    dayRefs.current.get(keyOf(focusDay))?.focus()
+  }, [focusDay, view])
+
   const monthLabel = React.useMemo(
     () => view.toLocaleDateString(locale, { month: "long", year: "numeric" }),
     [view, locale]
@@ -188,26 +251,23 @@ function DateRangePicker({
     () => buildMonthGrid(view.getFullYear(), view.getMonth(), weekStartsOn),
     [view, weekStartsOn]
   )
-
   const isDisabledDay = React.useCallback(
     (d: Date) => (minDate && isBefore(d, startOfDay(minDate))) || (maxDate && isBefore(startOfDay(maxDate), d)),
     [minDate, maxDate]
   )
 
+  // While a start endpoint is pending, don't paint the previous committed range.
+  const effectiveSelected = anchorStart ? null : selected
+
   function pick(day: Date) {
     const d = startOfDay(day)
     if (!anchorStart) {
-      // Begin a new range.
       setAnchorStart(d)
-      if (!isControlled) setInternal(null)
       return
     }
-    // Complete the range (swap if picked out of order).
     const range = isBefore(d, anchorStart) ? { start: d, end: anchorStart } : { start: anchorStart, end: d }
-    if (!isControlled) setInternal(range)
-    onValueChange?.(range)
     setAnchorStart(null)
-    setOpen(false)
+    onComplete(range)
   }
 
   function moveFocus(next: Date) {
@@ -237,100 +297,73 @@ function DateRangePicker({
     }
   }
 
-  const triggerText = selected ? `${fmt(selected.start)} – ${fmt(selected.end)}` : placeholder
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={
-          <button
-            type="button"
-            disabled={disabled}
-            aria-label={label}
-            aria-invalid={invalid || undefined}
-            className={cn(
-              "flex w-72 items-center gap-2 rounded-lg border border-border-strong bg-background px-3 text-start text-foreground transition-colors",
-              "hover:border-accent-strong focus-visible:border-accent-strong focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent-soft",
-              "disabled:pointer-events-none disabled:opacity-50",
-              invalid && "border-destructive focus-visible:ring-destructive/30",
-              shellSize[size]
-            )}
-          />
-        }
-      >
-        <Calendar aria-hidden className="shrink-0 text-muted-foreground" />
-        <span className={cn("flex-1 truncate", !selected && "text-muted-foreground")}>{triggerText}</span>
-      </PopoverTrigger>
+    <div data-slot="date-range-picker" className="flex w-64 flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <Button type="button" variant="ghost" size="icon-sm" aria-label="Previous month" onClick={() => setView(addMonths(view, -1))}>
+          <ChevronLeft aria-hidden className="rtl:rotate-180" />
+        </Button>
+        <span data-slot="date-range-picker-month" className="text-sm font-semibold text-foreground">
+          {monthLabel}
+        </span>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label="Next month" onClick={() => setView(addMonths(view, 1))}>
+          <ChevronRight aria-hidden className="rtl:rotate-180" />
+        </Button>
+      </div>
 
-      <PopoverContent side="bottom" align="start">
-        <div data-slot="date-range-picker" className="flex w-64 flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <Button type="button" variant="ghost" size="icon-sm" aria-label="Previous month" onClick={() => setView(addMonths(view, -1))}>
-              <ChevronLeft aria-hidden className="rtl:rotate-180" />
-            </Button>
-            <span data-slot="date-range-picker-month" className="text-sm font-semibold text-foreground">
-              {monthLabel}
+      <div role="grid" aria-label={monthLabel} data-slot="date-range-picker-grid" className="flex flex-col gap-1" onKeyDown={onGridKeyDown}>
+        <div role="row" className="grid grid-cols-7">
+          {weekdays.map((w, i) => (
+            <span key={i} role="columnheader" aria-label={w} className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground">
+              {w.slice(0, 2)}
             </span>
-            <Button type="button" variant="ghost" size="icon-sm" aria-label="Next month" onClick={() => setView(addMonths(view, 1))}>
-              <ChevronRight aria-hidden className="rtl:rotate-180" />
-            </Button>
-          </div>
-
-          <div role="grid" aria-label={monthLabel} data-slot="date-range-picker-grid" className="flex flex-col gap-1" onKeyDown={onGridKeyDown}>
-            <div role="row" className="grid grid-cols-7">
-              {weekdays.map((w, i) => (
-                <span key={i} role="columnheader" aria-label={w} className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground">
-                  {w.slice(0, 2)}
-                </span>
-              ))}
-            </div>
-
-            {Array.from({ length: 6 }).map((_, week) => (
-              <div key={week} role="row" className="grid grid-cols-7 gap-1">
-                {grid.slice(week * 7, week * 7 + 7).map((day) => {
-                  const outside = day.getMonth() !== view.getMonth()
-                  const isStart = isSameDay(day, selected?.start) || isSameDay(day, anchorStart)
-                  const isEnd = isSameDay(day, selected?.end)
-                  const isEndpoint = isStart || isEnd
-                  const within = selected ? inRange(day, selected.start, selected.end) : false
-                  const isFocusDay = isSameDay(day, focusDay)
-                  const dayDisabled = isDisabledDay(day)
-                  return (
-                    <button
-                      key={keyOf(day)}
-                      ref={(el) => {
-                        if (el) dayRefs.current.set(keyOf(day), el)
-                        else dayRefs.current.delete(keyOf(day))
-                      }}
-                      type="button"
-                      role="gridcell"
-                      aria-selected={isEndpoint || within}
-                      aria-label={day.toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-                      tabIndex={isFocusDay ? 0 : -1}
-                      disabled={dayDisabled}
-                      data-outside={outside || undefined}
-                      data-endpoint={isEndpoint || undefined}
-                      data-in-range={within || undefined}
-                      onClick={() => pick(day)}
-                      className={cn(
-                        "flex h-9 items-center justify-center rounded-md text-sm tabular-nums transition-colors outline-none",
-                        "hover:bg-muted focus-visible:ring-3 focus-visible:ring-accent-soft",
-                        "disabled:pointer-events-none disabled:opacity-40",
-                        outside ? "text-muted-foreground" : "text-foreground",
-                        within && "bg-accent-soft",
-                        isEndpoint && "bg-primary text-primary-foreground hover:bg-primary"
-                      )}
-                    >
-                      {day.getDate()}
-                    </button>
-                  )
-                })}
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
-      </PopoverContent>
-    </Popover>
+
+        {Array.from({ length: 6 }).map((_, week) => (
+          <div key={week} role="row" className="grid grid-cols-7 gap-1">
+            {grid.slice(week * 7, week * 7 + 7).map((day) => {
+              const outside = day.getMonth() !== view.getMonth()
+              const isStart = isSameDay(day, effectiveSelected?.start) || isSameDay(day, anchorStart)
+              const isEnd = isSameDay(day, effectiveSelected?.end)
+              const isEndpoint = isStart || isEnd
+              const within = effectiveSelected ? inRange(day, effectiveSelected.start, effectiveSelected.end) : false
+              const isFocusDay = isSameDay(day, focusDay)
+              const dayDisabled = isDisabledDay(day)
+              return (
+                <button
+                  key={keyOf(day)}
+                  ref={(el) => {
+                    if (el) dayRefs.current.set(keyOf(day), el)
+                    else dayRefs.current.delete(keyOf(day))
+                  }}
+                  type="button"
+                  role="gridcell"
+                  aria-selected={isEndpoint || within}
+                  aria-label={day.toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+                  tabIndex={isFocusDay ? 0 : -1}
+                  disabled={dayDisabled}
+                  data-outside={outside || undefined}
+                  data-endpoint={isEndpoint || undefined}
+                  data-in-range={within || undefined}
+                  onClick={() => pick(day)}
+                  className={cn(
+                    "flex h-9 items-center justify-center rounded-md text-sm tabular-nums transition-colors outline-none",
+                    "hover:bg-muted focus-visible:ring-3 focus-visible:ring-accent-soft",
+                    "disabled:pointer-events-none disabled:opacity-40",
+                    outside ? "text-muted-foreground" : "text-foreground",
+                    within && "bg-accent-soft",
+                    isEndpoint && "bg-primary text-primary-foreground hover:bg-primary"
+                  )}
+                >
+                  {day.getDate()}
+                </button>
+              )
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

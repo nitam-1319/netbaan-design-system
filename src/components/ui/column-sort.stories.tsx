@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import * as React from "react"
 import { expect, userEvent, waitFor, within } from "storybook/test"
 
 import {
@@ -10,7 +9,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
@@ -86,11 +84,15 @@ function SortableTable() {
   )
 }
 
+const STUB_ARGS = { label: "Name", direction: false as const, onSort: () => {} }
+
 export const Default: Story = {
+  args: STUB_ARGS,
   render: () => <SortableTable />,
 }
 
 export const Ascending: Story = {
+  args: STUB_ARGS,
   render: () => (
     <Table>
       <caption className="sr-only">Sorted ascending demo</caption>
@@ -111,6 +113,7 @@ export const Ascending: Story = {
 }
 
 export const Descending: Story = {
+  args: STUB_ARGS,
   render: () => (
     <Table>
       <caption className="sr-only">Sorted descending demo</caption>
@@ -131,6 +134,7 @@ export const Descending: Story = {
 }
 
 export const Interactive: Story = {
+  args: STUB_ARGS,
   render: () => <SortableTable />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
