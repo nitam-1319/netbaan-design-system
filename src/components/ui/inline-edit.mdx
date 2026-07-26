@@ -1,0 +1,93 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/InlineEdit/Guidelines" />
+
+# Inline Edit
+
+A value that reads as text until you edit it in place: click the value (or its
+pencil affordance) to swap to a **Text Field** pre-filled with the current value,
+then commit with Enter / the check, or discard with Escape / the ✕. It composes
+the AEGIS **Text Field** and **Button**.
+
+## Overview
+
+Inline editing keeps a page calm — settings and record fields look like content,
+not forms, until the user chooses to change one. Inline Edit standardises that
+click-to-edit interaction with consistent commit/cancel semantics.
+
+## Usage
+
+- **Do** use it for single-line values a user occasionally edits in context
+  (names, titles, labels).
+- **Do** give a clear `label` — it names both the field and the edit trigger.
+- **Do** persist on `onValueChange` (fired only on commit).
+- **Don't** use it for a standard form field — that is **Text Field**. Don't use
+  it for long/multiline content.
+
+## Anatomy
+
+Display mode: a trigger button (`data-slot="inline-edit"`, `data-empty`) with the
+value (`inline-edit-value`) and a hover/focus pencil. Edit mode
+(`data-editing`): a **Text Field** with a primary **Save** (check) and a ghost
+**Cancel** (✕).
+
+## Variants
+
+Presentation is fixed; `size` (sm · md · lg) scales the value text, field, and
+buttons together.
+
+## States
+
+- **Display** — value as text; empty shows the placeholder in muted italic
+  (`data-empty`).
+- **Editing** — the field is focused (`autoFocus`) with save/cancel.
+- **Disabled** — the trigger is inert.
+
+## Behavior
+
+- **Value**: controlled (`value` + `onValueChange`) or uncontrolled
+  (`defaultValue`). **Edit state**: controlled (`editing` + `onEditingChange`) or
+  internal.
+- Commit (Enter or check) fires `onValueChange` with the draft; cancel (Escape or
+  ✕) reverts the draft to the current value.
+- Entering edit seeds the draft from the current value each time.
+
+## Accessibility
+
+- The display trigger is a button named "Edit {label}"; the editor field is named
+  by `label` via `aria-label` (no stray visible label).
+- Save and cancel are labelled icon buttons.
+- Keyboard: Enter commits, Escape cancels; focus lands in the field on entry.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Text Field tokens | Editor field treatment + focus ring. |
+| Button tokens (`primary`/`ghost`) | Save / cancel. |
+| `hover:bg-muted` / `ring-accent-soft` | Trigger hover + focus ring. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Value, placeholder, pencil. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Controlled value. |
+| `defaultValue` | `string` | `""` | Initial value (uncontrolled). |
+| `onValueChange` | `(value: string) => void` | — | Fired on commit. |
+| `label` | `string` | — | Field + trigger accessible name (required). |
+| `placeholder` | `string` | `"Empty"` | Shown when the value is empty. |
+| `editing` | `boolean` | — | Controlled edit state. |
+| `onEditingChange` | `(editing: boolean) => void` | — | Edit-state callback. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Scale. |
+| `disabled` | `boolean` | `false` | Disable editing. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **CancelReverts**, **Empty**, **Sizes**, and **Disabled** stories. The
+control works in both themes and directions via the global toolbar; in RTL the
+value, pencil, and save/cancel buttons flow from the inline-start edge.
