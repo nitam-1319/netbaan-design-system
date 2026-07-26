@@ -1,0 +1,137 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Dropzone/Guidelines" />
+
+# Dropzone
+
+A file intake region. Users can **drag & drop** files onto it or **click /
+keyboard-activate** it to open the native file picker. The whole region is a
+`<label>` bound to a visually-hidden, focus-visible file `<input>`, so both
+paths work natively and assistive technology gets a real, labelled form control.
+Colors, borders, and the focus ring come from AEGIS tokens only, and the public
+API is **closed** — no `className` or `style`.
+
+## Overview
+
+Use a Dropzone as the entry point for uploads — attaching files to a form,
+importing a dataset, replacing an avatar. It reports the chosen files through
+`onFilesSelected` and deliberately does **not** hold them itself: pair it with a
+File List, Upload Progress, or File Card to show and manage what was selected.
+
+## Usage
+
+- **Do** give the region a clear prompt (`title`) and a `hint` describing the
+  accepted types and any size limit.
+- **Do** set `accept` and `multiple` to match what the destination can handle,
+  and validate the returned `File[]` before uploading.
+- **Do** set `invalid` when a dropped file is rejected, and explain why in the
+  `title` / `description` (never rely on the red border alone).
+- **Don't** use a Dropzone when a single, always-visible "Choose file" button is
+  enough — reach for a Button-triggered input instead.
+- **Don't** place interactive controls (buttons, links, a file list) inside the
+  region; the full-area label captures those clicks. Render them beside or below
+  the Dropzone.
+
+## Anatomy
+
+1. **Dropzone** — the dashed-border region (`--surface-2` fill, `--border-strong`
+   dashed frame, radius `xl`) that owns the drag-and-drop handlers.
+2. **dropzone-input** — the visually-hidden but focusable native file input; the
+   source of click-to-browse, keyboard activation, and form posting.
+3. **dropzone-label** — the full-region `<label>` that makes the whole area a
+   click / drop target for the input.
+4. **dropzone-content** — the centred stack: an optional leading `icon`, the
+   `title`, the `description`, and an optional `hint`.
+
+## Variants
+
+There is one visual treatment; the only variant axis is **size** (`sm`, `md`,
+`lg`), which scales padding, minimum height, gap, and the icon. Compositional
+flexibility comes from the `title` / `description` / `hint` / `icon` props.
+
+## States
+
+- **Default** — dashed `--border-strong` frame on `--surface-2`.
+- **Hover** — border and icon shift to `--accent-strong`, fill to `--muted`.
+- **Focus** — when the hidden input is keyboard-focused, the region shows the
+  AEGIS 3px `accent-soft` ring plus an `accent-strong` border.
+- **Dragging** (`data-dragging`) — accent border, `accent-soft` fill, and
+  foreground text while a drag is over the region.
+- **Invalid** (`invalid`) — destructive border, icon, and text.
+- **Disabled** (`disabled`) — dimmed and non-interactive; the input is disabled.
+
+## Behavior
+
+- **Uncontrolled by design.** The Dropzone holds no file state; every drop or
+  picker selection calls `onFilesSelected(files: File[])`.
+- **Drag lifecycle.** `dragover` sets the dragging state (unless disabled),
+  `dragleave` clears it (ignoring leaves that bubble from children still inside
+  the region), and `drop` reports `dataTransfer.files` and clears dragging.
+- **Re-selection.** After a picker selection the input value is reset, so
+  choosing the same file again still fires a change.
+- **Keyboard.** Tab moves focus to the region (the hidden input); Enter or Space
+  opens the native file picker; Escape / selection is handled by the OS dialog.
+
+## Accessibility
+
+- The region is a real `<label>` + file `<input>` pair, so screen readers
+  announce a labelled file-upload control and keyboard users can operate it
+  without a mouse (WCAG 2.1.1, 4.1.2).
+- The leading icon and the border/fill color changes are decorative — meaning is
+  always carried by the `title` / `description` text, so state is never conveyed
+  by color alone (WCAG 1.4.1). `invalid` flips `aria-invalid` on the input.
+- The `hint` is wired to the input via `aria-describedby` so accepted types and
+  limits are announced with the control.
+- Keyboard map: **Tab** focus in/out · **Enter** / **Space** open the file
+  picker.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--surface-2` | Region fill |
+| `--border-strong` | Dashed frame (resting) |
+| `--accent-strong` | Hover / focus / drag border + icon |
+| `--accent-soft` | 3px focus ring + drag fill |
+| `--muted` | Hover fill |
+| `--foreground` | Title (+ drag text) |
+| `--muted-foreground` | Description + resting icon |
+| `--text-faint` | Hint |
+| `--destructive` | Invalid border / icon / text |
+| `--radius` (xl) | Corner radius |
+
+## API
+
+`Dropzone` is a closed-API component: it accepts native `div` props **except**
+`className`, `style`, `onDrop`, and `children`, plus the props below. Every part
+carries a `data-slot` for targeting in tests.
+
+| Prop | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Region scale. |
+| `accept` | `string` | — | `accept` list forwarded to the input. |
+| `multiple` | `boolean` | `false` | Allow selecting more than one file. |
+| `disabled` | `boolean` | `false` | Dim + block interaction. |
+| `invalid` | `boolean` | `false` | Destructive treatment + `aria-invalid`. |
+| `required` | `boolean` | `false` | Mark the input required for form validation. |
+| `name` | `string` | — | `name` for the native input (form posting). |
+| `title` | `ReactNode` | `"Drag & drop files here"` | Primary prompt. |
+| `description` | `ReactNode` | `"or click to browse"` | Secondary line. |
+| `hint` | `ReactNode` | — | Small `aria-describedby` hint (types / limits). |
+| `icon` | `ReactNode \| false` | upload-cloud | Leading glyph, or `false` to omit. |
+| `onFilesSelected` | `(files: File[]) => void` | — | Fired on drop / picker selection. |
+
+## Examples
+
+The **Default** and **Sizes** stories show the standard region at each scale;
+**Single File** constrains `accept` and turns off `multiple`; **Invalid** and
+**Disabled** show those states; **Select Files** drives the hidden input in a
+play test to demonstrate `onFilesSelected`.
+
+**Dark** — the system is dark-first; every token above has a light-theme
+counterpart, so the Dropzone renders correctly under both `.dark` and light
+roots with no per-instance changes.
+
+**RTL / Persian** — the layout is a centred `flex-col` using logical spacing, so
+it mirrors automatically under `dir="rtl"` (see the **RTL (Persian)** story). The
+upload glyph is non-directional and is intentionally not mirrored.
