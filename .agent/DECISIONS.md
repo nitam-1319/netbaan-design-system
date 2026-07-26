@@ -557,3 +557,27 @@ Impact: 15 component fixes + the new gate. No public API changes except app-shel
 API (removing an unintended `className` hatch) — consumers passing `className` there now get a type error
 (correct per the closed-API decision 2026-07-19h). All gates green: typecheck, lint, conformance 115/115,
 token integrity, build, build-storybook; currency parse + sparkline browser/logic-verified.
+
+## 2026-07-25n — Recurring build: don't stop at unattended checkpoints; batch heavy gates to end-of-run; token-budget-aware loop
+Status: accepted
+Decision: Two changes to raise components-built-per-run, without touching the (secret-bearing) trigger
+prompt — the trigger delegates all build behavior to `.agent/`, so these docs are the real lever.
+(1) `prompts/recurring-build.md` previously told the loop to "STOP and request human review at every
+10th component / category boundary." These runs are UNATTENDED, so that halted them early (well before
+the token budget) — a bigger cap than gate overhead. Rewrote the loop to keep building continuously
+across those checkpoints (record a one-line note instead), and to stop only when: the queue is empty,
+the session's token budget is nearly spent (finish current component → end-of-run), or a genuine
+blocker (same fix ×3 / unfixable hard gate). Made budget-aware stopping explicitly "correct, not a
+failure — the next run continues."
+(2) `guides/BUILD_GUIDE.md` ran the FULL gate suite (incl. `npm run build` + `npm run build-storybook`,
+the slow ones) after EVERY component. Split into a fast per-component inner loop (tsc +
+verify-conformance <name> + verify-tokens, committed/pushed per component for crash-resilience) and the
+expensive whole-project gates (lint + build + build-storybook) run ONCE at end-of-run. Trade-off: an
+intermediate push is only fast-gated, so a rare MDX/story error surfaces at end-of-run (or the next
+run's end gate) rather than per component — acceptable on a build branch, and the run never ends red.
+Reason: yesterday's low count (15) was partly the 2×/day Saturday schedule, but per-run output was also
+capped by the unattended-checkpoint stop and the repeated slow gates. Removing both lets each session
+convert its full token budget into components.
+Impact: applies to every future scheduled run (they read `.agent/` fresh each run). Pairs with the
+schedule change (more, shorter-interval runs). Machine gates unchanged in substance — same checks, just
+re-timed (fast ones per component, heavy ones once per run).
