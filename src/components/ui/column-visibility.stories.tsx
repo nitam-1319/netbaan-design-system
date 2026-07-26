@@ -27,6 +27,7 @@ const COLUMNS = [
 ]
 
 export const Default: Story = {
+  args: { columns: COLUMNS },
   render: () => {
     const [value, setValue] = React.useState<VisibilityMap>({ updated: false })
     return <ColumnVisibility columns={COLUMNS} value={value} onValueChange={setValue} />
@@ -58,5 +59,6 @@ export const Default: Story = {
 }
 
 export const Uncontrolled: Story = {
+  args: { columns: COLUMNS },
   render: () => <ColumnVisibility columns={COLUMNS} defaultValue={{ owner: false }} />,
 }

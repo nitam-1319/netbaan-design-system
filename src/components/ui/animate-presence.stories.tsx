@@ -20,6 +20,7 @@ const meta = {
     duration: { control: { type: "number" } },
     appear: { control: "boolean" },
   },
+  args: { present: true, children: <div /> },
 } satisfies Meta<typeof AnimatePresence>
 
 export default meta

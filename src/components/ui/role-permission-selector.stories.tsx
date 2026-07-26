@@ -55,7 +55,7 @@ const GROUPS: PermissionGroup[] = [
 ]
 
 export const Default: Story = {
-  args: { size: "md" },
+  args: { size: "md", groups: GROUPS },
   render: (args) => {
     const [value, setValue] = React.useState<string[]>(["assets.read"])
     return <RolePermissionSelector {...args} groups={GROUPS} value={value} onValueChange={setValue} />
@@ -81,6 +81,7 @@ export const Default: Story = {
 }
 
 export const Uncontrolled: Story = {
+  args: { groups: GROUPS },
   render: () => (
     <RolePermissionSelector
       groups={GROUPS}

@@ -20,6 +20,7 @@ const meta = {
     sticky: { control: "boolean" },
     size: { control: "inline-radio", options: ["sm", "md"] },
   },
+  args: { count: 0 },
 } satisfies Meta<typeof BulkActionsBar>
 
 export default meta

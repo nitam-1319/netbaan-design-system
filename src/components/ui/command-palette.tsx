@@ -74,7 +74,9 @@ function CommandPalette({
   const isOpen = isControlled ? open : internalOpen
 
   const openRef = React.useRef(isOpen)
-  openRef.current = isOpen
+  React.useEffect(() => {
+    openRef.current = isOpen
+  }, [isOpen])
 
   const setOpen = React.useCallback(
     (next: boolean) => {

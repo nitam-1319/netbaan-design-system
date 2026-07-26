@@ -72,6 +72,7 @@ export const Prefilled: Story = {
 }
 
 export const Sizes: Story = {
+  args: { items: FRUITS },
   render: () => (
     <div className="flex flex-col gap-4">
       {(["sm", "md", "lg"] as const).map((size) => (

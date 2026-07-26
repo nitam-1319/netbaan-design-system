@@ -47,28 +47,33 @@ function AnimatePresence({
   const [state, setState] = React.useState<PresenceState>(
     present && !appear ? "open" : "closed"
   )
-  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
+  // All state transitions run inside animation-frame / timeout callbacks (never
+  // synchronously in the effect body) so a prop change never cascades renders.
   React.useEffect(() => {
-    if (timer.current) clearTimeout(timer.current)
-
     if (present) {
-      setMounted(true)
-      // Start from "closed" on (re)mount, then flip to "open" on the next frame
-      // so the enter transition actually runs.
-      const raf =
-        typeof requestAnimationFrame !== "undefined"
-          ? requestAnimationFrame(() => setState("open"))
-          : (setState("open"), 0)
+      // Ensure mounted (in the "closed" start state), then flip to "open" on the
+      // next frame so the enter transition actually runs.
+      let openFrame = 0
+      const mountFrame = requestAnimationFrame(() => {
+        setMounted(true)
+        openFrame = requestAnimationFrame(() => setState("open"))
+      })
       return () => {
-        if (typeof cancelAnimationFrame !== "undefined") cancelAnimationFrame(raf)
+        cancelAnimationFrame(mountFrame)
+        cancelAnimationFrame(openFrame)
       }
     }
 
-    setState("closed")
-    timer.current = setTimeout(() => setMounted(false), duration)
+    // Leave: mark closed (plays the exit), then unmount after `duration`.
+    let unmountTimer: ReturnType<typeof setTimeout> | undefined
+    const closeFrame = requestAnimationFrame(() => {
+      setState("closed")
+      unmountTimer = setTimeout(() => setMounted(false), duration)
+    })
     return () => {
-      if (timer.current) clearTimeout(timer.current)
+      cancelAnimationFrame(closeFrame)
+      if (unmountTimer) clearTimeout(unmountTimer)
     }
   }, [present, duration])
 

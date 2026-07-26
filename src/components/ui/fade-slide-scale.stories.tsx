@@ -32,6 +32,7 @@ const meta = {
     open: { control: "boolean" },
     appear: { control: "boolean" },
   },
+  args: { open: true, children: <div /> },
 } satisfies Meta<typeof Transition>
 
 export default meta

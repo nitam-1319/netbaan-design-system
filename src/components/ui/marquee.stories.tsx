@@ -21,6 +21,7 @@ const meta = {
     gap: { control: "inline-radio", options: ["none", "sm", "md", "lg"] },
     repeat: { control: { type: "number" } },
   },
+  args: { children: null },
 } satisfies Meta<typeof Marquee>
 
 export default meta
