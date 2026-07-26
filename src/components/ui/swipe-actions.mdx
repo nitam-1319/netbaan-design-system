@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SwipeActions/Guidelines" />
+
+# Swipe Actions
+
+Wraps a list row so a horizontal swipe reveals trailing actions (archive, delete,
+…) behind it — the familiar mobile row gesture. Built on pointer events with
+snap-open / snap-closed, it composes cleanly inside a **List**.
+
+## Overview
+
+Swipe-to-reveal keeps rows clean while putting actions a gesture away. This
+component standardises the interaction and the revealed action buttons.
+
+## Usage
+
+- **Do** wrap **ListItem** rows and pass 1–3 trailing `actions`.
+- **Do** mark irreversible actions `destructive`.
+- **Do** provide an equivalent action reachable by keyboard/AT elsewhere (swipe is
+  pointer-only).
+- **Don't** hide the only path to a critical action behind a swipe.
+
+## Anatomy
+
+A clipping wrapper (`data-slot="swipe-actions"`, `data-open`) with a trailing
+action bank (`swipe-actions-actions`) of buttons (`swipe-action`) behind the
+swipeable content (`swipe-actions-content`).
+
+## Variants
+
+No visual variants; each action can be `destructive`. Action width is tunable.
+
+## States
+
+- **Closed** — content covers the actions.
+- **Dragging** — content follows the pointer (clamped to the action bank width).
+- **Open** — snapped open past halfway (`data-open`); actions fully revealed.
+
+## Behavior
+
+- Pointer drag translates the content left; on release it snaps open or closed at
+  the halfway point.
+- Activating an action fires its `onClick` and closes the row.
+- Actions remain in the DOM (operable/testable) even when hidden.
+
+## Accessibility
+
+- Actions are real `<button>`s with accessible labels and a focus ring — but the
+  reveal gesture is pointer-only, so provide a keyboard-reachable equivalent
+  (e.g. a row menu) for the same actions.
+- Destructive actions are labelled by text, not colour alone (WCAG 1.4.1).
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-surface-3` / `hover:bg-border` | Default action. |
+| `bg-destructive` / `text-white` | Destructive action. |
+| `bg-card` | Row surface. |
+| `ring-accent-soft` | Action focus ring. |
+
+No colour is hard-coded; every value comes from an AEGIS token. The swipe offset
+is an internal transform, not a public `style`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Row content (required). |
+| `actions` | `SwipeAction[]` | — | Trailing actions (required). |
+| `actionWidth` | `number` | `76` | Width per action button (px). |
+| `disabled` | `boolean` | `false` | Disable the gesture. |
+
+`SwipeAction` is `{ label, icon?, onClick, destructive? }`. The API is closed:
+`className` and `style` are not accepted.
+
+## Examples
+
+See the **SingleAction** and **Rows** stories. Swipe a row left to reveal its
+actions. Works in both themes and directions via the global toolbar; the action
+bank sits on the trailing (inline-end) edge, which mirrors in RTL.
