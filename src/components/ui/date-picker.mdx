@@ -1,0 +1,95 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DatePicker/Guidelines" />
+
+# Date Picker
+
+A single-date field: an AEGIS Input-shell trigger (leading calendar glyph and the
+formatted value) that opens a `Popover` holding a self-contained month calendar.
+
+## Overview
+
+Base UI ships no calendar primitive, so the month grid is built from scratch — a
+real `role="grid"` of day buttons with month navigation and arrow-key roving focus
+— the same "own the keyboard model" approach `Rating` and `Tree View` take. The
+trigger wears the shared AEGIS Input shell so date fields line up with Text Field,
+Number Input, Time Picker, and the rest. You own the value; the picker emits a
+`Date` at local midnight and closes on selection.
+
+## Usage
+
+- **Do** keep the emitted `Date` in your state and format it however your app
+  needs (the trigger already shows a readable value).
+- **Do** bound the range with `minDate` / `maxDate` when only some days are valid.
+- **Do** set `defaultMonth` to control which month opens when there is no value.
+- **Don't** use it for time-of-day — that is `Time Picker`. For a start/end range,
+  use `Date Range Picker`.
+
+## Anatomy
+
+A `Popover` trigger (native `button` wearing the Input shell) → a
+`data-slot="date-picker"` popover: a header (previous-month `Button`, the month /
+year label, next-month `Button`), a weekday `columnheader` row, and a 6×7
+`role="grid"` of day `gridcell` buttons.
+
+## Behavior
+
+- Controlled via `value` + `onValueChange`, or uncontrolled via `defaultValue`.
+- Clicking a day selects it and closes the popover; the selected day is filled with
+  the primary token and marked `aria-selected`.
+- Month navigation: the header arrows, or `PageUp` / `PageDown` from the grid.
+- `minDate` / `maxDate` disable out-of-range days (and clamp keyboard focus).
+
+## Keyboard
+
+Within the grid: `←` / `→` move a day, `↑` / `↓` move a week, `Home` / `End` jump to
+the start / end of the week, `PageUp` / `PageDown` change month, and `Enter` /
+`Space` select the focused day. Focus roves via a single `tabIndex=0` day so `Tab`
+enters and leaves the grid as one stop.
+
+## Accessibility
+
+- The trigger always has an accessible name (`label`, default "Choose date") and
+  reflects `invalid` via `aria-invalid`.
+- The grid is a labelled `role="grid"`; each day is a `gridcell` with a full spoken
+  date name (weekday, month, day, year) and `aria-selected`, so selection is never
+  colour-only (WCAG 1.4.1).
+- The `Popover` manages focus and dismisses on `Esc` / outside press.
+
+## Design tokens
+
+Trigger shell: `border-border-strong` + `bg-background` + `accent-strong` hover +
+3px `accent-soft` focus ring (destructive when `invalid`). Selected day:
+`bg-primary` / `text-primary-foreground`. Inherits the `Popover` surface. No
+hard-coded colour, shadow, or ring.
+
+## Scope
+
+Single-date selection ships here. A start/end **Date Range Picker** builds on this,
+and localisation of the first day of week is the `weekStartsOn` prop.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `Date \| null` | — | Controlled selected date. |
+| `defaultValue` | `Date \| null` | `null` | Uncontrolled initial date. |
+| `onValueChange` | `(date \| null) => void` | — | Fires on selection. |
+| `defaultMonth` | `Date` | today | Month shown when opened with no value. |
+| `minDate` / `maxDate` | `Date` | — | Selectable range (inclusive). |
+| `placeholder` | `string` | `"Pick a date"` | Trigger text when empty. |
+| `label` | `string` | `"Choose date"` | Trigger accessible name. |
+| `locale` | `string` | runtime | BCP-47 locale for formatting. |
+| `weekStartsOn` | `number` | `0` | First weekday (0 = Sunday). |
+| `formatDate` | `(date) => string` | medium date | Trigger value format. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Trigger size. |
+| `disabled` | `boolean` | `false` | Disable the control. |
+| `invalid` | `boolean` | `false` | Paint invalid + set `aria-invalid`. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (open, pick June 15), **MonthNavigation** (arrows change month),
+**WithMinMax** (bounded range), **Sizes**, and **Invalid**. Works in both themes and
+directions.
