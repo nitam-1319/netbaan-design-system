@@ -1,0 +1,78 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Sign-up Form/Guidelines" />
+
+# Sign-up Form
+
+A registration form assembled from AEGIS parts: **Form Provider**, a **Text
+Field** for name and email, a **Password Input** paired with the **Password
+Strength Meter**, an optional confirm-password field, a required terms checkbox,
+an optional **SSO** block, and the submit **Button**. Fields are controlled
+internally, and `onSubmit` hands you the typed values once local validation
+passes.
+
+## When to use
+
+- **Do** use it as the account-creation surface, next to the **Login Form** as
+  its sibling.
+- **Do** keep the field set minimal — name (optional), email, password. Turn off
+  the name or confirm fields when your flow doesn't need them.
+- **Don't** hide the password from the user by default; the composed Password
+  Input has a reveal toggle and the strength meter guides a good choice.
+- **Don't** pre-check the terms box.
+
+## Anatomy
+
+A **title** + **description**, an optional **SSO** block and divider, an optional
+form-level **error** (Alert), then the **name**, **email**, **password** (with a
+live **strength meter**), optional **confirm-password**, a required **terms**
+checkbox, and the **submit** button. A **footer** slot holds the sign-in prompt.
+
+## Behavior
+
+- Name, email, password, confirm, and terms are held in local state; `onSubmit`
+  receives `{ name, email, password, acceptedTerms }` once validation passes.
+- Local validation checks: name present (when shown), a plausible email, a
+  password meeting `minPasswordScore` (default 2 / "Fair"), matching confirm, and
+  accepted terms. Supply `errors` for server-side field / form messages, which
+  take precedence over local ones.
+- The strength meter appears once the user starts typing a password and shows the
+  requirements checklist.
+- `submitting` shows the button's spinner and locks the inputs.
+
+## API
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `onSubmit` | `(values) => void` | — | `{ name, email, password, acceptedTerms }`. |
+| `errors` | `{ name?, email?, password?, confirm?, form? }` | — | Server / external errors. |
+| `showNameField` | `boolean` | `true` | |
+| `showConfirmPassword` | `boolean` | `true` | |
+| `minPasswordScore` | `0–4` | `2` | Gate strength on submit. |
+| `requireTerms` / `termsLabel` | `boolean` / `node` | `true` / default | |
+| `providers` / `onProviderSelect` | `ProviderKey[]` / `(p) => void` | — | SSO. |
+| `submitting` | `boolean` | `false` | Loading + locked. |
+| `footer` | `node` | — | e.g. a sign-in prompt. |
+
+## Accessibility
+
+- Native `<form>`: `Enter` submits, the button is a real `type="submit"`.
+- Each field has a visible label; the password strength meter exposes a labelled
+  progressbar and an `aria-live` label so changes are announced.
+- Field errors set `aria-invalid` with linked messages; the terms error and the
+  form-level error are text (and `role="alert"` for the latter), never colour
+  alone.
+- Focus rings are the 3px `accent-soft` ring; contrast meets WCAG 2.2 AA in both
+  themes.
+
+## Internationalization / RTL
+
+Every label is a prop; the whole layout mirrors under `dir="rtl"` because the
+composed parts use logical properties. Note the built-in email check is a loose
+plausibility test — pair it with server-side validation for non-Latin domains.
+
+## Tokens
+
+Text uses `text-foreground` / `text-muted-foreground` / `text-text-faint`; all
+composed fields, the strength meter, checkbox, buttons, and Alert are
+token-driven; the divider uses `bg-border`. No hard-coded colour.
