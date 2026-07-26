@@ -1,0 +1,86 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/GanttChart/Guidelines" />
+
+# Gantt Chart
+
+A deterministic project timeline: one row per task, each drawn as a horizontal
+bar spanning its start→end on a shared numeric time axis, with an optional
+progress fill.
+
+## Overview
+
+Gantt charts show *when* work happens and how tasks overlap. This one keeps time
+as plain numbers — day indices, week numbers, timestamps, whatever unit you pass
+— and a `formatTick` turns axis positions into human labels. That makes it fully
+deterministic and headless-verifiable, with no date engine in the component.
+
+## Usage
+
+- **Do** pass a `domain` when you want a fixed axis (e.g. the whole quarter)
+  rather than one that hugs the tasks.
+- **Do** supply `formatTick` to label the axis in your unit (dates, weeks…).
+- **Do** provide `progress` (0–1) to show completion inline.
+- **Don't** rely on bar colour to convey status — task names are the label of
+  record; pair with a table for a full non-visual view.
+- **Don't** pass `className` / `style`; the API is closed.
+
+## Anatomy
+
+A `gantt-chart` `<figure>` (`role="group"`, labelled) wrapping a `role="img"`
+`<svg>`: a left gutter of task-name text, a top tick axis with optional
+gridlines, a gutter divider, and one `gantt-row` per task holding a translucent
+`gantt-bar` and, when set, a solid `gantt-bar-progress` overlay.
+
+## Variants
+
+- `showGrid` — vertical gridlines at each tick.
+- `tickCount` — number of evenly spaced axis ticks.
+- `rowHeight` / `labelWidth` / `width` — numeric layout controls.
+
+## States
+
+Static and deterministic — the same `tasks` always render the same chart; there
+is no internal state.
+
+## Behavior
+
+- The time scale is linear across `domain` (or the tasks' extent); bars map
+  `start`/`end` onto it, clamped so `end ≥ start`.
+- `progress` draws a solid fill of `barWidth × progress` over the translucent bar.
+- Times read left→right (LTR) by convention, matching the other AEGIS charts.
+
+## Accessibility
+
+- The `<svg>` is a labelled `role="img"`; the outer `<figure>` is a labelled
+  group.
+- Task names render as real text, so the chart's meaning does not rest on colour.
+- Axis and bars are `aria-hidden` reading aids; provide a table alternative for a
+  complete non-visual account (dependency arrows / a "today" marker are deferred).
+
+## Design tokens
+
+Bars use the chart palette (`--color-chart-1…5`, translucent base + solid
+progress); gridlines `border/50`, gutter divider `border`, tick labels
+`muted-foreground`, task names `foreground`. No hard-coded colour or shadow.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name (required). |
+| `tasks` | `GanttTask[]` | — | Rows: `{ id, name, start, end, color?, progress? }` (required). |
+| `domain` | `[number, number]` | tasks' extent | Fixed time axis range. |
+| `tickCount` | `number` | `6` | Evenly spaced axis ticks. |
+| `formatTick` | `(v: number) => string` | `String` | Axis label formatter. |
+| `labelWidth` | `number` | `140` | Left gutter width (px). |
+| `rowHeight` | `number` | `36` | Row height (px). |
+| `width` | `number` | `720` | SVG width (user units). |
+| `showGrid` | `boolean` | `true` | Draw vertical gridlines. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (five tasks with progress, gridlines, week labels, and a play
+test asserting one bar per task) and **NoGrid**. Works in both themes.
