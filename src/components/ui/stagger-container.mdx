@@ -1,0 +1,71 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/StaggerContainer/Guidelines" />
+
+# Stagger Container
+
+Reveals a set of children in sequence — each entering a beat after the last — so a
+list, grid, or card row cascades into view instead of appearing all at once. It
+composes **Scroll Reveal** per child, inheriting the viewport trigger, directional
+slide, and automatic reduced-motion fallback.
+
+## Overview
+
+A coordinated cascade reads as more intentional than simultaneous entrances.
+Stagger Container standardises the pattern with a single `stagger` interval.
+
+## Usage
+
+- **Do** use it for card rows, feature lists, and dashboard tiles.
+- **Do** keep `stagger` small (60–120ms) so the cascade feels crisp.
+- **Don't** wrap large virtualised lists — the compounding delay becomes long.
+
+## Anatomy
+
+A flex column (`data-slot="stagger-container"`) that wraps each child in a
+**Scroll Reveal** with an incremental `delay`.
+
+## Variants
+
+- `stagger` — per-item delay (ms); `initialDelay` — offset before the first.
+- `from` / `speed` — passed to each Scroll Reveal.
+- `gap` — none · sm · md · lg spacing between items.
+
+## States
+
+Each item follows Scroll Reveal's hidden → revealed states, offset in time.
+
+## Behavior
+
+- The nth child gets `delay = initialDelay + n * stagger`.
+- All reveal behaviour (IntersectionObserver trigger, `once`, reduced-motion) is
+  inherited from Scroll Reveal.
+
+## Accessibility
+
+- Children always render and stay in the accessibility tree; the cascade is purely
+  visual and is disabled under `prefers-reduced-motion` (via Scroll Reveal).
+
+## Design tokens
+
+Motion is token-scaled via Scroll Reveal; spacing uses token `gap-*` utilities. No
+colour is introduced.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Items to reveal in sequence. |
+| `stagger` | `number` | `80` | Per-item delay (ms). |
+| `initialDelay` | `number` | `0` | Delay before the first item (ms). |
+| `from` | Scroll Reveal `from` | `"up"` | Slide origin per item. |
+| `speed` | Scroll Reveal `speed` | `"default"` | Transition speed. |
+| `once` | `boolean` | `true` | Reveal only once. |
+| `gap` | `"none" \| "sm" \| "md" \| "lg"` | `"md"` | Item spacing. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **FastFromLeft** story. It works in both themes and directions via the
+global toolbar; the slide origins follow the visual axis in RTL.
