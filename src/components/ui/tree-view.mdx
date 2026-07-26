@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/TreeView/Guidelines" />
+
+# Tree View
+
+A hierarchical, expandable list — file trees, org structures, nested categories.
+It renders a semantic `role="tree"` of `treeitem`s with `aria-expanded` /
+`aria-selected`, indents by depth, and toggles branches on click or keyboard.
+
+## Overview
+
+Nested data needs a compact, navigable presentation. Tree View standardises the
+expandable tree — folder/file glyphs, chevrons, selection highlight — with proper
+ARIA tree semantics.
+
+## Usage
+
+- **Do** use it for hierarchical navigation and pickers (files, taxonomies).
+- **Do** pass a typed `nodes` tree; branches are nodes with `children`.
+- **Do** control expansion/selection when the app owns that state.
+- **Don't** use it for a flat list — that is **List**. For files specifically,
+  see **Folder Tree**.
+
+## Anatomy
+
+A `role="tree"` list (`data-slot="tree-view"`) of items (`tree-view-item`,
+`data-selected`, `aria-expanded`/`aria-selected`), each a row
+(`tree-view-row`) with depth spacers, a chevron toggle (`tree-view-toggle`), a
+folder/file icon (`tree-view-icon`), and the label; branches nest a
+`role="group"` list.
+
+## Variants
+
+Presentation is fixed. Nodes supply their own `icon`; branches default to folder,
+leaves to file.
+
+## States
+
+- **Expanded / collapsed** — per branch (chevron rotates).
+- **Selected** — accent-soft row highlight (`data-selected`, `aria-selected`).
+- **Hover / focus** — muted background / accent-soft ring.
+
+## Behavior
+
+- Expansion: controlled (`expandedIds` + `onExpandedChange`) or uncontrolled
+  (`defaultExpandedIds`). Selection: controlled (`selectedId` +
+  `onSelectionChange`) or internal.
+- Click on a branch toggles + selects; on a leaf, selects.
+- Keyboard: Enter/Space select (and toggle branches); Arrow Right expands, Arrow
+  Left collapses the focused branch.
+
+## Accessibility
+
+- Proper ARIA tree: `role="tree"` / `treeitem` / `group`, with `aria-expanded`
+  and `aria-selected`; the tree has an accessible `label`.
+- Rows are keyboard-focusable with a visible focus ring; icons and chevrons are
+  `aria-hidden`.
+- The chevron mirrors and rotates correctly in RTL.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-accent-soft` / `text-accent-strong` | Selected row. |
+| `hover:bg-muted` / `ring-accent-soft` | Hover + focus ring. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Label, icon, chevron. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `nodes` | `TreeNode[]` | — | Root nodes (required). |
+| `expandedIds` | `string[]` | — | Controlled expanded set. |
+| `defaultExpandedIds` | `string[]` | `[]` | Initial expanded set. |
+| `onExpandedChange` | `(ids: string[]) => void` | — | Expansion callback. |
+| `selectedId` | `string` | — | Controlled selection. |
+| `onSelectionChange` | `(id: string) => void` | — | Selection callback. |
+| `label` | `string` | `"Tree"` | Tree accessible name. |
+
+`TreeNode` is `{ id, label, icon?, children? }`. The API is closed: `className`
+and `style` are not accepted.
+
+## Examples
+
+See the **Collapsed** and **FullyExpanded** stories. The tree works in both
+themes and directions via the global toolbar; in RTL indentation and chevrons
+flow from the inline-start edge automatically.
