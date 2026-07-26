@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ColumnVisibility/Guidelines" />
+
+# Column Visibility
+
+The dropdown that lets a user show or hide a table's columns. It is config-driven
+and controlled by you: pass the `columns` catalogue and a `key → visible` map, and
+it renders a checkbox item per column, emitting the next map on every toggle.
+
+## Overview
+
+Wide tables benefit from letting people hide columns they don't need. Column
+Visibility standardises that control — a compact "Columns" menu built on the AEGIS
+**Menu** — while leaving the source of truth (which columns render) with your Data
+Table. Feed the emitted map back into your column list to apply it.
+
+## Usage
+
+- **Do** key items to the same identifiers your Data Table columns use.
+- **Do** mark essential columns `canHide: false` so they stay locked on.
+- **Do** keep `minVisible` at 1 or higher so the table never goes blank.
+- **Don't** treat it as storage — persist the map yourself if you need it to stick.
+
+## Anatomy
+
+An outline **Columns** trigger button (`Menu` trigger) opening a portalled menu of
+`menuitemcheckbox` rows under a group heading. Toggling a row keeps the menu open.
+
+## Variants
+
+- `size` — trigger size `sm` · `md` · `lg`.
+- `side` / `align` — where the menu opens (default bottom / end).
+
+## States
+
+- **Visible** — checkbox checked; the column should render.
+- **Hidden** — checkbox unchecked.
+- **Locked** — `canHide: false`: always checked and disabled.
+- **At minimum** — hiding is blocked once `minVisible` columns remain.
+
+## Behavior
+
+- Controlled via `value` + `onValueChange`, or uncontrolled via `defaultValue`.
+- A key missing from the map is treated as visible.
+- Each toggle emits the **full** next map; the menu stays open (`closeOnClick`
+  is off) so several columns can be toggled in one pass.
+- Attempting to hide below `minVisible` (or hide a locked column) is a no-op.
+
+## Accessibility
+
+- Built on `Menu`: roving focus, typeahead, `Esc` to close, and the trigger's
+  AEGIS focus ring.
+- Rows are real `menuitemcheckbox`es with `aria-checked`; state is conveyed by
+  the checkmark and label, never colour alone.
+- The menu is labelled by its heading.
+
+## Design tokens
+
+Inherits Menu surface tokens (`bg-popover`, `ring-border-strong`,
+`shadow-elevated`) and Button tokens for the trigger. No hard-coded colour.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `columns` | `{ key; label; canHide? }[]` | — | Toggleable columns (required). |
+| `value` | `Record<string, boolean>` | — | Controlled visibility map. |
+| `defaultValue` | `Record<string, boolean>` | `{}` | Uncontrolled initial map. |
+| `onValueChange` | `(next) => void` | — | Fires with the full next map. |
+| `triggerLabel` | `string` | `"Columns"` | Trigger text. |
+| `heading` | `string` | `"Toggle columns"` | Menu heading. |
+| `minVisible` | `number` | `1` | Columns that must stay visible. |
+| `size` | `"sm" \| "md" \| "lg"` | `"sm"` | Trigger size. |
+| `side` / `align` | positioner | `bottom` / `end` | Menu placement. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** story (controlled, one column hidden, "Name" locked) and
+**Uncontrolled** (`defaultValue`). Works in both themes and directions.
