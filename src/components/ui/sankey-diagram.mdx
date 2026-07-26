@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SankeyDiagram/Guidelines" />
+
+# Sankey Diagram
+
+A flow diagram: nodes arranged in columns, linked by ribbons whose thickness is
+proportional to the value flowing between them. Ideal for funnels, budgets,
+energy/traffic flows — anywhere a quantity splits and merges across stages.
+
+## Overview
+
+Give it a directed acyclic graph of `nodes` and `links`. It computes a
+deterministic left→right layered layout: node columns by longest path from a
+source, node heights and ribbon widths by a single shared value→pixel scale. No
+force simulation, so it renders identically headless.
+
+## Usage
+
+- **Do** keep the graph acyclic — a node caught in a cycle falls back to column 0.
+- **Do** size `value` in a single consistent unit; ribbon width encodes it.
+- **Do** give every node a `label`; ribbons alone don't identify flows.
+- **Don't** expect hover highlighting or reordering — this is a static renderer.
+- **Don't** pass `className` / `style`; the API is closed.
+
+## Anatomy
+
+A `sankey-diagram` `<figure>` (`role="group"`, labelled) wrapping a `role="img"`
+`<svg>`: a `sankey-links` group of `sankey-link` ribbon paths drawn first, then a
+`sankey-nodes` group of `sankey-node` rects with text labels (labels sit after the
+node, or before it in the final column).
+
+## Variants
+
+- `nodeWidth` — column thickness.
+- `nodePadding` — vertical gap between stacked nodes.
+- `width` / `height` — numeric canvas size.
+
+## States
+
+Static and deterministic — the same graph always renders the same diagram; there
+is no internal state.
+
+## Behavior
+
+- Columns are assigned by longest path from a source node (nodes with no inbound
+  links are column 0).
+- Each node's throughput is `max(sum of inbound, sum of outbound)`; a single scale
+  (tightest column wins) keeps ribbon widths comparable and prevents overflow.
+- Ribbons are cubic béziers whose width equals their value on that scale; flows
+  read left→right (LTR) by convention.
+
+## Accessibility
+
+- The `<svg>` is a labelled `role="img"`; the `<figure>` is a labelled group.
+- Node labels render as real text, so meaning does not rest on colour.
+- Ribbons and nodes are `aria-hidden` reading aids; provide a table alternative
+  for a complete non-visual account.
+
+## Design tokens
+
+Nodes use the chart palette (`--color-chart-1…5`); ribbons inherit their source
+node's colour at reduced opacity; labels use `foreground`. No hard-coded colour or
+shadow.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name (required). |
+| `nodes` | `SankeyNode[]` | — | `{ id, label?, color? }` (required). |
+| `links` | `SankeyLink[]` | — | `{ source, target, value }` (required). |
+| `width` | `number` | `720` | SVG width (user units). |
+| `height` | `number` | `360` | SVG height (user units). |
+| `nodeWidth` | `number` | `14` | Node column thickness (px). |
+| `nodePadding` | `number` | `16` | Gap between stacked nodes (px). |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (a six-node conversion funnel with a play test asserting one
+ribbon per link) and **Compact**. Works in both themes.
