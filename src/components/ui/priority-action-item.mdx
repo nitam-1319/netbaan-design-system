@@ -1,0 +1,93 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/PriorityActionItem/Guidelines" />
+
+# Priority Action Item
+
+A single, ranked remediation action in a "what to fix next" list: an ordinal
+rank, the finding severity, a title, supporting meta (affected assets, impact),
+and — when it links — a trailing chevron. It composes the AEGIS **ListItem** with
+**Severity Badge**, so it drops straight into a **List**.
+
+## Overview
+
+ASM tools don't just list findings — they recommend an ordered set of actions.
+Priority Action Item is the row for that queue: severity-coloured, rank-numbered,
+and quantified by affected assets and expected impact.
+
+## Usage
+
+- **Do** place several inside a **List** (`variant="bordered"` or `"divided"`) to
+  form a prioritised remediation queue.
+- **Do** pass `rank` to show explicit ordering and `impact` to justify it.
+- **Do** set `href` to link each action to its detail/playbook.
+- **Don't** use it for a full finding summary — that is **Finding /
+  Vulnerability Card**. Don't use it for generic list rows — that is **List**.
+
+## Anatomy
+
+A **ListItem** (`data-slot="priority-action-item"`, `data-rank`,
+`data-severity`) with a leading rank chip, a content column
+(`ListItemContent`: a **Severity Badge** + title, description, and a meta row of
+affected-asset count + impact), and a trailing chevron when interactive.
+
+## Variants
+
+Presentation is fixed; `density` (inherited from ListItem: compact · default ·
+comfortable, default `comfortable`) tunes the row height.
+
+## States
+
+- **Static** — no link; inert row.
+- **Interactive** — with `href`: ListItem hover/focus background, a title link,
+  and a trailing chevron (mirrored in RTL).
+
+Rank, severity, description, affected count, and impact each collapse cleanly
+when omitted.
+
+## Behavior
+
+- The title is the row's link; the whole row shows the interactive affordance via
+  ListItem, and keyboard focus lands on the title link with a visible ring.
+- Affected count pluralises ("1 asset" / "N assets").
+- The trailing chevron mirrors in RTL (`rtl:rotate-180`).
+
+## Accessibility
+
+- Rank and severity are conveyed as text (WCAG 1.4.1); `data-rank` /
+  `data-severity` expose them to tests.
+- One link per row, named by the title.
+- Icons (layers, chevron) are `aria-hidden`; all meaning is in text.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| ListItem tokens | Spacing, dividers, hover/focus. |
+| `bg-surface-3` / `text-muted-foreground` | Rank chip. |
+| Severity Badge `--sev-*` | Severity ladder. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Title, meta, chevron. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `ReactNode` | — | Action title (required). |
+| `rank` | `number` | — | Ordinal rank chip. |
+| `severity` | `Severity` | — | Finding severity → Severity Badge. |
+| `description` | `ReactNode` | — | Short supporting description. |
+| `affectedCount` | `number` | — | Affected asset count. |
+| `impact` | `ReactNode` | — | Impact / effort note. |
+| `href` | `string` | — | Link; when set the title links + row is interactive. |
+| `density` | `"compact" \| "default" \| "comfortable"` | `"comfortable"` | Row height. |
+| `target` | `string` | — | Anchor target (adds `rel` for `_blank`). |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Queue**, **Static**, and **Minimal** stories. The row works in both
+themes and directions via the global toolbar; in RTL the rank chip leads and the
+chevron points inward automatically.
