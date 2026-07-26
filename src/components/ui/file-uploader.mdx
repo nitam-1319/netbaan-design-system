@@ -1,0 +1,103 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/File Uploader/Guidelines" />
+
+# File Uploader
+
+The full intake composite: a `Dropzone` to collect files and a managed `FileList`
+of what was selected, wired together with client-side validation (`accept`,
+`maxSizeBytes`, `maxFiles`). Selecting appends to the list; rejected files are kept
+with an `error` status and a plain-language reason so users see and can dismiss
+them. Colors are AEGIS tokens only (inherited from `Dropzone` / `FileCard`), and
+the public API is **closed** — no `className` or `style`.
+
+## Overview
+
+Reach for a File Uploader when a screen needs the whole flow — drop / browse,
+show what was chosen, validate, and remove — in one component: an attachments
+field, an import step, a document upload. For just the drop target use
+**Dropzone**; for just the chosen set use **File List**; for one transfer's
+progress use **Upload Progress**.
+
+## Uploading is the parent's job
+
+The File Uploader **never uploads anything itself**. It emits the current
+`FileListItem[]` through `onFilesChange`; your code performs the transfer and
+writes each item's `status` (`uploading` → `success` / `error`) and `progress`
+back. Run it **controlled** (pass `files` + `onFilesChange`) when you drive
+progress, or **uncontrolled** (seed with `defaultFiles`) for a simple picker.
+
+## Usage
+
+- **Do** set `accept`, `multiple`, `maxFiles`, and `maxSizeBytes` to match the
+  destination; validation runs on every selection.
+- **Do** read `onFilesChange` and start your uploads there, mutating item
+  `status` / `progress` as they proceed (controlled mode).
+- **Do** handle `onReject` to surface a toast or analytics event; rejected files
+  also appear inline with their reason.
+- **Do** use `size="lg"` for a prominent empty-state drop target; the list stays
+  `md`.
+- **Don't** expect the component to hold `File` objects — it models display data
+  (`FileListItem`). Keep the real `File`s in your own state, keyed by item `id`.
+- **Don't** pass `className`; compose it inside a `Stack`, form section, or dialog.
+
+## Anatomy
+
+1. **file-uploader** — the wrapper stacking the two parts.
+2. **Dropzone** — the drag-and-drop / click-to-browse region (disabled once
+   `maxFiles` is reached).
+3. **FileList** — the removable list of selected files, each a `FileCard`, with an
+   optional `listTitle` and summary.
+
+## States
+
+- **Empty** — just the Dropzone.
+- **With files** — Dropzone above, the file list below.
+- **At capacity** — when `maxFiles` valid files are present, the Dropzone is
+  disabled.
+- **Rejection** — an offending file is listed with `status="error"` and a reason;
+  `onReject` also fires.
+- **Disabled** — the whole uploader is dimmed and inert.
+
+## Accessibility
+
+- The Dropzone is a labelled, focus-visible native file input (drop + click +
+  keyboard); the list is a real `role="list"` of labelled `FileCard`s with
+  dismiss buttons and, for uploads, a labelled `progressbar`.
+- Rejection reasons are real text in the list, not color alone.
+- WCAG 2.2 AA contrast holds in both Light and Dark themes (inherited from the
+  composed components).
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus to the Dropzone input, then across each file row's controls. |
+| `Enter` / `Space` | Open the file picker (Dropzone) or activate a row's dismiss button. |
+
+## Tokens
+
+Inherited from `Dropzone` (`--surface-2`, `--border-strong`, `--accent-*`,
+`--destructive`) and `FileCard` / `FileList` (`--card`, `--border`, `--surface-3`,
+`--success`, `--text-faint`).
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `accept` | `string` | — | Comma-separated `accept` list; also validated. |
+| `multiple` | `boolean` | `true` | Allow selecting more than one file. |
+| `disabled` | `boolean` | `false` | Dim + disable the whole uploader. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Dropzone size (list uses `md` for `lg`). |
+| `title` / `description` / `hint` | `ReactNode` | — | Dropzone prompt lines. |
+| `maxFiles` | `number` | — | Max files to keep; extras are rejected. |
+| `maxSizeBytes` | `number` | — | Max size per file; larger files are rejected. |
+| `files` | `FileListItem[]` | — | Controlled item list (with `onFilesChange`). |
+| `defaultFiles` | `FileListItem[]` | `[]` | Initial items (uncontrolled). |
+| `onFilesChange` | `(items: FileListItem[]) => void` | — | Fired whenever the list changes. |
+| `onReject` | `(rejections: { file, reason }[]) => void` | — | Fired for files failing validation. |
+| `listTitle` | `ReactNode` | — | Heading above the list. |
+| `showSummary` | `boolean` | `true` | Show the list `N files · total` summary. |
+| `removable` | `boolean` | `true` | Allow removing selected files. |
+
+The public API is closed — there is no `className` / `style` prop.
