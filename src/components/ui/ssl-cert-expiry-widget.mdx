@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SslCertExpiryWidget/Guidelines" />
+
+# SSL / Cert Expiry Widget
+
+A compact readout of how long a **TLS certificate** has left before it expires. It
+composes the AEGIS **Radial Gauge** (`shape="ring"`) — the ring depletes as the
+remaining days fall through the validity window — with a centre "N days" readout,
+a humanised status line, and the certificate's host.
+
+## Overview
+
+Expired certificates cause outages and are an ASM red flag. This widget makes
+time-to-expiry a glanceable, colour-escalating number, with the exact day count
+and host always visible.
+
+## Usage
+
+- **Do** use it on certificate dashboards and asset detail panes.
+- **Do** pass `daysRemaining` (negative = already expired).
+- **Do** tune `warnDays` / `criticalDays` and `windowDays` to your policy.
+- **Don't** use it for a generic countdown — this is TLS-expiry specific.
+
+## Anatomy
+
+A group (`data-slot="ssl-cert-expiry-widget"`, `data-tone`, `data-expired`) with
+an optional label, a **Radial Gauge** ring (`ssl-cert-expiry-widget-meter`) whose
+centre shows the day count, a status line
+(`ssl-cert-expiry-widget-status`, with a shield glyph), and an optional host
+(`ssl-cert-expiry-widget-domain`).
+
+## Variants
+
+Presentation is fixed; `size` and `thickness` are inherited from Radial Gauge.
+Tone is derived from urgency, not chosen.
+
+## States
+
+- **Healthy** (success) — more than `warnDays` remaining.
+- **Warning** — at/under `warnDays`.
+- **Critical** — at/under `criticalDays`.
+- **Expired** — `daysRemaining ≤ 0`: danger tone, empty ring, ✕-shield, and an
+  "Expired Nd ago" status (`data-expired`).
+
+## Behavior
+
+- The ring fills to `daysRemaining / windowDays` (clamped 0–1); an expired cert
+  reads as an empty ring with a "0 days" centre.
+- The status line humanises the count ("Expires in Nd" / "Expired Nd ago") and
+  the shield glyph flips between check and ✕.
+- Deterministic — the same inputs always render the same widget; no internal
+  clock (pass a precomputed `daysRemaining`).
+
+## Accessibility
+
+- The gauge exposes `role="meter"`; the status phrasing is carried in
+  `aria-valuetext`, so urgency is announced independently of colour (WCAG 1.4.1).
+- The day count and status are real text; the shield glyph is `aria-hidden`.
+- `data-tone` / `data-expired` expose state to tests and styling hooks.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Radial Gauge tones (`success`/`warning`/`danger`) | Ring arc by urgency. |
+| `stroke-surface-3` | Ring track. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Count, status, host. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `daysRemaining` | `number` | — | Days until expiry; negative = expired (required). |
+| `windowDays` | `number` | `90` | Validity window for the ring scale. |
+| `domain` | `ReactNode` | — | Certificate host / subject. |
+| `label` | `ReactNode` | `"Certificate expiry"` | Label + meter name. |
+| `warnDays` | `number` | `30` | Days at/under which tone → warning. |
+| `criticalDays` | `number` | `7` | Days at/under which tone → danger. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Gauge scale. |
+| `thickness` | `"thin" \| "regular" \| "thick"` | `"regular"` | Arc weight. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Warning**, **Critical**, **Expired**, and **Fleet** stories. The widget
+works in both themes and directions via the global toolbar; the ring and readouts
+are direction-agnostic and the host truncates cleanly.
