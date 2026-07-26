@@ -1,0 +1,100 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/LocaleSwitcher/Guidelines" />
+
+# Locale / RTL Switcher
+
+A control that switches the application's active locale and, with it, the
+document writing direction — **English (LTR) ⇄ فارسی (RTL)** by default. It is
+the user-facing counterpart to the token-driven RTL system: everything below it
+re-flows through logical CSS properties once `dir` changes, so no component needs
+per-instance direction wiring.
+
+## Overview
+
+Bilingual security surfaces (EN/FA) need a single, discoverable way to change
+language and direction. Locale Switcher owns that action: on activation it cycles
+to the next supported locale and writes `lang` + `dir` onto `<html>`. For the
+common two-locale case that is a plain EN⇄FA toggle; supply more `locales` to
+cycle through additional languages.
+
+## Usage
+
+- **Do** place it in a top bar / settings area where language controls are
+  expected.
+- **Do** pass the full set of `locales` your app supports, each with its `code`,
+  endonymic `name`, and `dir`.
+- **Do** treat it as controlled (`locale` + `onLocaleChange`) when the locale is
+  owned by app/router state.
+- **Don't** use it purely to flip direction for a preview — that is a demo
+  concern; this control changes the real document locale.
+
+## Anatomy
+
+A `<button>` (`data-slot="locale-switcher"`, `data-locale`, `data-dir`)
+containing a non-directional `Languages` glyph and, unless `showLabel={false}`,
+the active locale's name (`data-slot="locale-switcher-label"`).
+
+## Variants
+
+| Prop | Values | Purpose |
+| --- | --- | --- |
+| `variant` | `outline` (default), `ghost`, `soft` | Chrome weight to match its container. |
+| `size` | `sm`, `md`, `lg` | Control height + type scale. |
+| `showLabel` | `boolean` | Show the locale name, or render an icon-only square. |
+
+## States
+
+Default, hover, focus-visible (3px accent-soft ring + accent border), and
+disabled. The control has no loading state — switching is synchronous.
+
+## Behavior
+
+- **Controlled**: pass `locale`; the control reflects it and calls
+  `onLocaleChange` with the next locale on click without mutating its own state.
+- **Uncontrolled**: pass `defaultLocale` (or rely on the first entry); the
+  control tracks the active locale internally.
+- On mount and on every change it applies `lang` + `dir` to `<html>` and observes
+  the root so it stays correct if direction is changed elsewhere.
+- Icons: the `Languages` glyph is non-directional and does **not** mirror in RTL.
+
+## Accessibility
+
+- The button always carries an accessible name: the visible locale name when
+  `showLabel`, otherwise an `aria-label` announcing the switch target
+  ("Switch language to فارسی"). A caller-supplied `aria-label` always wins.
+- Keyboard: focusable, activates with Enter/Space (native button semantics).
+- Direction is applied at the document root, so screen-reader reading order and
+  focus movement follow the new direction automatically.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `border-border-strong` | Outline control border. |
+| `bg-background` / `bg-muted` / `bg-border` | Surface + hover per variant. |
+| `text-foreground` / `text-muted-foreground` | Label + icon colour. |
+| `ring-accent-soft` / `border-accent-strong` | 3px focus ring + accent border. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `locales` | `Locale[]` | EN + FA | Locales to cycle through. |
+| `locale` | `string` | — | Controlled active locale code. |
+| `defaultLocale` | `string` | first entry | Initial locale when uncontrolled. |
+| `onLocaleChange` | `(locale: Locale) => void` | — | Fired with the next locale. |
+| `showLabel` | `boolean` | `true` | Show the locale name beside the icon. |
+| `variant` | `"outline" \| "ghost" \| "soft"` | `"outline"` | Chrome weight. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control scale. |
+
+`Locale` is `{ code: string; name: string; dir: "ltr" \| "rtl" }`. The API is
+closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Variants**, **Sizes**, **IconOnly**, and **ThreeLocales** stories. Use
+the global toolbar to preview Light/Dark; activating the control itself changes
+the live document direction between LTR and RTL.
