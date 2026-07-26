@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/BulkActionsBar/Guidelines" />
+
+# Bulk Actions Bar
+
+The contextual action bar that appears once rows are selected. It shows the
+selection count, a clear affordance, and a slot for the actions that apply to the
+whole selection — delete, export, assign, and so on.
+
+## Overview
+
+When a table supports multi-row selection, users need a single, obvious place to
+act on that selection. The Bulk Actions Bar is that place: presentation only, it
+takes the `count` you already track (e.g. from a **Data Table**) and animates in
+while any rows are selected, out when the count returns to zero.
+
+## Usage
+
+- **Do** compose AEGIS `Button`s as the actions, most-destructive last.
+- **Do** provide `onClear` so users can dismiss the selection quickly.
+- **Do** use `sticky` for long tables so the bar stays reachable while scrolling.
+- **Don't** put unrelated, non-selection actions here.
+- **Don't** hand it selection *logic* — it reflects `count`, it does not own it.
+
+## Anatomy
+
+An animated `data-slot="bulk-actions-bar"` region (`role="region"`, labelled
+"Bulk actions") holding: the live count text, an optional **Clear** button, a
+divider, and the actions slot. It rides on the `Fade / Slide / Scale` transition.
+
+## Variants
+
+- `size` — `sm` · `md` density.
+- `sticky` — pin to the bottom of the viewport, centred, vs inline flow.
+
+## States
+
+- **Hidden** — `count === 0` (or `open={false}`): unmounted after the leave
+  transition.
+- **Shown** — `count > 0` (or `open`): slides up into view.
+
+## Behavior
+
+- Visibility follows `count > 0` unless you override with `open`.
+- The count text is an `aria-live="polite"` region, so selection changes are
+  announced.
+- `sticky` renders a fixed, centred, non-interactive positioning layer; only the
+  bar itself receives pointer events.
+
+## Accessibility
+
+- Labelled landmark (`role="region"`, `aria-label="Bulk actions"`) so it is
+  reachable and identifiable.
+- Selection count is announced politely on change; it is text, never colour-only.
+- Actions are real buttons — keyboard operable with visible AEGIS focus rings.
+
+## Design tokens
+
+Surface `bg-card` + `border-border-strong` + `shadow-elevated`; divider
+`bg-border-strong`. Motion is token-scaled via the transition; no hard-coded
+colour or shadow.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `count` | `number` | — | Selected row count; shows the bar while `> 0` (required). |
+| `children` | `ReactNode` | — | Action controls (compose AEGIS `Button`s). |
+| `onClear` | `() => void` | — | Clear handler; renders a "Clear" button when set. |
+| `label` | `(count: number) => string` | `` `${n} selected` `` | Custom count text. |
+| `clearLabel` | `string` | `"Clear"` | Clear button text. |
+| `open` | `boolean` | `count > 0` | Force visibility. |
+| `sticky` | `boolean` | `false` | Pin to the bottom of the viewport. |
+| `size` | `"sm" \| "md"` | `"md"` | Density. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** story (static, with actions) and **Interactive** (select rows
+to raise the bar, Clear to dismiss). Works in both themes and directions.
