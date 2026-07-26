@@ -1,0 +1,89 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ColumnFilter/Guidelines" />
+
+# Column Filter
+
+The per-column filter affordance for a table header: a compact trigger that shows
+whether a filter is active and opens a popover with the filter control. Two modes
+cover the common cases — `text` (a "contains" query) and `select` (a checkbox
+list).
+
+## Overview
+
+Filtering a table one column at a time keeps the mental model simple: click the
+column's filter, narrow it, move on. Column Filter standardises that control while
+leaving the actual filtering to you — it emits the value and marks itself active;
+your table decides what to show.
+
+## Usage
+
+- **Do** use `text` for free-form columns and `select` for enumerated ones.
+- **Do** keep the emitted value in your table state and apply it there.
+- **Do** show the trigger in or beside the column header.
+- **Don't** expect it to filter data on its own — it is a control, not a store.
+
+## Anatomy
+
+An icon trigger (`Popover` trigger rendered as an AEGIS `Button`; `soft` variant
+while active) opening a `data-slot="column-filter"` popover: a title, the text
+input **or** a `Checkbox` list, and a **Clear** button.
+
+## Variants
+
+- `type` — `text` (string) · `select` (string[]).
+- `size` — trigger `sm` · `md` · `lg`.
+- `side` / `align` — popover placement (default bottom / start).
+
+## States
+
+- **Inactive** — no query / no options selected: ghost trigger, Clear disabled.
+- **Active** — a value is set: `soft` trigger and the accessible name gains
+  "(active)" so the state is not colour-only.
+
+## Behavior
+
+- Controlled via `value` + `onValueChange`, or uncontrolled via `defaultValue`.
+- `text` emits a string on every keystroke; `select` toggles values in an array.
+- **Clear** resets to `""` / `[]` and is disabled when already empty.
+
+## Accessibility
+
+- The trigger always has an accessible name (`Filter by {label}`), extended with
+  "(active)" when a filter is set — never colour alone.
+- The text input and the `select` group are labelled by the column name; options
+  are real AEGIS `Checkbox`es with keyboard support and AEGIS focus rings.
+- The popover manages focus and closes on `Esc` / outside press.
+
+## Design tokens
+
+Input shell `border-border-strong` + `bg-surface-2` + `ring-accent-soft` focus;
+active trigger uses the Button `soft` variant. Inherits Popover surface tokens. No
+hard-coded colour.
+
+## Scope
+
+`text` and `select` ship now. Numeric / date **range** filtering is a deliberate
+follow-up (an additive `type="range"` mode), recorded in `.agent/DECISIONS.md`,
+rather than folded in prematurely.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Column name (accessible name + title). Required. |
+| `type` | `"text" \| "select"` | `"text"` | Filter mode. |
+| `options` | `{ value; label }[]` | `[]` | Options for `select`. |
+| `value` | `string \| string[]` | — | Controlled value. |
+| `defaultValue` | `string \| string[]` | `""` / `[]` | Uncontrolled initial value. |
+| `onValueChange` | `(value) => void` | — | Fires on every change. |
+| `placeholder` | `string` | `Filter {label}…` | Text input placeholder. |
+| `size` | `"sm" \| "md" \| "lg"` | `"sm"` | Trigger size. |
+| `side` / `align` | positioner | `bottom` / `start` | Popover placement. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Text** story (type to activate) and **Select** (check an option to
+activate). Works in both themes and directions.

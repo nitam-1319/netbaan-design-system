@@ -654,3 +654,18 @@ higher run FREQUENCY can scale past.
 Impact: expect per-run counts to rise beyond ~8; if they don't, the residual limit is the platform
 per-session budget (not removable via docs). Trade-off: batched push means a crashed run may lose up
 to ~5 unpushed local commits (the next run rebuilds them from the queue).
+
+## 2026-07-26 — Column Filter ships text + select; range filtering deferred
+Status: accepted
+Decision: `column-filter.tsx` (roadmap #134, Recommended/Tables & Data Grid, dep Data Table) ships as
+a config-driven per-column filter with two modes — `text` ("contains" query → string) and `select`
+(Checkbox list → string[]) — as a trigger + Popover that emits the value and marks itself active. It
+does NOT own filtering; the consumer applies the emitted value to their Data Table.
+Reason: These two modes cover the overwhelming majority of column filters and are fully verifiable
+without a browser. Numeric/date RANGE filtering needs range inputs (two-thumb slider or two date
+fields) whose interaction is browser-verification-heavy; folding it in now would bloat the API before
+the range primitives are settled.
+Impact: A follow-up run adds an additive `type="range"` mode (not a fork) once a shared range control
+lands. Mirrors the honestly-scoped precedents: Combobox single-select (2026-07-23), static chart
+renderers (2026-07-23/07-25), Currency Input over generic mask (2026-07-24), Lightbox single-image
+(2026-07-25g).
