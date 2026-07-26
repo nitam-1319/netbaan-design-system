@@ -1,0 +1,89 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/StickyTable/Guidelines" />
+
+# Sticky Header / Column
+
+A scroll-bounded table whose header row — and, optionally, a leading column —
+stay pinned while the body scrolls. It keeps column labels and row identity in
+view for large grids without a separate scroll pane.
+
+## Overview
+
+When a table is taller or wider than its viewport, users lose the header on
+vertical scroll and the row's identity on horizontal scroll. `StickyTable` mirrors
+the AEGIS `Table` part set but bounds the height and pins headers/columns with
+`position: sticky`. Swap `Table*` for `StickyTable*`.
+
+## Usage
+
+- **Do** set `maxHeight` to the height at which the body should start scrolling
+  under the header.
+- **Do** mark the identity column with `sticky` on both its `StickyTableHead`
+  and each `StickyTableCell` so it pins on horizontal scroll.
+- **Do** keep sticky columns narrow — they occlude content scrolling beneath.
+- **Don't** pin more than one leading column; deep sticky stacks are disorienting.
+- **Don't** pass `className` / `style`; the API is closed.
+
+## Anatomy
+
+A `sticky-table-container` (bounded, `overflow: auto`) wrapping a
+`border-separate` `<table>`. `StickyTableHead` cells are pinned to the top;
+`sticky`-marked head/cell pairs are additionally pinned to the inline start, and
+the top-start head layers above both.
+
+## Variants
+
+- `maxHeight` — scroll-region height in px (default 360).
+- `sticky` (per `StickyTableHead` / `StickyTableCell`) — pin that column to the
+  inline start.
+
+## States
+
+- **Header pinned** — the header stays fixed as the body scrolls vertically.
+- **Column pinned** — sticky columns stay fixed as the body scrolls horizontally.
+
+## Behavior
+
+- Uses native `position: sticky`; no scroll listeners, so it stays smooth.
+- Sticky surfaces are opaque (`bg-card` for the header, `bg-background` for sticky
+  columns) so scrolled content never shows through.
+- Layering: header `z-20`, sticky column `z-10`, top-start corner `z-30`, sticky
+  footer `z-20`.
+
+## Accessibility
+
+- Renders native `<table>` / `<thead>` / `<th>` / `<td>`, so table, row, and
+  column-header semantics are announced without extra ARIA.
+- Cells align with logical `text-start`, and sticky columns pin to `start-0`, so
+  the table mirrors correctly in RTL.
+
+## Design tokens
+
+Container `border-border` + `rounded-lg`; header `bg-card`; sticky column
+`bg-background`; footer `bg-muted`; cell dividers `border-border`. No hard-coded
+colour or shadow.
+
+## API
+
+`StickyTable` accepts native `<table>` props plus:
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `maxHeight` | `number` | `360` | Scroll-region height (px). |
+
+`StickyTableHead` and `StickyTableCell` accept native `<th>` / `<td>` props plus:
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `sticky` | `boolean` | `false` | Pin this column to the inline start. |
+
+`StickyTableHeader`, `StickyTableBody`, `StickyTableFooter`, `StickyTableRow`, and
+`StickyTableCaption` mirror the `Table` parts. The API is closed: `className` and
+`style` are not accepted.
+
+## Examples
+
+See **HeaderAndColumn** (sticky header + pinned identity column, with a play test
+asserting the sticky markers) and **HeaderOnly**. Works in both themes and
+directions.
