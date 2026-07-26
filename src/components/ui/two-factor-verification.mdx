@@ -1,0 +1,79 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Two-Factor Verification/Guidelines" />
+
+# Two-Factor Verification
+
+A verification panel for the second step of authentication. It composes the
+AEGIS **OTP Input** for code entry and adds the surrounding chrome: a title and
+description, a resend control with a cooldown timer, and an optional verify
+button. The code is reported through `onComplete` as soon as every slot is
+filled, and through `onChange` on each edit.
+
+## When to use
+
+- **Do** use it after a password step (or a magic-link request) to confirm a
+  one-time code delivered by SMS, an authenticator app, or email.
+- **Do** set `channel` to a masked destination so users know where to look.
+- **Don't** use it as a general numeric input — it is purpose-built for OTP /
+  2FA codes. Use **OTP Input** directly if you only need the field.
+- **Don't** auto-advance the whole flow silently; surface `error` when a code is
+  wrong so the user can retry.
+
+## Anatomy
+
+A **title** + **description** block, the **code field** (OTP Input), and a
+footer row with the **resend** control and an optional **verify** button.
+
+## Behavior
+
+- The code is reported via `onComplete(code)` when the last slot fills, and via
+  `onChange(code)` on every edit. Pass `value` to control it.
+- **Resend** is disabled for `resendCooldown` seconds (default 30) after mount
+  and after each resend; the button shows a live countdown, then becomes an
+  actionable link that calls `onResend`.
+- Provide `onSubmit` to render a **Verify** button (disabled until the code is
+  complete); omit it to rely on auto-verify via `onComplete`.
+- `verifying` shows the button's loading state and locks the inputs.
+
+## API
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `length` | `number` | `6` | Number of slots. |
+| `title` | `node` | "Two-factor authentication" | |
+| `description` | `node` | derived | Falls back to a sentence using `channel`. |
+| `channel` | `string` | "your device" | Masked destination for the default copy. |
+| `value` / `onChange` | `string` / `(code) => void` | — | Controlled code. |
+| `onComplete` | `(code) => void` | — | Fires when all slots fill. |
+| `onResend` | `() => void` | — | Restarts the cooldown. |
+| `resendCooldown` | `number` | `30` | Seconds before resend re-enables. |
+| `onSubmit` | `(code) => void` | — | Renders the Verify button. |
+| `error` | `node` | — | Paints the error state on the field. |
+| `verifying` | `boolean` | `false` | Loading + locked inputs. |
+| `size` | `sm \| md \| lg` | `md` | Vertical rhythm of the panel. |
+
+## Accessibility
+
+- The panel is a labelled `role="group"` (`aria-labelledby` → the title), so the
+  set is announced as a unit.
+- The OTP field inherits full keyboard support from the primitive: type to
+  advance, `Backspace` to go back, arrow keys to move, and paste-to-fill. Each
+  slot has an accessible name ("Character _n_ of _length_").
+- `error` sets `aria-invalid` on the field and renders a linked message; the
+  error state is never colour-only (border + message text).
+- Contrast meets WCAG 2.2 AA in both themes; the focus ring is the 3px
+  `accent-soft` ring from the field.
+
+## Internationalization / RTL
+
+Pass translated `title` / `description` and the layout mirrors under `dir="rtl"`
+(logical flex direction). The countdown uses `tabular-nums` so it doesn't jitter
+as the number shrinks.
+
+## Tokens
+
+Text uses `text-foreground`, `text-muted-foreground`, `text-text-faint`; the
+resend link and verify button come from the token-driven **Button** variants;
+the code field carries the AEGIS input skin and `accent-soft` focus ring. No
+hard-coded colour.
