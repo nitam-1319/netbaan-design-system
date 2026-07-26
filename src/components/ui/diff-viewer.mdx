@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DiffViewer/Guidelines" />
+
+# Diff Viewer
+
+A read-only, line-by-line view of a change set — the diff-scoped sibling of
+**Code Block**. It shares Code Block's surface language (monospace, token-themed,
+bordered, copyable) but renders each line with an old/new line-number gutter, a
+`+` / `−` / ` ` change marker, and a tinted background.
+
+## Overview
+
+Reviews, audit trails, and remediation playbooks show what changed. Diff Viewer
+gives that a consistent presentation where additions and removals are legible at
+a glance without relying on colour.
+
+## Usage
+
+- **Do** use it to display a parsed change set (config edits, remediation diffs).
+- **Do** pass a pre-parsed `lines` array — parsing/algorithm is the caller's job.
+- **Don't** use it for a single snippet — that is **Code Block**. Don't expect it
+  to compute a diff.
+
+## Anatomy
+
+A bordered surface (`data-slot="diff-viewer"`) with a header (filename +
+additions/deletions counts + copy) over a scrollable table of rows
+(`diff-viewer-line`, `data-type`): old/new number gutters, a marker cell, and the
+line content.
+
+## Variants
+
+Presentation is fixed; `size` (sm · md) scales the text, `showLineNumbers` and
+`showCopy` toggle chrome.
+
+## States
+
+Presentational. Rows are `add` (success tint, `+`), `remove` (destructive tint,
+`−`), or `context` (no tint, space).
+
+## Behavior
+
+- Deterministic — the same `lines` always render the same view.
+- The copy button copies the resulting (new) source: context + additions with
+  markers stripped.
+- Content preserves whitespace and scrolls horizontally.
+
+## Accessibility
+
+- Change type is carried by the marker glyph and a screen-reader prefix
+  ("Added:" / "Removed:"), not colour alone (WCAG 1.4.1); `data-type` exposes it.
+- Line-number and marker cells are `aria-hidden` (decorative); the scroll region
+  is keyboard-focusable and labelled.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-surface-2` / `bg-surface-3` / `border-border` | Surface, header, border. |
+| `color-mix(... var(--success) ...)` / `color-mix(... var(--destructive) ...)` | Row tints. |
+| `text-success` / `text-destructive` / `text-text-faint` | Markers + counts. |
+
+No colour is hard-coded; every hue comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `lines` | `DiffLine[]` | — | Pre-parsed diff lines (required). |
+| `filename` | `ReactNode` | — | Header filename. |
+| `showLineNumbers` | `boolean` | `true` | Old/new number gutter. |
+| `showCopy` | `boolean` | `true` | Copy the changed source. |
+| `size` | `"sm" \| "md"` | `"md"` | Text scale. |
+| `label` | `string` | `"Diff"` | Scroll-region accessible name. |
+
+`DiffLine` is `{ type: "add" | "remove" | "context"; content; oldLine?; newLine? }`.
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **NoLineNumbers** and **Small** stories. The viewer works in both themes
+and directions via the global toolbar; content stays LTR-oriented (code) while the
+surrounding chrome mirrors in RTL.
