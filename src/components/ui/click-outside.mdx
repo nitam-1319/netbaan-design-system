@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Click Outside/Guidelines" />
+
+# Click Outside
+
+The "dismiss when the user interacts elsewhere" primitive, for the custom surfaces
+you build yourself — a bespoke popover, an inline editor, a disclosure — that don't
+already sit on a Base UI overlay. It ships as a hook (`useClickOutside`) and a thin
+closed wrapper (`ClickOutside`).
+
+## Overview
+
+Reach for it only for surfaces you assemble by hand. Base UI's own `Dialog`,
+`Popover`, `Menu`, and the AEGIS components built on them handle outside-press
+dismissal internally — prefer those. Click Outside exists for the gap: a
+lightweight open/close surface with no overlay primitive underneath.
+
+## When to use
+
+- **Do** use it for custom, hand-rolled popovers, inline editors, and disclosures.
+- **Do** gate it with `enabled` so it only listens while the surface is open.
+- **Don't** use it when a Base UI overlay (`Popover`, `Menu`, `Dialog`, `Drawer`,
+  `Bottom Sheet`) already fits — those manage dismissal, focus, and portalling for you.
+- **Don't** rely on it for focus trapping or Escape handling — it only detects
+  outside interaction.
+
+## Anatomy
+
+1. **useClickOutside(ref, handler, options?)** — the hook; attach your own element ref.
+2. **ClickOutside** — a thin wrapper that owns the ref for you and calls
+   `onClickOutside`; polymorphic via `render`.
+
+## Behavior
+
+- **Detection:** runs on the **capture** phase of `pointerdown`, so it fires before
+  an inner handler can `stopPropagation`. Interactions *inside* the element never
+  fire the handler.
+- **Focus (opt-in):** `detectFocus` additionally listens on `focusin`, so the
+  surface also dismisses when keyboard focus leaves it.
+- **Enablement:** the listeners are attached only while `enabled` is `true`
+  (default), and are removed on unmount or when disabled — no idle listeners.
+- **Latest handler:** the handler is read from a ref, so passing a fresh closure
+  each render does not re-subscribe the DOM listeners.
+
+## Accessibility
+
+- Click Outside is a behavioural utility with no visual output and no ARIA of its
+  own; it renders exactly the element you give it (a `div` by default).
+- It is not a substitute for a dialog's semantics. For modal surfaces, use a Base
+  UI overlay so focus trap, scroll lock, and `role`/`aria-modal` are handled.
+- Because it can also dismiss on `focusin` (`detectFocus`), keyboard users get the
+  same dismissal affordance as pointer users when that option is enabled.
+
+## RTL / i18n
+
+Purely behavioural — there is no text, icon, or directional layout, so it is
+direction-agnostic and needs no RTL handling.
+
+## Design tokens
+
+None. Click Outside adds no styling; the wrapped element carries its own tokens.
+
+## API
+
+### `ClickOutside`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `onClickOutside` | `(event) => void` | — | Fired on a pointer/focus interaction outside the wrapper. |
+| `enabled` | `boolean` | `true` | Only listen while `true`. |
+| `detectFocus` | `boolean` | `false` | Also fire when focus moves outside (keyboard). |
+| `render` | `ReactElement` | `<div>` | Element to render the wrapper as. |
+
+### `useClickOutside(ref, handler, options?)`
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| `ref` | `RefObject<HTMLElement \| null>` | The element considered "inside". |
+| `handler` | `(event) => void` | Called on an outside interaction. |
+| `options.enabled` | `boolean` | Only listen while `true` (default `true`). |
+| `options.detectFocus` | `boolean` | Also listen on `focusin` (default `false`). |
+
+The public API is closed: no `className` / `style`. The wrapper carries
+`data-slot="click-outside"`.
+
+## Examples
+
+The interactive stories show dismissal on an outside click, safety of inside
+clicks, and rendering the wrapper as a different element via `render`.
