@@ -682,3 +682,16 @@ the string-item shape the single-select Combobox already uses.
 Impact: 2026-07-23's "compose Checkbox in Card / wait for #43" guidance is now satisfied — use
 `MultiSelect` for multi-value autocomplete. Object-valued items (value≠label) remain a future additive
 enhancement, consistent with the single-select's current string-item scope.
+
+## 2026-07-26c — Command Palette ships flat; heading groups deferred
+Status: accepted
+Decision: `command-palette.tsx` (roadmap #33, dep Dialog + Combobox) ships as a modal ⌘K launcher
+pairing the AEGIS Dialog with the Base UI Combobox primitive in `inline` mode (always-open listbox
+inside the dialog). v1 renders a FLAT filtered command list (icon · label · shortcut, keyword search,
+built-in ⌘K/Ctrl-K hotkey).
+Reason: The primitive's inline mode gives the search/list/keyboard behaviour for free and is fully
+verifiable headless. Section HEADINGS need either static groups (whose labels linger when all their
+items filter out) or custom filtering that bypasses the primitive — both are additive polish, not core.
+Impact: A follow-up adds grouped headings as an additive layer over the same primitive. Consistent with
+the honestly-scoped precedents (static chart renderers, Combobox single-select, Lightbox single-image,
+Column Filter text+select).

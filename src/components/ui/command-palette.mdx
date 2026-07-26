@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/CommandPalette/Guidelines" />
+
+# Command Palette
+
+The ⌘K launcher: a modal search box over your app's commands. Type to filter by
+label or keywords, arrow through the results, and press Enter to run one.
+
+## Overview
+
+A command palette gives power users one keyboard-first entry point to everything —
+navigation, actions, settings — without hunting through menus. This one pairs the
+AEGIS **Dialog** (modal, focus trap, Esc, backdrop) with the Base UI Combobox
+primitive in inline mode, so the search/list behaviour and the modal behaviour
+compose without re-implementing either.
+
+## Usage
+
+- **Do** give each command a clear `label` and useful `keywords` (synonyms).
+- **Do** show `shortcut` hints for commands that also have hotkeys.
+- **Do** control `open` from your own trigger button as well as the ⌘K hotkey.
+- **Don't** overload it with hundreds of undifferentiated commands.
+- **Don't** put destructive actions where a stray Enter could fire them.
+
+## Anatomy
+
+A `Dialog` holding a `data-slot="command-palette"` inline Combobox: a search input
+(with icon), an empty-state message, and a scrollable `listbox` of command items
+(optional icon · label · trailing shortcut).
+
+## Variants
+
+- `hotkey` — enable/disable the built-in ⌘K / Ctrl-K toggle.
+- Commands carry `icon`, `shortcut`, `keywords`, and `disabled` per item.
+
+## States
+
+- **Closed** — nothing rendered; ⌘K (or your trigger) opens it.
+- **Filtering** — typing narrows the list by label + keywords.
+- **Empty** — no match: `emptyMessage` is shown.
+- **Highlighted** — the active option (keyboard or pointer) is accented.
+
+## Behavior
+
+- Controlled via `open` + `onOpenChange`, or uncontrolled via `defaultOpen`.
+- ⌘K / Ctrl-K toggles it when `hotkey` is on (default).
+- Choosing a command runs its `onSelect`, then the palette's `onSelect`, then
+  closes. Selecting the same command twice works (selection is reset each time).
+- Esc, backdrop click, and focus trapping come from the Dialog.
+
+## Accessibility
+
+- Primitive ARIA: `role="combobox"` input, `listbox`/`option`,
+  `aria-activedescendant`, and roving highlight; the Dialog labels itself with
+  `label`.
+- Icons and shortcut hints are decorative (`aria-hidden`); the command is
+  identified by its text label, never colour or icon alone.
+- Full keyboard flow: type, Arrow/Home/End, Enter, Esc.
+
+## Design tokens
+
+Inherits Dialog surface tokens; items use `data-[highlighted]:bg-accent` and
+`text-muted-foreground` for icons/shortcuts. No hard-coded colour.
+
+## Scope
+
+v1 renders a **flat** command list. Heading **groups** are a deliberate follow-up
+(an additive layer over the same primitive), recorded in `.agent/DECISIONS.md`,
+rather than shipped half-working.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `CommandPaletteItem[]` | — | Commands (required). |
+| `open` | `boolean` | — | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Uncontrolled initial open. |
+| `onOpenChange` | `(open) => void` | — | Open-state handler. |
+| `onSelect` | `(value) => void` | — | Fires with the chosen value. |
+| `placeholder` | `string` | `"Type a command or search…"` | Input placeholder. |
+| `emptyMessage` | `string` | `"No results found."` | No-match message. |
+| `label` | `string` | `"Command palette"` | Dialog + input accessible name. |
+| `hotkey` | `boolean` | `true` | Enable the ⌘K / Ctrl-K toggle. |
+
+`CommandPaletteItem`: `{ value; label; icon?; shortcut?; keywords?; disabled?; onSelect? }`.
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (button + ⌘K), **OpenAndSelect** (filter and run), and **Empty**.
+Works in both themes and directions via the global toolbar.
