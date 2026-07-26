@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FadeSlideScale/Guidelines" />
+
+# Fade / Slide / Scale
+
+The everyday enter/leave presets, built on **Animate Presence**. Give it an
+`open` boolean and a `preset`; it fades, slides, or scales its content in when
+`open` turns true and animates it out — then unmounts it — when `open` turns
+false.
+
+## Overview
+
+Most transient UI (inline panels, revealed detail, toasts you compose yourself)
+needs the same handful of motions: a fade, a short directional slide, or a gentle
+scale. This standardises them with token-scaled timing and an automatic
+reduced-motion fallback, so entrances feel consistent everywhere.
+
+## Usage
+
+- **Do** use `Fade`, `Slide`, or `Scale` for the common case; reach for
+  `Transition` when you want to pick the `preset` dynamically.
+- **Do** keep `open` in sync with the state that shows/hides the content.
+- **Don't** use it to defer *rendering* — that is **Lazy Loader** — or for
+  scroll-triggered entrances — that is **Scroll Reveal**.
+- **Don't** wrap content that must always stay mounted for layout.
+
+## Anatomy
+
+A single `data-slot="transition"` wrapper managed by `Animate Presence`: it holds
+the transition utilities and flips between the open and closed states, animating
+opacity and transform.
+
+## Variants
+
+- `preset` — `fade` · `slide-up/down/left/right` · `scale` · `scale-fade`.
+- `speed` — `fast` (150ms) · `default` (200ms) · `slow` (300ms).
+- `appear` — also animate the first mount when `open` starts true.
+
+Convenience wrappers: `Fade`, `Slide` (with `from`), `Scale` (with `fade`).
+
+## States
+
+- **open** — settled: full opacity, no offset/scale.
+- **closed** — entering or leaving: `opacity-0` plus the preset's transform. The
+  content stays mounted through the leave, then unmounts.
+
+## Behavior
+
+- Enter: on `open → true` the content mounts closed then animates to open on the
+  next frame.
+- Leave: on `open → false` it animates to closed, then unmounts after the speed's
+  duration (matched to the CSS timing).
+- `prefers-reduced-motion` disables the transition and transform; the content
+  still appears and disappears, just without motion.
+
+## Accessibility
+
+- The wrapper adds no ARIA; semantics belong to the content you place inside.
+- Slide directions are physical (`left`/`right`); for direction-aware layout,
+  place it inside RTL-aware containers or choose `fade`/`scale`.
+- Reduced-motion users get instant show/hide.
+
+## Design tokens
+
+No colour is introduced. Durations use token-scaled `duration-*` utilities;
+`motion-reduce:*` guards honour the OS preference.
+
+## API
+
+### `Transition`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | — | Whether the content is shown (required). |
+| `children` | `ReactNode` | — | Content to animate (required). |
+| `preset` | `"fade" \| "slide-up" \| "slide-down" \| "slide-left" \| "slide-right" \| "scale" \| "scale-fade"` | `"fade"` | Entrance/exit motion. |
+| `speed` | `"fast" \| "default" \| "slow"` | `"default"` | Transition duration. |
+| `appear` | `boolean` | `false` | Animate the first mount too. |
+
+`Fade`, `Slide` (`from`: up/down/left/right), and `Scale` (`fade`: boolean) accept
+the same props minus `preset`. The API is closed: `className` and `style` are not
+accepted.
+
+## Examples
+
+See the **Default** story (toggle a single panel) and **Presets** (fade, slide,
+and scale side by side). Works in both themes via the global toolbar.
