@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScatterPlot/Guidelines" />
+
+# Scatter Plot
+
+A config-driven scatter chart built on the AEGIS chart foundation. Give it one or
+more `series`, each a set of `{ x, y }` points; it draws a linear x/y plot with
+**Axis** gridlines, a **Chart Legend**, and one token-coloured dot per point.
+
+## Overview
+
+Scatter plots reveal correlation and clusters. This one composes the shared chart
+foundation so its colours, axes, and legend match every other AEGIS chart.
+
+## Usage
+
+- **Do** use it to show the relationship between two numeric variables.
+- **Do** group points into `series` to colour by category.
+- **Do** set `xDomain` / `yDomain` for fixed scales; otherwise they derive from
+  the data (padded).
+- **Don't** use it for a magnitude-encoded third dimension — that is **Bubble
+  Chart**.
+
+## Anatomy
+
+A **Chart Container** + **Chart Plot** with a left and bottom **Axis** (linear
+domains, optional grid), per-series point groups (`data-slot="scatter-series"`)
+of dots (`scatter-point`), and a **Chart Legend**.
+
+## Variants
+
+Presentation is fixed; toggles include `showGrid`, `showXAxis`, `showYAxis`,
+`showLegend`, and `pointRadius`.
+
+## States
+
+Presentational and deterministic — the same data always renders the same plot.
+
+## Behavior
+
+- Points map from data values to the plot area using the (derived or supplied)
+  domains; the data origin is bottom-left.
+- Each series takes a palette colour that agrees between dots and legend.
+- Static renderer — a hover tooltip is deferred (documented, per chart precedent).
+
+## Accessibility
+
+- The plot is an accessible `role="img"` named by `label`; the legend pairs colour
+  with a text label so series aren't distinguished by colour alone (WCAG 1.4.1).
+- For exact values, provide a data table alongside (charts are a visual summary).
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1..5` | Series dot colours. |
+| Axis tokens (`stroke-border`, `text-muted-foreground`) | Axes + grid. |
+
+No colour is hard-coded; every hue comes from the AEGIS chart palette.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name (required). |
+| `series` | `ScatterSeries[]` | — | Series with points (required). |
+| `xDomain` / `yDomain` | `[number, number]` | derived | Fixed axis ranges. |
+| `pointRadius` | `number` | `4` | Dot radius. |
+| `showGrid` / `showXAxis` / `showYAxis` | `boolean` | `true` | Axis chrome. |
+| `showLegend` | `boolean` | `>1 series` | Legend visibility. |
+| `tickCount` | `number` | `5` | Axis ticks. |
+| `xFormat` / `yFormat` | `(v: number) => ReactNode` | — | Tick formatters. |
+| `width` / `height` | `number` | `640` / `360` | Coordinate size. |
+
+`ScatterSeries` is `{ key, label?, color?, points: {x,y}[] }`. The API is closed:
+`className` and `style` are not accepted.
+
+## Examples
+
+See the **SingleSeries** and **FixedDomain** stories. The chart scales fluidly to
+its container and works in both themes via the global toolbar.
