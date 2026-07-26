@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/AttackSurfaceWidget/Guidelines" />
+
+# Attack Surface Widget
+
+A dashboard tile that summarises the exposed **attack surface** as a column chart
+— exposed services by type, open ports by category, or findings by severity
+across a period. It composes the AEGIS **Card** framing with the config-driven
+**Bar Chart**, adding a title, an optional description, and an optional headline
+total.
+
+## Overview
+
+ASM dashboards need a consistent "shape of the surface" tile. This widget gives
+that breakdown a titled card with an at-a-glance total and a token-coloured bar
+chart, so it matches every other card on the board.
+
+## Usage
+
+- **Do** use it for categorical exposure breakdowns on an ASM dashboard.
+- **Do** pass a `total` for the headline count the chart breaks down.
+- **Do** choose `stacked` for part-of-whole categories, grouped for comparisons.
+- **Don't** use it for time-series remediation flow — that is **Remediation
+  Velocity**. Don't use it for a bare chart — that is **Bar Chart**.
+
+## Anatomy
+
+A **Card** (`data-slot="attack-surface-widget"`) with a header (title
+`attack-surface-widget-title` + description, and an optional headline total
+`attack-surface-widget-total`) over a **Bar Chart** in the content.
+
+## Variants
+
+Presentation is fixed; the meaningful axis is `stacked` (stacked vs grouped bars),
+passed through to Bar Chart along with the rest of the chart config.
+
+## States
+
+Presentational and deterministic — the same data always renders the same chart.
+Description, total, and legend each collapse cleanly when omitted.
+
+## Behavior
+
+- All chart semantics (`data`, `xKey`, `series`, `stacked`, `yFormat`,
+  `showLegend`, `height`) are passed through to **Bar Chart**.
+- The chart's accessible name defaults to the title (or an explicit `chartLabel`).
+- Static renderer — hover tooltips are deferred at the Bar Chart level (documented
+  there), not re-introduced here.
+
+## Accessibility
+
+- The chart is an accessible `role="img"` named by the title; the categorical
+  legend pairs colour with text so series aren't distinguished by colour alone
+  (WCAG 1.4.1).
+- Title, description, and total are real text.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Card `default` tokens | Surface + border. |
+| Chart palette (`--chart-1..5`) | Series colours. |
+| `text-foreground` / `text-muted-foreground` | Title, description, total. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `ReactNode` | `"Attack surface"` | Widget title. |
+| `description` | `ReactNode` | — | Supporting description. |
+| `data` | `BarChartDatum[]` | — | Row data (required). |
+| `xKey` | `string` | — | Category field (required). |
+| `series` | `BarChartSeries[]` | — | Series config (required). |
+| `chartLabel` | `string` | title | Chart accessible name. |
+| `stacked` | `boolean` | `false` | Stack vs group series. |
+| `total` | `ReactNode` | — | Headline total. |
+| `totalLabel` | `ReactNode` | — | Label under the total. |
+| `height` | `number` | `260` | Chart height. |
+| `yFormat` | `(value: number) => ReactNode` | — | Y-axis tick formatter. |
+| `showLegend` | `boolean` | Bar Chart default | Legend visibility. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Grouped** and **SingleSeries** stories. The widget works in both themes
+and directions via the global toolbar; the card framing flips edges in RTL while
+the chart stays direction-consistent.
