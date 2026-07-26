@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/LazyLoader/Guidelines" />
+
+# Lazy Loader
+
+Defers rendering its children until it scrolls near the viewport, so heavy content
+(charts, images, embeds, long lists) doesn't cost anything until it's about to be
+seen. It reserves space with a placeholder to prevent layout shift, then swaps in
+the real content.
+
+## Overview
+
+Rendering everything upfront is wasteful on long pages. Lazy Loader uses an
+`IntersectionObserver` with a preload margin so content is ready just before it
+enters view, without janky pop-in.
+
+## Usage
+
+- **Do** wrap expensive, below-the-fold content.
+- **Do** set `minHeight` to reserve space and avoid layout shift.
+- **Do** pass a meaningful `placeholder` (e.g. a **Skeleton**) for long loads.
+- **Don't** wrap content that must be present for SEO/print — it may not render
+  until scrolled into view.
+
+## Anatomy
+
+A wrapper (`data-slot="lazy-loader"`, `data-visible`) that renders either the
+`children` or a placeholder (`lazy-loader-placeholder`, a pulsing surface box by
+default) sized by `minHeight`.
+
+## Variants
+
+No visual variants; behaviour is tuned via `rootMargin`, `minHeight`, and `once`.
+
+## States
+
+- **Unloaded** — placeholder shown, space reserved.
+- **Loaded** — children rendered (`data-visible`); with `once` (default) it stays
+  loaded even when scrolled away.
+
+## Behavior
+
+- An `IntersectionObserver` with `rootMargin` (default 200px preload) flips to
+  loaded when the wrapper nears the viewport; `onVisible` fires once.
+- With `once={false}` it unloads when scrolled away (for very large lists).
+- If `IntersectionObserver` is unavailable, it renders eagerly (graceful
+  fallback).
+
+## Accessibility
+
+- The default placeholder is `aria-hidden` (decorative). Provide an accessible
+  placeholder if the loading state should be announced.
+- Deferred content is not in the accessibility tree until loaded — don't defer
+  content essential to understanding the page's top.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-surface-3` + `animate-pulse` | Default placeholder. |
+
+No colour is hard-coded; the placeholder uses an AEGIS surface token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Content rendered once visible (required). |
+| `placeholder` | `ReactNode` | pulse box | Pre-load placeholder. |
+| `minHeight` | `number` | `120` | Reserved height (px) while unloaded. |
+| `rootMargin` | `string` | `"200px"` | Preload distance from viewport. |
+| `once` | `boolean` | `true` | Keep mounted after first show. |
+| `onVisible` | `() => void` | — | Fired on first visibility. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **BelowTheFold** and **CustomPlaceholder** stories. It works in both
+themes and directions via the global toolbar; the placeholder inherits document
+direction.
