@@ -1,0 +1,112 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Action Sheet/Guidelines" />
+
+# Action Sheet
+
+The mobile idiom for "what do you want to do with this?" — a set of choices, one
+of them often destructive, presented as a stack of full-width rows rising from the
+bottom of the screen with a separated Cancel. It is a **config-driven convenience
+over `Bottom Sheet`** (mirroring how `Confirmation Dialog` wraps `Dialog`): you
+pass an `actions` array and it renders the rows, wiring each to close the sheet and
+fire its handler, composing AEGIS `Button` so tokens stay consistent. The overlay
+contract — portal, backdrop, focus trap, scroll lock, `role="dialog"` /
+`aria-modal`, Escape / outside-press — comes from the Base UI `Dialog` primitive
+underneath `Bottom Sheet`.
+
+## Overview
+
+Use an action sheet on touch and narrow layouts when a control has several
+possible actions and you want them thumb-reachable, with a clear separated escape
+(Cancel). It is the mobile counterpart to a `Menu` / dropdown; on wide layouts,
+prefer a `Menu` anchored to the trigger.
+
+## When to use
+
+- **Do** use it for row/asset actions and share menus on mobile.
+- **Do** flag dangerous rows with `destructive` so they read as risky.
+- **Don't** use it for a single yes/no decision — use a `Confirmation Dialog`.
+- **Don't** use it for free-form content — use `Bottom Sheet` directly.
+- **Don't** use it as an anchored dropdown on desktop — use a `Menu`.
+
+## Anatomy
+
+1. **ActionSheet** — the root; owns `open` state (a thin `Bottom Sheet`).
+2. **ActionSheetTrigger** — the control that opens the sheet (usually renders a `Button`).
+3. **ActionSheetContent** — the config-driven surface: an optional header, the
+   `actions` rows, and a separated Cancel row.
+
+## Variants
+
+There is no visual variant; the shape is driven by data. Each entry in `actions`
+is `{ label, onClick?, icon?, destructive?, disabled? }`. Normal rows use the
+`secondary` Button; `destructive: true` rows use the `destructive` Button.
+`ActionSheetContent` also forwards `Bottom Sheet`'s `height` (defaulting to `sm`,
+appropriate for a short action list) and `showGrabber`. The corner close button is
+off by default because Cancel already provides the escape.
+
+## States
+
+Closed, Opening / Open (slide-and-fade up), Closing (slide-and-fade down). Rows
+inherit `Button` states, including a `disabled` row that neither closes the sheet
+nor fires its handler.
+
+## Behavior
+
+- **Controlled:** pass `open` + `onOpenChange` on `ActionSheet`. **Uncontrolled:**
+  `defaultOpen`.
+- **Choosing a row** fires that row's `onClick`, then closes the sheet.
+- **Dismissal:** the Cancel row (fires `onCancel`), Escape, or an outside-press.
+- **Focus:** on open, focus moves into the sheet; on close, it returns to the
+  trigger. Focus is trapped while open.
+
+## Accessibility
+
+- Roles: the surface is `role="dialog"` with `aria-modal="true"`. When a `title`
+  is given it labels the sheet (`aria-labelledby`); when title-less, pass
+  `aria-label` (defaults to `"Actions"`) so the dialog always has a name.
+- Keyboard map: `Tab` / `Shift+Tab` cycle the rows within the trapped scope,
+  `Escape` closes, `Enter` / `Space` activate the focused row.
+- Danger is not colour-only: a destructive row uses the destructive token **and**
+  its label names the consequence (e.g. "Delete asset").
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes.
+
+## RTL / i18n
+
+Rows are full-width and centred, and the sheet is vertically anchored, so the
+layout is symmetric under RTL. Icons sit at the inline-start of each label via
+logical flow, and the header inherits `Bottom Sheet`'s logical alignment — so the
+sheet mirrors correctly under RTL with Vazirmatn.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--popover` / `--popover-foreground` | Sheet surface + text |
+| `--secondary` / `--card` | Normal action rows |
+| `--destructive` | Destructive action rows |
+| `--muted` / `--muted-foreground` | Cancel row, grabber |
+| `--background` | Backdrop tint |
+| `--accent-soft` / `--ring` | Focus ring |
+
+## API
+
+| Part | Prop | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ActionSheet` | `open` / `defaultOpen` | `boolean` | — | Open state (controlled / uncontrolled). |
+| `ActionSheet` | `onOpenChange` | `(open, details) => void` | — | Open-state change handler. |
+| `ActionSheetContent` | `actions` | `ActionSheetAction[]` | — | The rows: `{ label, onClick?, icon?, destructive?, disabled? }`. |
+| `ActionSheetContent` | `title` / `description` | `ReactNode` | — | Optional header above the rows. |
+| `ActionSheetContent` | `cancelLabel` | `ReactNode` | `"Cancel"` | Label of the separated Cancel row. |
+| `ActionSheetContent` | `showCancel` | `boolean` | `true` | Render the Cancel row. |
+| `ActionSheetContent` | `onCancel` | `() => void` | — | Fired when Cancel is chosen. |
+| `ActionSheetContent` | `height` | `"sm" \| "default" \| "lg" \| "full"` | `"sm"` | Sheet height cap. |
+| `ActionSheetContent` | `aria-label` | `string` | `"Actions"` | Accessible name when title-less. |
+
+The public API is closed: no `className` / `style`. Every part carries a
+`data-slot`, and element polymorphism is available on the trigger through `render`.
+
+## Examples
+
+Switch the toolbar **Theme** to Light and **Locale** to فارسی (RTL) to confirm the
+rows, icons, and Cancel mirror correctly with Vazirmatn.
