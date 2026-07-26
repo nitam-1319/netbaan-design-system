@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/StackedAreaChart/Guidelines" />
+
+# Stacked Area Chart
+
+The part-to-whole-over-time sibling of `AreaChart`: a config-driven convenience that
+fixes the stacking so series always accumulate into opaque bands, with the
+first-declared series at the bottom of the stack.
+
+## Overview
+
+`AreaChart` can overlap, stack, or normalise via its `stackMode` knob. Stacked Area
+Chart removes that ambiguity for the common case — it is one obvious component for
+"stack these series" rather than remembering to pass `stackMode="stacked"` every
+time. This mirrors the `ConfirmDialog` ↔ `Dialog` convenience precedent: same
+engine, fewer footguns.
+
+Reach for it when the total matters as much as the split — cumulative traffic by
+source, revenue by tier over quarters — and set `normalized` when the *share* over
+time is the story rather than the absolute total.
+
+## Usage
+
+- **Do** use it when series are non-negative and additive (they sum to a
+  meaningful whole).
+- **Do** set `normalized` for a 100 %-stacked share-of-total trend.
+- **Don't** use it for series that can go negative or that aren't parts of one
+  total — reach for `AreaChart` (`overlap`) or `LineChart` instead.
+
+## Anatomy
+
+A `ChartContainer` (geometry + palette) wrapping a `ChartLegend` and a `ChartPlot`
+with a linear left `Axis`, the stacked `area-chart-series` bands, and a bottom
+`Axis` whose ticks line up with the data points — all inherited from `AreaChart`.
+
+## Behavior
+
+- Bands stack from the zero baseline in series order; the y-extent is the largest
+  per-column sum (or `[0, 1]` when `normalized`).
+- `normalized` switches the underlying mode to `expand`, so each x column fills the
+  full plot height and the axis reads as a share.
+- Static, deterministic renderer — a hover tooltip is deferred to the same
+  follow-up as the other AEGIS charts.
+
+## Accessibility
+
+- The plot is a named `img` (`label`); the legend pairs each series' colour with
+  its text label, so series identity is never colour-only (WCAG 1.4.1).
+- As with the other static charts, provide a data table alternative for the full
+  underlying values.
+
+## Design tokens
+
+Inherits the chart palette (`--color-chart-1…5`) and axis/legend tokens from the
+chart foundation. No hard-coded colour, shadow, or ring.
+
+## Scope
+
+Stacked and normalized (100 %) modes ship here. Overlapping bands remain on
+`AreaChart`. A hover tooltip is a deferred follow-up.
+
+## API
+
+Every `AreaChart` prop is accepted **except** `stackMode` (fixed internally), plus:
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `normalized` | `boolean` | `false` | Stack to 100 % (share of total) instead of absolute totals. |
+| `label` | `string` | — | Accessible chart name. Required. |
+| `data` | `object[]` | — | Row data (one row per x position). Required. |
+| `xKey` | `string` | — | Field naming each point. Required. |
+| `series` | `{ key; label?; color? }[]` | — | One entry per stacked band. Required. |
+| `showLine` / `showDots` / `showGrid` | `boolean` | see `AreaChart` | Mark + grid toggles. |
+| `showXAxis` / `showYAxis` / `showLegend` | `boolean` | see `AreaChart` | Axis + legend toggles. |
+| `yFormat` | `(value) => ReactNode` | — | Format y-axis ticks (use `%` when normalized). |
+| `width` / `height` | `number` | `640` / `320` | Outer coordinate size. |
+
+The API is closed: `className`, `style`, and `stackMode` are not accepted.
+
+## Examples
+
+See the **Default** (absolute stack), **Normalized** (100 % share), and
+**WithDots** stories. Works in both themes and directions.
