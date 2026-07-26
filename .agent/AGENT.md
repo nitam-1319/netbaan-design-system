@@ -101,8 +101,10 @@ Load: `guides/RELEASE_GUIDE.md`, `checklists/REVIEW_CHECKLIST.md`, `checklists/C
 Prompt: `prompts/release-check.md`
 
 ### MODE: RECURRING BUILD — autonomous loop of CREATE runs
-Load: `prompts/recurring-build.md` (which itself enters CREATE mode per component and honors the
-checkpoint gates in `checklists/COMPONENTS_STATUS.md`).
+Load: `prompts/recurring-build.md` (which enters CREATE mode per component). This loop is UNATTENDED:
+it does NOT stop at the "every 10" / category-boundary checkpoints in `checklists/COMPONENTS_STATUS.md`
+(those are for attended review) — it builds continuously until the token budget or the queue is
+exhausted, stopping only on a genuine blocker (see that file's "Checkpoint gates").
 
 ---
 

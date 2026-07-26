@@ -604,3 +604,28 @@ inside a build run. Suite greening is valuable but is a dedicated REVIEW task, n
 must not steal a build run's context.
 Impact: future recurring runs convert their full context into new components; play-test-suite
 maintenance is deferred to explicit REVIEW work. No component/API change — docs only.
+
+## 2026-07-26b — CORRECTION: the low-throughput cause was a DUPLICATE checkpoint stop, not suite-greening
+Status: accepted (corrects 2026-07-26a)
+Decision: 2026-07-26a misattributed the cause. Commit 8303540 ("green the Storybook interaction suite
+561/561", which rewrote ~19 existing components) was authored by the MAINTAINER (matin gh
+<nitamcode@gmail.com>) in their own interactive session — NOT by a scheduled/manual task run. The task
+runs are authored "AEGIS build (Cowork)" <netbaanmanage@gmail.com>. So the task did NOT divert into
+suite maintenance.
+What the task actually did: it built the 6 File Management components (attachment-chip, file-card,
+file-list, upload-progress, file-uploader, file-preview), committed "record 6 built components", and
+STOPPED at the **category boundary** — with budget to spare. Root cause: the "STOP and request review"
+checkpoint gate was DUPLICATED. 2026-07-25n removed it from `prompts/recurring-build.md`, but it also
+lived in `checklists/COMPONENTS_STATUS.md` ("Every 10 → review; category boundary → sign-off"), and
+`AGENT.md` told the RECURRING BUILD loop to honor that file's checkpoint gates. So the run still hit the
+category-boundary stop.
+Fix: relaxed the checkpoint gates in `COMPONENTS_STATUS.md` — unattended runs record a one-line note and
+CONTINUE past the every-10 and category-boundary checkpoints (only "3 consecutive same-fix" still stops,
+as BLOCKED); updated `AGENT.md` so the loop explicitly does not stop at those checkpoints. Kept the
+2026-07-26a "stay in your lane" guidance (build runs shouldn't green the play-test suite or edit
+neighbors — still sound), but corrected its now-false causal claim in the docs (that a run built only 6
+because it greened the suite).
+Reason: the earlier "no checkpoint stop" change (2026-07-25n) was correct but INCOMPLETE — the stop was
+enforced in a second file I hadn't edited. This closes that gap.
+Impact: the recurring loop now builds continuously across category boundaries; expect per-run counts to
+rise past a single category. Attended review sessions may still use the checkpoints manually.

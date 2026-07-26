@@ -17,10 +17,17 @@ Regenerate: `node .agent/scripts/verify-inventory.mjs`
 ## Status vocabulary
 `PASS` / `FAILED` / `BLOCKED` / `HUMAN_VERIFY_REQUIRED` (see `../rules/TESTING_RULES.md`).
 
-## Human checkpoint gates (STOP and request review)
-- Every 10 completed components → batch review.
-- On a category boundary (Essential→Recommended→Advanced) → sign-off.
-- On 3 consecutive components needing the same fix → stop; fold it into a rule/token.
+## Checkpoint gates
+UNATTENDED recurring build runs do **NOT** stop at these — stopping to "request review" wastes the
+session (no human is online). Record a one-line note in the run report and **keep building**:
+- Every 10 completed components → note "batch-review due" and continue.
+- On a category boundary (Essential→Recommended→Advanced) → note "category N complete" and continue
+  straight into the next category. (Completing a category is NOT a reason to end the run.)
+The only checkpoint that still STOPS a run:
+- On 3 consecutive components needing the same fix → stop and report BLOCKED (a systemic problem worth
+  a human's attention; folding it into a rule/token needs review).
+(Attended/interactive REVIEW sessions may still use the batch-review and category sign-off as manual
+checkpoints — this relaxation is specifically for the unattended recurring loop.)
 
 ## Built (60) — closed API, on disk
 | # | Component (file) | Impl | Story | Docs | Overall | Notes |

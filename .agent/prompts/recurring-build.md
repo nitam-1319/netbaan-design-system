@@ -10,8 +10,8 @@ This run's ONLY job is to build the next **new** components. Do not let anything
 budget:
 - **Do NOT green / run / set up the Storybook interaction (play-test) suite.** Those runner tests
   are `human-verify` / CI (see `../rules/TESTING_RULES.md`); running and greening the whole suite
-  (editing dozens of existing stories) will eat the entire session and is why past runs built only a
-  handful of components. Your gates are the **compile** gates below — nothing more.
+  (editing dozens of existing stories) would eat the entire session's context. Your gates are the
+  **compile** gates below — nothing more.
 - **Do NOT edit or "fix up" existing/neighbor components** (their `.tsx`, `.stories.tsx`, or `.mdx`).
   That is REFACTOR/REVIEW work, forbidden in CREATE (AGENT.md rule 2). If you notice a problem in an
   existing component or the suite is red from earlier work, write **ONE line** in the run report as a
