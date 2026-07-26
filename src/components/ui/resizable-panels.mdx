@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ResizablePanels/Guidelines" />
+
+# Resizable Panels
+
+Two panels separated by a draggable divider — a split view (sidebar + content,
+editor + preview) the user can resize by pointer or keyboard. The divider is a
+proper `role="separator"` with `aria-valuenow/min/max`, works horizontally or
+vertically, and is RTL-aware.
+
+## Overview
+
+Split layouts let users trade space between two regions. Resizable Panels
+standardises that interaction with an accessible, keyboard-operable divider and
+clamped bounds.
+
+## Usage
+
+- **Do** use it for two-region split views a user should be able to resize.
+- **Do** pass exactly two children (start, end).
+- **Do** set `min` / `max` to protect each panel's usable space.
+- **Don't** use it for more than two regions (nest instead) or for non-resizable
+  layout — that is **Grid** / **Stack**.
+
+## Anatomy
+
+A flex container (`data-slot="resizable-panels"`, `data-orientation`) with a start
+panel (`data-panel="start"`, sized by percentage), a divider
+(`resizable-handle`, `role="separator"`), and a flexible end panel
+(`data-panel="end"`).
+
+## Variants
+
+`orientation` (horizontal · vertical) sets the split axis and the handle's cursor
+and `aria-orientation`.
+
+## States
+
+- **Idle / hover / focus** — the handle brightens on hover and shows the accent
+  ring on focus.
+- **Dragging** — pointer drag updates the first panel's size live.
+
+## Behavior
+
+- Size is the first panel's percentage: controlled (`size` + `onSizeChange`) or
+  uncontrolled (`defaultSize`), clamped to `[min, max]`.
+- Pointer: drag the handle (pointer captured). Keyboard: Arrow keys adjust by
+  `step`, Home/End jump to `min`/`max`.
+- RTL: horizontal dragging is mirrored so the handle tracks the pointer correctly.
+
+## Accessibility
+
+- The divider is a `role="separator"` with `aria-orientation`, `aria-valuenow`,
+  `aria-valuemin`, `aria-valuemax`, and an accessible `label`.
+- Fully keyboard-operable (Arrows, Home, End) with a visible focus ring.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `border-border` / `bg-border` | Container border + handle track. |
+| `bg-accent-strong` / `ring-accent-soft` | Handle hover/active + focus ring. |
+| `bg-muted-foreground/50` | Handle grip. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `[ReactNode, ReactNode]` | — | Start + end panels (required). |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Split axis. |
+| `size` | `number` | — | Controlled first-panel %. |
+| `defaultSize` | `number` | `50` | Initial first-panel %. |
+| `onSizeChange` | `(size: number) => void` | — | Resize callback. |
+| `min` / `max` | `number` | `10` / `90` | First-panel bounds. |
+| `step` | `number` | `2` | Keyboard step (%). |
+| `label` | `string` | `"Resize panels"` | Divider accessible name. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Vertical** and **WideSidebar** stories. The split works in both themes
+and directions via the global toolbar; horizontal drag and arrow keys mirror in
+RTL.
