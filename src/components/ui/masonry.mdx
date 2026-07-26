@@ -1,0 +1,71 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Masonry/Guidelines" />
+
+# Masonry
+
+A masonry layout — items flow into balanced vertical columns with no fixed row
+heights, so cards of varying height pack tightly (galleries, dashboards, card
+walls). Built on native CSS multi-column, so it degrades gracefully and needs no
+measurement JS.
+
+## Overview
+
+Grids leave gaps when content heights vary. Masonry packs items column-by-column,
+keeping each item whole, and reduces its column count on smaller screens.
+
+## Usage
+
+- **Do** use it for card walls, image galleries, and heterogeneous-height content.
+- **Do** pass a `columns` target; it steps down responsively.
+- **Don't** use it when strict row alignment matters — that is **Grid**. Note
+  that multi-column order flows top-to-bottom, then across.
+
+## Anatomy
+
+A multi-column container (`data-slot="masonry"`, `data-columns`) wrapping each
+child in a break-safe item (`masonry-item`).
+
+## Variants
+
+- `columns` — 1–5 target columns (responsive: 1 on mobile, stepping up at `sm` /
+  `lg` / `xl`).
+- `gap` — sm · md · lg spacing between items (both column gap and item spacing).
+
+## States
+
+Purely structural — no interactive states.
+
+## Behavior
+
+- Uses CSS `columns`; each child is wrapped with `break-inside-avoid` so it is
+  never split across columns.
+- Reading order is top-to-bottom within a column, then to the next column — keep
+  that in mind for content where sequence matters.
+- Vertical spacing is a bottom margin on each item; horizontal spacing is the
+  column gap.
+
+## Accessibility
+
+- Layout only — it adds no roles and preserves the DOM order of children (which is
+  the reading/tab order). Ensure that DOM order is the intended reading order.
+
+## Design tokens
+
+Spacing uses token-scaled `gap-*` / `mb-*` utilities; no colour is introduced.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `columns` | `1 \| 2 \| 3 \| 4 \| 5` | `3` | Target columns on wide screens. |
+| `gap` | `"sm" \| "md" \| "lg"` | `"md"` | Item spacing. |
+| `children` | `ReactNode` | — | Items to lay out. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **TwoColumns** and **LargeGap** stories. Masonry works in both themes and
+directions via the global toolbar; multi-column flow follows the document
+direction, so RTL fills from the inline-start edge.
