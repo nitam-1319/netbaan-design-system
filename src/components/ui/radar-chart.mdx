@@ -1,0 +1,80 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/RadarChart/Guidelines" />
+
+# Radar Chart
+
+A radar (spider) chart for comparing several series across the same set of
+dimensions — capability coverage, category scores, control maturity. It composes
+the AEGIS **Chart Container**, draws a concentric grid with one spoke per axis,
+and overlays one token-coloured polygon per series.
+
+## Overview
+
+Radar charts make multi-dimensional profiles comparable at a glance — where each
+series is strong or weak across the same axes.
+
+## Usage
+
+- **Do** use it to compare a few series across 4–8 shared dimensions.
+- **Do** keep `values` aligned to `axes` order.
+- **Do** set an explicit `max` when scores share a known scale (e.g. 100).
+- **Don't** use it for many series (polygons overlap) or for time series.
+
+## Anatomy
+
+A **Chart Container** + **Chart Plot** with a concentric grid
+(`data-slot="radar-grid"`), per-axis spokes + labels (`radar-axis`), and one
+polygon per series (`radar-series`), plus a **Chart Legend**.
+
+## Variants
+
+Presentation is fixed; `rings` sets the grid density, `showLegend` toggles the
+legend, `max` fixes the outer-ring value.
+
+## States
+
+Presentational and deterministic — the same data always renders the same chart.
+
+## Behavior
+
+- Axis `i` sits at angle `-90° + i·(360/n)` (first axis at the top, clockwise).
+- Each value maps to a radius fraction of `value / max`; polygons are translucent
+  so overlaps stay readable.
+- `max` derives from the data when not provided.
+
+## Accessibility
+
+- The plot is an accessible `role="img"` named by `label`; the legend pairs colour
+  with a text label (WCAG 1.4.1), and axis labels are real text.
+- Provide the underlying scores in a table for exact values.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1..5` | Series polygons. |
+| `stroke-border` | Grid + spokes. |
+| `fill-muted-foreground` | Axis labels. |
+
+No colour is hard-coded; every hue comes from the AEGIS chart palette.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name (required). |
+| `axes` | `string[]` | — | Dimension labels, in order (required). |
+| `series` | `RadarSeries[]` | — | Series with `values` aligned to `axes` (required). |
+| `max` | `number` | derived | Outer-ring value. |
+| `rings` | `number` | `4` | Concentric grid rings. |
+| `showLegend` | `boolean` | `>1 series` | Legend visibility. |
+| `size` | `number` | `380` | Square coordinate size. |
+
+`RadarSeries` is `{ key, label?, color?, values: number[] }`. The API is closed:
+`className` and `style` are not accepted.
+
+## Examples
+
+See the **SingleSeries** story. The chart scales fluidly to its container and
+works in both themes via the global toolbar.
