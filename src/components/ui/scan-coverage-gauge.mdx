@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScanCoverageGauge/Guidelines" />
+
+# Scan Coverage Gauge
+
+A gauge for how much of the attack surface has actually been scanned —
+`scanned` assets out of `total`. It composes the AEGIS **Radial Gauge**, showing
+the coverage percentage in the arc and, below it, the exact `scanned / total`
+readout. Coverage tone escalates as it drops, so blind spots are visible at a
+glance.
+
+## Overview
+
+Coverage is a trust metric: a great posture score means little if half the
+surface was never scanned. Scan Coverage Gauge makes coverage a first-class,
+colour-coded number with the underlying counts always visible.
+
+## Usage
+
+- **Do** use it on ASM dashboards and scan-summary panels.
+- **Do** pass raw `scanned` / `total` counts — the gauge computes the percentage.
+- **Do** keep the readout on so the exact counts are visible.
+- **Don't** use it for a posture score (that is **Posture Score Card**) or a
+  generic percentage (that is **Radial Gauge**).
+
+## Anatomy
+
+A group (`data-slot="scan-coverage-gauge"`, `data-tone`) with an optional label,
+a **Radial Gauge** (`scan-coverage-gauge-meter`) whose centre shows the percent,
+and a `scanned / total` readout (`scan-coverage-gauge-readout`).
+
+## Variants
+
+Presentation is fixed; `size` and `thickness` are inherited from Radial Gauge.
+Tone is derived from coverage, not chosen.
+
+## States
+
+- **Tone by coverage** — ≥90% success, ≥60% accent, ≥30% warning, <30% danger.
+
+The label and readout each collapse cleanly when disabled.
+
+## Behavior
+
+- `scanned` is clamped to `[0, total]`; the arc fills to the fraction and the
+  centre shows the rounded percent.
+- The visible centre is the percent; the meter's `aria-valuetext` carries the full
+  "N% (X of Y assets)" phrasing.
+- All values are deterministic reflections of the props — no internal state.
+
+## Accessibility
+
+- The gauge exposes `role="meter"` with `aria-valuenow` = scanned and
+  `aria-valuemax` = total, plus a descriptive `aria-valuetext`, so coverage is
+  announced independently of colour (WCAG 1.4.1).
+- The readout is real monospace text with exact counts.
+- `data-tone` exposes the coverage tier to tests and styling hooks.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Radial Gauge tones (`success`/`accent`/`warning`/`danger`) | Arc colour by coverage. |
+| `stroke-surface-3` | Gauge track. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Percent, label, readout. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `scanned` | `number` | — | Assets scanned (required). |
+| `total` | `number` | — | Total assets (required). |
+| `label` | `ReactNode` | `"Scan coverage"` | Label + meter accessible name. |
+| `unit` | `string` | `"assets"` | Unit noun in the readout. |
+| `showReadout` | `boolean` | `true` | Show the `scanned / total` readout. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Gauge scale. |
+| `thickness` | `"thin" \| "regular" \| "thick"` | `"thick"` | Arc weight. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Partial**, **Low**, **GaugeOnly**, and **Tiers** stories. The gauge
+works in both themes and directions via the global toolbar; the arc and readouts
+are direction-agnostic.
