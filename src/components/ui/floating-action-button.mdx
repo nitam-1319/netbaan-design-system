@@ -1,0 +1,68 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Floating Action Button/Guidelines" />
+
+# Floating Action Button
+
+A prominent, circular (or extended) action pinned above the content — the
+primary action on a mobile or focused surface. It is built on the same Base UI
+Button primitive as the AEGIS **Button**, and the `primary` variant carries the
+signature accent **beam**, so tokens, focus ring, and motion match the system.
+
+## When to use
+
+- **Do** use a single FAB for the one most-important, most-frequent action on a
+  screen (compose, create, add).
+- **Do** use the extended (pill) form when the icon alone is ambiguous — the
+  label makes the action unmistakable.
+- **Don't** place more than one FAB on a screen, and don't use it for
+  destructive-by-default actions without confirmation.
+- **Don't** cover critical content; pin it clear of the bottom navigation.
+
+## Anatomy
+
+An **icon** (required) with an optional **label**. Without a label the FAB is a
+circle (`aspect-square`); with a label it becomes an extended pill.
+
+## Variants & sizes
+
+| `variant` | Use |
+| --- | --- |
+| `primary` | The default; accent beam + bloom. |
+| `secondary` | Card surface with a strong border. |
+| `surface` | Quiet, low-emphasis surface. |
+| `destructive` | A destructive primary action. |
+
+| `size` | Diameter |
+| --- | --- |
+| `sm` | 44px |
+| `md` | 56px (default) |
+| `lg` | 64px |
+
+`sm` (44px) meets the WCAG 2.5.8 / mobile minimum touch target.
+
+## Placement
+
+`placement` pins the FAB to a viewport corner (`bottom-end`, `bottom-start`,
+`bottom-center`) as `position: fixed`, or `inline` (default) to drop it into your
+own positioned container. Corners use logical properties, so they mirror in RTL.
+
+## Accessibility
+
+- Icon-only FABs **require** an `aria-label`; extended FABs derive their name
+  from the visible label. The button is never unlabelled.
+- It is a real `<button>` (Base UI Button primitive): click, `Enter`, and `Space`
+  activate it, and it takes the 3px `accent-soft` focus ring.
+- Contrast meets WCAG 2.2 AA in both themes; the beam and bloom are decorative
+  (`aria-hidden`).
+
+## Internationalization / RTL
+
+Corner placements resolve with `start` / `end`, so a `bottom-end` FAB sits on the
+right in LTR and the left in RTL. Labels are nodes you translate.
+
+## Tokens
+
+`primary` uses the `--primary` beam gradient + `shadow-bloom`; other variants use
+`bg-card` / `bg-surface-2` / `bg-destructive` with `shadow-elevated` and
+`border-border-strong`. No hard-coded colour or shadow.
