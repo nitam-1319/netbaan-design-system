@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/MultiStepForm/Guidelines" />
+
+# Multi-step Form
+
+A wizard shell that drives a linear, multi-step flow: a **Stepper** header shows
+progress, the active step's content renders below, and a footer provides
+**Back / Next / Submit** navigation. It composes the AEGIS **Stepper** and
+**Button**.
+
+## Overview
+
+Long forms are easier when broken into steps. Multi-step Form standardises the
+wizard chrome — progress indicator, step body, and navigation — so every wizard
+in the product behaves and looks the same, while you own the fields and data.
+
+## Usage
+
+- **Do** use it for onboarding, setup, and any form split into ordered steps.
+- **Do** render your fields (e.g. **Text Field** inside a **Form Provider**) as
+  each step's `content`.
+- **Do** gate advancing with `nextDisabled` when the current step is invalid.
+- **Don't** use it for non-linear tab navigation — that is **Tabs**.
+
+## Anatomy
+
+A container (`data-slot="multi-step-form"`, `data-orientation`) with a **Stepper**,
+a content region (`multi-step-form-content`, a labelled group), and a footer
+(`multi-step-form-footer`): a **Back** button, an "Step N of M" progress readout
+(`multi-step-form-progress`), and a **Next**/**Submit** button.
+
+## Variants
+
+Presentation is fixed; `orientation` (horizontal · vertical) is passed to the
+Stepper.
+
+## States
+
+- **First step** — Back is disabled.
+- **Middle steps** — Back + Next.
+- **Final step** — the primary button becomes **Submit** (with an optional
+  `loading` state via `submitting`).
+- **Blocked** — `nextDisabled` disables advancing/submitting.
+
+## Behavior
+
+- Navigation is controlled (`activeStep` + `onStepChange`) or uncontrolled
+  (`defaultActiveStep`); the index is clamped to the step range.
+- Next advances until the last step, where it calls `onSubmit`; Back decrements.
+- The shell manages step index only — form state and validation live in the
+  caller's fields.
+
+## Accessibility
+
+- The Stepper marks the active step with `aria-current="step"` and annotates each
+  indicator's status for screen readers.
+- The content region is a labelled `role="group"` named by the active step.
+- Back/Next/Submit are real buttons; the direction arrows mirror in RTL.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Stepper tokens | Progress indicators + track. |
+| Button tokens (`ghost`/`primary`) | Back / Next / Submit. |
+| `text-muted-foreground` | Progress readout. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `steps` | `MultiStepFormStep[]` | — | Stepper meta + per-step `content` (required). |
+| `activeStep` | `number` | — | Controlled step index. |
+| `defaultActiveStep` | `number` | `0` | Initial step (uncontrolled). |
+| `onStepChange` | `(index: number) => void` | — | Step-change callback. |
+| `onSubmit` | `() => void` | — | Fired on the final step's submit. |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Stepper direction. |
+| `backLabel` / `nextLabel` / `submitLabel` | `ReactNode` | defaults | Button labels. |
+| `nextDisabled` | `boolean` | `false` | Block advancing/submitting. |
+| `submitting` | `boolean` | `false` | Loading state on submit. |
+
+`MultiStepFormStep` is `StepperStep & { content: ReactNode }`. The API is closed:
+`className` and `style` are not accepted.
+
+## Examples
+
+See the **Submit**, **Vertical**, and **Submitting** stories. The wizard works in
+both themes and directions via the global toolbar; in RTL the stepper, progress,
+and navigation arrows all mirror automatically.
