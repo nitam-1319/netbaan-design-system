@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Error Boundary/Guidelines" />
+
+# Error Boundary
+
+A React error boundary that catches render-time errors in its subtree and, in
+their place, shows the AEGIS `Error State` wired to a **reset** — so a broken
+widget degrades to a recoverable "Something went wrong · Try again" surface
+instead of tearing down the whole app. Error boundaries must be class components
+(there is no Hook equivalent for `componentDidCatch`), so this is the one
+deliberately class-based part in the system; its public surface stays declarative
+and closed.
+
+## Overview
+
+Wrap the parts of a screen that can fail independently — a chart, a data panel, a
+third-party widget — each in its own boundary, so one failure is contained to that
+region. A boundary catches errors thrown during rendering, in lifecycle methods,
+and in constructors of the components below it.
+
+## When to use
+
+- **Do** wrap independently-failing regions (dashboards of widgets, lazy routes).
+- **Do** pair `onReset` + `resetKeys` with the state that caused the failure so
+  Retry actually recovers.
+- **Don't** rely on it to catch errors in event handlers, async callbacks, or
+  `setTimeout` — those aren't render-phase; handle them with `try/catch` and your
+  own state.
+- **Don't** wrap the entire app in a single boundary if a finer-grained one keeps
+  more of the UI alive.
+
+## Anatomy
+
+1. **ErrorBoundary** — the class boundary; renders `children` normally, or the
+   fallback once an error is caught.
+2. **Fallback** — the default is `Error State` (Retry → `reset()`); override with a
+   `fallback` node or a `({ error, reset }) => ReactNode` render function.
+
+## Behavior
+
+- **Catch:** a render-phase error in the subtree switches the boundary to its
+  fallback and calls `onError(error, info)`.
+- **Reset:** the default Retry calls `reset()`, which runs `onReset` (where you fix
+  the cause) then clears the boundary so the subtree re-renders.
+- **resetKeys:** once errored, any change (by `Object.is`) to a value in
+  `resetKeys` clears the boundary automatically — the idiom for "the input that
+  failed has changed, try again" (e.g. a new route param or query).
+- **Nesting:** the nearest boundary above the throwing component handles the error;
+  deeper boundaries contain failures more narrowly.
+
+## States
+
+Healthy (renders `children`) and Errored (renders the fallback). The default
+fallback inherits `Error State` visuals; its Retry button inherits `Button` states.
+
+## Accessibility
+
+- The default fallback is `Error State`, which is `role="alert"` — assistive tech
+  announces the failure when it appears.
+- The Retry action is a real `Button` with a visible focus ring and an accessible
+  label ("Try again" by default).
+- Custom fallbacks should preserve an assertive announcement and a keyboard-
+  reachable recovery control.
+- Meets WCAG 2.2 AA contrast in both Light and Dark themes (via `Error State`).
+
+## RTL / i18n
+
+The default fallback inherits `Error State` / `Empty State` centred, logical-flow
+layout, so it mirrors correctly under RTL with Vazirmatn. Pass translated `title` /
+`description` strings; the boundary adds no text of its own beyond `Error State`'s
+defaults.
+
+## Design tokens
+
+The boundary renders no chrome of its own; the default fallback uses `Error State`
+tokens (`--destructive` glyph, `--muted` / `--muted-foreground` detail chip,
+`--primary` Retry button, `--accent-soft` / `--ring` focus ring).
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | The protected subtree. |
+| `fallback` | `ReactNode \| (({ error, reset }) => ReactNode)` | `Error State` | What to show once an error is caught. |
+| `onError` | `(error, info) => void` | — | Reported when an error is caught (logging). |
+| `onReset` | `() => void` | — | Called on reset — fix the cause here (e.g. refetch). |
+| `resetKeys` | `readonly unknown[]` | — | Any change clears the boundary. |
+| `title` / `description` | `ReactNode` | `Error State` defaults | Copy for the default fallback. |
+| `showErrorDetail` | `boolean` | `false` | Show the caught message as the fallback detail. |
+
+The public API is closed: no `className` / `style`. The default fallback carries
+`data-slot="error-boundary"`.
+
+## Examples
+
+Trigger the boundary (in the interactive stories) and switch the toolbar **Theme**
+to Light and **Locale** to فارسی (RTL) to confirm the recoverable error surface
+mirrors correctly with Vazirmatn.
