@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Reduced Motion/Guidelines" />
+
+# Reduced Motion
+
+The single source of truth for "does this user prefer reduced motion?". It wraps
+the `(prefers-reduced-motion: reduce)` media query in a reactive, SSR-safe hook
+(`usePrefersReducedMotion`) and a small declarative gate (`ReducedMotion`), so
+motion-bearing components can offer a calm alternative without each
+re-implementing the query.
+
+## Overview
+
+Respecting reduced-motion is a WCAG 2.2 requirement (2.3.3 Animation from
+Interactions, AAA — and a strong AA expectation for non-essential motion). Use
+this utility when the decision has to happen in **JavaScript**: choosing an
+animation driver, swapping whole subtrees, or computing a duration. For purely
+CSS-driven motion, prefer Tailwind's `motion-reduce:` variant or a
+`@media (prefers-reduced-motion: reduce)` block instead.
+
+## When to use
+
+- **Do** use the hook to branch imperative animation (scroll behavior, JS tweens).
+- **Do** use the gate to render a static alternative to an animated subtree.
+- **Don't** reach for it to disable a CSS transition — use `motion-reduce:` in the
+  component's class list.
+- **Don't** remove *essential* motion (e.g. a loading spinner that conveys
+  progress); reduced-motion targets decorative movement.
+
+## Anatomy
+
+1. **usePrefersReducedMotion()** — a reactive boolean; updates if the OS
+   preference changes at runtime.
+2. **ReducedMotion** — a gate that renders `whenReduced` in place of `children`
+   when motion is reduced, or calls a `(reduced) => ReactNode` render function.
+
+## Behavior
+
+- **Reactive:** the hook subscribes to the media query's `change` event, so a
+  live OS-level toggle updates every consumer.
+- **SSR-safe:** built on `useSyncExternalStore` with a server snapshot of `false`,
+  so it hydrates without a mismatch and never touches `window` during render on
+  the server.
+- **No-op safe:** where `window.matchMedia` is unavailable, it reports `false`
+  and attaches no listeners.
+
+## Accessibility
+
+- This utility is the mechanism by which components honour a user's reduced-motion
+  preference — a direct accessibility affordance rather than a visual element.
+- It renders no DOM of its own and adds no ARIA; it simply selects which subtree
+  to render.
+- Keep *essential* motion (progress, state-change cues) and only swap or dampen
+  decorative motion when `reduced` is `true`.
+
+## RTL / i18n
+
+Purely behavioural — no text, icons, or directional layout, so it is
+direction-agnostic and needs no RTL handling.
+
+## Design tokens
+
+None. Reduced Motion adds no styling; the branches you render carry their own
+tokens.
+
+## API
+
+### `ReducedMotion`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode \| ((reduced: boolean) => ReactNode)` | — | Full-motion output, or a render function given the preference. |
+| `whenReduced` | `ReactNode` | — | Rendered instead of `children` when motion is reduced (ignored for the render-function form). |
+
+### `usePrefersReducedMotion()`
+
+Returns a reactive `boolean` — `true` when the user prefers reduced motion.
+
+The public API is closed: no `className` / `style`. This is a behavioural utility
+with no visual output of its own.
+
+## Examples
+
+The stories show the gate swapping to a static alternative, the render-function
+form, and a live hook readout. Toggle "Reduce motion" in your OS accessibility
+settings to see the values change.
