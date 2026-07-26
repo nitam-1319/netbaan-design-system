@@ -695,3 +695,31 @@ items filter out) or custom filtering that bypasses the primitive — both are a
 Impact: A follow-up adds grouped headings as an additive layer over the same primitive. Consistent with
 the honestly-scoped precedents (static chart renderers, Combobox single-select, Lightbox single-image,
 Column Filter text+select).
+
+## 2026-07-26d — Recurring run: 5 components (2 table, 2 viz, 1 input); buildable queue now empty
+Status: accepted
+Decision: Built expandable-rows (#137), sticky-header-column (#139), gantt-chart (#89),
+sankey-diagram (#87), color-picker (#47) — all closed-API, tokens-only, machine gates green (tsc +
+per-component conformance/hygiene + verify-tokens), added to Built list as PARTIAL (runner axes
+HUMAN_VERIFY_REQUIRED). Gantt & Sankey are deterministic token-only SVG renderers reusing the chart
+palette (CHART_PALETTE) — consistent with the honestly-scoped static-chart precedent (hover/interaction
+deferred). Color Picker composes Popover with three labelled native range sliders (H/S/L) branded via
+accent-color=--primary; the 2-D saturation/value square + eyedropper are deferred (honestly-scoped,
+mirrors Combobox/Time Picker native-control precedents). Colour VALUES are HSL data, not tokens — kept
+all hex/rgba literals out of the .tsx to satisfy the hygiene gate (presets live in the stories file).
+After these, the CREATE queue has no buildable-and-headless-verifiable item left:
+- Foundations (#1–9, 11, 190, 193 Color/Typography/Spacing/Elevation/Radius/Iconography/Motion/Z-index/
+  Focus Ring/Visible Focus/High Contrast) are CSS-token/foundation concerns, not closed-API tsx
+  components; never built as components by prior runs. Theme Provider (#10) already exists at
+  `src/components/theme-provider.tsx` (consumed by theme-toggle) — fulfilled, not a gap.
+- Date Picker (#44) + Date Range Picker (#45): @base-ui/react ships NO calendar/date primitive (verified
+  `ls node_modules/@base-ui/react`), so these need a from-scratch calendar (month grid + keyboard + RTL)
+  that is browser-verification-heavy — DEFERRED pending a Calendar foundation.
+- Rich Text Editor (#53, contentEditable), Mention Input (#54), Network Graph (#88, force layout),
+  Virtualized Grid (#141, DOM measurement), Image Cropper (#161, canvas): all interaction/browser-heavy,
+  not headless-verifiable — DEFERRED.
+- Geo/Choropleth Map (#85) + Hosts-by-Country Map (#217): need geo/topojson data — DEFERRED.
+Reason: throughput run should spend context on buildable, headless-verifiable components; the remainder
+are either non-components (CSS foundations) or need a browser/data dependency this sandbox can't verify.
+Impact: next run continues the deferrals list above; unblocking Date Picker (build a Calendar first) or a
+geo-data source would reopen a cluster of items. Run ended: queue empty of buildable items (not budget).
