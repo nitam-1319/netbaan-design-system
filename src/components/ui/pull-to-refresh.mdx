@@ -1,0 +1,77 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/PullToRefresh/Guidelines" />
+
+# Pull to Refresh
+
+Wraps a scrollable region so a downward pull from the top reveals a refresh
+affordance and, when released past a threshold, runs `onRefresh` and shows a
+spinner until it resolves. Built on pointer events (touch + mouse), with a
+resistance curve.
+
+## Overview
+
+Pull-to-refresh is the expected way to reload a feed on touch devices. This
+component standardises the gesture, the indicator, and the async lifecycle.
+
+## Usage
+
+- **Do** wrap a scrollable list/feed and return a Promise from `onRefresh`.
+- **Do** keep the wrapper a fixed-height scroll region.
+- **Don't** use it on desktop-primary layouts where a refresh button is clearer.
+
+## Anatomy
+
+A clipping wrapper (`data-slot="pull-to-refresh"`) with an indicator
+(`pull-to-refresh-indicator`: chevron/spinner + status text) above a scroll
+region (`pull-to-refresh-scroll`) that translates down as you pull.
+
+## Variants
+
+No visual variants; tune with `threshold` and the labels.
+
+## States
+
+- **Pulling** — below threshold: "Pull to refresh", chevron down.
+- **Ready** — past threshold: "Release to refresh", chevron flipped.
+- **Refreshing** — after release: spinner + "Refreshing…" until `onRefresh`
+  resolves.
+
+## Behavior
+
+- The gesture only starts when the scroll region is at the top (`scrollTop ≤ 0`).
+- A resistance factor makes the pull feel weighted; the offset is capped.
+- On release past `threshold`, `onRefresh` runs; the component awaits it (Promise)
+  before snapping back.
+
+## Accessibility
+
+- The status is text in a `role="status"` region ("Pull…"/"Release…"/
+  "Refreshing…"), so it's announced and never colour-only (WCAG 1.4.1).
+- The chevron/spinner is `aria-hidden`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `text-muted-foreground` | Indicator text + glyph. |
+
+No colour is hard-coded; the indicator uses an AEGIS token. The pull offset is an
+internal transform, not a public `style`.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Scrollable content (required). |
+| `onRefresh` | `() => void \| Promise<void>` | — | Refresh handler (awaited) (required). |
+| `threshold` | `number` | `72` | Pull distance to trigger (px). |
+| `disabled` | `boolean` | `false` | Disable the gesture. |
+| `pullLabel` / `releaseLabel` / `refreshingLabel` | `string` | defaults | Status labels. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **LargeThreshold** story. Pull the list down from the top to trigger a
+refresh. Works in both themes and directions via the global toolbar.
