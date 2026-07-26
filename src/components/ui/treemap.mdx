@@ -1,0 +1,78 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Treemap/Guidelines" />
+
+# Treemap
+
+A space-filling chart where each item is a rectangle sized in proportion to its
+value — asset counts by group, spend by category, findings by service. It
+composes the AEGIS **Chart Container** and lays items out with a deterministic
+recursive split (area ∝ value).
+
+## Overview
+
+Treemaps pack part-to-whole comparisons into a fixed area, making the biggest
+contributors obvious. This one keeps values accessible on every tile.
+
+## Usage
+
+- **Do** use it for part-of-whole breakdowns with several categories.
+- **Do** keep the item count moderate so tiles stay labelable.
+- **Don't** use it for precise value comparison (area is hard to compare
+  exactly) — pair it with a table, or use **Bar Chart**.
+
+## Anatomy
+
+A **Chart Container** wrapping a positioned tile area (`data-slot="treemap"`) of
+value-sized tiles (`treemap-tile`, `data-tile`), each a token-coloured rectangle
+with a label + value when space allows.
+
+## Variants
+
+Presentation is fixed; `height` sets the map's pixel height.
+
+## States
+
+Presentational and deterministic — the same items always render the same layout.
+
+## Behavior
+
+- Items are sorted by value, then laid out by a slice-and-dice split (value-
+  balanced groups divided along the rect's longer side, recursively).
+- Tiles too small for text show colour only; their value is still in the
+  accessible name.
+
+## Accessibility
+
+- The figure is a `role="group"` named by `label`; each tile has an accessible
+  name ("{label}: {value}") so values never depend on colour (WCAG 1.4.1), plus
+  `data-tile` for tests.
+- Visible tile text uses the on-tone colour for contrast against the fill.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1..5` | Tile colours. |
+| `border-background` | Tile separation. |
+| `text-on-tone` | Tile label/value. |
+
+No colour is hard-coded; every hue comes from the AEGIS chart palette.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name (required). |
+| `items` | `TreemapItem[]` | — | Items to lay out (required). |
+| `height` | `number` | `320` | Map height (px). |
+| `valueFormat` | `(v: number) => string` | locale int | Value formatter. |
+
+`TreemapItem` is `{ key?, label, value, color? }`. The API is closed: `className`
+and `style` are not accepted.
+
+## Examples
+
+See the **Spend** story. The treemap works in both themes and directions via the
+global toolbar; tile positions follow the layout regardless of direction, while
+text inherits document direction.
