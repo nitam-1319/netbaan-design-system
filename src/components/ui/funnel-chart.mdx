@@ -1,0 +1,77 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FunnelChart/Guidelines" />
+
+# Funnel Chart
+
+A staged conversion funnel: each stage is a centred bar whose width is
+proportional to its value, so drop-off between steps reads at a glance. It
+composes the AEGIS **Chart Container** (figure role, accessible name, shared
+palette) and shows each stage's value and conversion rate versus the first stage.
+
+## Overview
+
+Funnels show where people (or items) fall out of a multi-step process — signup
+flows, remediation pipelines. This chart standardises that view with token colours
+and exact figures.
+
+## Usage
+
+- **Do** pass `stages` largest-first (the first stage is the conversion baseline).
+- **Do** keep stages to a handful — funnels lose meaning with too many steps.
+- **Don't** use it for categorical comparison — that is **Bar Chart**.
+
+## Anatomy
+
+A **Chart Container** wrapping a stack of stage rows
+(`data-slot="funnel-chart-stage"`): a label + value/conversion line over a
+centred, token-coloured bar (`funnel-chart-bar`) on a track.
+
+## Variants
+
+Presentation is fixed; `showConversion` toggles the percentage, and `valueFormat`
+controls number formatting.
+
+## States
+
+Presentational and deterministic — the same stages always render the same funnel.
+
+## Behavior
+
+- Bar width is proportional to the stage value over the max; conversion is the
+  stage value over the first stage's value.
+- Each stage takes a palette colour from the container.
+
+## Accessibility
+
+- The figure is a `role="group"` named by `label`; each stage's value and
+  conversion are real text, so nothing depends on colour (WCAG 1.4.1).
+- Bar widths are a visual aid to the text figures.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1..5` | Stage bar colours. |
+| `bg-surface-3` | Bar track. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Labels, values, conversion. |
+
+No colour is hard-coded; every hue comes from the AEGIS chart palette.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name (required). |
+| `stages` | `FunnelStage[]` | — | Ordered stages, largest first (required). |
+| `valueFormat` | `(v: number) => ReactNode` | locale int | Value formatter. |
+| `showConversion` | `boolean` | `true` | Show conversion vs. first stage. |
+
+`FunnelStage` is `{ key?, label, value, color? }`. The API is closed: `className`
+and `style` are not accepted.
+
+## Examples
+
+See the **NoConversion** and **SecurityPipeline** stories. The funnel works in
+both themes and directions via the global toolbar; in RTL labels and values swap
+edges while bars stay centred.
