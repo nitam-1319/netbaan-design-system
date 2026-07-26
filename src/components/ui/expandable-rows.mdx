@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ExpandableRow/Guidelines" />
+
+# Expandable Rows
+
+A disclosure detail panel for a data row. `ExpandableRow` renders the visible
+row — a leading toggle cell followed by your cells — plus a full-width detail row
+beneath it that expands and collapses on demand.
+
+## Overview
+
+Tables often carry more per-row context than fits in a line: a finding's
+remediation steps, an asset's full inventory, a request's payload. Expandable
+rows keep the table scannable while letting a user open any row in place. Drop
+`ExpandableRow` inside a `TableBody` where you would otherwise use `TableRow`.
+
+## Usage
+
+- **Do** add a leading, empty `TableHead` in the header to line up with the
+  toggle column.
+- **Do** pass `colSpan` equal to the total number of columns (including the
+  toggle column) so the detail panel spans the full width.
+- **Do** use `defaultExpanded` for uncontrolled rows, or `expanded` +
+  `onExpandedChange` when the parent owns the state.
+- **Don't** hide essential information only inside the panel — the collapsed row
+  should still communicate the row's identity and status.
+- **Don't** pass `className` / `style`; the API is closed.
+
+## Anatomy
+
+An `expandable-row` `<tr>` (toggle cell + your cells) and an
+`expandable-row-detail-row` `<tr>` whose single `<td colSpan>` holds the
+`expandable-row-detail` panel. The toggle is a real `<button>` with a chevron
+that rotates 90° when open.
+
+## Variants
+
+- `size` — `sm` · `md` density (toggle size + panel padding).
+- `showToggle` — render the leading toggle cell (default) or omit it if you drive
+  expansion from elsewhere.
+
+## States
+
+- **Collapsed** — panel height `0fr`, `aria-hidden`, chevron points at the inline
+  edge.
+- **Expanded** — panel height `1fr`, revealed, chevron rotated down.
+- **Disabled** — toggle is inert and dimmed.
+
+## Behavior
+
+- Controlled via `expanded` + `onExpandedChange`, or uncontrolled via
+  `defaultExpanded`.
+- The panel is always mounted so `aria-controls` stays valid; it animates via a
+  token-scaled `grid-template-rows` transition and is `aria-hidden` while closed.
+
+## Accessibility
+
+- The toggle carries `aria-expanded` and `aria-controls` pointing to the panel —
+  a standard disclosure that screen readers announce correctly.
+- The chevron is decorative (`aria-hidden`); the toggle's accessible name comes
+  from `toggleLabel`.
+- The chevron mirrors in RTL so it always points toward the inline edge.
+
+## Design tokens
+
+Row surfaces use `bg-muted/30` (open row) and `bg-muted/20` (panel); borders use
+`border-border`; the toggle uses `text-muted-foreground` → `text-foreground` on
+hover with the shared accent focus ring. No hard-coded colour or shadow.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `detail` | `ReactNode` | — | Content of the detail panel (required). |
+| `colSpan` | `number` | — | Columns the panel spans, incl. toggle column (required). |
+| `children` | `ReactNode` | — | The visible row cells (compose `TableCell`s). |
+| `expanded` | `boolean` | — | Controlled expanded state. |
+| `defaultExpanded` | `boolean` | `false` | Uncontrolled initial state. |
+| `onExpandedChange` | `(expanded: boolean) => void` | — | Change handler. |
+| `showToggle` | `boolean` | `true` | Render the leading toggle cell. |
+| `toggleLabel` | `string` | `"Toggle row details"` | Toggle accessible name. |
+| `disabled` | `boolean` | `false` | Disable the toggle. |
+| `size` | `"sm" \| "md"` | `"md"` | Density. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** story (three rows, first open) and **Controlled** (parent
+owns the state, with a play test asserting the disclosure wiring). Works in both
+themes and directions.
