@@ -196,7 +196,7 @@ function FileCard({
           <div data-slot="file-card-progress" className="mt-1.5">
             <Progress
               value={progress}
-              tone={status === "error" ? "critical" : "default"}
+              tone="default"
               aria-label={`Uploading ${name}`}
             />
           </div>

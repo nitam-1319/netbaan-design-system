@@ -54,7 +54,7 @@ const fileListVariants = cva("flex w-full flex-col", {
 
 type FileListProps = Omit<
   React.ComponentProps<"div">,
-  "className" | "style" | "children"
+  "className" | "style" | "children" | "title"
 > &
   VariantProps<typeof fileListVariants> & {
     /** The files to render, in order. */

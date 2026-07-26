@@ -34,8 +34,8 @@ type FileUploaderProps = {
   disabled?: boolean
   /** Dropzone size. The list uses `md` for `lg`. */
   size?: "sm" | "md" | "lg"
-  /** Dropzone prompt lines. */
-  title?: React.ReactNode
+  /** Dropzone prompt lines. `title` is plain text (the Dropzone's visible + sr-only prompt). */
+  title?: string
   description?: React.ReactNode
   hint?: React.ReactNode
   /** Maximum number of files to keep; extra selections are rejected. */

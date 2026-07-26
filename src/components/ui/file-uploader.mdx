@@ -89,7 +89,8 @@ Inherited from `Dropzone` (`--surface-2`, `--border-strong`, `--accent-*`,
 | `multiple` | `boolean` | `true` | Allow selecting more than one file. |
 | `disabled` | `boolean` | `false` | Dim + disable the whole uploader. |
 | `size` | `"sm" \| "md" \| "lg"` | `"md"` | Dropzone size (list uses `md` for `lg`). |
-| `title` / `description` / `hint` | `ReactNode` | — | Dropzone prompt lines. |
+| `title` | `string` | — | Dropzone prompt (visible + sr-only text). |
+| `description` / `hint` | `ReactNode` | — | Dropzone secondary prompt lines. |
 | `maxFiles` | `number` | — | Max files to keep; extras are rejected. |
 | `maxSizeBytes` | `number` | — | Max size per file; larger files are rejected. |
 | `files` | `FileListItem[]` | — | Controlled item list (with `onFilesChange`). |
