@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ReasoningTrace/Guidelines" />
+
+# Reasoning Trace
+
+A collapsible disclosure for a model's intermediate reasoning ("chain of
+thought"). It stays collapsed behind a summary so it never competes with the
+final answer, and expands to reveal the steps on demand. It composes the AEGIS
+**Accordion**, inheriting its keyboard support, ARIA wiring, and open/close
+animation.
+
+## Overview
+
+AI answers are more trustworthy when the reasoning is inspectable — but the
+reasoning should be secondary to the result. Reasoning Trace gives that content a
+consistent, unobtrusive home: a labelled header (brain glyph, title, and an
+optional "Thought for Ns" duration or live "Thinking…" state) over a panel of
+ordered steps or freeform text.
+
+## Usage
+
+- **Do** use it to reveal a model's steps, tool-selection rationale, or plan.
+- **Do** keep it collapsed by default so the answer leads.
+- **Do** set `status="thinking"` while the trace is still streaming.
+- **Don't** use it for a tool invocation's inputs/outputs — that is **Tool Call
+  Block**. Don't use it for generic FAQ disclosure — that is **Accordion**.
+
+## Anatomy
+
+A wrapper (`data-slot="reasoning-trace"`, `data-status`) containing a single
+**Accordion** item: a trigger with an icon (`data-slot="reasoning-trace-icon"`),
+title, and optional meta (`data-slot="reasoning-trace-meta"`), over a panel with
+either an ordered step list (`data-slot="reasoning-trace-steps"` /
+`reasoning-trace-step`) or freeform content (`data-slot="reasoning-trace-content"`).
+
+## Variants
+
+There is one presentation (the `separated` Accordion surface). Content shape
+varies: numbered `steps` or freeform `children`.
+
+## States
+
+- **Collapsed** (default) / **Expanded** — the disclosure state.
+- **Done** — resting; shows the optional duration.
+- **Thinking** — the icon pulses and the header reads "Thinking…".
+
+## Behavior
+
+- **Controlled**: pass `open` + `onOpenChange`. **Uncontrolled**: pass
+  `defaultOpen`.
+- With `steps`, each item renders in a numbered list; otherwise `children` render
+  as freeform prose.
+- Expand/collapse animates via the Accordion's `--accordion-panel-height`
+  transition; keyboard (Enter/Space to toggle) is inherited.
+
+## Accessibility
+
+- The trigger exposes `aria-expanded` and controls its panel (Accordion wiring).
+- The status is available as text ("Thinking…" / "Thought for Ns") and via
+  `data-status`, not by the icon animation alone.
+- Steps are a real ordered list, so their sequence is announced.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-accent-soft` / `text-accent-strong` | Header icon chip. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Title, body, step numbers. |
+| `bg-surface-3` | Step-number chip. |
+| Accordion `separated` tokens | Surface, border, open state. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `ReactNode` | `"Reasoning"` | Header title. |
+| `steps` | `ReactNode[]` | — | Ordered reasoning steps. |
+| `children` | `ReactNode` | — | Freeform reasoning (when no `steps`). |
+| `durationSeconds` | `number` | — | Thinking time → "Thought for Ns". |
+| `status` | `"thinking" \| "done"` | `"done"` | Live vs resting state. |
+| `defaultOpen` | `boolean` | `false` | Start expanded (uncontrolled). |
+| `open` | `boolean` | — | Controlled open state. |
+| `onOpenChange` | `(open: boolean) => void` | — | Toggle callback. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Expanded**, **Thinking**, **Freeform**, and **NoDuration** stories. The
+trace works in both themes and directions via the global toolbar; in RTL the
+icon, title, and step numbers lead from the inline-start edge.
