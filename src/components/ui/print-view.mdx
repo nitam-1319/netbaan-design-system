@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/PrintView/Guidelines" />
+
+# Print View
+
+Helpers for print output: a **PrintView** region with a screen-only toolbar and a
+print trigger, plus **PrintOnly** / **ScreenOnly** visibility wrappers and a
+standalone **PrintButton**. Together they let a page present a clean, printable
+document without duplicating markup.
+
+## Overview
+
+Reports and receipts are often printed. Print View standardises the split between
+screen chrome (hidden on paper) and print-only content (shown only on paper), and
+provides a consistent print button.
+
+## Usage
+
+- **Do** wrap a printable report in `PrintView`; its toolbar disappears when
+  printing.
+- **Do** use `ScreenOnly` for controls/nav and `PrintOnly` for print notes
+  (confidentiality, page footers).
+- **Do** use `PrintButton` anywhere you need a print trigger.
+- **Don't** rely on it to paginate — the browser handles page breaks.
+
+## Anatomy
+
+`PrintView` (`data-slot="print-view"`): a screen-only toolbar
+(`print-view-toolbar`, title + **PrintButton**) over the printable document
+(`print-view-document`). `PrintOnly` / `ScreenOnly` toggle visibility by medium;
+`PrintButton` composes **Button** with a printer glyph.
+
+## Variants
+
+`PrintButton` inherits Button's `variant` / `size`. `PrintView` toggles its
+toolbar via `showToolbar`.
+
+## States
+
+Presentational; visibility switches between screen and print media.
+
+## Behavior
+
+- `PrintButton` calls `window.print()` (guarded for SSR) and fires `onPrinted`.
+- `PrintOnly` = `hidden print:block`; `ScreenOnly` = `print:hidden`; the PrintView
+  toolbar is itself screen-only.
+
+## Accessibility
+
+- The print button is a real, labelled button with a printer glyph
+  (`aria-hidden`).
+- Medium-based visibility uses CSS `print:` variants, so both screen and print
+  content remain in the DOM/accessibility tree as appropriate.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Button tokens | Print button. |
+| `text-foreground` | Toolbar title. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+**PrintView**
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Printable content (required). |
+| `title` | `ReactNode` | — | Screen toolbar title. |
+| `showToolbar` | `boolean` | `true` | Show the screen-only toolbar. |
+| `printLabel` | `ReactNode` | `"Print"` | Print button label. |
+
+**PrintButton** — Button props plus `onPrinted?: () => void`. **PrintOnly** /
+**ScreenOnly** — content wrappers. The API is closed: `className` and `style` are
+not accepted.
+
+## Examples
+
+See the **NoToolbar** story. Use your browser's print preview to see the toolbar
+disappear and any `PrintOnly` content appear. Works in both themes and directions
+via the global toolbar.
