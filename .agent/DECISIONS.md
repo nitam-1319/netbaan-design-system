@@ -669,3 +669,16 @@ Impact: A follow-up run adds an additive `type="range"` mode (not a fork) once a
 lands. Mirrors the honestly-scoped precedents: Combobox single-select (2026-07-23), static chart
 renderers (2026-07-23/07-25), Currency Input over generic mask (2026-07-24), Lightbox single-image
 (2026-07-25g).
+
+## 2026-07-26b — Multi-select lands, fulfilling the Combobox deferral
+Status: accepted
+Decision: `multi-select.tsx` (roadmap #43, dep Combobox + Tag) ships as the multi-select field the
+Combobox decision (2026-07-23) deferred to. It is built on the SAME Base UI Combobox primitive in
+`multiple` mode using the primitive's native `Chips` / `Chip` / `ChipRemove` parts, and reuses the
+AEGIS `Combobox` content/list/item for the popup so single- and multi-select are visually identical.
+Reason: The primitive gained first-class chip parts, so multi-select no longer needs a hand-rolled
+chip engine — the risk that motivated the 2026-07-23 deferral is gone. Values are `string[]`, matching
+the string-item shape the single-select Combobox already uses.
+Impact: 2026-07-23's "compose Checkbox in Card / wait for #43" guidance is now satisfied — use
+`MultiSelect` for multi-value autocomplete. Object-valued items (value≠label) remain a future additive
+enhancement, consistent with the single-select's current string-item scope.

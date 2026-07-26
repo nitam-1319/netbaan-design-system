@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/MultiSelect/Guidelines" />
+
+# Multi-select
+
+The multi-select sibling of **Combobox**: type to filter, pick several values, and
+each becomes a removable chip in the field. Use it when a field can hold more than
+one option — tags, recipients, categories, scopes.
+
+## Overview
+
+Multi-select is the component the Combobox decision deferred multi-select to. It is
+built on the same Base UI Combobox primitive in `multiple` mode, using its native
+chip parts, so chip keyboard navigation, Backspace-to-remove, filtering, portalled
+positioning, and the input↔listbox ARIA all come from the primitive. The field and
+list reuse the AEGIS Combobox tokens, so single- and multi-select look identical.
+
+## Usage
+
+- **Do** use it when several values are valid at once.
+- **Do** keep the option list filterable — that is the point over a checkbox list.
+- **Don't** use it for single-choice fields — reach for `Combobox` or `Select`.
+- **Don't** hand it hundreds of pre-selected chips; summarise instead.
+
+## Anatomy
+
+A field shell wrapping a `Chips` area (a `Chip` per value, each with a `ChipRemove`
+button) plus the filtering `Input`, followed by a clear-all button and the open
+trigger. The portalled list reuses AEGIS `Combobox` content/list/item.
+
+## Variants
+
+- `size` — `sm` (32px) · `md` (40px) · `lg` (48px) field height (grows with rows).
+- `side` / `align` — list placement (default bottom / start).
+
+## States
+
+- **Empty** — placeholder shown, no chips.
+- **Selected** — one chip per value; selected options show a check in the list.
+- **Filtering** — typing narrows the list; `emptyMessage` shows on no match.
+- **Disabled** — whole field non-interactive and dimmed.
+
+## Behavior
+
+- Controlled via `value` + `onValueChange` (a `string[]`), or uncontrolled via
+  `defaultValue`.
+- Selecting keeps the list open so several values can be added in a row.
+- Chips are removable by click, and Backspace from the empty input removes the
+  last chip (primitive behaviour).
+- The clear-all button empties the selection; `name` submits values in a form.
+
+## Accessibility
+
+- Primitive-supplied ARIA: `role="combobox"` input, `listbox`/`option`,
+  `aria-activedescendant`, and roving focus across chips.
+- Every chip's remove button has a name (`Remove {value}`); the open and clear
+  controls are labelled. AEGIS focus rings throughout.
+- Contrast holds in both themes; state is never colour-only (chips carry text).
+
+## Design tokens
+
+Field shell `border-border-strong` + `bg-background` + `ring-accent-soft` focus;
+chips `bg-surface-2` + `border-border-strong`. List inherits Combobox surface
+tokens. No hard-coded colour.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `string[]` | — | Selectable values (required). |
+| `value` | `string[]` | — | Controlled selection. |
+| `defaultValue` | `string[]` | — | Uncontrolled initial selection. |
+| `onValueChange` | `(value: string[]) => void` | — | Selection change handler. |
+| `placeholder` | `string` | — | Field placeholder. |
+| `emptyMessage` | `string` | `"No results."` | Shown when nothing matches. |
+| `hideClear` | `boolean` | `false` | Hide the clear-all button. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Field height. |
+| `disabled` | `boolean` | `false` | Disable the field. |
+| `name` | `string` | — | Native form submission name. |
+| `side` / `align` | positioner | `bottom` / `start` | List placement. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (add/remove chips), **Prefilled** (`defaultValue`), and **Sizes**.
+Works in both themes and directions via the global toolbar.
