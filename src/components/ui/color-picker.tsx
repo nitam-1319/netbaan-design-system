@@ -32,7 +32,7 @@ type HSL = { h: number; s: number; l: number }
 
 type ColorPickerProps = Omit<
   React.ComponentProps<typeof PopoverTrigger>,
-  "children" | "render"
+  "children" | "render" | "value" | "defaultValue" | "color"
 > & {
   /** Controlled colour. */
   value?: HSL
@@ -133,10 +133,15 @@ function ColorPicker({
         data-slot="color-picker-trigger"
         disabled={disabled}
         aria-label={`${label} (${css})`}
-        className={cn(
-          "inline-flex items-center rounded-md border border-border-strong bg-card text-foreground outline-none transition-[background-color,border-color] hover:border-border-strong hover:brightness-105 focus-visible:focus-accent disabled:pointer-events-none disabled:opacity-45",
-          triggerSize[size]
-        )}
+        render={
+          <button
+            type="button"
+            className={cn(
+              "inline-flex items-center rounded-md border border-border-strong bg-card text-foreground outline-none transition-[background-color,border-color] hover:brightness-105 focus-visible:focus-accent disabled:pointer-events-none disabled:opacity-45",
+              triggerSize[size]
+            )}
+          />
+        }
         {...props}
       >
         <span
