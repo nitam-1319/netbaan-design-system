@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, within } from "storybook/test"
+import { expect, userEvent, screen, waitFor, within } from "storybook/test"
 
 import {
   HoverCard,
@@ -60,7 +60,8 @@ export const Default: Story = {
     const trigger = canvas.getByRole("link", { name: "@ada" })
     await userEvent.hover(trigger)
     // Portalled content lands on document.body.
-    await expect(await screen.findByText("Ada Lovelace")).toBeVisible()
+    const card = await screen.findByText("Ada Lovelace")
+    await waitFor(() => expect(card).toBeVisible())
   },
 }
 

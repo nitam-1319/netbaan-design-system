@@ -56,7 +56,9 @@ export const Wrapping: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const overlay = canvas.getByRole("status")
+    // The overlay and its inner Spinner both expose role="status"; the overlay is
+    // the one carrying aria-busy.
+    const overlay = canvas.getByRole("status", { busy: true })
     await expect(overlay).toHaveAttribute("aria-busy", "true")
     // Content stays mounted beneath the scrim.
     await expect(canvas.getByText("Asset inventory")).toBeInTheDocument()

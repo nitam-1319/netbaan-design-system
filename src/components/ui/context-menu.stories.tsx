@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, fireEvent, screen, within } from "storybook/test"
+import { expect, fireEvent, screen, waitFor, within } from "storybook/test"
 import * as React from "react"
 import { Copy, Download, Pencil, Share2, Star, Trash2 } from "lucide-react"
 
@@ -102,7 +102,7 @@ export const Default: Story = {
     // Right-click (contextmenu) opens the portalled menu on document.body.
     fireEvent.contextMenu(trigger)
     const menu = await screen.findByRole("menu")
-    await expect(menu).toBeVisible()
+    await waitFor(() => expect(menu).toBeVisible())
     await expect(
       screen.getByRole("menuitem", { name: /Delete/ })
     ).toBeInTheDocument()

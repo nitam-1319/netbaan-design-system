@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, within } from "storybook/test"
+import { expect, userEvent, screen, waitFor, within } from "storybook/test"
 import { SlidersHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -57,11 +57,14 @@ export const Default: Story = {
     await expect(trigger).toHaveAttribute("aria-expanded", "false")
     await userEvent.click(trigger)
     // Portalled content lands on document.body.
-    await expect(await screen.findByText("Filter findings")).toBeVisible()
+    const panel = await screen.findByText("Filter findings")
+    await waitFor(() => expect(panel).toBeVisible())
     await expect(trigger).toHaveAttribute("aria-expanded", "true")
     // Escape dismisses.
     await userEvent.keyboard("{Escape}")
-    await expect(screen.queryByText("Filter findings")).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.queryByText("Filter findings")).not.toBeInTheDocument()
+    )
   },
 }
 
@@ -119,6 +122,8 @@ export const WithActions: Story = {
     const snooze = await screen.findByRole("button", { name: "Snooze" })
     await userEvent.click(snooze)
     // A PopoverClose control dismisses the surface.
-    await expect(screen.queryByText("Snooze for 7 days?")).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.queryByText("Snooze for 7 days?")).not.toBeInTheDocument()
+    )
   },
 }

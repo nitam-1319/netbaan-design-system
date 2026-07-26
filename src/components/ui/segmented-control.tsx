@@ -109,16 +109,24 @@ function SegmentedControl({
   onValueChange,
   ...props
 }: SegmentedControlProps) {
+  // Control the value internally so the "exactly one selected" contract holds:
+  // Base UI's ToggleGroup deselects on re-press, so we ignore empty selections
+  // and keep the current value instead of clearing it.
+  const isControlled = value != null
+  const [internalValue, setInternalValue] = React.useState(defaultValue)
+  const current = isControlled ? value : internalValue
+
   return (
     <ToggleGroupPrimitive<string>
       data-slot="segmented-control"
       className={cn(trackVariants({ size, fullWidth }))}
-      value={value != null ? [value] : undefined}
-      defaultValue={defaultValue != null ? [defaultValue] : undefined}
+      value={current != null ? [current] : []}
       onValueChange={(groupValue, eventDetails) => {
         // Single-select: keep exactly one selection (ignore deselect-to-empty).
         const next = groupValue[0]
-        if (next != null) onValueChange?.(next, eventDetails)
+        if (next == null) return
+        if (!isControlled) setInternalValue(next)
+        onValueChange?.(next, eventDetails)
       }}
       {...props}
     >

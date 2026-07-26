@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, within } from "storybook/test"
+import { expect, userEvent, screen, waitFor, within } from "storybook/test"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -54,13 +54,15 @@ export const Default: Story = {
     await userEvent.click(trigger)
     // Portalled content lands on document.body, so query the screen.
     const drawer = await screen.findByRole("dialog")
-    await expect(drawer).toBeVisible()
+    await waitFor(() => expect(drawer).toBeVisible())
     await expect(
       screen.getByRole("heading", { name: "Filter findings" })
     ).toBeVisible()
     // Escape dismisses and returns focus to the trigger.
     await userEvent.keyboard("{Escape}")
-    await expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+    )
     await expect(trigger).toHaveFocus()
   },
 }

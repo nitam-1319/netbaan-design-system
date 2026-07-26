@@ -55,9 +55,11 @@ function TemplateRoot({
       role="status"
       aria-busy="true"
       aria-live="polite"
+      // A status region takes its accessible name from aria-label, not from
+      // descendant text — an sr-only child would not name the region.
+      aria-label={label}
       className={cn(className)}
     >
-      <span className="sr-only">{label}</span>
       {children}
     </div>
   )

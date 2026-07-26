@@ -171,10 +171,16 @@ type SelectItemProps = Omit<
   "className" | "style"
 >
 
-function SelectItem({ children, ...props }: SelectItemProps) {
+function SelectItem({ children, label, ...props }: SelectItemProps) {
+  // Base UI resolves the trigger's displayed label from the mounted items, which
+  // unmount when the popup closes — so a string child is promoted to an explicit
+  // `label` to keep the selected label visible after selection.
+  const resolvedLabel =
+    label ?? (typeof children === "string" ? children : undefined)
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
+      label={resolvedLabel}
       className={cn(
         "text-muted-foreground relative flex w-full cursor-default items-center justify-between gap-2.5 rounded-[7px] py-2 pr-2 pl-2.5 text-[0.8rem] font-medium outline-none transition-colors select-none",
         "data-[highlighted]:bg-accent-soft data-[highlighted]:text-foreground",

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 import { Sparkles, ShieldAlert, FileSearch } from "lucide-react"
 
 import {
@@ -26,6 +26,7 @@ const meta = {
     onSelect: { action: "select" },
   },
   args: {
+    onSelect: fn(),
     label: "Suggested prompts",
     size: "md",
     items: [

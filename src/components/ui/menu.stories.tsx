@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, within } from "storybook/test"
+import { expect, userEvent, screen, waitFor, within } from "storybook/test"
 import * as React from "react"
 import {
   Copy,
@@ -83,14 +83,17 @@ export const Default: Story = {
     await expect(trigger).toHaveAttribute("aria-expanded", "false")
     await userEvent.click(trigger)
     // Portalled content lands on document.body.
-    await expect(await screen.findByRole("menu")).toBeVisible()
+    const menu = await screen.findByRole("menu")
+    await waitFor(() => expect(menu).toBeVisible())
     await expect(trigger).toHaveAttribute("aria-expanded", "true")
     await expect(
       screen.getByRole("menuitem", { name: /Delete/ })
     ).toBeInTheDocument()
     // Escape dismisses.
     await userEvent.keyboard("{Escape}")
-    await expect(screen.queryByRole("menu")).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument()
+    )
   },
 }
 

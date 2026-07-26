@@ -25,26 +25,16 @@ type Story = StoryObj<typeof meta>
 
 const PEOPLE = ["Ana Ruiz", "Ben Cho", "Kai Ito", "Lea Von", "Mo Diaz", "Sky Poe"]
 
-function People({
-  size,
-}: {
-  size?: "xs" | "sm" | "md" | "lg" | "xl"
-}) {
-  return (
-    <>
-      {PEOPLE.map((name) => (
-        <Avatar key={name} name={name} size={size} />
-      ))}
-    </>
-  )
+// Avatars must be passed as direct children (a wrapping component would count as
+// a single child, so the "+N" overflow would never trigger).
+function people(size?: "xs" | "sm" | "md" | "lg" | "xl") {
+  return PEOPLE.map((name) => <Avatar key={name} name={name} size={size} />)
 }
 
 export const Default: Story = {
   args: { max: 4, size: "md" },
   render: (args) => (
-    <AvatarGroup {...args}>
-      <People size={args.size ?? undefined} />
-    </AvatarGroup>
+    <AvatarGroup {...args}>{people(args.size ?? undefined)}</AvatarGroup>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -70,7 +60,7 @@ export const Sizes: Story = {
     <div className="flex flex-col gap-4">
       {(["xs", "sm", "md", "lg"] as const).map((size) => (
         <AvatarGroup key={size} size={size} max={4}>
-          <People size={size} />
+          {people(size)}
         </AvatarGroup>
       ))}
     </div>

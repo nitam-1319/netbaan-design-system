@@ -75,7 +75,8 @@ export const Default: Story = {
     const option = await screen.findByRole("option", { name: /Claude Sonnet/ })
     await userEvent.click(option)
 
-    await expect(args.onValueChange).toHaveBeenCalledWith("sonnet")
+    // Base UI passes (value, eventDetails); assert on the value argument.
+    await expect(args.onValueChange).toHaveBeenCalledWith("sonnet", expect.anything())
     // Trigger now reflects the chosen model.
     await expect(canvas.getByRole("combobox")).toHaveTextContent("Claude Sonnet")
   },

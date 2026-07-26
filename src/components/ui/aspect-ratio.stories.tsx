@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, within } from "storybook/test"
+import { expect } from "storybook/test"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 
@@ -56,9 +56,11 @@ export const Video: Story = {
     </AspectRatio>
   ),
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const box = canvas.getByText("16 / 9").parentElement?.parentElement
-    await expect(box).toHaveAttribute("data-slot", "aspect-ratio")
+    const box = canvasElement.querySelector("[data-slot='aspect-ratio']")
+    await expect(box).toBeInTheDocument()
+    // "video" maps to the aspect-video ratio class.
+    await expect(box).toHaveClass("aspect-video")
+    await expect(box).toHaveTextContent("16 / 9")
   },
 }
 

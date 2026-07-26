@@ -94,8 +94,11 @@ export const CopyInteraction: Story = {
     const canvas = within(canvasElement)
 
     let written = ""
-    Object.assign(navigator, {
-      clipboard: {
+    // navigator.clipboard is a getter-only property in the browser runner, so
+    // it must be replaced via defineProperty rather than Object.assign.
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
         writeText: (text: string) => {
           written = text
           return Promise.resolve()

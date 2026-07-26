@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, fn, userEvent, screen, within } from "storybook/test"
+import { expect, fn, userEvent, screen, waitFor, within } from "storybook/test"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
@@ -57,7 +57,7 @@ export const Destructive: Story = {
     await userEvent.click(trigger)
     // Alert dialog is portalled to document.body.
     const dialog = await screen.findByRole("alertdialog")
-    await expect(dialog).toBeVisible()
+    await waitFor(() => expect(dialog).toBeVisible())
     const confirm = within(dialog).getByRole("button", { name: "Delete" })
     await userEvent.click(confirm)
     await expect(onConfirmSpy).toHaveBeenCalledTimes(1)

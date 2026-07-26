@@ -46,7 +46,7 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const input = canvas.getByLabelText("Tags")
+    const input = canvas.getByRole("textbox", { name: "Tags" })
     // Seeded tags render.
     await expect(canvas.getByText("asm")).toBeInTheDocument()
     await expect(canvas.getByText("critical")).toBeInTheDocument()
@@ -85,7 +85,7 @@ export const NoDuplicates: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const input = canvas.getByLabelText("Tags")
+    const input = canvas.getByRole("textbox", { name: "Tags" })
     await userEvent.type(input, "prod{Enter}")
     // Still only one "prod".
     await expect(canvas.getAllByText("prod")).toHaveLength(1)
@@ -109,7 +109,7 @@ export const Error: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await expect(canvas.getByLabelText("Tags")).toHaveAttribute(
+    await expect(canvas.getByRole("textbox", { name: "Tags" })).toHaveAttribute(
       "aria-invalid",
       "true"
     )

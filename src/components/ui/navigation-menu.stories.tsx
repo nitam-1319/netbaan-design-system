@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, within } from "storybook/test"
+import { expect, userEvent, screen, waitFor, within } from "storybook/test"
 
 import {
   NavigationMenu,
@@ -122,7 +122,8 @@ export const Default: Story = {
 
     // Opening the trigger teleports the panel into the portalled viewport.
     await userEvent.click(trigger)
-    await expect(await screen.findByText("Attack Surface")).toBeVisible()
+    const panel = await screen.findByText("Attack Surface")
+    await waitFor(() => expect(panel).toBeVisible())
 
     // A plain top-level link renders inline (no dropdown panel).
     await expect(

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, within } from "storybook/test"
+import { expect, waitFor, within } from "storybook/test"
 
 import {
   Carousel,
@@ -96,9 +96,13 @@ export const Default: Story = {
       `1 of ${SLIDES.length}`
     )
 
-    // One dot per slide, and the nav buttons carry accessible names.
-    const dots = canvasElement.querySelectorAll("[data-slot=carousel-dot]")
-    await expect(dots.length).toBe(SLIDES.length)
+    // One dot per slide — the count is measured from the viewport on a rAF after
+    // mount, so wait for it to settle rather than reading it synchronously.
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelectorAll("[data-slot=carousel-dot]").length
+      ).toBe(SLIDES.length)
+    )
     await expect(canvas.getByLabelText("Previous slide")).toBeInTheDocument()
     await expect(canvas.getByLabelText("Next slide")).toBeInTheDocument()
   },

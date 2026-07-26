@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, within } from "storybook/test"
+import { expect, userEvent, screen, waitFor, within } from "storybook/test"
 
 import { ToastProvider, Toaster, useToast } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
@@ -87,14 +87,19 @@ export const Default: Story = {
     const trigger = canvas.getByRole("button", { name: "Default" })
     await userEvent.click(trigger)
     // Toast content portals to the body; assert it announced and is visible.
-    await expect(await screen.findByText("Scan queued")).toBeVisible()
+    const toastTitle = await screen.findByText("Scan queued")
+    await waitFor(() => expect(toastTitle).toBeVisible())
     await expect(
       screen.getByText("api-gw-prod.netbaan.io will be scanned shortly.")
     ).toBeVisible()
-    // Dismiss it via the close control.
-    const close = screen.getByRole("button", { name: "Close" })
+    // Base UI keeps toast controls out of the a11y tree until the viewport is
+    // hovered/focused (so a toast never steals focus); hover to reveal Close.
+    await userEvent.hover(toastTitle)
+    const close = await screen.findByRole("button", { name: "Close" })
     await userEvent.click(close)
-    await expect(screen.queryByText("Scan queued")).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.queryByText("Scan queued")).not.toBeInTheDocument()
+    )
   },
 }
 
@@ -103,6 +108,7 @@ export const Success: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await userEvent.click(canvas.getByRole("button", { name: "Success" }))
-    await expect(await screen.findByText("Finding remediated")).toBeVisible()
+    const successTitle = await screen.findByText("Finding remediated")
+    await waitFor(() => expect(successTitle).toBeVisible())
   },
 }

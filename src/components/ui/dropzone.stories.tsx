@@ -122,7 +122,11 @@ export const SelectFiles: Story = {
       "[data-slot='dropzone-input']"
     )
     await expect(input).toBeInTheDocument()
-    await expect(canvas.getByText("Drag & drop files here")).toBeVisible()
+    await expect(
+      canvas.getByText("Drag & drop files here", {
+        selector: "[data-slot='dropzone-title']",
+      })
+    ).toBeVisible()
 
     const file = new File(["hello aegis"], "notes.txt", { type: "text/plain" })
     await userEvent.upload(input as HTMLInputElement, file)

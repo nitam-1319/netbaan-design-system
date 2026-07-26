@@ -147,6 +147,10 @@ function Search({ label, render = <search />, ...rest }: LabeledProps<"search">)
   return useRender({
     render,
     props: {
+      // The native <search> element (role=search) is new (2023) and still
+      // unmapped by some screen readers and test tooling, so we set the role
+      // explicitly to guarantee the landmark is exposed everywhere.
+      role: "search",
       "data-slot": "landmark-search",
       "aria-label": label,
       className: cn(landmarkBase),

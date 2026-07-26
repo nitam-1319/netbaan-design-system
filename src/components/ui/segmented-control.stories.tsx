@@ -1,6 +1,6 @@
 import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, userEvent, waitFor, within } from "storybook/test"
 import { LayoutGrid, List, Map } from "lucide-react"
 
 import { SegmentedControl } from "@/components/ui/segmented-control"
@@ -42,16 +42,32 @@ export const Default: Story = {
   args: { items: rangeItems, defaultValue: "7d" },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const seven = canvas.getByRole("button", { name: "7d" })
-    await expect(seven).toHaveAttribute("aria-pressed", "true")
+    // Re-query inside waitFor: the pressed state settles after the controlled
+    // default commits, so a captured node reference can read a stale attribute.
+    await waitFor(() =>
+      expect(canvas.getByRole("button", { name: "7d" })).toHaveAttribute(
+        "aria-pressed",
+        "true"
+      )
+    )
     // Selecting another segment moves the pressed state.
-    const thirty = canvas.getByRole("button", { name: "30d" })
-    await userEvent.click(thirty)
-    await expect(thirty).toHaveAttribute("aria-pressed", "true")
-    await expect(seven).toHaveAttribute("aria-pressed", "false")
+    await userEvent.click(canvas.getByRole("button", { name: "30d" }))
+    await waitFor(() =>
+      expect(canvas.getByRole("button", { name: "30d" })).toHaveAttribute(
+        "aria-pressed",
+        "true"
+      )
+    )
+    await expect(canvas.getByRole("button", { name: "7d" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    )
     // Re-clicking the active segment keeps a selection (no deselect).
-    await userEvent.click(thirty)
-    await expect(thirty).toHaveAttribute("aria-pressed", "true")
+    await userEvent.click(canvas.getByRole("button", { name: "30d" }))
+    await expect(canvas.getByRole("button", { name: "30d" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    )
   },
 }
 

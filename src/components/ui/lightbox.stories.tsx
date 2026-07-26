@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, fn, userEvent, screen, within } from "storybook/test"
+import { expect, fn, userEvent, screen, waitFor, within } from "storybook/test"
 
 import { Lightbox } from "@/components/ui/lightbox"
 
@@ -62,7 +62,7 @@ export const Default: Story = {
 
     // Portalled dialog opens with a name and the first image.
     const dialog = await screen.findByRole("dialog")
-    await expect(dialog).toBeVisible()
+    await waitFor(() => expect(dialog).toBeVisible())
     await expect(screen.getByText("1 / 3")).toBeInTheDocument()
     await expect(screen.getByAltText("Asset map overview")).toBeInTheDocument()
 

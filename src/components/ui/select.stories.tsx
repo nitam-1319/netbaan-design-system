@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, within } from "storybook/test"
+import { expect, userEvent, screen, waitFor, within } from "storybook/test"
 import * as React from "react"
 
 import {
@@ -44,7 +44,9 @@ const SEVERITIES = ["Critical", "High", "Medium", "Low", "Informational"]
 
 export const Default: Story = {
   render: () => (
-    <Select>
+    <Select
+      items={SEVERITIES.map((s) => ({ value: s.toLowerCase(), label: s }))}
+    >
       <SelectTrigger>
         <SelectValue placeholder="Select severity" />
       </SelectTrigger>
@@ -62,16 +64,18 @@ export const Default: Story = {
     const trigger = canvas.getByRole("combobox")
     await expect(trigger).toHaveTextContent("Select severity")
     await userEvent.click(trigger)
-    // Chevron rotates while the menu is open.
-    await expect(trigger).toHaveAttribute("data-popup-open")
+    // Chevron rotates while the menu is open (attribute lands after the popup mounts).
+    await waitFor(() => expect(trigger).toHaveAttribute("data-popup-open"))
     // Portalled listbox lands on document.body.
     const option = await screen.findByRole("option", { name: "High" })
     await userEvent.click(option)
     await expect(trigger).toHaveTextContent("High")
     // Popup closes on select.
-    await expect(
-      screen.queryByRole("option", { name: "Low" })
-    ).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("option", { name: "Low" })
+      ).not.toBeInTheDocument()
+    )
   },
 }
 

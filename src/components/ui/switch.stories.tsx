@@ -98,7 +98,10 @@ export const Loading: Story = {
     const canvas = within(canvasElement)
     const sw = canvas.getByRole("switch")
     await expect(sw).toHaveAttribute("aria-busy", "true")
-    await expect(sw).toBeDisabled()
+    // Base UI's switch is a <span role="switch">, not a native control, so the
+    // disabled state is exposed via aria-disabled/data-disabled, not the native
+    // `disabled` attribute that toBeDisabled() looks for.
+    await expect(sw).toHaveAttribute("aria-disabled", "true")
   },
 }
 
