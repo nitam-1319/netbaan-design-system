@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Consent Banner/Guidelines" />
+
+# Consent / Cookie Banner
+
+A privacy and cookie consent notice. It shares the AEGIS **Alert / Banner**
+design language — a token-surfaced region with an optional leading glyph — and
+adds a consent action row: Accept all, Reject all, and an optional Manage
+preferences control, plus an optional policy link. Render it inline, pinned to
+the viewport edge, or as a floating card.
+
+## When to use
+
+- **Do** show it on first visit to obtain (or record) consent for non-essential
+  cookies and tracking.
+- **Do** offer a genuine reject path with equal prominence to accept — many
+  privacy regimes require it. Reject uses `outline`, not a hidden link.
+- **Don't** trap the user: a consent banner is not a modal dialog. It should not
+  steal focus or block the page. Use **Modal / Dialog** only for a full
+  preferences editor opened from Manage.
+- **Don't** pre-check optional categories in the Manage panel.
+
+## Anatomy
+
+An optional **icon**, a **title** + **description** (with an optional policy
+link), an **actions** row (Accept / Reject / Manage), and an optional **dismiss**
+(×) control.
+
+## Placement
+
+| `placement` | Behaviour |
+| --- | --- |
+| `inline` | Flows in the document (default). |
+| `bottom` | Fixed bar pinned to the bottom edge (insets on `sm`+). |
+| `top` | Fixed bar pinned to the top edge. |
+| `floating` | Fixed card anchored to the bottom-start corner. |
+
+## API
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `title` | `node` | "We value your privacy" | |
+| `description` | `node` | standard notice | |
+| `onAccept` / `acceptLabel` | `() => void` / `node` | — / "Accept all" | |
+| `onReject` / `rejectLabel` | `() => void` / `node` | — / "Reject all" | |
+| `onManage` / `manageLabel` | `() => void` / `node` | — / "Manage preferences" | Optional. |
+| `policyHref` / `policyLabel` | `string` / `node` | — / "Privacy Policy" | Optional link. |
+| `showIcon` | `boolean` | `true` | Leading cookie glyph. |
+| `onDismiss` | `() => void` | — | Shows a × (falls back to `onReject`). |
+
+## Behavior
+
+The banner is presentational and controlled: it never persists consent itself.
+Wire `onAccept` / `onReject` / `onManage` to your consent store. A dismiss (×)
+is shown only when `onDismiss` or `onReject` is provided, and dismissing is
+treated as a rejection unless you pass a distinct `onDismiss`.
+
+## Accessibility
+
+- The banner is a labelled `role="region"` (`aria-labelledby` → title,
+  `aria-describedby` → description), so screen-reader users can navigate to it as
+  a landmark without it grabbing focus.
+- All actions are real buttons with text labels; the dismiss button has an
+  `aria-label` of "Dismiss".
+- It does **not** trap focus or render a backdrop — consistent with guidance that
+  a consent banner is not a modal.
+- Contrast meets WCAG 2.2 AA in both themes; links and buttons carry the 3px
+  `accent-soft` focus ring.
+
+## Internationalization / RTL
+
+Pass translated labels and copy; the layout, the floating anchor (`start-4`),
+and the dismiss position all mirror under `dir="rtl"` via logical properties.
+
+## Tokens
+
+Surface `bg-card` + `border-border` + `shadow-elevated`; the icon chip uses
+`bg-accent-soft` / `text-accent-strong`; text uses `text-foreground` /
+`text-muted-foreground`; actions and the policy link use token-driven Button and
+`text-accent-strong`. No hard-coded colour or shadow.
