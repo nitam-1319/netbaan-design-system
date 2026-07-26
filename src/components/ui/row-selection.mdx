@@ -1,0 +1,110 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/RowSelection/Guidelines" />
+
+# Row Selection
+
+The standalone checkbox-selection affordance for a hand-rolled `Table`. The
+`useRowSelection` hook owns the selected-id set with a tri-state select-all;
+`RowSelectionHeader` renders the header select-all `<th>` and `RowSelectionCell`
+renders a per-row `<td>` checkbox.
+
+## Overview
+
+`Data Table` selects rows internally from its typed config. Row Selection is for
+tables you compose by hand from the `Table` parts: it standardises the select-all
+header, the per-row box, and the selection state machine — including the
+indeterminate (some-but-not-all) header state — while you keep ownership of the
+data. It is the selection sibling of Column Sort and Column Filter, and it feeds
+naturally into the Bulk Actions Bar.
+
+## Usage
+
+- **Do** drive selection with `useRowSelection` and read `isSelected(id)` per row.
+- **Do** pass the visible id set to `toggleAll` / `getToggleAllState` so select-all
+  respects the current filter/page rather than hidden rows.
+- **Do** set `data-state="selected"` on the `TableRow` so the selected surface
+  token applies.
+- **Don't** rely on colour alone — the native checkbox state carries the meaning.
+
+## Anatomy
+
+`RowSelectionHeader` — a `<th>` holding a tri-state AEGIS `Checkbox` (checked /
+indeterminate / unchecked). `RowSelectionCell` — a `<td>` holding a per-row
+`Checkbox`. Both use `[&:has([role=checkbox])]:pe-0` to match the `Table`'s
+checkbox-column spacing.
+
+## Behavior
+
+- `useRowSelection` is controlled via `selectedIds` + `onSelectedIdsChange`, or
+  uncontrolled via `defaultSelectedIds`.
+- `toggle(id, checked)` selects one row; `toggleAll(allIds, checked)` selects or
+  clears the whole visible set; `getToggleAllState(allIds)` returns
+  `{ checked, indeterminate }` for the header box; `clear()` empties the selection.
+- Every mutation emits the **full next id list** — the selection is never held in
+  two places.
+
+## States
+
+- **Header** — unchecked (no rows selected), indeterminate (some selected), checked
+  (all visible selected).
+- **Row** — unchecked / checked, plus `disabled`.
+
+## Accessibility
+
+- Header and row boxes are real AEGIS `Checkbox`es with keyboard support and the
+  AEGIS accent-soft focus ring.
+- The select-all box is named (`Select all rows` by default); each row box requires
+  a descriptive `label` (e.g. `Select INV-1001`) so the target is unambiguous.
+- The header's indeterminate state is exposed via the checkbox's `aria-checked
+  ="mixed"`, so assistive tech announces the partial selection.
+
+## Design tokens
+
+Inherits `Checkbox` and `Table` tokens only. The selected row surface comes from
+the `Table`'s `data-[state=selected]:bg-accent-soft`. No hard-coded colour, shadow,
+or ring.
+
+## Scope
+
+Single-set selection with tri-state select-all ships now, matching Data Table.
+Range selection (shift-click) is a deliberate follow-up, not folded in here.
+
+## API
+
+### `useRowSelection(options?)`
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `selectedIds` | `string[]` | — | Controlled selection. |
+| `defaultSelectedIds` | `string[]` | `[]` | Uncontrolled initial selection. |
+| `onSelectedIdsChange` | `(ids) => void` | — | Fires with the full next list. |
+
+Returns `{ selectedIds, selectedCount, isSelected(id), toggle(id, checked),
+toggleAll(allIds, checked), getToggleAllState(allIds), clear() }`.
+
+### `RowSelectionHeader`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `state` | `ToggleAllState` | — | Header state from `getToggleAllState`. Required. |
+| `onToggleAll` | `(checked) => void` | — | Select-all handler. Required. |
+| `disabled` | `boolean` | `false` | Disable the select-all box. |
+| `label` | `string` | `"Select all rows"` | Accessible name. |
+
+### `RowSelectionCell`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `selected` | `boolean` | — | Whether this row is selected. Required. |
+| `onSelectedChange` | `(checked) => void` | — | Row toggle handler. Required. |
+| `label` | `string` | — | Accessible name describing the row. Required. |
+| `disabled` | `boolean` | `false` | Disable this row's box. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Interactive** story — select one row, then use the header box to select
+and clear all; the live count and the indeterminate header state follow. Works in
+both themes and directions.
