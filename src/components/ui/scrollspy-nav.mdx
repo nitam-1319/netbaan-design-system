@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScrollspyNav/Guidelines" />
+
+# Scrollspy Nav
+
+An in-page navigation list that highlights the section currently in view and
+scrolls to a section when its link is clicked — the "on this page" rail beside
+long documents. It observes each target section with an `IntersectionObserver`
+and marks the active link with `aria-current`.
+
+## Overview
+
+Long pages need a way to orient and jump. Scrollspy Nav keeps a table-of-contents
+in sync with scroll position, so readers always know where they are.
+
+## Usage
+
+- **Do** use it beside long documents, settings pages, or guides with anchored
+  sections.
+- **Do** give each `item.id` a matching element `id` in the page.
+- **Don't** use it for primary site navigation — that is **Navbar** / **Sidebar**.
+
+## Anatomy
+
+A `<nav>` (`data-slot="scrollspy-nav"`, `data-orientation`) with an accessible
+name and a list of links (`scrollspy-nav-item`), the active one carrying
+`aria-current="location"` and `data-active`.
+
+## Variants
+
+`orientation` (vertical · horizontal). Vertical links carry an inline-start active
+rail; horizontal links wrap.
+
+## States
+
+- **Active** — the section nearest the top; accent-soft highlight + `aria-current`.
+- **Hover / focus** — muted background / accent-soft ring.
+
+## Behavior
+
+- An `IntersectionObserver` (rootMargin biased toward the top) tracks which
+  sections are visible and marks the first visible one active.
+- Active state is controlled (`activeId` + `onActiveChange`) or derived from
+  scroll.
+- Clicking a link smooth-scrolls to the section and sets it active.
+
+## Accessibility
+
+- The nav has an accessible `label`; the active link uses `aria-current="location"`.
+- Links are real anchors (`#id`) — usable and focusable without JS; the focus ring
+  is visible.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-accent-soft` / `text-accent-strong` / `border-primary` | Active link + rail. |
+| `hover:bg-muted` / `ring-accent-soft` | Hover + focus ring. |
+| `text-muted-foreground` / `text-foreground` | Inactive / hover text. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `ScrollspyItem[]` | — | Sections to track (required). |
+| `activeId` | `string` | — | Controlled active section id. |
+| `onActiveChange` | `(id: string) => void` | — | Active-change callback. |
+| `orientation` | `"vertical" \| "horizontal"` | `"vertical"` | Layout direction. |
+| `label` | `string` | `"On this page"` | Nav accessible name. |
+
+`ScrollspyItem` is `{ id, label }`. The API is closed: `className` and `style` are
+not accepted.
+
+## Examples
+
+See the **Horizontal** story. The nav works in both themes and directions via the
+global toolbar; in RTL the vertical active rail sits on the inline-start edge
+automatically.
