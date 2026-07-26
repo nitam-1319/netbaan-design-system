@@ -1,0 +1,69 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Bottom Navigation/Guidelines" />
+
+# Bottom Navigation
+
+A mobile navigation bar pinned to the bottom edge: three to five top-level
+destinations, each an icon over a short label, with a clear active state. It is a
+navigation landmark (`<nav>`) whose items carry `aria-current` — the mobile
+sibling of **Tabs**, but for switching app destinations rather than in-page
+panels.
+
+## When to use
+
+- **Do** use it for the 3–5 most important, top-level destinations of a mobile
+  app.
+- **Do** keep labels to a single word; the bar is width-constrained.
+- **Don't** use it for in-page section switching — that's **Tabs**. And don't
+  use it for more than five destinations; overflow belongs in a "More" menu.
+- **Don't** hide the active state or rely on colour alone — `aria-current` and
+  the accent tint work together.
+
+## Anatomy
+
+A row of **items**, each an **icon** with an optional **label** and an optional
+**badge** (a count or a dot) pinned to the icon's corner.
+
+## Behavior
+
+- Items render as buttons by default (calling `onValueChange`), or as links when
+  given an `href` (native navigation).
+- `showLabels` controls whether labels are `always` shown, only on the `active`
+  item, or `never` (icon-only, with the label kept for screen readers).
+- `placement="fixed"` pins the bar to the viewport bottom with safe-area padding;
+  `inline` flows it in the document (useful inside a phone frame).
+
+## API
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `items` | `BottomNavigationItem[]` | — | `{ value, label, icon, href?, badge?, disabled? }`. |
+| `value` | `string` | — | Active destination. |
+| `onValueChange` | `(value) => void` | — | Fired for button items. |
+| `showLabels` | `always \| active \| never` | `always` | |
+| `placement` | `fixed \| inline` | `fixed` | |
+| `aria-label` | `string` | `"Primary"` | Names the nav landmark. |
+
+## Accessibility
+
+- The bar is a `<nav>` landmark with an accessible name; the active item has
+  `aria-current="page"`.
+- Icon-only mode keeps each label available to screen readers via
+  visually-hidden text, so the accessible name is never lost.
+- Badges announce meaning: a count reads "_n_ notifications", a dot reads "New".
+- Items take the 3px `accent-soft` focus ring; touch targets fill the row height.
+  Contrast meets WCAG 2.2 AA in both themes.
+
+## Internationalization / RTL
+
+Items lay out with logical flex direction, so the order mirrors under
+`dir="rtl"`, and the badge corner (`-end-1.5`) follows. Labels and the nav name
+are nodes/strings you translate.
+
+## Tokens
+
+Surface `bg-card/95` + `border-border` with `backdrop-blur`; active items use
+`text-accent-strong`, inactive `text-muted-foreground`; badges use
+`bg-destructive` + `ring-card`; focus uses `ring-accent-soft`. No hard-coded
+colour.
