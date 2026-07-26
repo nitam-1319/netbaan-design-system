@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Heatmap/Guidelines" />
+
+# Heatmap
+
+A matrix of values shown as a grid of colour-graded cells — activity by day/hour,
+findings by asset/severity, coverage by team/control. It composes the AEGIS
+**Chart Container** and renders a semantic table whose cell backgrounds scale from
+the surface to a single chart hue by value intensity.
+
+## Overview
+
+Heatmaps expose patterns across two categorical axes at once. This one keeps the
+data accessible (a real table with headers) while the colour scale surfaces the
+hotspots.
+
+## Usage
+
+- **Do** use it for two-dimensional categorical intensity.
+- **Do** align `values[row][col]` to `yLabels × xLabels`.
+- **Do** set `min` / `max` when comparing multiple heatmaps on one scale.
+- **Don't** use it for a single series over time — that is **Sparkline** /
+  **Bar Chart**.
+
+## Anatomy
+
+A **Chart Container** wrapping a `<table>` (`data-slot="heatmap"`) with column
+(`scope="col"`) and row (`scope="row"`) headers and value cells
+(`heatmap-cell`, `data-value`) whose background scales by intensity.
+
+## Variants
+
+Presentation is fixed; `colorIndex` chooses the palette hue and `showValues`
+toggles visible numbers.
+
+## States
+
+Presentational and deterministic — the same matrix always renders the same grid.
+
+## Behavior
+
+- Each cell's background is `color-mix(chart-hue value%, surface)`, where value% is
+  the cell's normalised intensity over `[min, max]`.
+- High-intensity cells switch their (optional) visible text to the on-tone colour
+  for contrast.
+
+## Accessibility
+
+- A real table with `scope`d headers; each cell has an accessible name
+  ("{row}, {col}: {value}") so values never depend on colour (WCAG 1.4.1), plus
+  `data-value` for tests.
+- Visible numbers are optional; the accessible name is always present.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--color-chart-1..5` + `--surface-2` | Cell intensity mix. |
+| `text-on-tone` / `text-foreground` | Cell text contrast. |
+| `text-muted-foreground` | Header labels. |
+
+No colour is hard-coded; every hue comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible chart name (required). |
+| `xLabels` | `string[]` | — | Column headers (required). |
+| `yLabels` | `string[]` | — | Row headers (required). |
+| `values` | `number[][]` | — | Value matrix `[row][col]` (required). |
+| `min` / `max` | `number` | derived | Fixed colour-scale ends. |
+| `colorIndex` | `1..5` | `1` | Palette hue. |
+| `showValues` | `boolean` | `false` | Render numbers in cells. |
+| `valueFormat` | `(v: number) => string` | `String` | Value formatter. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **NoValues** and **Activity** stories. The heatmap works in both themes
+and directions via the global toolbar; in RTL the row headers and columns flow
+from the inline-start edge.
