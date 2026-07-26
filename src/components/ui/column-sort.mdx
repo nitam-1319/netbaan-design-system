@@ -1,0 +1,101 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ColumnSort/Guidelines" />
+
+# Column Sort
+
+The standalone sorting affordance for a hand-rolled `Table`. `SortableColumnHeader`
+renders a real `<th>` whose label is a click-to-sort AEGIS `Button`, and the
+`useColumnSort` hook owns the single-active-column tri-state cycle (ascending →
+descending → unsorted) plus a `sortRows` helper.
+
+## Overview
+
+`Data Table` already sorts internally from its typed `columns`. Column Sort is for
+tables you compose by hand from the `Table` parts: it standardises the header
+control and the sort-state machine so click-to-sort behaves identically, while you
+keep ownership of the data. It is the sorting sibling of Column Filter and Column
+Visibility.
+
+## Usage
+
+- **Do** drive it with `useColumnSort` and reorder rows via `sortRows`.
+- **Do** give numeric columns `align="end"` so figures line up.
+- **Do** provide a comparator per sortable column id.
+- **Don't** reorder the DOM yourself in parallel — let `sortRows` be the source of
+  truth so the `aria-sort` state and the row order never disagree.
+
+## Anatomy
+
+A `data-slot="sortable-column-header"` `<th>` carrying native `aria-sort`, wrapping
+a ghost AEGIS `Button` (the column label) and a directional icon: `ArrowUp`
+(ascending), `ArrowDown` (descending), or a dimmed `ChevronsUpDown` (unsorted).
+
+## Behavior
+
+- One column is sorted at a time. Activating a header cycles that column
+  unsorted → ascending → descending → unsorted; activating a different column
+  starts it at ascending.
+- `useColumnSort` is controlled via `sort` + `onSortChange`, or uncontrolled via
+  `defaultSort`. `sortRows(data, comparators)` returns a sorted copy — it never
+  mutates your array.
+
+## States
+
+- **Unsorted** — dimmed `ChevronsUpDown`, `aria-sort="none"`.
+- **Ascending** — `ArrowUp`, `aria-sort="ascending"`.
+- **Descending** — `ArrowDown`, `aria-sort="descending"`.
+
+State is conveyed by icon shape **and** native `aria-sort`, never colour alone
+(WCAG 1.4.1).
+
+## Accessibility
+
+- Each header is a native `columnheader` with `aria-sort`, so assistive tech
+  announces the current sort without extra ARIA scaffolding.
+- The trigger has an accessible name (`Sort by {label}`); when `label` is not a
+  string, pass `labelText` for that name.
+- The trigger is a real AEGIS `Button` with keyboard support and the AEGIS
+  accent-soft focus ring.
+
+## Design tokens
+
+Inherits the `Table` head tokens (`text-muted-foreground`, `border-border`) and the
+`Button` ghost variant (hover surface + accent-soft focus ring). No hard-coded
+colour, shadow, or ring.
+
+## Scope
+
+Single-column sort matches Data Table. Multi-column (tie-breaker) sort is a
+deliberate follow-up, not folded in here.
+
+## API
+
+### `useColumnSort(options?)`
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `sort` | `ColumnSortState \| null` | — | Controlled sort state. |
+| `defaultSort` | `ColumnSortState \| null` | `null` | Uncontrolled initial sort. |
+| `onSortChange` | `(sort) => void` | — | Fires on every toggle. |
+
+Returns `{ sort, toggle(columnId), getDirection(columnId), sortRows(data, comparators) }`.
+
+### `SortableColumnHeader`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `ReactNode` | — | Header text / accessible name. Required. |
+| `labelText` | `string` | — | Plain-text name when `label` is not a string. |
+| `direction` | `"asc" \| "desc" \| false` | — | Current direction for this column. Required. |
+| `onSort` | `() => void` | — | Activation handler (wire to `toggle`). Required. |
+| `align` | `"start" \| "center" \| "end"` | `"start"` | Horizontal alignment. |
+| `size` | `"sm" \| "md" \| "lg"` | `"sm"` | Trigger size. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Interactive** story (click Commits to cycle asc → desc → unsorted; the
+row order and `aria-sort` follow) and the static **Ascending** / **Descending**
+stories. Works in both themes and directions.
