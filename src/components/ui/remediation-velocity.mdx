@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/RemediationVelocity/Guidelines" />
+
+# Remediation Velocity
+
+A widget that tracks how fast findings are being **closed versus opened** over
+time — the security team's remediation velocity. It composes the AEGIS **Card**
+with a grouped **Bar Chart** (opened vs resolved per period) and a headline net
+figure rendered through **Stat Tile Delta**.
+
+## Overview
+
+Posture improves only if findings close faster than they open. This widget makes
+that balance visible: a per-period comparison plus a single net number that says
+whether the backlog is shrinking or growing.
+
+## Usage
+
+- **Do** use it on ASM/ops dashboards to track remediation over weeks/sprints.
+- **Do** pass `opened` and `resolved` counts per period (rename via
+  `openedKey` / `resolvedKey`).
+- **Don't** use it for a categorical exposure breakdown — that is **Attack
+  Surface Widget**.
+
+## Anatomy
+
+A **Card** (`data-slot="remediation-velocity"`, `data-trend`) with a header
+(title `remediation-velocity-title` + description, and a net figure
+`remediation-velocity-net` via **Stat Tile Delta**) over a grouped **Bar Chart**.
+
+## Variants
+
+Presentation is fixed. `showNet` toggles the headline figure; the chart is always
+grouped opened-vs-resolved.
+
+## States
+
+- **Backlog shrinking** — net > 0 (resolved exceeds opened): up trend, positive
+  sentiment.
+- **Backlog growing** — net < 0: down trend, negative sentiment.
+- **Flat** — net 0.
+
+## Behavior
+
+- Net is computed as `Σ resolved − Σ opened` across all rows.
+- The delta's sentiment is set explicitly (positive when closing faster), so the
+  colour matches meaning even though "up" and "good" align here.
+- Static renderer — hover tooltips are deferred at the Bar Chart level.
+
+## Accessibility
+
+- The net direction carries a screen-reader label ("Backlog shrinking" /
+  "Backlog growing" / "No change"), so it never depends on the arrow/colour alone
+  (WCAG 1.4.1); `data-trend` exposes it to tests.
+- The chart is an accessible `role="img"` named by the title with a colour+text
+  legend.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Card `default` tokens | Surface + border. |
+| Chart palette (`--chart-1..5`) | Opened / resolved series. |
+| Stat Tile Delta tokens | Net trend colour. |
+| `text-foreground` / `text-muted-foreground` | Title, description, net label. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `data` | `VelocityDatum[]` | — | Per-period rows (required). |
+| `xKey` | `string` | — | Period field (required). |
+| `openedKey` | `string` | `"opened"` | Opened-count field. |
+| `resolvedKey` | `string` | `"resolved"` | Resolved-count field. |
+| `openedLabel` / `resolvedLabel` | `string` | `"Opened"` / `"Resolved"` | Legend labels. |
+| `title` | `ReactNode` | `"Remediation velocity"` | Widget title. |
+| `description` | `ReactNode` | — | Supporting description. |
+| `showNet` | `boolean` | `true` | Show the headline net figure. |
+| `height` | `number` | `260` | Chart height. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **BacklogGrowing** and **NoNet** stories. The widget works in both themes
+and directions via the global toolbar; the card framing flips edges in RTL while
+the chart stays direction-consistent.
