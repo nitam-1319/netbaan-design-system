@@ -20,13 +20,26 @@ budget:
   needs a new runtime dependency.
 - Every unit of budget goes to the next new component, not to maintenance.
 
+## SPEND TURNS LIKE THEY'RE THE SCARCE RESOURCE (they are)
+What ends a run first is almost always the **per-session agentic-turn budget** (number of tool calls),
+not tokens — a run stops after a handful of components because each one spends ~15 tool calls, not
+because context filled. So minimize tool calls per component:
+- **Batch shell commands.** Run the per-component gates as ONE chained command, not three:
+  `npx tsc --noEmit && node .agent/scripts/verify-conformance.mjs <name> && node .agent/scripts/verify-tokens.mjs`
+- **Write each file in a single Write** (compose it fully, don't dribble edits). Don't re-open a file
+  to re-read what you just wrote.
+- **Do NOT push every component.** A fetch/rebase/push per component is ~3 tool calls each and is the
+  single biggest turn sink. `git add -A && git commit` per component (one call, cheap, keeps
+  granular history), then **push once every ~5 components and once at end of run.**
+- Don't re-run a gate you already saw pass. Don't read docs you've already read this run.
+Treat every avoided tool call as one more component you get to build this session.
+
 Loop (repeat — keep building one component after another):
 1. Enter **CREATE** mode (`component-create.md`) for the next unchecked component in
    `../checklists/COMPONENTS_STATUS.md`, honoring priority and dependencies.
 2. Finish it fully (completion definition in `../checklists/REVIEW_CHECKLIST.md`).
-3. Run the **per-component fast gates** and commit + push per `../guides/BUILD_GUIDE.md`
-   (tsc + `verify-conformance <name>` + `verify-tokens`). Push per component so a crash keeps
-   finished work.
+3. Run the per-component gates as ONE chained command (see above) and `git commit` (per component).
+   **Push in batches** — every ~5 components and at end of run — not once per component.
 4. **Do NOT stop at the "every 10th component" or "category boundary" checkpoints.** This run is
    unattended, so stopping for human review just wastes the session. At each such checkpoint, record
    a one-line "review checkpoint" note for the run report and **continue** — including across
@@ -36,9 +49,11 @@ Loop (repeat — keep building one component after another):
 Stop the loop only when one of these is true:
 - **Queue empty** — no buildable component remains (all done, or all remaining are blocked by a
   missing Base UI primitive; record which).
-- **Token budget** — you are approaching the session's context/token budget. Finish the component
-  in progress, then go to "End of run". (Budget-aware stopping is expected and correct — it is not a
-  failure; the next scheduled run continues where you left off.)
+- **Session budget** — you are genuinely near the session's limit (agentic-turn budget or context).
+  Do NOT stop early "to be safe" — keep building while you can still complete a full component; only
+  then finish the component in progress and go to "End of run". (Budget-aware stopping is expected and
+  correct — the next run continues where you left off. But stopping at a handful of components while
+  budget clearly remains is the bug we are fixing: keep going.)
 - **Genuine blocker** — the SAME fix recurs 3× (a systemic problem), or a hard gate cannot pass and
   cannot be fixed. Stop and report it as `BLOCKED`.
 

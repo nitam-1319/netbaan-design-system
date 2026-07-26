@@ -629,3 +629,28 @@ Reason: the earlier "no checkpoint stop" change (2026-07-25n) was correct but IN
 enforced in a second file I hadn't edited. This closes that gap.
 Impact: the recurring loop now builds continuously across category boundaries; expect per-run counts to
 rise past a single category. Attended review sessions may still use the checkpoints manually.
+
+## 2026-07-26c — Per-run ceiling is the session's agentic-TURN budget; cut per-component tool calls
+Status: accepted
+Decision: After the checkpoint-stop fix (2026-07-26b), runs improved 6→8 components and now cross
+category boundaries (verified: a run built sso-provider-buttons…bottom-navigation across the auth +
+mobile categories, then stopped at 8 on its own "approaching budget" condition). No artificial
+doc-level stop remains (swept every `.agent/*.md`). Evidence points to the binding limit being the
+**per-session agentic-turn budget** (tool-call count), not context/tokens: at 8 small components the
+context is well under half a 200k window, yet the run wraps up cleanly. Each component was spending
+~15 tool calls — notably THREE separate gate commands and a full fetch/rebase/**push per component**
+(~3 calls each) — so ~8 components exhausts the turn budget.
+Fix (the only remaining lever short of a platform change): cut tool calls per component.
+- `prompts/recurring-build.md`: added "SPEND TURNS LIKE THEY'RE THE SCARCE RESOURCE" — run the three
+  per-component gates as ONE chained `&&` command; write each file in a single Write; **commit per
+  component but PUSH in batches (every ~5 + end of run)**, not per component; don't re-run passed
+  gates or re-read docs. Reworded the "budget" stop so the loop does NOT stop early "to be safe".
+- `guides/BUILD_GUIDE.md`: per-component gates collapsed to one chained command; push rules changed
+  from per-component to batched.
+Reason: removing the artificial stop was necessary but not sufficient — the run now hits the real
+per-session turn ceiling. Halving the tool-calls per component (≈15→≈8) should let materially more
+components fit before that ceiling. The remaining hard ceiling is a platform per-session cap that only
+higher run FREQUENCY can scale past.
+Impact: expect per-run counts to rise beyond ~8; if they don't, the residual limit is the platform
+per-session budget (not removable via docs). Trade-off: batched push means a crashed run may lose up
+to ~5 unpushed local commits (the next run rebuilds them from the queue).

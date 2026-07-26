@@ -49,12 +49,13 @@ component; run the **end-of-run** gates (below) once before the session ends.
 Split the gates so the expensive whole-project ones run **once per run**, not once per component.
 This is what lets a single session build many more components before its token budget is spent.
 
-**Per component — the FAST correctness gates, before each commit (every commit stays safe):**
+**Per component — the FAST correctness gates, as ONE chained command (saves tool calls):**
 ```bash
-npx tsc --noEmit                                    # type safety (whole project)
-node .agent/scripts/verify-conformance.mjs <name>   # reference fidelity — HARD GATE (rules/REFERENCE_FIDELITY.md)
-node .agent/scripts/verify-tokens.mjs               # token integrity — no dangling var(--*)
+npx tsc --noEmit && node .agent/scripts/verify-conformance.mjs <name> && node .agent/scripts/verify-tokens.mjs
 ```
+(type safety + reference-fidelity HARD GATE + token integrity, in a single call.) Then `git add -A &&
+git commit` — one call. Do NOT run these as three separate calls; the per-session **agentic-turn
+budget** is what ends a run, so every avoided tool call is another component you get to build.
 
 **Once at the END of the run — the EXPENSIVE whole-project gates, a single time:**
 ```bash
@@ -86,12 +87,13 @@ docs(select): add usage and API guidelines
 ```
 Reject vague messages: `fix`, `update`, `changes`, `wip`, `test`.
 
-## Push rules
+## Push rules — commit per component, PUSH IN BATCHES
+Commit each component locally (`git add -A && git commit`), but do **not** push after every one — a
+fetch/rebase/push cycle is ~3 tool calls and, repeated per component, is the biggest drain on the
+per-session turn budget (it's a large part of why runs stopped after only a handful of components).
+Push **every ~5 components and once at end of run**:
 ```bash
-git push -u origin aegis/build
+git pull --rebase origin aegis/build && git push origin aegis/build
 ```
-If rejected because the remote moved:
-```bash
-git pull --rebase origin aegis/build
-```
-then push again.
+(If a run dies between pushes, at most ~5 local commits are lost and the next run simply rebuilds them
+from the queue — an acceptable trade for the throughput gained.)
