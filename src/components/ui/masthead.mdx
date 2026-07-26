@@ -1,0 +1,138 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Masthead/Guidelines" />
+
+# Masthead
+
+The AEGIS signature page header. A rotating conic-gradient **beam** sweeps
+around the border (the same beam motif as `Card variant="beam"` and the Primary
+button) behind an inset `--card` panel that carries an eyebrow, a display title,
+a description, and an actions slot. It is the "header with a light beam moving
+across it" from the reference pages, promoted to a first-class, page-level
+header.
+
+Masthead is a set of composable slot parts rather than a single monolith, so any
+page can assemble its own header from the same pieces. Colors, elevation, and
+motion come from AEGIS tokens only, and the public API is **closed** — no
+`className` or `style`.
+
+## Overview
+
+Use a Masthead at the top of a page or major section to establish context: which
+area of the product the user is in (breadcrumb), what the page is (title), why it
+matters (description), and the primary actions available (actions slot). The
+animated beam is decorative and purely presentational — it conveys brand, never
+meaning.
+
+## Usage
+
+- **Do** use one Masthead per page, as the first landmark inside the main region.
+- **Do** pair a `MastheadBrand` chip with a `MastheadBreadcrumb` in the eyebrow to
+  orient the user within the information architecture.
+- **Do** place page-level controls (theme toggle, primary CTA, back link) in
+  `MastheadActions`; they wrap onto their own row on narrow viewports.
+- **Don't** stack multiple mastheads on one page or nest one inside a `Card` — use
+  a plain heading for sub-sections instead.
+- **Don't** rely on the beam animation to communicate state; it is decorative and
+  is hidden from assistive technology.
+
+## Anatomy
+
+1. **Masthead** — the `<header>` container: `--border-strong` frame, `radius 20px`,
+   elevation shadow, and the `beam-spin` conic-gradient arc revealed as a 1.5px
+   frame around an inset `--card` panel.
+2. **MastheadContent** — the left column stacking eyebrow, title, and description.
+3. **MastheadEyebrow** — the row above the title; holds the brand chip and
+   breadcrumb.
+4. **MastheadBrand** — the accent-filled mono, uppercase brand chip (e.g. `AEGIS`).
+5. **MastheadBreadcrumb** — the muted mono path (use ` / ` separators).
+6. **MastheadTitle** — the display title (Space Grotesk, fluid 28–40px).
+7. **MastheadDescription** — supporting copy under the title, max width ~640px.
+8. **MastheadActions** — the right-aligned actions cluster (theme toggle, CTA…).
+
+## Variants
+
+Masthead has no visual variants; its appearance is fixed to preserve the
+signature beam treatment across pages. Compositional flexibility comes from which
+slot parts you include — title-only, title + description, or the full eyebrow +
+title + description + actions arrangement.
+
+## States
+
+The container is static (no hover/pressed/disabled states). The only motion is
+the continuous `beam-spin` animation on the decorative border arc, which respects
+the user's reduced-motion preference through the shared motion tokens. Interactive
+children (buttons, links, toggles) manage their own states.
+
+## Behavior
+
+- Masthead is presentational and uncontrolled; it holds no internal state.
+- The content row uses `flex-wrap`, so `MastheadActions` drops below the content
+  column when horizontal space is tight.
+- The beam is rendered in an `aria-hidden` layer and sits behind the content on a
+  higher stacking context, so it never intercepts pointer events.
+- Keyboard: the Masthead itself is not focusable; tab order is entirely determined
+  by the interactive children placed in `MastheadActions` (and any links in the
+  content).
+
+## Accessibility
+
+- Masthead renders a native `<header>` element, giving it the implicit `banner`
+  landmark role when it is a top-level page header — pair it with `Skip to
+  Content` and the other landmark regions. When it is a section header rather than
+  the page banner, wrap or render it so the role matches its scope.
+- `MastheadTitle` renders an `<h1>`. Ensure only one `<h1>` per page and that the
+  surrounding heading outline is correct; for a section-level masthead, provide an
+  appropriately-leveled heading instead.
+- The decorative beam is `aria-hidden`, so screen-reader users get the title,
+  breadcrumb, and description as text with no animation noise.
+- Keyboard map: no Masthead-specific keys; children (buttons, links) follow their
+  own standard keyboard behavior.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--card` / `--card-foreground` | Inset panel surface + text |
+| `--border-strong` | Outer frame the beam sits on |
+| `--primary` / `--accent-strong` | Beam conic-gradient stops |
+| `--primary-solid` | Brand chip fill |
+| `--foreground` | Title |
+| `--muted-foreground` | Description |
+| `--text-faint` | Breadcrumb |
+| `shadow-elevated` | Container elevation |
+| `animate-beam-spin` (6.5s) | Rotating border beam |
+| `--radius` (20px / 18.5px inset) | Corner radii |
+
+## API
+
+Every part is a closed-API slot component: it accepts the native props for its
+underlying element **except** `className` and `style`, and each carries a
+`data-slot` attribute for targeting in tests and app-level composition.
+
+| Part | Element | Purpose |
+| --- | --- | --- |
+| `Masthead` | `header` | Outer container with the signature beam frame. |
+| `MastheadContent` | `div` | Left column: eyebrow + title + description. |
+| `MastheadEyebrow` | `div` | Row above the title (brand + breadcrumb). |
+| `MastheadBrand` | `span` | Accent brand chip (mono, uppercase). |
+| `MastheadBreadcrumb` | `span` | Muted mono breadcrumb path. |
+| `MastheadTitle` | `h1` | Display title. |
+| `MastheadDescription` | `p` | Supporting copy under the title. |
+| `MastheadActions` | `div` | Right-aligned actions cluster. |
+
+## Examples
+
+The **Default** story shows the full library masthead (brand + breadcrumb + title
++ description + a single action). The **As a page header** story shows the
+breadcrumb-plus-CTA arrangement used at the top of an individual component page.
+
+**Dark** — the system is dark-first; the beam and `--card` inset are tuned for the
+dark theme and every token above has a light-theme counterpart, so the Masthead
+renders correctly under both `.dark` and light roots with no per-instance changes.
+
+**RTL / Persian** — all spacing uses logical properties and the layout is
+`flex`-based, so the content column and actions cluster mirror automatically under
+`dir="rtl"`. Use ` / ` separators in the breadcrumb regardless of direction; the
+mono breadcrumb reads left-to-right by convention while the surrounding layout
+mirrors.
