@@ -1,0 +1,86 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FieldArray/Guidelines" />
+
+# Field Array
+
+Manages a repeatable set of fields — email lists, key/value pairs, team members,
+scan targets — with add, remove, and `min` / `max` bounds. You render each row's
+fields via `renderItem`; Field Array owns the array state, the row frame, the
+remove control, and the add button (composing **Button**).
+
+## Overview
+
+Many forms need "add another". Field Array standardises that pattern so every
+repeatable group looks and behaves the same, while you keep full control of each
+row's fields.
+
+## Usage
+
+- **Do** use it for lists of homogeneous field groups.
+- **Do** render your fields (e.g. **Text Field**) in `renderItem` and provide a
+  `newItem` factory.
+- **Do** set `min` / `max` to bound the list.
+- **Don't** use it for a single value — that is **Text Field**.
+
+## Anatomy
+
+A group (`data-slot="field-array"`) with an optional label, an empty state
+(`field-array-empty`), rows (`field-array-item`, `data-index`) each pairing your
+rendered fields with a remove **Button**, and an add **Button**.
+
+## Variants
+
+No visual variants; behaviour is bounded by `min` / `max` and toggled by
+`disabled`.
+
+## States
+
+- **Empty** — shows a placeholder when there are no rows.
+- **At min** — remove buttons disabled.
+- **At max** — add button disabled.
+- **Disabled** — all controls disabled.
+
+## Behavior
+
+- State is controlled (`value` + `onChange`) or uncontrolled (`defaultValue`).
+- Add appends `newItem()`; remove drops a row (respecting `min`).
+- `renderItem` receives `{ item, index }`; the row's field values are yours to
+  wire to `onChange`.
+
+## Accessibility
+
+- The group is a labelled `role="group"`; each remove button has an indexed
+  accessible name ("Remove 1"), and the add button is clearly labelled.
+- The remove glyph is `aria-hidden`; ensure each rendered field has its own label.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Button tokens (`ghost`/`outline`) | Remove / add. |
+| `text-destructive` | Remove glyph. |
+| `text-foreground` / `text-muted-foreground` | Label / empty state. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `T[]` | — | Controlled array. |
+| `defaultValue` | `T[]` | `[]` | Initial array (uncontrolled). |
+| `onChange` | `(next: T[]) => void` | — | Change callback. |
+| `renderItem` | `({ item, index }) => ReactNode` | — | Row renderer (required). |
+| `newItem` | `() => T` | — | New-row factory (required). |
+| `label` | `ReactNode` | — | Group label. |
+| `addLabel` / `removeLabel` | `ReactNode` / `string` | `"Add"` / `"Remove"` | Control labels. |
+| `min` / `max` | `number` | `0` / — | Row bounds. |
+| `disabled` | `boolean` | `false` | Disable all controls. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Bounded** story. It works in both themes and directions via the global
+toolbar; rows and controls flow from the inline-start edge in RTL.
