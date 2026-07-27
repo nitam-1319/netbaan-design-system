@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 22 / 207 reviewed  ·  library @ `628dacb`
+**Progress:** 26 / 207 reviewed  ·  library @ `a0f56bd`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -36,15 +36,15 @@
 | `list` | ✅ | yes | ✅ | ✅ | ✅ | 3 |  | 5 | medium | FIXED: added dedicated `Disabled` story + a11y assert (missing-state-story cleared). 7 stories axe-green (dark & light); RTL verified (icons/text mirror). Closed API. |
 | `progress` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 5 | clean | Own code clean (closed API, token tones success/warning/critical, indeterminate anim, Base UI progressbar). Only axe hit is INHERITED queued `--text-faint` (#6e6880 3.74 both themes) on `ProgressValue` in `WithLabelAndValue` — SAME token as checkbox/radio (recurring 3×, systemic; escalated in PR). |
 | `password-input` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 2 | medium | Own code clean/closed-API (`Omit<input, className\|style\|size\|type>`), token shell (border-strong / accent focus ring / destructive invalid), reveal toggle `aria-pressed`, label+desc+error associated. Triage `missing-state-story:invalid` was a FALSE POSITIVE — invalid derives from `error`, covered by the `Error` story (added `aria-invalid`+`aria-describedby` play assert). QUEUED: `Error` message ink `text-destructive` #e5484d on light bg = 3.62<4.5 AA — systemic `--destructive` tone (same family as queued button ink); registered in known-issues.json, foundation fix deferred. |
-| `animate-presence` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
+| `animate-presence` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; renderless mount/unmount orchestrator (clones its single child, injects `data-state` open/closed + context). Both triage findings FALSE POSITIVES: `closed-api` matched the `React.ComponentProps<"div">` cast on `cloneElement` (props are a bespoke type — no DOM spread, no className/style); `no-data-slot` n/a for a renderless behavioural primitive (no element of its own). 2 stories, 0 render/play errors, 0 a11y. rAF/timeout-driven (deterministic, headless-testable). |
 | `otp-input` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 1 | medium | Own code clean/closed-API, Base UI `OTPField`, per-slot `aria-label`, group `aria-invalid`+`aria-describedby`, token slot variants. Triage `missing-state-story:invalid` was a FALSE POSITIVE — invalid derives from `error`, covered by the `Error` story (added group `aria-invalid`+`aria-describedby` play assert). QUEUED: same systemic `Error` ink #e5484d/light 3.62<4.5 as password-input — see known-issues.json. |
-| `color-picker` | ⬜ | — | — | — | — | 2 |  | 0 | high |  |
+| `color-picker` | ✅ | — | — | ✅ | ✅ | 2 |  | 0 | high | Clean; HSL trigger-swatch + Popover with hue/sat/light range sliders + presets. Both triage findings FALSE POSITIVES: `hardcoded-color hsl(` is EXEMPT — the swatch/preview/track backgrounds render the user's picked colour (data, not chrome; chrome is token-only: border-strong / bg-card / --primary accent / ring-strong); `closed-api` is closed — base type `Omit<ComponentProps<PopoverTrigger>, …>` and PopoverTrigger already omits className/style, so `{...props}` can't leak them. 3 stories axe-green (incl. open popover — portal captured), 0 errors; sliders keyboard-operable + `aria-label`. |
 | `empty-state` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
 | `popover` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
 | `radial-gauge` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
 | `bar-chart` | ✅ | — | — | ✅ | ✅ | 2 |  | 3 | medium | Clean; config-driven column chart on the chart foundation (ChartContainer/Plot/Axis/Legend). 4 stories (grouped/stacked/single/formatted-axis) axe-green (dark & light); render/play 0 errors; closed API (bespoke prop type, no className/style, no primitive spread), token-only palette via `seriesByKey`, `data-slot` marks. Grouped/stacked geometry + zero-baseline verified in the montage. |
 | `copy-to-clipboard` | ⬜ | — | — | — | — | 1 |  | 3 | clean |  |
-| `severity-badge` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
+| `severity-badge` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 3 | medium | Own code clean — thin `Badge` wrapper (`Omit<BadgeProps, tone\|count\|max>`, closed API, `data-slot`+`data-severity`, level always spelled out → never colour-alone). 7 stories, 0 render/play errors. All axe hits are INHERITED queued Badge tone-ink: soft/outline `--sev-*` ink on light (2.5–2.7) + solid white-on-`--sev-*` (1.9–3.5, both themes) — registered the full severity-ramp signatures in known-issues.json under the badge-batch-1 tone-ink family. QUEUED (foundation --on-tone decision). |
 | `text-field` | ⬜ | — | — | — | — | 1 |  | 3 | clean |  |
 | `alert` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
 | `combobox` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
@@ -58,7 +58,7 @@
 | `area-chart` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; config-driven area chart on the chart foundation, 3 stack modes (overlap/stacked/expand). 6 stories axe-green (dark & light); render/play 0 errors; closed API (bespoke prop type, no className/style), token-only palette + `var(--color-background)` dot fill, `data-slot` marks. Overlap translucency / stacked opacity / expand→100% normalisation verified in the montage. |
 | `bottom-sheet` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `code-block` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `cve-reference-chip` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
+| `cve-reference-chip` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 1 | medium | Own code clean — thin `Badge` wrapper (`Omit<BadgeProps, tone\|count\|max\|dot\|icon\|children\|render>`, closed API, polymorphic `render` anchor to NVD, `rel=noreferrer` on `_blank`, mono ID carries meaning, `data-slot`+`data-cve`+`data-severity`). 6 stories, 0 errors. All axe hits INHERITED queued Badge tone-ink (soft/outline `--sev-*` + solid white-on-tone) — see known-issues.json. QUEUED (foundation --on-tone decision). |
 | `drawer` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `dropzone` | ✅ | yes | ✅ | ✅ | ✅ | 2 |  | 1 | medium | FIXED: added `Required` story + play assert (missing-state-story cleared). Own code clean/closed-API; 10 stories, 0 render/play errors; RTL-Persian story correct. Only axe hits are the INHERITED queued `--text-faint` (#6e6880 3.27–3.53) on the `hint` across all stories — see systemic note. |
 | `error-state` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
