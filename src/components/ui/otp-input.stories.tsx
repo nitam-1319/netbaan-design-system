@@ -74,6 +74,18 @@ export const Error: Story = {
     defaultValue: "000000",
     error: "That code is incorrect or expired.",
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const message = canvas.getByText("That code is incorrect or expired.")
+    await expect(message).toBeInTheDocument()
+    // The error state marks the field-group invalid and links the message for AT.
+    const root = canvasElement.querySelector('[data-slot="otp-input-root"]')
+    await expect(root).toHaveAttribute("aria-invalid", "true")
+    await expect(root).toHaveAttribute(
+      "aria-describedby",
+      message.getAttribute("id") as string
+    )
+  },
 }
 
 export const Disabled: Story = {
