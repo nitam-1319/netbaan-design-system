@@ -16,27 +16,55 @@
 
 import { createServer } from "node:http"
 import { readFile, mkdir, writeFile, rm } from "node:fs/promises"
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { extname, join, resolve } from "node:path"
 import { chromium } from "playwright"
+import { PNG } from "pngjs"
+import { resolveStories } from "./lib/story-resolve.mjs"
 
 const ROOT = resolve(process.cwd())
 const STATIC = join(ROOT, "storybook-static")
 const OUT = join(ROOT, ".agent", "audit", "screens")
+const BASELINE = join(ROOT, ".agent", "audit", "baselines")
 const INDEX = join(STATIC, "index.json")
+
+// Dependency-free pixel diff (pngjs is already a dep). Returns the fraction of
+// pixels that differ beyond a per-channel threshold, or 1 on a size mismatch.
+function pngDiffFraction(aPath, bPath, thresh = 24) {
+  try {
+    const a = PNG.sync.read(readFileSync(aPath))
+    const b = PNG.sync.read(readFileSync(bPath))
+    if (a.width !== b.width || a.height !== b.height) return 1
+    let diff = 0
+    const n = a.data.length
+    for (let i = 0; i < n; i += 4) {
+      if (
+        Math.abs(a.data[i] - b.data[i]) > thresh ||
+        Math.abs(a.data[i + 1] - b.data[i + 1]) > thresh ||
+        Math.abs(a.data[i + 2] - b.data[i + 2]) > thresh
+      )
+        diff++
+    }
+    return diff / (n / 4)
+  } catch {
+    return 1
+  }
+}
 
 const VIEWPORTS = { desktop: { width: 1280, height: 900 }, mobile: { width: 390, height: 780 } }
 const MIME = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".woff": "font/woff", ".ttf": "font/ttf", ".map": "application/json", ".ico": "image/x-icon" }
 
 // ---- args ----
 const args = process.argv.slice(2)
-const opts = { themes: ["dark", "light"], locales: ["en", "fa"], viewports: ["desktop"], story: null, names: [] }
+const opts = { themes: ["dark", "light"], locales: ["en", "fa"], viewports: ["desktop"], story: null, names: [], baseline: false, diffThreshold: 0.001 }
 for (let i = 0; i < args.length; i++) {
   const a = args[i]
   if (a === "--themes") opts.themes = args[++i].split(",")
   else if (a === "--locales") opts.locales = args[++i].split(",")
   else if (a === "--viewports") opts.viewports = args[++i].split(",")
   else if (a === "--story") opts.story = args[++i]
+  else if (a === "--baseline") opts.baseline = true // capture reference montages instead of diffing
+  else if (a === "--diff-threshold") opts.diffThreshold = Number(args[++i])
   else opts.names.push(a)
 }
 
@@ -114,12 +142,12 @@ try {
     }
   } else {
     const names = opts.names.length ? opts.names : ["*"]
+    let unchanged = 0, changed = 0, added = 0
     for (const name of names) {
-      const stories = name === "*"
-        ? entries
-        : entries.filter((e) => e.id.startsWith(`components-${name}--`) || (e.title || "").toLowerCase() === `components/${name.replace(/-/g, " ")}`)
+      const stories = name === "*" ? entries : resolveStories(entries, name)
       if (!stories.length) { console.warn(`[audit-visual] no stories for "${name}"`); continue }
-      const outdir = join(OUT, name)
+      const outdir = join(opts.baseline ? BASELINE : OUT, name)
+      const baseDir = join(BASELINE, name)
       await mkdir(outdir, { recursive: true })
       const montagePath = join(STATIC, `__audit_montage_${name}.html`)
       for (const theme of opts.themes) for (const locale of opts.locales) for (const vpName of opts.viewports) {
@@ -131,10 +159,31 @@ try {
         const f = join(outdir, `${theme}-${locale}-${vpName}.png`)
         await page.screenshot({ path: f, fullPage: true })
         await page.close(); captured++
-        console.log(`  ✓ ${name}: ${theme}/${locale}/${vpName} (${stories.length} stories) -> ${f.replace(ROOT + "/", "")}`)
+        // Visual-regression: in normal mode, diff against the committed baseline so
+        // UNCHANGED renders need zero image reads by the reviewer.
+        if (!opts.baseline) {
+          const basePng = join(baseDir, `${theme}-${locale}-${vpName}.png`)
+          if (!existsSync(basePng)) {
+            added++
+            console.log(`  + ${name}: ${theme}/${locale}/${vpName} (${stories.length} stories) NO BASELINE -> read ${f.replace(ROOT + "/", "")}`)
+          } else {
+            const frac = pngDiffFraction(basePng, f)
+            if (frac <= opts.diffThreshold) {
+              unchanged++
+              console.log(`  = ${name}: ${theme}/${locale}/${vpName} unchanged (${(frac * 100).toFixed(3)}% ≤ ${(opts.diffThreshold * 100).toFixed(3)}%)`)
+            } else {
+              changed++
+              console.log(`  ~ ${name}: ${theme}/${locale}/${vpName} CHANGED (${(frac * 100).toFixed(2)}% px) -> read ${f.replace(ROOT + "/", "")}`)
+            }
+          }
+        } else {
+          console.log(`  ✓ baseline ${name}: ${theme}/${locale}/${vpName} (${stories.length} stories) -> ${f.replace(ROOT + "/", "")}`)
+        }
       }
       await rm(montagePath, { force: true })
     }
+    if (!opts.baseline && (unchanged || changed || added))
+      console.log(`[audit-visual] diff summary: ${unchanged} unchanged (skip read), ${changed} changed, ${added} no-baseline`)
   }
 } finally {
   await browser.close()

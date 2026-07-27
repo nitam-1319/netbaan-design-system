@@ -19,15 +19,32 @@
 
 import { createServer } from "node:http"
 import { readFile } from "node:fs/promises"
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { writeFileSync } from "node:fs"
-import { extname, join, resolve } from "node:path"
+import { extname, join, resolve, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
 import { chromium } from "playwright"
+import { resolveStories } from "./lib/story-resolve.mjs"
 
 const ROOT = resolve(process.cwd())
 const STATIC = join(ROOT, "storybook-static")
 const INDEX = join(STATIC, "index.json")
 const AXE = join(ROOT, "node_modules", "axe-core", "axe.min.js")
+
+// Known, QUEUED design-token contrast issues → auto-classified so dependents
+// aren't re-verified per run. See .agent/audit/known-issues.json.
+const KNOWN_PATH = join(dirname(fileURLToPath(import.meta.url)), "..", "audit", "known-issues.json")
+const KNOWN = existsSync(KNOWN_PATH) ? JSON.parse(readFileSync(KNOWN_PATH, "utf8")).contrast || [] : []
+const norm = (c) => (c ? String(c).trim().toLowerCase() : null)
+function classifyContrast(fg, bg) {
+  const f = norm(fg), b = norm(bg)
+  for (const k of KNOWN) {
+    if (norm(k.fg) && norm(k.fg) !== f) continue
+    if (norm(k.bg) && norm(k.bg) !== b) continue
+    if (norm(k.fg) || norm(k.bg)) return k.label
+  }
+  return null
+}
 const MIME = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".woff": "font/woff", ".ttf": "font/ttf", ".map": "application/json", ".ico": "image/x-icon" }
 
 const args = process.argv.slice(2)
@@ -64,7 +81,7 @@ const names = opts.names.length ? opts.names : ["*"]
 const report = []
 try {
   for (const name of names) {
-    const stories = name === "*" ? entries : entries.filter((e) => e.id.startsWith(`components-${name}--`))
+    const stories = resolveStories(entries, name)
     if (!stories.length) { console.warn(`[audit-checks] no stories for "${name}"`); continue }
     for (const s of stories) {
       const rec = { id: s.id, name: s.name, errors: [], a11y: [] }
@@ -84,12 +101,44 @@ try {
           const result = await page.evaluate(async () => {
             const root = document.querySelector("#storybook-root") || document.body
             const r = await window.axe.run(root, { resultTypes: ["violations"] })
-            return r.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, nodes: v.nodes.length }))
+            return r.violations.map((v) => ({
+              id: v.id,
+              impact: v.impact,
+              help: v.help,
+              // Per-node detail so the reviewer sees WHICH element + contrast data,
+              // instead of an opaque count that needs an ad-hoc script to resolve.
+              nodes: v.nodes.map((n) => {
+                const cc = (n.any || []).find((a) => a.data && (a.data.fgColor || a.data.bgColor))
+                const d = cc && cc.data ? cc.data : {}
+                return {
+                  target: Array.isArray(n.target) ? n.target.join(" ") : String(n.target),
+                  fg: d.fgColor || null,
+                  bg: d.bgColor || null,
+                  ratio: d.contrastRatio != null ? Number(d.contrastRatio) : null,
+                }
+              }),
+            }))
           })
           for (const v of result) {
             // dedupe across themes but keep contrast per-theme (it is theme-specific)
             const key = v.id === "color-contrast" ? `${v.id}@${theme}` : v.id
-            if (!rec.a11y.some((x) => x._key === key)) rec.a11y.push({ ...v, theme: v.id === "color-contrast" ? theme : "any", _key: key })
+            if (rec.a11y.some((x) => x._key === key)) continue
+            const nodes = (v.nodes || []).map((n) => ({
+              ...n,
+              known: v.id === "color-contrast" ? classifyContrast(n.fg, n.bg) : null,
+            }))
+            // A violation is "new" (needs review) if ANY node is not a known-queued signature.
+            const isNew = nodes.some((n) => !n.known)
+            rec.a11y.push({
+              id: v.id,
+              impact: v.impact,
+              help: v.help,
+              theme: v.id === "color-contrast" ? theme : "any",
+              nodes,
+              count: nodes.length,
+              isNew,
+              _key: key,
+            })
           }
         } catch (e) {
           errs.push(`load-failed: ${(e.message || e).toString().slice(0, 200)}`)
@@ -105,14 +154,37 @@ try {
   await browser.close(); server.close()
 }
 
-const flat = { stories: report.length, storiesWithErrors: report.filter((r) => r.errors.length).length, storiesWithA11y: report.filter((r) => r.a11y.length).length, report }
+const hasNew = (r) => r.a11y.some((v) => v.isNew)
+const flat = {
+  stories: report.length,
+  storiesWithErrors: report.filter((r) => r.errors.length).length,
+  storiesWithA11y: report.filter((r) => r.a11y.length).length,
+  storiesWithNewA11y: report.filter(hasNew).length,
+  storiesWithOnlyQueuedA11y: report.filter((r) => r.a11y.length && !hasNew(r)).length,
+  report,
+}
 if (opts.out) { writeFileSync(opts.out, JSON.stringify(flat, null, 2)); console.error(`[audit-checks] wrote ${opts.out}`) }
 if (opts.json) { console.log(JSON.stringify(flat, null, 2)); process.exit(0) }
 
-console.log(`\nRuntime checks — ${flat.stories} stor(y/ies): ${flat.storiesWithErrors} with errors, ${flat.storiesWithA11y} with a11y violations\n`)
+console.log(
+  `\nRuntime checks — ${flat.stories} stor(y/ies): ${flat.storiesWithErrors} with errors, ` +
+    `${flat.storiesWithNewA11y} with NEW a11y violations, ${flat.storiesWithOnlyQueuedA11y} with only queued/known issues\n`
+)
+const fmtNode = (n) => {
+  const where = n.target ? ` @ ${n.target}` : ""
+  const cc = n.ratio != null ? ` ${n.fg}→${n.bg} ${n.ratio.toFixed(2)}:1` : ""
+  const tag = n.known ? `  [queued: ${n.known}]` : ""
+  return `${where}${cc}${tag}`
+}
 for (const r of report.filter((r) => r.errors.length || r.a11y.length)) {
   console.log(`• ${r.id}`)
   for (const e of r.errors) console.log(`    ❌ error: ${e}`)
-  for (const v of r.a11y) console.log(`    ♿ ${v.impact || "?"} ${v.id}${v.theme !== "any" ? ` [${v.theme}]` : ""} — ${v.help} (${v.nodes} node${v.nodes === 1 ? "" : "s"})`)
+  for (const v of r.a11y) {
+    const flag = v.id === "color-contrast" && !v.isNew ? "✓queued" : "♿"
+    console.log(
+      `    ${flag} ${v.impact || "?"} ${v.id}${v.theme !== "any" ? ` [${v.theme}]` : ""} — ${v.help} (${v.count} node${v.count === 1 ? "" : "s"})`
+    )
+    for (const n of v.nodes) console.log(`        -${fmtNode(n)}`)
+  }
 }
 console.log("")

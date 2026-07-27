@@ -1,0 +1,18 @@
+{
+  "$comment": "Baseline of QUEUED, human-owned design-token contrast issues. audit-checks classifies each color-contrast violation against these signatures: a match is tagged `queued` (already logged for a foundation decision — do NOT re-verify per component), anything else is a NEW finding that needs review. Match is by foreground hex (and background hex when given), case-insensitive. See the audit PRs that queued these.",
+  "contrast": [
+    {
+      "label": "destructive button ink",
+      "fg": "#ffffff",
+      "bg": "#e5484d",
+      "note": "White-on-#e5484d = 3.91 < 4.5 on an interactive control. Queued (button). Proposed --on-tone ink.",
+      "queuedIn": "aegis/audit batch 1"
+    },
+    {
+      "label": "badge soft warning ink",
+      "fg": "#ecb22e",
+      "note": "Warning soft-tone text on soft background fails AA in light. Queued (badge). Proposed --on-tone ink.",
+      "queuedIn": "aegis/audit batch 1"
+    }
+  ]
+}

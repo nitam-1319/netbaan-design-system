@@ -80,10 +80,20 @@ for (const name of components) {
   // className leak is hard to distinguish statically from internal
   // `useRender({…className…})` calls, so the model confirms this one.)
   const stripsClassName = /Omit<[\s\S]{0,200}?["']className["']/.test(tsx)
-  if (!stripsClassName) add("medium", "closed-api", "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)")
+  // Only a lead when the component actually EXTENDS a DOM/primitive props type
+  // (so className/style could leak). A pure composite with a bespoke prop type
+  // takes no primitive props and is closed by construction — not a finding.
+  const extendsDomProps =
+    /(?:React\.|useRender\.)?ComponentProps<|HTMLAttributes<|HTMLProps<|DetailedHTMLProps</.test(tsx)
+  if (extendsDomProps && !stripsClassName)
+    add("medium", "closed-api", "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed")
 
   // --- data-slot ---
-  if (!/data-slot=/.test(tsx)) add("medium", "no-data-slot", "no data-slot attribute set (styling/anchor hook + test selector missing)")
+  // Match BOTH the JSX attribute form (`data-slot="x"`) and the props-object form
+  // used by Base UI `useRender` (`"data-slot": "x"`), so useRender components
+  // aren't false-flagged.
+  if (!/["']?data-slot["']?\s*[:=]/.test(tsx))
+    add("medium", "no-data-slot", "no data-slot attribute set (styling/anchor hook + test selector missing)")
 
   // --- stories ---
   if (!story) {

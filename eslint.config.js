@@ -26,4 +26,23 @@ export default defineConfig([globalIgnores(['dist', 'storybook-static']), {
   rules: {
     'react-refresh/only-export-components': 'off',
   },
+}, {
+  // Shift-left RTL guard: physical direction utilities don't mirror in RTL.
+  // Flag them at build time (warn) so the CREATE task catches them before the
+  // AUDIT task has to. Use logical utilities instead: text-start/text-end,
+  // ms-/me-, ps-/pe-, start-/end-. See rules/RTL_I18N_RULES.md.
+  files: ['src/components/ui/**/*.tsx'],
+  ignores: ['src/components/ui/**/*.stories.tsx'],
+  rules: {
+    'no-restricted-syntax': ['warn',
+      {
+        selector: "Literal[value=/\\b(?:text-(?:left|right)|[mp][lr]-|(?:left|right)-[\\d.[])/]",
+        message: 'Physical direction utility — use a logical one (text-start/text-end, ms-/me-, ps-/pe-, start-/end-) so RTL mirrors correctly (RTL_I18N_RULES).',
+      },
+      {
+        selector: "TemplateElement[value.raw=/\\b(?:text-(?:left|right)|[mp][lr]-|(?:left|right)-[\\d.[])/]",
+        message: 'Physical direction utility — use a logical one (text-start/text-end, ms-/me-, ps-/pe-, start-/end-) so RTL mirrors correctly (RTL_I18N_RULES).',
+      },
+    ],
+  },
 }, ...storybook.configs["flat/recommended"]])
