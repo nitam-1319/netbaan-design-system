@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 26 / 207 reviewed  ·  library @ `a0f56bd`
+**Progress:** 29 / 207 reviewed  ·  library @ `cc9d889`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -39,8 +39,8 @@
 | `animate-presence` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; renderless mount/unmount orchestrator (clones its single child, injects `data-state` open/closed + context). Both triage findings FALSE POSITIVES: `closed-api` matched the `React.ComponentProps<"div">` cast on `cloneElement` (props are a bespoke type — no DOM spread, no className/style); `no-data-slot` n/a for a renderless behavioural primitive (no element of its own). 2 stories, 0 render/play errors, 0 a11y. rAF/timeout-driven (deterministic, headless-testable). |
 | `otp-input` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 1 | medium | Own code clean/closed-API, Base UI `OTPField`, per-slot `aria-label`, group `aria-invalid`+`aria-describedby`, token slot variants. Triage `missing-state-story:invalid` was a FALSE POSITIVE — invalid derives from `error`, covered by the `Error` story (added group `aria-invalid`+`aria-describedby` play assert). QUEUED: same systemic `Error` ink #e5484d/light 3.62<4.5 as password-input — see known-issues.json. |
 | `color-picker` | ✅ | — | — | ✅ | ✅ | 2 |  | 0 | high | Clean; HSL trigger-swatch + Popover with hue/sat/light range sliders + presets. Both triage findings FALSE POSITIVES: `hardcoded-color hsl(` is EXEMPT — the swatch/preview/track backgrounds render the user's picked colour (data, not chrome; chrome is token-only: border-strong / bg-card / --primary accent / ring-strong); `closed-api` is closed — base type `Omit<ComponentProps<PopoverTrigger>, …>` and PopoverTrigger already omits className/style, so `{...props}` can't leak them. 3 stories axe-green (incl. open popover — portal captured), 0 errors; sliders keyboard-operable + `aria-label`. |
-| `empty-state` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
-| `popover` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
+| `empty-state` | ✅ | — | — | ✅ | ✅ | 1 |  | 4 | clean | Clean; composite (icon/title/description/actions) via size context. Closed API on every part (`Omit<…, className\|style>`), token-only (bg-muted / muted-foreground / foreground), `role=status`, icon `aria-hidden`. 3 stories (empty/no-results/all-clear) axe-green (dark & light), 0 errors; montage confirms centered hierarchy + action row. |
+| `popover` | ✅ | — | — | ✅ | ✅ | 1 |  | 4 | clean | Clean foundation (Base UI Popover: portal/positioning/focus/dismiss). Closed API on all 6 parts (`Omit<…, className\|style>`), token-only surface (bg-popover / popover-foreground / ring-border-strong / shadow-elevated / fill-popover), `data-slot` throughout, arrow SVG `aria-hidden`. 4 stories axe-green (dark & light), 0 render/play errors. NOTE: visual montage can't stitch (portal `networkidle` timeout, as with lightbox/otp-input) — verified via in-browser a11y + code + the working popover surface captured in the color-picker montage. |
 | `radial-gauge` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
 | `bar-chart` | ✅ | — | — | ✅ | ✅ | 2 |  | 3 | medium | Clean; config-driven column chart on the chart foundation (ChartContainer/Plot/Axis/Legend). 4 stories (grouped/stacked/single/formatted-axis) axe-green (dark & light); render/play 0 errors; closed API (bespoke prop type, no className/style, no primitive spread), token-only palette via `seriesByKey`, `data-slot` marks. Grouped/stacked geometry + zero-baseline verified in the montage. |
 | `copy-to-clipboard` | ⬜ | — | — | — | — | 1 |  | 3 | clean |  |
@@ -66,7 +66,7 @@
 | `file-card` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `file-list` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `geo-choropleth-map` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `inline-edit` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
+| `inline-edit` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; read-as-text → edit-in-place composing `TextField`+`Button`. Closed API (bespoke prop type, no className/style), token-driven (foreground / muted-foreground / hover:bg-muted / ring-accent-soft), `data-slot`+`data-editing`+`data-empty`, `aria-label` on trigger + save/cancel, Enter commits / Escape cancels, autoFocus on edit. 5 stories, 0 render/play errors (Cancel-reverts flow asserted); montage shows resting value / italic empty placeholder / size scale / disabled dim. Pencil `text-text-faint` is a decorative `aria-hidden` icon (exempt). |
 | `kbd` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"kbd"` via `useRender` props-object). 4 stories axe-green (sizes/chord/in-text); token chip + bottom-edge; small-caps; closed API. |
 | `lightbox` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage closed-api was a FALSE POSITIVE (pure composite — bespoke prop type, no primitive spread, no className/style accepted). 4 stories axe-green. Code-verified RTL (logical `start`/`end` + `rtl:rotate-180` chevrons), focus trap (Base UI Dialog), `aria-live` position, required `alt`. NOTE: visual montage can't stitch (portal + media `networkidle` timeout) — verified via in-browser a11y + code, not screenshot. |
 | `menu` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
