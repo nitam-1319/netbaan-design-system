@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/RichTextEditor/Guidelines" />
+
+# Rich Text Editor
+
+A lightweight WYSIWYG editor: the AEGIS **Toolbar** of formatting controls on top
+of a `contenteditable` region wearing the Input visual language. It emits HTML,
+supports **bold / italic / underline** and **bulleted / numbered lists**, and can
+be controlled or uncontrolled.
+
+## Overview
+
+Comment boxes, descriptions, and note fields often need light formatting without
+a full document editor. This component gives you that with zero extra
+dependencies, composing the existing Toolbar and the Input shell.
+
+## Usage
+
+- **Do** use it for comments, descriptions, and short formatted notes.
+- **Do** treat it as controlled (`value` + `onValueChange`) or uncontrolled
+  (`defaultValue`); both carry HTML strings.
+- **Do** narrow the `controls` set when you want fewer options.
+- **Do** sanitise the emitted HTML before persisting or re-rendering it
+  elsewhere.
+- **Don't** expect links, headings, images, tables, or collaborative editing —
+  those need a schema-backed engine and are a deferred upgrade (honestly-scoped).
+
+## Anatomy
+
+A wrapper (`data-slot="rich-text-editor"`) with an optional label, a shell
+(`rich-text-editor-shell`, the focus-ring container) holding the **Toolbar** of
+formatting buttons and the editable body (`rich-text-editor-content`), plus a
+placeholder (`rich-text-editor-placeholder`) shown while empty.
+
+## Behavior
+
+- Formatting is applied with the built-in `document.execCommand` rich-text
+  commands (`bold`, `italic`, `underline`, `insertUnorderedList`,
+  `insertOrderedList`), guarded so environments without it degrade gracefully.
+- Toolbar buttons reflect the current selection's state via `aria-pressed`
+  (updated on `selectionchange`); pressing one preserves the selection
+  (pointer-down is prevented from stealing focus).
+- `onValueChange` fires on input and blur with the editor's HTML.
+- A controlled `value` is synced in only when it differs and the editor is not
+  focused, so it never disrupts the caret mid-edit.
+
+## Accessibility
+
+- The editable region is `role="textbox"` with `aria-multiline`, an accessible
+  name from the label, and `aria-readonly` / `aria-disabled` as applicable.
+- The toolbar is a labelled `role="toolbar"` (roving-tabindex from Base UI);
+  each button has a text `aria-label` and an `aria-hidden` icon.
+- The label is associated to the editor via `htmlFor` / `id`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `border-border-strong` → `border-primary` + `ring-accent-soft` | Shell outline → focus. |
+| `bg-surface-2` / `bg-surface` | Shell surface / editable body. |
+| Toolbar tokens (`bg-card`, `border-border`, `shadow-elevated`, `bg-muted` hover) | Formatting bar. |
+| `text-foreground` / `text-muted-foreground` | Content / placeholder. |
+| `text-primary` | List / link accents inside content. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Controlled HTML value. |
+| `defaultValue` | `string` | `""` | Initial HTML (uncontrolled). |
+| `onValueChange` | `(html: string) => void` | — | Fires on input / blur. |
+| `label` | `ReactNode` | — | Visible label. |
+| `placeholder` | `string` | `"Write something…"` | Shown while empty. |
+| `controls` | `RichTextControl[]` | all | Which formatting controls to show. |
+| `disabled` | `boolean` | `false` | Disable the whole editor. |
+| `readOnly` | `boolean` | `false` | Read-only content (toolbar hidden). |
+| `minHeightRem` | `number` | `6` | Minimum editor body height (rem). |
+
+`RichTextControl` = `"bold" | "italic" | "underline" | "bulletList" | "orderedList"`.
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default**, **Prefilled**, **BoldItalicOnly**, **ReadOnly**, and
+**Disabled** stories. The editor works in both themes and directions via the
+global toolbar.
