@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/VirtualizedGrid/Guidelines" />
+
+# Virtualized Grid
+
+A **row-virtualized** data grid: only the rows in (and just around) the viewport
+are in the DOM, so tens of thousands of rows scroll smoothly. It is config-driven
+with typed `columns` (like **Data Table**) and renders the AEGIS table surface
+language on a CSS grid so column tracks stay aligned.
+
+## Overview
+
+When a dataset is too large to render every row, virtualization keeps the DOM
+small by materialising only the visible window. This grid does that with a fixed
+row height and a simple offset calculation, while preserving accessible size and
+position information.
+
+## Usage
+
+- **Do** use it for very large, flat datasets (thousands of rows) where scroll
+  performance matters.
+- **Do** provide a stable `getRowId` and a descriptive `label`.
+- **Do** set `rowHeight` to match your cell content and `visibleRows` to size the
+  viewport.
+- **Don't** use it for small tables — reach for **Data Table** (it also gives you
+  sort, selection, and async states).
+- **Don't** expect variable/measured row heights or horizontal virtualization —
+  those are out of scope (honestly-scoped).
+
+## Anatomy
+
+A `grid` container (`data-slot="virtualized-grid"`) with a sticky header
+(`virtualized-grid-header` → `columnheader`s), and a scroll viewport
+(`virtualized-grid-viewport`) holding a full-height canvas
+(`virtualized-grid-canvas`) within which the windowed rows
+(`virtualized-grid-row` → `gridcell`s) are absolutely positioned at their true
+offset. An empty dataset renders `virtualized-grid-empty`.
+
+## Behavior
+
+- The visible window is `[floor(scrollTop / rowHeight) − overscan,
+  start + ceil(viewportHeight / rowHeight) + 2·overscan)`, clamped to the data.
+- The canvas is `rowHeight × rowCount` tall so the scrollbar reflects the full
+  dataset; rows sit at `top = index × rowHeight`.
+- When `onRowActivate` is set, rows are focusable and respond to click, Enter, and
+  Space.
+- Deterministic — the viewport height comes from `visibleRows × rowHeight` (a
+  prop, not a measurement), so the same inputs always window the same rows.
+
+## Accessibility
+
+- The container is `role="grid"` with `aria-rowcount` (dataset + header) and
+  `aria-colcount` reflecting the FULL size, so assistive tech is told the real
+  extent even though most rows are not in the DOM.
+- Every rendered row and cell carries its true 1-based `aria-rowindex` /
+  `aria-colindex`; the header row is index 1 and data rows start at 2.
+- Activatable rows are keyboard-operable (Enter / Space) and show a focus
+  surface.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-card` / `border-border` | Grid surface + dividers. |
+| `bg-surface-2` | Sticky header surface. |
+| `bg-muted/50` | Row hover / focus surface. |
+| `text-foreground` / `text-muted-foreground` | Cell text / header + empty text. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `columns` | `VirtualizedGridColumn<TRow>[]` | — | Typed column defs (required). |
+| `data` | `TRow[]` | — | Full row set — only the window renders (required). |
+| `getRowId` | `(row, index) => string` | — | Stable row id / key (required). |
+| `label` | `string` | — | Accessible grid name (required). |
+| `rowHeight` | `number` | `44` | Fixed row height in px. |
+| `visibleRows` | `number` | `8` | Rows visible at once (viewport height). |
+| `overscan` | `number` | `4` | Extra rows rendered around the viewport. |
+| `onRowActivate` | `(row, index) => void` | — | Row click / Enter / Space handler. |
+| `emptyMessage` | `ReactNode` | `"No rows"` | Shown when `data` is empty. |
+
+`VirtualizedGridColumn` = `{ id; header; headerLabel?; cell; width?; align? }`.
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** (1,000 rows, scroll to reveal a deep row), **Empty**, and
+**Activatable** stories. The grid works in both themes and directions via the
+global toolbar.
