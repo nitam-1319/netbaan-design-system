@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 12 / 207 reviewed  ·  library @ `b6e028a`
+**Progress:** 16 / 207 reviewed  ·  library @ `79a74b1`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -38,14 +38,14 @@
 | `bar-chart` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
 | `severity-badge` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
 | `password-input` | ⬜ | — | — | — | — | 2 |  | 2 | medium |  |
-| `skeleton` | ⬜ | — | — | — | — | 2 |  | 2 | medium |  |
+| `skeleton` | ✅ | — | — | ✅ | ✅ | 2 |  | 2 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"skeleton"` via Base UI `useRender` props-object; regex only matches JSX `data-slot=`). 2 stories axe-green (dark & light); `aria-hidden` pulse; token bg. Closed API. |
 | `animate-presence` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
 | `area-chart` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
 | `cve-reference-chip` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
-| `dropzone` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
+| `dropzone` | ✅ | yes | ✅ | ✅ | ✅ | 2 |  | 1 | medium | FIXED: added `Required` story + play assert (missing-state-story cleared). Own code clean/closed-API; 10 stories, 0 render/play errors; RTL-Persian story correct. Only axe hits are the INHERITED queued `--text-faint` (#6e6880 3.27–3.53) on the `hint` across all stories — see systemic note. |
+| `kbd` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"kbd"` via `useRender` props-object). 4 stories axe-green (sizes/chord/in-text); token chip + bottom-edge; small-caps; closed API. |
 | `inline-edit` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
-| `kbd` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
-| `lightbox` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
+| `lightbox` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage closed-api was a FALSE POSITIVE (pure composite — bespoke prop type, no primitive spread, no className/style accepted). 4 stories axe-green. Code-verified RTL (logical `start`/`end` + `rtl:rotate-180` chevrons), focus trap (Base UI Dialog), `aria-live` position, required `alt`. NOTE: visual montage can't stitch (portal + media `networkidle` timeout) — verified via in-browser a11y + code, not screenshot. |
 | `otp-input` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
 | `color-picker` | ⬜ | — | — | — | — | 2 |  | 0 | high |  |
 | `empty-state` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
