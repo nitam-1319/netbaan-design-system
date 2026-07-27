@@ -100,6 +100,17 @@ Prompt: `prompts/component-refactor.md`
 Load: `guides/RELEASE_GUIDE.md`, `checklists/REVIEW_CHECKLIST.md`, `checklists/COMPONENTS_STATUS.md`.
 Prompt: `prompts/release-check.md`
 
+### MODE: AUDIT — deep quality audit of existing components (build phase done)
+Autonomous, budget-bounded loop that reviews components against the design system and
+makes them production-ready. Load: `prompts/recurring-audit.md` (it pulls in
+`rules/REFERENCE_FIDELITY.md`, `rules/DESIGN_RULES.md`, `rules/TOKEN_RULES.md`,
+`rules/ACCESSIBILITY_RULES.md`, `checklists/AUDIT_STATUS.md` as needed). Works on the
+`aegis/audit` branch, risk-ordered queue, find→verify→fix (objective auto / subjective
+queued), one auto-merge-on-green PR per batch. Harness scripts:
+`scripts/audit-visual.mjs` (Playwright screenshots), `scripts/audit-checks.mjs`
+(axe a11y + play/render errors), `scripts/verify-audit.mjs` (static triage),
+`scripts/audit-queue.mjs` (regenerate the ranked tracker).
+
 ### MODE: RECURRING BUILD — autonomous loop of CREATE runs
 Load: `prompts/recurring-build.md` (which enters CREATE mode per component). This loop is UNATTENDED:
 it does NOT stop at the "every 10" / category-boundary checkpoints in `checklists/COMPONENTS_STATUS.md`

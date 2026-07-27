@@ -1,0 +1,1841 @@
+{
+  "scanned": 207,
+  "withFindings": 82,
+  "bySeverity": {
+    "high": 1,
+    "medium": 78,
+    "low": 0,
+    "info": 8
+  },
+  "components": [
+    {
+      "name": "accordion",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "action-sheet",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "alert",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "animate-presence",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "api-key-manager",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "app-shell",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "area-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "aspect-ratio",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "asset-row",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "attachment-chip",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "attack-surface-widget",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "avatar",
+      "severity": "info",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: text-white"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "axis",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "badge",
+      "severity": "info",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: text-white"
+        }
+      ]
+    },
+    {
+      "name": "bar-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "beam-glow",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "bottom-navigation",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: text-white"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "bottom-sheet",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "box",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "bubble-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "bulk-actions-bar",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "button",
+      "severity": "info",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: text-white"
+        }
+      ]
+    },
+    {
+      "name": "callout",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "card",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "carousel",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "chart-container",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "chart-legend",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "chart-tooltip",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "checkbox",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-group",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "choice-card",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "citation-source-card",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "click-outside",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "code-block",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "collapse",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "color-picker",
+      "severity": "high",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "high",
+          "check": "hardcoded-color",
+          "detail": "rawColorFn: hsl("
+        },
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "column-filter",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "column-sort",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "column-visibility",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "command-palette",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "confirm-dialog",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "consent-banner",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "container",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "context-menu",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "conversation-thread",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "copy-to-clipboard",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "count-up-ticker",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "currency-input",
+      "severity": "medium",
+      "count": 3,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`required` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "cve-reference-chip",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "data-table",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "date-picker",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "date-range-picker",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "description-list",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "device-session-list",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "diff-viewer",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "divider",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "donut-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "drawer",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "dropzone",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`required` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "editable-cell",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "empty-state",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "error-boundary",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`error` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "error-state",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "expandable-rows",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "fade-slide-scale",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "field-array",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "field-label",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "fieldset",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "file-card",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "file-list",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "file-preview",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "file-uploader",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "finding-vulnerability-card",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "first-run-onboarding",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "floating-action-button",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: text-white"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "focus-trap",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "folder-tree",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "form-actions",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "form-field",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "form-provider",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "form-section",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "funnel-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "gantt-chart",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "geo-choropleth-map",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "grade-ring-a-f",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "grid",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "grouped-stacked-bar",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "heatmap",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "helper-text",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "hosts-by-country-map",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "hover-card",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "image-cropper",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "inline-edit",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "input-group",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "kbd",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "keyboard-shortcut",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "landmark-regions",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "lazy-loader",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "lightbox",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "line-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "list",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "live-region",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "loading-overlay",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "locale-rtl-switcher",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "login-form",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "marquee",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "masonry",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "masthead",
+      "severity": "info",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: text-white"
+        }
+      ]
+    },
+    {
+      "name": "mention-input",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "menu",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "message-bubble",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "mobile-app-bar",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "model-selector",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "multi-select",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "multi-step-form",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "navbar",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "navigation-menu",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "network-graph",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "no-results",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "notification-center",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "number-input",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "otp-input",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "password-input",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "password-strength-meter",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "pie-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "portal",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "posture-score-card",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "print-view",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "priority-action-item",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "prompt-composer",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "pull-to-refresh",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "radar-chart",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "radial-gauge",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "radio",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "rating",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "reasoning-trace",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "reduced-motion",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "remediation-velocity",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "resizable-panels",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "response-feedback",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "rich-text-editor",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "role-permission-selector",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "row-selection",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "sankey-diagram",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "scan-coverage-gauge",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "scatter-plot",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "scroll-reveal",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "scrollspy-nav",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "search-input",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "segmented-control",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "select",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "session-timeout-modal",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "severity-badge",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "sidebar",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "sign-up-form",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "skeleton-templates",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "skip-to-content",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "slider",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "spacer",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "sparkline",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "spinner",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "ssl-cert-expiry-widget",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "sso-provider-buttons",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "stack",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "stacked-area-chart",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    },
+    {
+      "name": "stagger-container",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "stat-tile",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "status-indicator",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "status-pill",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "stepper",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "sticky-header-column",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "suggestion-chips",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "swipe-actions",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: text-white"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "severity": "medium",
+      "count": 2,
+      "findings": [
+        {
+          "severity": "info",
+          "check": "hardcoded-color",
+          "detail": "bwUtil: bg-white"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "tabs",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "tag",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "tag-input",
+      "severity": "medium",
+      "count": 3,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        },
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`required` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "text-field",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "textarea",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "theme-toggle",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`disabled` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "time-picker",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`invalid` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "timeline",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "toast",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "toggle-group",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "tool-call-block",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "toolbar",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "tooltip",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "tree-view",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "treemap",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "closed-api",
+          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+        }
+      ]
+    },
+    {
+      "name": "two-factor-verification",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "typing-indicator",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "upload-progress",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "usage-token-meter",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "validation-message",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "missing-state-story",
+          "detail": "`error` prop exists but no story exercises it"
+        }
+      ]
+    },
+    {
+      "name": "virtualized-grid",
+      "severity": "clean",
+      "count": 0,
+      "findings": []
+    },
+    {
+      "name": "visually-hidden",
+      "severity": "medium",
+      "count": 1,
+      "findings": [
+        {
+          "severity": "medium",
+          "check": "no-data-slot",
+          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
+        }
+      ]
+    }
+  ]
+}

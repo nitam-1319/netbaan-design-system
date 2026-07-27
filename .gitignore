@@ -25,3 +25,7 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+# audit harness artifacts (regenerated each run)
+.agent/audit/screens/
+storybook-static/
