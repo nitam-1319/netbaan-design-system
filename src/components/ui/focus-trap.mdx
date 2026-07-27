@@ -1,0 +1,102 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Focus Trap/Guidelines" />
+
+# Focus Trap
+
+The "keep keyboard focus inside this region" primitive, for the custom modal
+surfaces you build yourself — a hand-rolled dialog, a command panel, a takeover
+menu — that don't already sit on a Base UI overlay. It ships as a hook
+(`useFocusTrap`) and a thin closed wrapper (`FocusTrap`).
+
+## Overview
+
+Reach for it only for surfaces you assemble by hand. Base UI's own `Dialog`,
+`AlertDialog`, `Drawer`, and the AEGIS components built on them trap focus,
+lock scroll, and set `aria-modal` internally — prefer those. `Focus Trap` fills
+the gap: a modal-like region with no overlay primitive underneath that still
+needs focus contained for keyboard and screen-reader users.
+
+## When to use
+
+- **Do** use it around custom modal content so `Tab` / `Shift+Tab` cannot reach
+  the inert page behind it.
+- **Do** gate it with `enabled` so it only traps while the surface is open.
+- **Do** pair it with `Portal` (to escape clipping ancestors) and an
+  `aria-modal="true"` / `role="dialog"` host for full modal semantics.
+- **Don't** use it when a Base UI overlay already fits — those trap focus for you.
+- **Don't** treat it as a complete dialog; it manages focus only, not scroll
+  lock, backdrop, or Escape-to-close (add `Click Outside` / your own key handler).
+
+## Anatomy
+
+1. **useFocusTrap(ref, options?)** — the hook; attach your own element ref.
+2. **FocusTrap** — a thin wrapper that owns the ref for you; polymorphic via
+   `render`.
+
+## Behavior
+
+- **Initial focus:** on engage, focus moves to `initialFocus` if given, else the
+  first tabbable child, else the container itself (made programmatically
+  focusable so an empty surface still catches focus).
+- **Wrapping:** `Tab` past the last tabbable wraps to the first; `Shift+Tab`
+  before the first wraps to the last. The tabbable set is recomputed on every
+  `Tab`, so it stays correct as the surface's contents change.
+- **Containment:** if focus somehow lands outside the region (e.g. a programmatic
+  focus call), it is pulled back inside.
+- **Restore:** on teardown (disable or unmount) focus returns to whatever was
+  focused before the trap engaged, unless `restoreFocus` is `false`.
+- **Enablement:** listeners attach only while `enabled` is `true` (default) and
+  are removed on unmount or when disabled — no idle listeners.
+- **Visibility-aware:** disabled and visually hidden controls are excluded from
+  the tabbable set.
+
+## Accessibility
+
+- Trapping focus is a core requirement of WCAG 2.2 (focus order, no keyboard
+  trap *out* of a modal) — but it must be paired with modal semantics: give the
+  host `role="dialog"` (or `alertdialog`) and `aria-modal="true"`, and label it
+  with `aria-labelledby` / `aria-label`.
+- Restoring focus to the trigger on close (the default) keeps keyboard users
+  oriented — they return to where they were.
+- Focus Trap does not hide the rest of the page from assistive tech. For true
+  modality also mark background content inert (`inert` / `aria-hidden`), or use a
+  Base UI overlay that does this for you.
+
+## RTL / i18n
+
+Purely behavioural — there is no text, icon, or directional layout, so it is
+direction-agnostic and needs no RTL handling. Tab order follows DOM order in both
+directions.
+
+## Design tokens
+
+None. `Focus Trap` adds no styling; the wrapped element carries its own tokens.
+
+## API
+
+### `FocusTrap`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `true` | Only trap while `true`. |
+| `initialFocus` | `RefObject<HTMLElement \| null>` | — | Element to focus first; defaults to the first tabbable. |
+| `restoreFocus` | `boolean` | `true` | Restore focus to the previously-focused element on teardown. |
+| `render` | `ReactElement` | `<div>` | Element to render the wrapper as. |
+
+### `useFocusTrap(ref, options?)`
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| `ref` | `RefObject<HTMLElement \| null>` | The region to trap focus within. |
+| `options.enabled` | `boolean` | Only trap while `true` (default `true`). |
+| `options.initialFocus` | `RefObject<HTMLElement \| null>` | Element to focus first. |
+| `options.restoreFocus` | `boolean` | Restore focus on teardown (default `true`). |
+
+The public API is closed: no `className` / `style`. The wrapper carries
+`data-slot="focus-trap"`.
+
+## Examples
+
+The interactive stories show `Tab` wrapping inside the panel with focus restored
+on close, and directing initial focus to a specific control via `initialFocus`.
