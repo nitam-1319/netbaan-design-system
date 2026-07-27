@@ -80,6 +80,27 @@ export const Disabled: Story = {
   },
 }
 
+export const Required: Story = {
+  render: (args) => (
+    <form
+      className="flex flex-col items-center gap-4"
+      onSubmit={(e) => e.preventDefault()}
+    >
+      <Dropzone {...args} required name="attachment" />
+      <button type="submit" className="sr-only">
+        Submit
+      </button>
+    </form>
+  ),
+  play: async ({ canvasElement }) => {
+    const input = canvasElement.querySelector<HTMLInputElement>(
+      "[data-slot=dropzone-input]"
+    )
+    // The `required` prop forwards to the native input for form validation.
+    await expect(input).toBeRequired()
+  },
+}
+
 export const CustomContent: Story = {
   args: {
     title: "Import a dataset",
