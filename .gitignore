@@ -28,4 +28,5 @@ storybook-static
 
 # audit harness artifacts (regenerated each run)
 .agent/audit/screens/
+.agent/audit/checks-*.json
 storybook-static/
