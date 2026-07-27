@@ -772,3 +772,37 @@ can already build it today by passing country paths to `GeoChoroplethMap`. A fol
 optional bundled projection/topology as an additive, data-carrying layer. Still genuinely blocked in this
 sandbox (browser-interaction-heavy): Rich Text Editor (#53), Mention Input (#54), Virtualized Grid (#141),
 Image Cropper (#161). Foundations (#1–9, 11, 190, 193) remain CSS-token concerns, not tsx components.
+
+## 2026-07-27c — Portal (#110) + Focus Trap (#112) ship as behavioural utilities; Floating Engine (#111) is primitive infra; CREATE queue now empty
+Status: accepted
+Decision: Built `portal.tsx` (roadmap #110, Essential/Overlays) and `focus-trap.tsx` (#112,
+Essential/Overlays) as closed-API behavioural utilities, mirroring the existing `click-outside` /
+`visually-hidden` precedent (hook + polymorphic wrapper via `useRender`, no visual tokens, not in the
+conformance manifest). `Portal` teleports children via `ReactDOM.createPortal` (container = element /
+DocumentFragment / lazy getter, default `document.body`; `disabled` renders inline; mount-deferred so
+SSR + first client render agree on `null`). `Focus Trap` engages initial focus (initialFocus → first
+tabbable → container), wraps Tab/Shift+Tab at the edges (tabbable set recomputed each Tab,
+visibility/disabled filtered), pulls stray focus back, and restores prior focus on teardown. Machine
+gates green (tsc + per-component conformance/hygiene + verify-tokens); added to Built list as PARTIAL
+(runner axes HUMAN_VERIFY_REQUIRED).
+Reason: prior "queue empty" entries (2026-07-26d, -27, -27b) enumerated the remaining gaps but never
+explicitly resolved #110/#111/#112. #110 and #112 ARE buildable, headless-verifiable DS primitives:
+consumers assembling a bespoke overlay need portalling + focus containment WITHOUT pulling a full Dialog,
+exactly the gap `click-outside` already fills for outside-press. `@base-ui/react` exports no standalone
+`portal` / `focus-trap` primitive (verified `ls node_modules/@base-ui/react`) — each overlay portals and
+traps internally — so these wrap no Base UI part and follow the token-only utility precedent instead
+(like `spacer`, `visually-hidden`, `click-outside`). This is the same "build the honestly-scoped,
+headless-verifiable piece" move used for the static chart / network-graph / geo-map renderers.
+Floating Engine (#111) is NOT shipped as a discrete component: it is the floating-ui positioning engine
+that `@base-ui/react` bundles internally (`floating-ui-react`) and exposes through each overlay's
+`.Positioner` part (Popover/Menu/Tooltip/Select/…). A standalone "Floating Engine" component would either
+duplicate `Popover` or re-export an internal engine with no closed-API surface of its own — so it is
+recorded as primitive infrastructure, consumed via the anchored overlays, on the same footing as the
+CSS-token Foundations (#1–9, 11, 190, 193).
+Impact: with #110 and #112 built and #111 classified as infra, the CREATE queue has no buildable,
+headless-verifiable, closed-API component left. Remaining roadmap items are all non-components: the
+CSS-token Foundations (#1–9, 11, 190, 193), Theme Provider (#10, already at
+`src/components/theme-provider.tsx`), and Floating Engine (#111, primitive infra). Every previously
+browser-blocked item (Date Picker, Rich Text Editor, Mention Input, Virtualized Grid, Image Cropper,
+Network Graph, Geo/Choropleth + Hosts-by-Country Map) has since been built as an honestly-scoped
+renderer. Run ended: queue empty of buildable items (not budget). Built count 205 → 207.
