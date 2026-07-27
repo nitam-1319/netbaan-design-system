@@ -11,6 +11,11 @@ const meta = {
   parameters: {
     layout: "centered",
   },
+  // Each story supplies its own subtree via a local render; this satisfies the
+  // required `children` prop for the render-only stories.
+  args: {
+    children: null,
+  },
   tags: ["autodocs"],
 } satisfies Meta<typeof Portal>
 

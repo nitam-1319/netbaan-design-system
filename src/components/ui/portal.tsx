@@ -60,13 +60,26 @@ function resolveContainer(container: PortalContainer): Element | DocumentFragmen
   return typeof document !== "undefined" ? document.body : null
 }
 
+const noopSubscribe = () => () => {}
+
+/**
+ * `false` on the server and during the first client render, `true` thereafter.
+ * `useSyncExternalStore` reconciles the two snapshots without a hydration
+ * warning and without setting state inside an effect — so the portal only
+ * attaches once `document` exists.
+ */
+function useIsClient(): boolean {
+  return React.useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false
+  )
+}
+
 function Portal({ children, container, disabled = false }: PortalProps) {
-  // Defer the portal to a client-side effect: on the server and on the first
-  // client render there is nothing to portal into, so both agree on `null`.
-  const [mounted, setMounted] = React.useState(false)
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  // Defer the portal to the client: on the server and on the first client
+  // render there is nothing to portal into, so both agree on `null`.
+  const mounted = useIsClient()
 
   if (disabled) {
     return <>{children}</>

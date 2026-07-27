@@ -48,7 +48,7 @@ export const Default: Story = {
                 <Button variant="ghost" size="sm">
                   Secondary
                 </Button>
-                <Button variant="default" size="sm" onClick={() => setOpen(false)}>
+                <Button variant="primary" size="sm" onClick={() => setOpen(false)}>
                   Close
                 </Button>
               </div>
@@ -103,7 +103,7 @@ export const InitialFocus: Story = {
             <Button variant="ghost" size="sm">
               Cancel
             </Button>
-            <Button ref={confirmRef} variant="default" size="sm">
+            <Button ref={confirmRef} variant="primary" size="sm">
               Confirm
             </Button>
           </div>
