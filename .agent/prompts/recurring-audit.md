@@ -15,12 +15,17 @@ resource they are (this is what capped past runs): batch shell commands, write e
 file in one Write, don't re-run a gate you already saw pass, and push in batches.
 
 ## Branch & coexistence
-- Work on **`aegis/audit`** (branched off `aegis/build`). NEVER push to `main` or
-  `aegis/build` directly. The build task may still be pushing to `aegis/build`; keep
-  the two separate. Token handling & clone: exactly as in `recurring-build.md`
-  (mask the PAT through `sed -E 's/github_pat_[A-Za-z0-9_]+/***TOKEN***/g'`).
-- Init: `git fetch origin`, then `git switch -c aegis/audit origin/aegis/audit`
-  (or create from `origin/aegis/build` if `aegis/audit` doesn't exist yet).
+- NEVER push to `main` or `aegis/build` directly. The build task may still be pushing
+  to `aegis/build`; keep the two separate. Mask the PAT in all output through
+  `sed -E 's/github_pat_[A-Za-z0-9_]+/***TOKEN***/g'`.
+- `aegis/audit` is a **short-lived integration branch = latest `aegis/build` + the
+  current batch of fixes.** At the **start of each batch**, re-sync it so every PR is a
+  clean, reviewable diff and you automatically pick up any new components the build task
+  shipped:
+  ```
+  git fetch origin && git switch -C aegis/audit origin/aegis/build
+  ```
+  (`gh` is NOT installed — use the GitHub REST API via curl for PRs; see below.)
 - `npm ci` (stop and report if it fails).
 
 ## One-time per run: build the review harness
@@ -111,20 +116,30 @@ A column is ✅ **only if the check actually ran and passed this session** — n
 gate you didn't run (AGENT.md §3; a tracker that lies is worse than none). Bump the
 Progress line.
 
-## Pull request — one per batch, AUTO-MERGE ON GREEN
+## Pull request — one per batch, MERGE ON GREEN (REST API, no gh)
 Commit per component (Conventional Commits, e.g. `fix(badge): token contrast on solid tones`),
-push the batch to `aegis/audit`, and open **one PR per batch** into `aegis/build` with:
-- **Components reviewed**, **Problems discovered**, **Fixes applied**, **Testing performed**
-  (gates + which checks ran green in-browser), **Queued for confirmation** (subjective),
-  **Remaining concerns**.
-Then **auto-merge only if every gate is green**:
+then `git push -f origin aegis/audit` (force is safe — the branch is defined as
+build+batch). Open **one PR per batch** into `aegis/build` and merge it **only if you
+personally ran every gate this run and saw them all green** (`gh` is absent, so you are
+the green check). Use curl with the PAT in `$TOKEN` (never echo it):
 ```
-gh pr merge --squash --auto <pr>     # merges when required checks pass
+# create PR (body via a heredoc file to keep JSON clean)
+PR=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
+  https://api.github.com/repos/nitam-1319/netbaan-design-system/pulls \
+  -d "$(jq -n --arg t 'audit: <batch title>' --arg h aegis/audit --arg b aegis/build --arg body "$PR_BODY" \
+        '{title:$t, head:$h, base:$b, body:$body}')" | jq -r .number)
+# merge ONLY if all gates were green:
+curl -s -X PUT -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
+  https://api.github.com/repos/nitam-1319/netbaan-design-system/pulls/$PR/merge \
+  -d '{"merge_method":"squash"}'
 ```
-If any gate is red, do NOT merge — leave the PR open, note it in the run report, and
-move on. Keep PRs logically grouped and reviewable. (If `gh` auto-merge isn't available
-in the run, merge the PR yourself only after you have personally run and seen all gates
-green; otherwise leave it open.)
+The PR body must contain: **Components reviewed**, **Problems discovered**, **Fixes
+applied**, **Testing performed** (gates + which checks ran green in-browser), **Queued
+for confirmation** (subjective), **Remaining concerns**. If any gate is RED: do NOT
+merge — leave the PR open, and **stop the run** (don't start another batch — the next
+batch would reset this branch and orphan the open PR). Report the red PR in the run
+report. After a successful merge, the next batch re-syncs `aegis/audit` from the updated
+`aegis/build` (top of this section).
 
 ## Stop conditions
 - **Queue empty** — every component is ✅ reviewed (and re-audits from dependency
