@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/NetworkGraph/Guidelines" />
+
+# Network Graph
+
+A node-link diagram: circular nodes connected by edges. Ideal for service
+topologies, dependency maps, attack-path / asset-relationship views — anywhere
+entities and the connections between them matter more than a single metric.
+
+## Overview
+
+Give it `nodes` (each with a normalised `x` / `y` in the unit square `[0,1]`)
+and `links` between them. The component maps those coordinates deterministically
+into pixels and draws edges under nodes. There is **no force simulation** — the
+caller owns placement, so the same graph always renders identically, including
+headless.
+
+## Usage
+
+- **Do** supply `x` / `y` in `[0,1]`; values are clamped, `y` runs top→bottom.
+- **Do** give every node a `label`; nodes alone don't identify entities.
+- **Do** set `value` on links when edge weight is meaningful — it scales line
+  thickness relative to the largest value.
+- **Do** enable `directed` for flows/dependencies to add target arrowheads.
+- **Don't** expect physics, dragging, zoom/pan, or auto-layout — this is a
+  static renderer. Compute positions upstream if you need a layout algorithm.
+- **Don't** pass `className` / `style`; the API is closed.
+
+## Anatomy
+
+A `network-graph` `<figure>` (`role="group"`, labelled) wrapping a `role="img"`
+`<svg>`: a `network-graph-edges` group of `network-graph-edge` lines (with an
+optional arrowhead `polygon` when `directed`) drawn first, then a
+`network-graph-nodes` group of `network-graph-node` circles each with a text
+label beneath it.
+
+## Variants
+
+- `nodeRadius` — default node radius; per-node `size` overrides it.
+- `directed` — adds an arrowhead at each edge's target end.
+- `width` / `height` — numeric canvas size (user units).
+
+## States
+
+Static and deterministic — the same `nodes` / `links` always render the same
+diagram; there is no internal state.
+
+## Behavior
+
+- Node positions are `x` / `y` clamped to `[0,1]` and mapped into a padded plot
+  area that reserves room for node radii and labels, so nothing clips.
+- Edges stop at each node's rim (backed off by its radius) so lines never
+  overlap circles; arrowheads sit at the target rim.
+- Edge thickness is `value` relative to the largest edge value; edges with no
+  `value` use a constant weight.
+- Self-links (`source === target`) and edges referencing an unknown node are
+  dropped.
+
+## Accessibility
+
+- The `<svg>` is a labelled `role="img"`; the `<figure>` is a labelled group.
+- Node labels render as real text, so meaning does not rest on colour.
+- Edges are an `aria-hidden` reading aid; provide a table or list alternative
+  for a complete non-visual account of the topology.
+
+## Design tokens
+
+Nodes use the chart palette (`--color-chart-1…5`); edges and arrowheads use the
+neutral `border` token; labels use `foreground`. No hard-coded colour or shadow.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name (required). |
+| `nodes` | `NetworkGraphNode[]` | — | `{ id, label?, x, y, color?, size? }` (required). |
+| `links` | `NetworkGraphLink[]` | — | `{ source, target, value? }` (required). |
+| `width` | `number` | `640` | SVG width (user units). |
+| `height` | `number` | `420` | SVG height (user units). |
+| `nodeRadius` | `number` | `9` | Default node radius (px). |
+| `directed` | `boolean` | `false` | Draw an arrowhead at each edge's target. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (a six-node service topology with weighted edges and a play test
+asserting one edge per link), **Directed** (arrowheads per edge), and
+**SelfLinkAndUnknownDropped** (edge filtering). Works in both themes.

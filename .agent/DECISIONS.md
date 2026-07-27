@@ -723,3 +723,28 @@ Reason: throughput run should spend context on buildable, headless-verifiable co
 are either non-components (CSS foundations) or need a browser/data dependency this sandbox can't verify.
 Impact: next run continues the deferrals list above; unblocking Date Picker (build a Calendar first) or a
 geo-data source would reopen a cluster of items. Run ended: queue empty of buildable items (not budget).
+
+## 2026-07-27 — Network Graph ships as a static renderer; refines the 2026-07-26d "queue empty" deferral
+Status: accepted
+Decision: `network-graph.tsx` (roadmap #88, Advanced/Data Visualization, dep Chart Container) ships as
+a deterministic token-only static SVG node-link renderer. Nodes carry caller-supplied normalised
+coordinates (`x`/`y` in the unit square `[0,1]`, clamped); the component maps them into pixels, draws
+edges under nodes (neutral `border` token, thickness = `value` on a shared scale, backed off each node
+rim), optionally adds a target arrowhead (`directed`), and colours nodes from the chart palette with
+real text labels. Closed API; machine gates green (tsc + per-component conformance/hygiene +
+verify-tokens); added to Built list as PARTIAL (runner axes HUMAN_VERIFY_REQUIRED).
+Reason: 2026-07-26d deferred #88 as "force layout, not headless-verifiable." That reasoning applies to
+the *layout algorithm* (physics/force simulation), not to the *diagram*. Making the caller own node
+placement removes the non-deterministic part, leaving a static renderer that is fully headless-verifiable
+— exactly the honestly-scoped move already accepted for the static chart renderers (Line/Bar/Sankey/Gantt
+ship without interaction; hover/drag deferred), Combobox single-select, Lightbox single-image, and Color
+Picker's native sliders. This refines — does not contradict — 2026-07-26d: force/hierarchical auto-layout
+remains deferred; only the deterministic renderer lands.
+Impact: `NetworkGraph` is available for topology/dependency/attack-path views; callers supply positions
+from any upstream layout. A follow-up could add a built-in force/hierarchical layout as an additive,
+browser-verifiable enhancement. The still-deferred buildable-queue items from 2026-07-26d that remain
+genuinely blocked in this sandbox: Rich Text Editor (#53, contentEditable), Mention Input (#54,
+caret/interaction), Virtualized Grid (#141, DOM measurement), Image Cropper (#161, canvas) — all
+browser-interaction-heavy — and Geo/Choropleth Map (#85) + Hosts-by-Country Map (#217), which need
+geo/topojson DATA this sandbox doesn't bundle. Foundations (#1–9, 11, 190, 193) remain CSS-token
+concerns, not tsx components.
