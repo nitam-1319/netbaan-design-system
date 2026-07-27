@@ -131,7 +131,7 @@
     --border-strong: rgba(24, 20, 34, 0.15);
     --accent-strong: #6a44c0;
     --accent-soft: rgba(124, 83, 212, 0.1);
-    --text-faint: #8d8799;
+    --text-faint: #6e687b; /* AA fix: was #8d8799 (2.94:1) → 4.53:1 on darkest light surface, hue preserved */
     --success: #2fb680;
     --warning: #ecb22e;
     --shadow: 0 18px 50px -22px rgba(90, 68, 150, 0.32);
@@ -199,7 +199,7 @@
     --border-strong: rgba(255, 255, 255, 0.13);
     --accent-strong: #ab8ce8;
     --accent-soft: rgba(147, 115, 217, 0.14);
-    --text-faint: #6e6880;
+    --text-faint: #8a859c; /* AA fix: was #6e6880 (3.02:1) → 4.52:1 on lightest dark surface, hue preserved */
     --success: #2fb680;
     --warning: #ecb22e;
     --shadow: 0 18px 50px -18px rgba(0, 0, 0, 0.7);
