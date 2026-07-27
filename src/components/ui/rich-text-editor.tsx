@@ -111,7 +111,6 @@ function RichTextEditor({
   const reactId = React.useId()
   const editorId = `${reactId}-rte`
   const editorRef = React.useRef<HTMLDivElement>(null)
-  const isControlled = value !== undefined
 
   const [empty, setEmpty] = React.useState(() => isHtmlEmpty(value ?? defaultValue))
   const [active, setActive] = React.useState<Partial<Record<RichTextControl, boolean>>>({})

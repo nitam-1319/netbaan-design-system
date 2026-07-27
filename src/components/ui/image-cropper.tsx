@@ -36,7 +36,7 @@ type Corner = "nw" | "ne" | "sw" | "se"
 
 type ImageCropperProps = Omit<
   React.ComponentProps<"div">,
-  "className" | "style" | "children"
+  "className" | "style" | "children" | "value" | "defaultValue" | "onChange"
 > & {
   /** Image source URL. */
   src: string
@@ -126,7 +126,9 @@ function ImageCropper({
   // `commitRef` keeps the handler pointed at the latest committer without
   // re-subscribing on every crop change.
   const commitRef = React.useRef(commit)
-  commitRef.current = commit
+  React.useEffect(() => {
+    commitRef.current = commit
+  })
   React.useEffect(() => {
     const onMove = (e: PointerEvent) => {
       const d = drag.current

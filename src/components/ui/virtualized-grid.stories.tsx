@@ -28,9 +28,13 @@ const COLUMNS: VirtualizedGridColumn<Host>[] = [
   { id: "findings", header: "Findings", width: "120px", align: "end", cell: (r) => r.findings },
 ]
 
+// Fix the generic to `Host` via a TS instantiation expression so Storybook's
+// arg/prop inference is concrete rather than `unknown`.
+const HostGrid = VirtualizedGrid<Host>
+
 const meta = {
   title: "Components/VirtualizedGrid",
-  component: VirtualizedGrid,
+  component: HostGrid,
   parameters: { layout: "padded" },
   tags: ["autodocs"],
   argTypes: {
@@ -47,7 +51,7 @@ const meta = {
     visibleRows: 8,
     overscan: 4,
   },
-} satisfies Meta<typeof VirtualizedGrid<Host>>
+} satisfies Meta<typeof HostGrid>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -55,7 +59,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: (args) => (
     <div style={{ maxWidth: 720 }}>
-      <VirtualizedGrid {...args} />
+      <HostGrid {...args} />
     </div>
   ),
   play: async ({ canvasElement }) => {
@@ -88,7 +92,7 @@ export const Empty: Story = {
   args: { data: [] },
   render: (args) => (
     <div style={{ maxWidth: 720 }}>
-      <VirtualizedGrid {...args} />
+      <HostGrid {...args} />
     </div>
   ),
   play: async ({ canvasElement }) => {
@@ -101,7 +105,7 @@ export const Activatable: Story = {
   args: { onRowActivate: () => {}, visibleRows: 6 },
   render: (args) => (
     <div style={{ maxWidth: 720 }}>
-      <VirtualizedGrid {...args} />
+      <HostGrid {...args} />
     </div>
   ),
 }
