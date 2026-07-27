@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/Portal/Guidelines" />
+
+# Portal
+
+The "render this subtree somewhere else in the DOM" primitive, for the custom
+overlays you build yourself — a bespoke tooltip, a floating panel, a banner that
+must escape an `overflow:hidden` or `transform` ancestor. `Portal` teleports its
+children to another node (by default `document.body`) without wrapping them.
+
+## Overview
+
+Reach for it only for surfaces you assemble by hand. Base UI's own `Dialog`,
+`Popover`, `Menu`, `Tooltip`, and the AEGIS components built on them portal
+internally — prefer those, since they also manage focus, dismissal, and
+positioning. `Portal` exists for the gap: a subtree that needs to break out of
+its DOM parent's stacking or clipping context but has no overlay primitive
+underneath.
+
+## When to use
+
+- **Do** use it to lift a hand-rolled floating element out of an ancestor with
+  `overflow:hidden`, `transform`, `filter`, or a low `z-index`.
+- **Do** pass `container` (an element or a lazy getter) to mount into a dedicated
+  overlay root rather than `document.body`.
+- **Don't** use it when a Base UI overlay already fits — those portal, trap
+  focus, and position for you.
+- **Don't** rely on it for focus management or dismissal; pair it with
+  `Focus Trap` and `Click Outside` when you need those.
+
+## Anatomy
+
+1. **Portal** — a component that renders its `children` into `container` via
+   `ReactDOM.createPortal`. It has no host element of its own.
+
+## Behavior
+
+- **Mount-deferred:** the portal attaches only after the component mounts on the
+  client. On the server and during the first client render it returns `null`, so
+  hydration never mismatches over a node that only exists in the browser.
+- **Container resolution:** `container` may be an element, a document fragment,
+  or a function returning one. A function getter is evaluated after mount, so it
+  can point at an element that mounts later. When it resolves to nothing, the
+  portal falls back to `document.body`.
+- **Disabled:** `disabled` renders the children inline in place instead of
+  teleporting — useful in tests or when a parent already provides a portal
+  boundary.
+- **No wrapper:** the children are rendered unchanged; `Portal` adds no element,
+  class, or style, so it never affects layout at the mount point.
+
+## Accessibility
+
+- `Portal` is a behavioural utility with no visual output and no ARIA of its own.
+- Moving content in the DOM changes tab order and the accessibility tree's
+  structure. Keep the portalled subtree associated with its trigger via
+  `aria-controls` / `aria-labelledby`, and manage focus explicitly (e.g. with
+  `Focus Trap`) so keyboard users are not stranded.
+- Portalled content still reads in DOM order for screen readers; place the
+  container thoughtfully (an overlay root near the end of `<body>` is typical).
+
+## RTL / i18n
+
+Purely behavioural — there is no text, icon, or directional layout, so it is
+direction-agnostic and needs no RTL handling. The portalled children carry their
+own logical-property layout.
+
+## Design tokens
+
+None. `Portal` adds no styling; the teleported children carry their own tokens.
+
+## API
+
+### `Portal`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | The subtree to teleport. |
+| `container` | `Element \| DocumentFragment \| (() => Element \| DocumentFragment \| null) \| null` | `document.body` | Where to mount; a getter is resolved after mount. |
+| `disabled` | `boolean` | `false` | Render the children inline in place instead of teleporting. |
+
+The public API is closed: no `className` / `style`. `Portal` renders no host
+element of its own.
+
+## Examples
+
+The interactive stories show a panel escaping an `overflow:hidden` box, mounting
+into a custom container, and the inline `disabled` fallback.
