@@ -1,0 +1,100 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/HostsByCountryMap/Guidelines" />
+
+# Hosts-by-Country Map
+
+An attack-surface readout of **where an organisation's internet-facing hosts
+live** geographically. It composes the AEGIS **Geo / Choropleth Map** (countries
+shaded by host count) and frames it for the ASM domain with a titled header, the
+fleet total, and a ranked list of the top countries by host count and share.
+
+## Overview
+
+Knowing the geographic spread of a host fleet matters for compliance
+(data-residency), latency, and surfacing shadow infrastructure in unexpected
+regions. This widget turns a country → host-count map into a glanceable picture
+plus an exact, text-first ranking.
+
+## Usage
+
+- **Do** use it on ASM dashboards and asset-inventory summaries.
+- **Do** supply each country's already-projected SVG `d` path and its `hosts`
+  count — projection runs upstream (d3-geo / topojson), exactly as the underlying
+  Geo / Choropleth Map expects.
+- **Do** tune `topCount`, `steps`, and toggle `showLegend` / `showRanking`.
+- **Don't** expect bundled world topology, zoom/pan, or hover highlighting — this
+  is a deterministic static renderer (honestly-scoped, like the chart family).
+
+## Anatomy
+
+A `figure` (`data-slot="hosts-by-country-map"`) with a header
+(`hosts-by-country-map-header`: a globe glyph, the label, and the fleet total
+`hosts-by-country-map-total`), the composed **Geo / Choropleth Map**
+(`hosts-by-country-map-plot`), and an ordered ranking
+(`hosts-by-country-map-ranking`) of rows (`hosts-by-country-map-rank`), each with
+index, country, host count, and share.
+
+## Variants
+
+Presentation is fixed. `steps` controls the map's shade buckets; `topCount`
+controls the ranking length; `showLegend` and `showRanking` toggle those regions.
+
+## States
+
+- **Populated** — one or more countries with `hosts > 0`: the map shades and the
+  ranking lists the top `topCount`.
+- **Sparse / no data** — countries with an omitted or zero `hosts` count render as
+  "no data" regions on the map and are excluded from the total and ranking.
+
+## Behavior
+
+- The fleet total is the sum of all countries' host counts; the country count is
+  the number of countries with a positive count.
+- The ranking is sorted by host count descending, sliced to `topCount`, with each
+  country's share computed against the total.
+- Deterministic — the same inputs always render the same widget; no internal
+  clock or randomness.
+
+## Accessibility
+
+- The `figure` is a labelled group whose accessible name includes the summary
+  ("N hosts across M countries"), and the composed map is a labelled `img` with
+  per-region `<title>`s.
+- The ranking is a real ordered list; every count and share is text, so the
+  distribution is never conveyed by shade alone (WCAG 1.4.1). Pair the map with
+  this ranking (or a full table) for a complete account.
+- The globe glyph is `aria-hidden`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Geo / Choropleth Map (`--color-primary` ramp, `--color-muted`) | Region shading. |
+| `text-foreground` / `text-muted-foreground` / `text-text-faint` | Total, labels, index. |
+| `font-heading` | Fleet-total numeral. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `countries` | `HostCountry[]` | — | Countries with projected `d` paths and `hosts` counts (required). |
+| `label` | `ReactNode` | `"Hosts by country"` | Heading + accessible-name stem. |
+| `viewBox` | `string` | `"0 0 960 600"` | SVG viewBox matching the path coordinate space. |
+| `steps` | `number` | `5` | Number of shade buckets. |
+| `showLegend` | `boolean` | `true` | Render the map's shade legend. |
+| `showRanking` | `boolean` | `true` | Render the ranked country list. |
+| `topCount` | `number` | `5` | How many countries to list in the ranking. |
+| `formatCount` | `(v: number) => string` | thousands-grouped | Format host counts. |
+
+`HostCountry` = `{ id: string; label?: string; d: string; hosts?: number }`.
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default**, **TopThree**, **NoRanking**, and **NoLegend** stories. The
+widget works in both themes and directions via the global toolbar; the ranking
+and readouts are direction-agnostic.
