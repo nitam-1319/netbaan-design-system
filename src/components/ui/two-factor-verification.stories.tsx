@@ -112,7 +112,10 @@ export const CompleteInteraction: Story = {
   args: { onComplete: fn(), onSubmit: fn(), onResend: fn(), resendCooldown: 0 },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement)
-    const first = canvas.getByLabelText("Character 1 of 6")
+    // Base UI's OTPField ignores `aria-label` on the first slot, so query it by data-slot.
+    const first = canvasElement.querySelector<HTMLInputElement>(
+      '[data-slot="otp-input-slot"]',
+    )!
     await userEvent.click(first)
     await userEvent.keyboard("482913")
     await expect(args.onComplete).toHaveBeenCalledWith("482913")

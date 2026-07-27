@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 
 import { FolderTree } from "@/components/ui/folder-tree"
 
@@ -40,6 +40,8 @@ const meta = {
     onExpandedChange: { action: "expandedChange" },
   },
   args: {
+    onSelectionChange: fn(),
+    onExpandedChange: fn(),
     items: ITEMS,
     defaultExpandedIds: ["src"],
     label: "Project files",

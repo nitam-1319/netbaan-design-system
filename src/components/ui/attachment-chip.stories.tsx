@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, fn, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, waitFor, within } from "storybook/test"
 
 import { AttachmentChip } from "@/components/ui/attachment-chip"
 
@@ -90,7 +90,8 @@ export const RemoveInteraction: Story = {
   args: { onRemove: fn() },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement)
-    await expect(canvas.getByText("quarterly-report.pdf")).toBeVisible()
+    // Chip mounts with a `chipPop` entrance animation (opacity 0 → 1); wait for it to settle.
+    await waitFor(() => expect(canvas.getByText("quarterly-report.pdf")).toBeVisible())
 
     const remove = canvas.getByRole("button", { name: "Remove attachment" })
     await userEvent.click(remove)

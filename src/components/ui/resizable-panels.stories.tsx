@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 
 import { ResizablePanels } from "@/components/ui/resizable-panels"
 
@@ -27,6 +27,7 @@ const meta = {
     onSizeChange: { action: "sizeChange" },
   },
   args: {
+    onSizeChange: fn(),
     orientation: "horizontal",
     defaultSize: 40,
     children: [<Pane key="a" label="Sidebar" />, <Pane key="b" label="Content" />],

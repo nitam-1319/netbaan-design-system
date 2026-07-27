@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 
 import { EditableCell } from "@/components/ui/editable-cell"
 
@@ -20,6 +20,7 @@ const meta = {
     onValueChange: { action: "valueChange" },
   },
   args: {
+    onValueChange: fn(),
     label: "Asset name",
     defaultValue: "api.example.com",
     placeholder: "Empty",

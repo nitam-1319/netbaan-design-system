@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 
 import { MultiStepForm } from "@/components/ui/multi-step-form"
 import { TextField } from "@/components/ui/text-field"
@@ -48,6 +48,8 @@ const meta = {
     onSubmit: { action: "submit" },
   },
   args: {
+    onStepChange: fn(),
+    onSubmit: fn(),
     steps: STEPS,
     orientation: "horizontal",
   },

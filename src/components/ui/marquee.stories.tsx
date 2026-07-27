@@ -48,7 +48,7 @@ export const Default: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const strip = canvas.getByText("Acme").closest("[data-slot=marquee]")
+    const strip = canvas.getAllByText("Acme")[0].closest("[data-slot=marquee]")
     expect(strip).toHaveAttribute("data-direction", "left")
     // Content is duplicated for the seamless loop → more than one "Acme".
     expect(canvas.getAllByText("Acme").length).toBeGreaterThan(1)

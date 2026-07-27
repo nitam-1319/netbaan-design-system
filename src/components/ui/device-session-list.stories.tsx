@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 
 import { DeviceSessionList } from "@/components/ui/device-session-list"
 
@@ -17,6 +17,7 @@ const meta = {
     onRevoke: { action: "revoke" },
   },
   args: {
+    onRevoke: fn(),
     sessions: [
       {
         id: "s1",

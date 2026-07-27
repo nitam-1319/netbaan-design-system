@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 
 import { TreeView } from "@/components/ui/tree-view"
 
@@ -42,6 +42,8 @@ const meta = {
     onSelectionChange: { action: "selectionChange" },
   },
   args: {
+    onExpandedChange: fn(),
+    onSelectionChange: fn(),
     nodes: NODES,
     defaultExpandedIds: ["src"],
     label: "Project files",

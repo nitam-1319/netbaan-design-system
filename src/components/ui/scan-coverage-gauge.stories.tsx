@@ -20,7 +20,7 @@ const meta = {
     size: { control: "inline-radio", options: ["sm", "md", "lg"] },
   },
   args: {
-    scanned: 1240,
+    scanned: 1245,
     total: 1380,
     label: "Scan coverage",
     unit: "assets",
@@ -36,9 +36,9 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const meter = canvas.getByRole("meter", { name: "Scan coverage" })
-    await expect(meter).toHaveAttribute("aria-valuenow", "1240")
+    await expect(meter).toHaveAttribute("aria-valuenow", "1245")
     await expect(meter).toHaveAttribute("aria-valuemax", "1380")
-    // 1240/1380 ≈ 90% → success tone.
+    // 1245/1380 ≈ 90% (≥ 0.9) → success tone.
     const root = canvas
       .getByText("Scan coverage")
       .closest("[data-slot=scan-coverage-gauge]")

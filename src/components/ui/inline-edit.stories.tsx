@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, fn, userEvent, within } from "storybook/test"
 
 import { InlineEdit } from "@/components/ui/inline-edit"
 
@@ -19,6 +19,7 @@ const meta = {
     onValueChange: { action: "valueChange" },
   },
   args: {
+    onValueChange: fn(),
     label: "Display name",
     defaultValue: "Netbaan Security",
     placeholder: "Add a name",
