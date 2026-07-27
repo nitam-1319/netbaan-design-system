@@ -20,6 +20,65 @@
       "bg": "#f6f6f9",
       "note": "text-destructive validation/error message on the light app background = 3.62 < 4.5 AA. Recurring across form-field error text (password-input, otp-input Error stories, and any component that renders `text-destructive` copy). Same --destructive tone family already queued for button ink; the fix is a foundation-token decision (darken --destructive in light, or introduce a dedicated --destructive-text / --on-tone ink) — do NOT patch per component. Queued for human confirmation.",
       "queuedIn": "aegis/audit batch 2"
+    },
+    {
+      "label": "severity ramp soft/outline ink — critical",
+      "fg": "#f0506e",
+      "note": "--sev-critical used as Badge soft/outline TEXT ink on light tinted/app backgrounds fails AA (~2.7:1). Same Badge soft/outline tone-ink family already queued in badge batch 1 ('soft tone-text light 1.6–3.0 → propose --on-tone ink'). Surfaces through every Badge-derived severity component (severity-badge, cve-reference-chip, …). Foundation-token decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp soft/outline ink — high",
+      "fg": "#f5872b",
+      "note": "--sev-high as Badge soft/outline TEXT ink on light fails AA (~2.3:1). Badge tone-ink family queued in badge batch 1. Foundation decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp soft/outline ink — low",
+      "fg": "#3a97d4",
+      "note": "--sev-low as Badge soft/outline TEXT ink on light fails AA (~2.6:1). Badge tone-ink family queued in badge batch 1. Foundation decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp soft/outline ink — info",
+      "fg": "#7d8798",
+      "note": "--sev-info (neutral) as Badge soft/outline TEXT ink on light may fail AA. Badge tone-ink family queued in badge batch 1. Foundation decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp solid ink — white on critical",
+      "fg": "#ffffff",
+      "bg": "#f0506e",
+      "note": "Badge SOLID variant: white ink on --sev-critical = 3.45 < 4.5 AA (both themes; sev tokens are theme-invariant). Same 'solid white-on-tone' Badge family queued in badge batch 1. Resolved by the --on-tone ink foundation decision — do NOT patch per component (severity-badge, cve-reference-chip, …).",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp solid ink — white on high",
+      "fg": "#ffffff",
+      "bg": "#f5872b",
+      "note": "Badge SOLID variant: white ink on --sev-high = 2.50 < 4.5 AA. 'solid white-on-tone' Badge family queued in badge batch 1. Foundation --on-tone decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp solid ink — white on medium",
+      "fg": "#ffffff",
+      "bg": "#ecb22e",
+      "note": "Badge SOLID variant: white ink on --sev-medium = 1.91 < 4.5 AA. 'solid white-on-tone' Badge family queued in badge batch 1. Foundation --on-tone decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp solid ink — white on low",
+      "fg": "#ffffff",
+      "bg": "#3a97d4",
+      "note": "Badge SOLID variant: white ink on --sev-low fails AA. 'solid white-on-tone' Badge family queued in badge batch 1. Foundation --on-tone decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "severity ramp solid ink — white on info",
+      "fg": "#ffffff",
+      "bg": "#7d8798",
+      "note": "Badge SOLID variant: white ink on --sev-info fails AA. 'solid white-on-tone' Badge family queued in badge batch 1. Foundation --on-tone decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 5"
     }
   ]
 }
