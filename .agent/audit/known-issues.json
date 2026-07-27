@@ -13,6 +13,13 @@
       "fg": "#ecb22e",
       "note": "Warning soft-tone text on soft background fails AA in light. Queued (badge). Proposed --on-tone ink.",
       "queuedIn": "aegis/audit batch 1"
+    },
+    {
+      "label": "destructive message ink (light)",
+      "fg": "#e5484d",
+      "bg": "#f6f6f9",
+      "note": "text-destructive validation/error message on the light app background = 3.62 < 4.5 AA. Recurring across form-field error text (password-input, otp-input Error stories, and any component that renders `text-destructive` copy). Same --destructive tone family already queued for button ink; the fix is a foundation-token decision (darken --destructive in light, or introduce a dedicated --destructive-text / --on-tone ink) — do NOT patch per component. Queued for human confirmation.",
+      "queuedIn": "aegis/audit batch 2"
     }
   ]
 }

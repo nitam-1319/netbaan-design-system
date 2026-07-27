@@ -72,6 +72,17 @@ export const Error: Story = {
     defaultValue: "short",
     error: "Password is too short.",
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const input = canvas.getByLabelText("Password")
+    // The error state marks the control invalid and links the message for AT.
+    await expect(input).toHaveAttribute("aria-invalid", "true")
+    const message = canvas.getByText("Password is too short.")
+    await expect(input).toHaveAttribute(
+      "aria-describedby",
+      message.getAttribute("id") as string
+    )
+  },
 }
 
 export const Disabled: Story = {

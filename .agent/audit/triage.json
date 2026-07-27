@@ -1,9 +1,9 @@
 {
   "scanned": 207,
-  "withFindings": 81,
+  "withFindings": 40,
   "bySeverity": {
     "high": 1,
-    "medium": 77,
+    "medium": 36,
     "low": 0,
     "info": 8
   },
@@ -22,7 +22,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -40,7 +40,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         },
         {
           "severity": "medium",
@@ -57,7 +57,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -69,27 +69,15 @@
     },
     {
       "name": "area-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "aspect-ratio",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "asset-row",
@@ -99,7 +87,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -153,15 +141,9 @@
     },
     {
       "name": "bar-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "beam-glow",
@@ -194,15 +176,9 @@
     },
     {
       "name": "box",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "breadcrumb",
@@ -212,15 +188,9 @@
     },
     {
       "name": "bubble-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "bulk-actions-bar",
@@ -302,15 +272,9 @@
     },
     {
       "name": "click-outside",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "code-block",
@@ -337,7 +301,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -349,7 +313,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -367,7 +331,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         },
         {
           "severity": "medium",
@@ -385,13 +349,8 @@
     {
       "name": "command-palette",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "missing-state-story",
@@ -413,15 +372,9 @@
     },
     {
       "name": "container",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "context-menu",
@@ -450,13 +403,8 @@
     {
       "name": "currency-input",
       "severity": "medium",
-      "count": 3,
+      "count": 2,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "missing-state-story",
@@ -471,15 +419,9 @@
     },
     {
       "name": "cve-reference-chip",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "data-table",
@@ -489,27 +431,15 @@
     },
     {
       "name": "date-picker",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "date-range-picker",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "description-list",
@@ -525,7 +455,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -549,15 +479,9 @@
     },
     {
       "name": "donut-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "drawer",
@@ -567,27 +491,15 @@
     },
     {
       "name": "dropzone",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`required` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "editable-cell",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "empty-state",
@@ -598,13 +510,8 @@
     {
       "name": "error-boundary",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "missing-state-story",
@@ -633,13 +540,8 @@
     {
       "name": "field-array",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "missing-state-story",
@@ -649,15 +551,9 @@
     },
     {
       "name": "field-label",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "fieldset",
@@ -685,15 +581,9 @@
     },
     {
       "name": "file-uploader",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "finding-vulnerability-card",
@@ -726,15 +616,9 @@
     },
     {
       "name": "focus-trap",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "folder-tree",
@@ -744,7 +628,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -774,15 +658,9 @@
     },
     {
       "name": "funnel-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "gantt-chart",
@@ -798,38 +676,21 @@
     },
     {
       "name": "grade-ring-a-f",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "grid",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "grouped-stacked-bar",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "no-data-slot",
@@ -839,27 +700,15 @@
     },
     {
       "name": "heatmap",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "helper-text",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "hosts-by-country-map",
@@ -881,15 +730,9 @@
     },
     {
       "name": "inline-edit",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "input-group",
@@ -910,15 +753,9 @@
     },
     {
       "name": "kbd",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "keyboard-shortcut",
@@ -928,15 +765,9 @@
     },
     {
       "name": "landmark-regions",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "lazy-loader",
@@ -946,39 +777,21 @@
     },
     {
       "name": "lightbox",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "line-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "list",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "live-region",
@@ -1000,15 +813,9 @@
     },
     {
       "name": "login-form",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "marquee",
@@ -1066,7 +873,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -1078,7 +885,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -1120,7 +927,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -1174,15 +981,9 @@
     },
     {
       "name": "pie-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "popover",
@@ -1193,13 +994,8 @@
     {
       "name": "portal",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "no-data-slot",
@@ -1227,7 +1023,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -1251,15 +1047,9 @@
     },
     {
       "name": "radar-chart",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "radial-gauge",
@@ -1288,13 +1078,8 @@
     {
       "name": "reduced-motion",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "no-data-slot",
@@ -1328,15 +1113,9 @@
     },
     {
       "name": "role-permission-selector",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "row-selection",
@@ -1364,15 +1143,9 @@
     },
     {
       "name": "scatter-plot",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "scroll-area",
@@ -1418,27 +1191,15 @@
     },
     {
       "name": "session-timeout-modal",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "severity-badge",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "sidebar",
@@ -1448,39 +1209,21 @@
     },
     {
       "name": "sign-up-form",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "skeleton",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "skeleton-templates",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "skip-to-content",
@@ -1496,15 +1239,9 @@
     },
     {
       "name": "spacer",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "sparkline",
@@ -1532,26 +1269,15 @@
     },
     {
       "name": "stack",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "stacked-area-chart",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "no-data-slot",
@@ -1656,13 +1382,8 @@
     {
       "name": "tag-input",
       "severity": "medium",
-      "count": 3,
+      "count": 2,
       "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        },
         {
           "severity": "medium",
           "check": "missing-state-story",
@@ -1725,7 +1446,7 @@
         {
           "severity": "medium",
           "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
+          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
         }
       ]
     },
@@ -1767,15 +1488,9 @@
     },
     {
       "name": "treemap",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "no `Omit<… \"className\" | \"style\">` — verify the public API is closed (may be a pure composite)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "two-factor-verification",
@@ -1821,15 +1536,9 @@
     },
     {
       "name": "visually-hidden",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     }
   ]
 }
