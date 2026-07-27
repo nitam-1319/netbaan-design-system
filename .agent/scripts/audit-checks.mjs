@@ -83,8 +83,7 @@ try {
           await page.addScriptTag({ content: axeSrc })
           const result = await page.evaluate(async () => {
             const root = document.querySelector("#storybook-root") || document.body
-            // eslint-disable-next-line no-undef
-            const r = await axe.run(root, { resultTypes: ["violations"] })
+            const r = await window.axe.run(root, { resultTypes: ["violations"] })
             return r.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, nodes: v.nodes.length }))
           })
           for (const v of result) {
