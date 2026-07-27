@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ImageCropper/Guidelines" />
+
+# Image Cropper
+
+An interactive **crop selector** over an image: a draggable, resizable rectangle
+with a dimmed exterior, corner handles, rule-of-thirds guides, keyboard nudging,
+and a live percentage readout. The crop is expressed in **fractional
+coordinates** (`x`/`y`/`width`/`height` in `[0, 1]`), so it is
+resolution-independent.
+
+## Overview
+
+Cropping is a two-part problem: choosing a region, and rasterising it. This
+component owns the first part and emits the region; you apply it to the
+full-resolution bitmap upstream (a `<canvas>` `drawImage`), exactly as
+**Geo / Choropleth Map** leaves projection to the caller.
+
+## Usage
+
+- **Do** use it in avatar/upload flows and any "select a region" step.
+- **Do** treat it as controlled (`value` + `onValueChange`) or uncontrolled
+  (`defaultValue`); the value is fractional, so it survives image resizes.
+- **Do** apply the returned crop to a canvas to produce the cropped bitmap.
+- **Don't** expect it to export the cropped image, rotate, or zoom — those are
+  additive follow-ups (honestly-scoped).
+
+## Anatomy
+
+A group (`data-slot="image-cropper"`) with a frame (`image-cropper-frame`)
+containing the image (`image-cropper-image`), a four-band dimmed exterior
+(`image-cropper-shade`), and the crop selection (`image-cropper-selection`) with
+rule-of-thirds guides, four corner handles (`image-cropper-handle`), plus a live
+readout (`image-cropper-readout`).
+
+## Behavior
+
+- Drag the selection body to move it; drag a corner handle to resize from that
+  corner. Both clamp to the image bounds and a `minSize` floor.
+- With the selection focused, Arrow keys nudge position by `step`; Shift+Arrow
+  resizes width/height by `step`.
+- The crop is fractional and always normalised (clamped, min size enforced), so
+  the emitted value is valid regardless of input.
+- Pointer geometry needs a laid-out element, so drag/resize is browser-verified;
+  keyboard nudging is deterministic.
+
+## Accessibility
+
+- The selection is a `role="slider"` with a spelled-out `aria-valuetext`
+  ("Crop W% × H% at X%, Y%"), so its size and position are announced without
+  relying on the visuals; `aria-valuenow` carries the crop's area percentage.
+- It is focusable and fully keyboard-operable (Arrow / Shift+Arrow).
+- The image keeps its `alt`; decorative shade, guides, and handles are
+  `aria-hidden`; the readout is an `aria-live` region.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `border-border` / `bg-surface-2` | Frame border + backdrop. |
+| `bg-background/60` | Dimmed exterior bands. |
+| `ring-primary` / `ring-accent-soft` | Selection outline / focus ring. |
+| `bg-primary` / `border-background` | Corner handles. |
+| `bg-foreground/25` | Rule-of-thirds guides. |
+| `text-muted-foreground` | Readout. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `src` | `string` | — | Image source URL (required). |
+| `alt` | `string` | — | Accessible image description (required). |
+| `value` | `CropRect` | — | Controlled crop (fractional). |
+| `defaultValue` | `CropRect` | centred 60% | Initial crop (uncontrolled). |
+| `onValueChange` | `(crop: CropRect) => void` | — | Fires on any crop change. |
+| `label` | `string` | `"Crop image"` | Accessible name. |
+| `step` | `number` | `0.02` | Keyboard nudge / resize step (fraction). |
+| `minSize` | `number` | `0.1` | Smallest allowed crop side (fraction). |
+
+`CropRect` = `{ x: number; y: number; width: number; height: number }` (all fractions of the image).
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default** (with keyboard-driven crop changes) and **PortraitStart**
+stories. The cropper works in both themes and directions via the global toolbar.
