@@ -86,3 +86,15 @@ export const States: Story = {
     </div>
   ),
 }
+
+export const Invalid: Story = {
+  name: "Invalid (error state)",
+  render: () => (
+    <Checkbox aria-invalid={true} label="Accept the required terms" />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const box = canvas.getByRole("checkbox")
+    await expect(box).toHaveAttribute("aria-invalid", "true")
+  },
+}
