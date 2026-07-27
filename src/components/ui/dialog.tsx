@@ -93,7 +93,7 @@ function DialogContent({
             data-slot="dialog-close"
             aria-label="Close"
             className={cn(
-              "absolute top-4 right-4 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none",
+              "absolute top-4 end-4 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none",
               "hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-accent-soft",
               "[&>svg]:size-4"
             )}
@@ -110,7 +110,7 @@ function DialogHeader({ children }: { children?: React.ReactNode }) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-1.5 pr-8 text-left")}
+      className={cn("flex flex-col gap-1.5 pe-8 text-start")}
     >
       {children}
     </div>

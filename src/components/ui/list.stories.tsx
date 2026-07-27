@@ -107,6 +107,33 @@ export const Interactive: Story = {
   },
 }
 
+export const Disabled: Story = {
+  render: () => (
+    <List variant="bordered">
+      <ListItem interactive onClick={fn()}>
+        <ListItemContent>Attack surface</ListItemContent>
+        <ChevronRight className="size-4 text-muted-foreground" />
+      </ListItem>
+      <ListItem interactive disabled>
+        <ListItemContent>Certificates (disabled)</ListItemContent>
+        <ChevronRight className="size-4 text-muted-foreground" />
+      </ListItem>
+      <ListItem disabled>
+        <ListItemContent>Archived (disabled)</ListItemContent>
+      </ListItem>
+    </List>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const items = canvas.getAllByRole("listitem")
+    // Disabled rows expose aria-disabled and are removed from the tab order.
+    await expect(items[1]).toHaveAttribute("aria-disabled", "true")
+    await expect(items[1]).not.toHaveAttribute("tabindex")
+    await expect(items[2]).toHaveAttribute("aria-disabled", "true")
+    await expect(items[2]).not.toHaveAttribute("tabindex")
+  },
+}
+
 export const Densities: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
