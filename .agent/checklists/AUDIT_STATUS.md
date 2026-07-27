@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 0 / 207 reviewed  ·  library @ `6887d7f`
+**Progress:** 7 / 207 reviewed  ·  library @ `946d79a`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -21,14 +21,14 @@
 
 | Component | Reviewed | Issues | Fixed | DS ✓ | Tests ✓ | Risk | spec | imp | triage | Notes |
 |-----------|:--------:|:------:|:-----:|:----:|:------:|:----:|:----:|:---:|:------:|-------|
-| `checkbox` | ⬜ | — | — | — | — | 6 | ◆ | 7 | medium |  |
-| `button` | ⬜ | — | — | — | — | 5 | ◆ | 30 | info |  |
-| `badge` | ⬜ | — | — | — | — | 5 | ◆ | 8 | info |  |
-| `toggle` | ⬜ | — | — | — | — | 4 | ◆ | 2 | clean |  |
-| `radio` | ⬜ | — | — | — | — | 4 | ◆ | 1 | clean |  |
-| `select` | ⬜ | — | — | — | — | 4 | ◆ | 1 | clean |  |
+| `checkbox` | ✅ | yes | ⏳ | — | ✅ | 6 | ◆ | 7 | medium | Added `Invalid` story + a11y assert (missing-state-story cleared). QUEUED: description `text-faint` contrast 3.74<4.5 (dark & light). |
+| `button` | ✅ | yes | ⏳ | — | ✅ | 5 | ◆ | 30 | info | 7 stories axe-checked. QUEUED: `destructive` white-on-#e5484d = 3.91<4.5 AA fail on an interactive control. |
+| `badge` | ✅ | yes | ⏳ | — | ✅ | 5 | ◆ | 8 | info | 8 stories axe-checked. QUEUED: solid white-on-tone (success 2.58 / danger 3.91) + soft tone-text (light 1.6–3.0) — propose `--on-tone` ink for light tones. |
+| `toggle` | ✅ | — | — | ✅ | ✅ | 4 | ◆ | 2 | clean | Clean; 6 stories axe-green (dark & light). Closed API verified. |
+| `radio` | ✅ | yes | ⏳ | — | ✅ | 4 | ◆ | 1 | clean | 7 stories axe-checked. QUEUED: `aria-readonly` invalid on `role=radio` (readonly state); description `text-faint` contrast. |
+| `select` | ✅ | yes | ✅ | ✅ | ✅ | 4 | ◆ | 1 | clean | FIXED: trigger `button-name` — combobox needs explicit name; added `aria-label` to trigger stories. 9 stories axe-green. |
 | `list` | ⬜ | — | — | — | — | 3 |  | 5 | medium |  |
-| `avatar` | ⬜ | — | — | — | — | 3 | ◆ | 0 | info |  |
+| `avatar` | ✅ | — | — | ✅ | ✅ | 3 | ◆ | 0 | info | Clean; 7 stories axe-green. `text-white` on seeded fills passes AA (verified in browser). |
 | `chart-container` | ⬜ | — | — | — | — | 2 |  | 17 | clean |  |
 | `chart-legend` | ⬜ | — | — | — | — | 2 |  | 8 | clean |  |
 | `axis` | ⬜ | — | — | — | — | 2 |  | 5 | clean |  |
