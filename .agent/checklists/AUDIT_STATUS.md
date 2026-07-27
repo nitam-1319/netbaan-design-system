@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 7 / 207 reviewed  ·  library @ `946d79a`
+**Progress:** 12 / 207 reviewed  ·  library @ `b6e028a`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -21,20 +21,20 @@
 
 | Component | Reviewed | Issues | Fixed | DS ✓ | Tests ✓ | Risk | spec | imp | triage | Notes |
 |-----------|:--------:|:------:|:-----:|:----:|:------:|:----:|:----:|:---:|:------:|-------|
-| `checkbox` | ✅ | yes | ⏳ | — | ✅ | 6 | ◆ | 7 | medium | Added `Invalid` story + a11y assert (missing-state-story cleared). QUEUED: description `text-faint` contrast 3.74<4.5 (dark & light). |
 | `button` | ✅ | yes | ⏳ | — | ✅ | 5 | ◆ | 30 | info | 7 stories axe-checked. QUEUED: `destructive` white-on-#e5484d = 3.91<4.5 AA fail on an interactive control. |
 | `badge` | ✅ | yes | ⏳ | — | ✅ | 5 | ◆ | 8 | info | 8 stories axe-checked. QUEUED: solid white-on-tone (success 2.58 / danger 3.91) + soft tone-text (light 1.6–3.0) — propose `--on-tone` ink for light tones. |
+| `checkbox` | ✅ | yes | ⏳ | — | ✅ | 6 | ◆ | 7 | medium | Added `Invalid` story + a11y assert (missing-state-story cleared). QUEUED: description `text-faint` contrast 3.74<4.5 (dark & light). |
 | `toggle` | ✅ | — | — | ✅ | ✅ | 4 | ◆ | 2 | clean | Clean; 6 stories axe-green (dark & light). Closed API verified. |
 | `radio` | ✅ | yes | ⏳ | — | ✅ | 4 | ◆ | 1 | clean | 7 stories axe-checked. QUEUED: `aria-readonly` invalid on `role=radio` (readonly state); description `text-faint` contrast. |
 | `select` | ✅ | yes | ✅ | ✅ | ✅ | 4 | ◆ | 1 | clean | FIXED: trigger `button-name` — combobox needs explicit name; added `aria-label` to trigger stories. 9 stories axe-green. |
-| `list` | ⬜ | — | — | — | — | 3 |  | 5 | medium |  |
+| `list` | ✅ | yes | ✅ | ✅ | ✅ | 3 |  | 5 | medium | FIXED: added dedicated `Disabled` story + a11y assert (missing-state-story cleared). 7 stories axe-green (dark & light); RTL verified (icons/text mirror). Closed API. |
 | `avatar` | ✅ | — | — | ✅ | ✅ | 3 | ◆ | 0 | info | Clean; 7 stories axe-green. `text-white` on seeded fills passes AA (verified in browser). |
-| `chart-container` | ⬜ | — | — | — | — | 2 |  | 17 | clean |  |
-| `chart-legend` | ⬜ | — | — | — | — | 2 |  | 8 | clean |  |
-| `axis` | ⬜ | — | — | — | — | 2 |  | 5 | clean |  |
-| `card` | ⬜ | — | — | — | — | 2 |  | 5 | clean |  |
-| `dialog` | ⬜ | — | — | — | — | 2 |  | 5 | clean |  |
-| `progress` | ⬜ | — | — | — | — | 2 |  | 5 | clean |  |
+| `chart-container` | ⬜ | — | — | — | — | 2 |  | 17 | clean | NOT audited: story title `Components/ChartContainer` → id `components-chartcontainer--*`, but harness resolves `components-chart-container--*` (name→id kebab mismatch) → visual/a11y gates can't target it. Code read: closed API, token-only palette — looks clean. Needs harness title-alignment before browser gates. |
+| `chart-legend` | ⬜ | — | — | — | — | 2 |  | 8 | clean | NOT audited: same name→id mismatch as chart-container (`components-chartlegend--*`). Code read: closed API, token swatch via internal CSS var, label carries meaning (WCAG 1.4.1) — looks clean. Needs harness title-alignment before browser gates. |
+| `axis` | ✅ | — | — | ✅ | ✅ | 2 |  | 5 | clean | Clean; 4 stories axe-green (dark & light). Token strokes (`stroke-border`, `fill-muted-foreground`); SVG `aria-hidden` (plot carries the accessible name). Closed API. |
+| `card` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 5 | clean | Own code clean (closed API, token surfaces, beam/elevated/interactive render correctly dark+light+RTL). Only axe hit is INHERITED queued Badge soft-tone (warning `text` #ecb22e on soft #fcf4e2 = 1.74 light) in `WithActionAndFooter` — see badge queue. QUEUED: `beam` variant ignores `interactive` prop (no hover-lift/glow). |
+| `dialog` | ✅ | yes | ✅ | ✅ | ✅ | 2 |  | 5 | clean | FIXED: RTL logical props — close button `right-4`→`end-4`, header `pr-8`→`pe-8`, `text-left`→`text-start` (physical dirs don't mirror in Persian; RTL rules mandate logical). Own code otherwise clean/closed-API. Only axe hit is INHERITED queued `destructive` Button (white-on-#e5484d 3.91) in `Destructive` story — see button queue. |
+| `progress` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 5 | clean | Own code clean (closed API, token tones success/warning/critical, indeterminate anim, Base UI progressbar). Only axe hit is INHERITED queued `--text-faint` (#6e6880 3.74 both themes) on `ProgressValue` in `WithLabelAndValue` — SAME token as checkbox/radio (recurring 3×, systemic; escalated in PR). |
 | `bar-chart` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
 | `severity-badge` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
 | `password-input` | ⬜ | — | — | — | — | 2 |  | 2 | medium |  |

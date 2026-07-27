@@ -1,9 +1,9 @@
 {
   "scanned": 207,
-  "withFindings": 82,
+  "withFindings": 81,
   "bySeverity": {
     "high": 1,
-    "medium": 78,
+    "medium": 77,
     "low": 0,
     "info": 8
   },
@@ -278,15 +278,9 @@
     },
     {
       "name": "checkbox",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`invalid` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "checkbox-group",
