@@ -1,0 +1,107 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/MentionInput/Guidelines" />
+
+# Mention Input
+
+A multi-line text control that opens a **listbox of mentionable entities** when
+the user types a trigger character (default `@`), letting them complete a mention
+with the keyboard or pointer. It wears the AEGIS Input visual language, so it sits
+beside **Textarea** and **Combobox**, and the suggestion surface mirrors **Menu**
+/ **Combobox**.
+
+## Overview
+
+Mentions are how people tag teammates in comments, threads, and prompt fields.
+This control detects the active `@query` token under the caret, offers filtered
+matches, and completes the mention as text — without pulling in an editor engine.
+
+## Usage
+
+- **Do** use it for comments, chat, and any field where users tag people or
+  entities.
+- **Do** pass `options` (`{ id, label, description? }`) and handle `onMention` to
+  record the referenced entity.
+- **Do** treat it as controlled (`value` + `onValueChange`) or uncontrolled
+  (`defaultValue`).
+- **Do** customise `trigger`, `filter`, and `mentionText` for non-`@` schemes.
+- **Don't** expect atomic mention "chips" or caret-pixel popup following — those
+  are deferred additive layers (honestly-scoped).
+
+## Anatomy
+
+A wrapper (`data-slot="mention-input"`) with an optional label, the textarea
+control (`mention-input-control`) in the AEGIS Input shell, and — while a trigger
+token is active — a popup (`mention-input-popup`) containing either a `listbox`
+(`mention-input-list`) of options (`mention-input-option`) or an empty message
+(`mention-input-empty`).
+
+## Variants
+
+`size` (`sm` / `md` / `lg`, default `md`) scales the control height and type, matching Textarea.
+
+## States
+
+- **Idle** — no trigger token under the caret; plain textarea.
+- **Open** — a trigger token (`@`, at a word boundary, no whitespace to the caret)
+  is active: the listbox shows filtered matches with one highlighted.
+- **Empty** — the token is active but nothing matches: the empty message shows.
+- **Disabled** — the control is non-interactive and dimmed.
+
+## Behavior
+
+- The active token is the trigger char at a word boundary with no whitespace
+  between it and the caret; its trailing text is the query.
+- ArrowDown/ArrowUp move the highlight (wrapping); Enter or Tab complete the
+  highlighted option; Escape dismisses without completing.
+- Pointer selection uses pointer-down so the textarea keeps focus.
+- Completing replaces the `@query` token with `mentionText` (default `@label `,
+  trailing space) and fires `onMention` with the option.
+
+## Accessibility
+
+- The control exposes `role="textbox"`, `aria-multiline`, and
+  `aria-autocomplete="list"`; while open it sets `aria-expanded`,
+  `aria-controls` → the listbox, and `aria-activedescendant` → the highlighted
+  option.
+- Options are `role="option"` with `aria-selected` on the active one; the list is
+  a labelled `role="listbox"`.
+- The label is associated to the control via `htmlFor` / `id`.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `border-border-strong` → `border-primary` + `ring-accent-soft` | Resting outline → focus. |
+| `bg-surface-2` / `bg-surface` | Field surface (resting / focus). |
+| `bg-popover` / `text-popover-foreground` / `ring-border-strong` / `shadow-elevated` | Suggestion surface. |
+| `bg-accent` / `text-accent-foreground` | Highlighted option. |
+| `text-foreground` / `text-muted-foreground` | Label + option text / description. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `options` | `MentionOption[]` | — | Mentionable entities (required). |
+| `value` | `string` | — | Controlled text value. |
+| `defaultValue` | `string` | `""` | Initial value (uncontrolled). |
+| `onValueChange` | `(value: string) => void` | — | Fires on every text change. |
+| `onMention` | `(option: MentionOption) => void` | — | Fires when a mention completes. |
+| `label` | `ReactNode` | — | Visible label. |
+| `trigger` | `string` | `"@"` | Character that opens the list. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Control scale. |
+| `filter` | `(o, query) => boolean` | label/id contains | Match predicate. |
+| `mentionText` | `(o, trigger) => string` | `` `@label ` `` | Inserted mention text. |
+| `emptyMessage` | `ReactNode` | `"No matches"` | Shown when nothing matches. |
+| `rows` | `number` | `3` | Visible textarea rows. |
+
+`MentionOption` = `{ id: string; label: string; description?: ReactNode }`.
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default**, **KeyboardNavigation**, **Sizes**, and **Disabled** stories.
+The control works in both themes and directions via the global toolbar.
