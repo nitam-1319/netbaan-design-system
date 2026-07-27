@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 16 / 207 reviewed  ·  library @ `79a74b1`
+**Progress:** 22 / 207 reviewed  ·  library @ `628dacb`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -27,48 +27,48 @@
 | `toggle` | ✅ | — | — | ✅ | ✅ | 4 | ◆ | 2 | clean | Clean; 6 stories axe-green (dark & light). Closed API verified. |
 | `radio` | ✅ | yes | ⏳ | — | ✅ | 4 | ◆ | 1 | clean | 7 stories axe-checked. QUEUED: `aria-readonly` invalid on `role=radio` (readonly state); description `text-faint` contrast. |
 | `select` | ✅ | yes | ✅ | ✅ | ✅ | 4 | ◆ | 1 | clean | FIXED: trigger `button-name` — combobox needs explicit name; added `aria-label` to trigger stories. 9 stories axe-green. |
-| `list` | ✅ | yes | ✅ | ✅ | ✅ | 3 |  | 5 | medium | FIXED: added dedicated `Disabled` story + a11y assert (missing-state-story cleared). 7 stories axe-green (dark & light); RTL verified (icons/text mirror). Closed API. |
 | `avatar` | ✅ | — | — | ✅ | ✅ | 3 | ◆ | 0 | info | Clean; 7 stories axe-green. `text-white` on seeded fills passes AA (verified in browser). |
-| `chart-container` | ⬜ | — | — | — | — | 2 |  | 17 | clean | NOT audited: story title `Components/ChartContainer` → id `components-chartcontainer--*`, but harness resolves `components-chart-container--*` (name→id kebab mismatch) → visual/a11y gates can't target it. Code read: closed API, token-only palette — looks clean. Needs harness title-alignment before browser gates. |
-| `chart-legend` | ⬜ | — | — | — | — | 2 |  | 8 | clean | NOT audited: same name→id mismatch as chart-container (`components-chartlegend--*`). Code read: closed API, token swatch via internal CSS var, label carries meaning (WCAG 1.4.1) — looks clean. Needs harness title-alignment before browser gates. |
+| `chart-container` | ✅ | — | — | ✅ | ✅ | 2 |  | 17 | clean | Clean. Prior name→id kebab-mismatch note is STALE — `story-resolve.mjs` now resolves by kebab'd title segment, so `Components/ChartContainer`→`chart-container` targets fine (4 stories). 4 stories axe-green (dark & light); render/play 0 errors; closed API (`Omit<figure, className\|style>`), token-only chart palette, `role=group`+`aria-label`, `ChartPlot` `role=img`. RTL renders identically (charts don't mirror the plot — correct). |
+| `chart-legend` | ✅ | — | — | ✅ | ✅ | 2 |  | 8 | clean | Clean; resolves via kebab title (4 stories: shapes/orientation/sizes). 4 stories axe-green (dark & light); closed API (`Omit<ul, className\|style\|children>`), per-series colour via internal CSS var (not a consumer hatch), label text carries meaning (WCAG 1.4.1), `role=list`. |
 | `axis` | ✅ | — | — | ✅ | ✅ | 2 |  | 5 | clean | Clean; 4 stories axe-green (dark & light). Token strokes (`stroke-border`, `fill-muted-foreground`); SVG `aria-hidden` (plot carries the accessible name). Closed API. |
 | `card` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 5 | clean | Own code clean (closed API, token surfaces, beam/elevated/interactive render correctly dark+light+RTL). Only axe hit is INHERITED queued Badge soft-tone (warning `text` #ecb22e on soft #fcf4e2 = 1.74 light) in `WithActionAndFooter` — see badge queue. QUEUED: `beam` variant ignores `interactive` prop (no hover-lift/glow). |
 | `dialog` | ✅ | yes | ✅ | ✅ | ✅ | 2 |  | 5 | clean | FIXED: RTL logical props — close button `right-4`→`end-4`, header `pr-8`→`pe-8`, `text-left`→`text-start` (physical dirs don't mirror in Persian; RTL rules mandate logical). Own code otherwise clean/closed-API. Only axe hit is INHERITED queued `destructive` Button (white-on-#e5484d 3.91) in `Destructive` story — see button queue. |
+| `list` | ✅ | yes | ✅ | ✅ | ✅ | 3 |  | 5 | medium | FIXED: added dedicated `Disabled` story + a11y assert (missing-state-story cleared). 7 stories axe-green (dark & light); RTL verified (icons/text mirror). Closed API. |
 | `progress` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 5 | clean | Own code clean (closed API, token tones success/warning/critical, indeterminate anim, Base UI progressbar). Only axe hit is INHERITED queued `--text-faint` (#6e6880 3.74 both themes) on `ProgressValue` in `WithLabelAndValue` — SAME token as checkbox/radio (recurring 3×, systemic; escalated in PR). |
-| `bar-chart` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
-| `severity-badge` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
-| `password-input` | ⬜ | — | — | — | — | 2 |  | 2 | medium |  |
-| `skeleton` | ✅ | — | — | ✅ | ✅ | 2 |  | 2 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"skeleton"` via Base UI `useRender` props-object; regex only matches JSX `data-slot=`). 2 stories axe-green (dark & light); `aria-hidden` pulse; token bg. Closed API. |
+| `password-input` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 2 | medium | Own code clean/closed-API (`Omit<input, className\|style\|size\|type>`), token shell (border-strong / accent focus ring / destructive invalid), reveal toggle `aria-pressed`, label+desc+error associated. Triage `missing-state-story:invalid` was a FALSE POSITIVE — invalid derives from `error`, covered by the `Error` story (added `aria-invalid`+`aria-describedby` play assert). QUEUED: `Error` message ink `text-destructive` #e5484d on light bg = 3.62<4.5 AA — systemic `--destructive` tone (same family as queued button ink); registered in known-issues.json, foundation fix deferred. |
 | `animate-presence` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
-| `area-chart` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
-| `cve-reference-chip` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
-| `dropzone` | ✅ | yes | ✅ | ✅ | ✅ | 2 |  | 1 | medium | FIXED: added `Required` story + play assert (missing-state-story cleared). Own code clean/closed-API; 10 stories, 0 render/play errors; RTL-Persian story correct. Only axe hits are the INHERITED queued `--text-faint` (#6e6880 3.27–3.53) on the `hint` across all stories — see systemic note. |
-| `kbd` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"kbd"` via `useRender` props-object). 4 stories axe-green (sizes/chord/in-text); token chip + bottom-edge; small-caps; closed API. |
-| `inline-edit` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
-| `lightbox` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage closed-api was a FALSE POSITIVE (pure composite — bespoke prop type, no primitive spread, no className/style accepted). 4 stories axe-green. Code-verified RTL (logical `start`/`end` + `rtl:rotate-180` chevrons), focus trap (Base UI Dialog), `aria-live` position, required `alt`. NOTE: visual montage can't stitch (portal + media `networkidle` timeout) — verified via in-browser a11y + code, not screenshot. |
-| `otp-input` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
+| `otp-input` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 1 | medium | Own code clean/closed-API, Base UI `OTPField`, per-slot `aria-label`, group `aria-invalid`+`aria-describedby`, token slot variants. Triage `missing-state-story:invalid` was a FALSE POSITIVE — invalid derives from `error`, covered by the `Error` story (added group `aria-invalid`+`aria-describedby` play assert). QUEUED: same systemic `Error` ink #e5484d/light 3.62<4.5 as password-input — see known-issues.json. |
 | `color-picker` | ⬜ | — | — | — | — | 2 |  | 0 | high |  |
 | `empty-state` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
 | `popover` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
 | `radial-gauge` | ⬜ | — | — | — | — | 1 |  | 4 | clean |  |
+| `bar-chart` | ✅ | — | — | ✅ | ✅ | 2 |  | 3 | medium | Clean; config-driven column chart on the chart foundation (ChartContainer/Plot/Axis/Legend). 4 stories (grouped/stacked/single/formatted-axis) axe-green (dark & light); render/play 0 errors; closed API (bespoke prop type, no className/style, no primitive spread), token-only palette via `seriesByKey`, `data-slot` marks. Grouped/stacked geometry + zero-baseline verified in the montage. |
 | `copy-to-clipboard` | ⬜ | — | — | — | — | 1 |  | 3 | clean |  |
+| `severity-badge` | ⬜ | — | — | — | — | 2 |  | 3 | medium |  |
 | `text-field` | ⬜ | — | — | — | — | 1 |  | 3 | clean |  |
 | `alert` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
 | `combobox` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
 | `form-field` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
 | `form-provider` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
+| `skeleton` | ✅ | — | — | ✅ | ✅ | 2 |  | 2 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"skeleton"` via Base UI `useRender` props-object; regex only matches JSX `data-slot=`). 2 stories axe-green (dark & light); `aria-hidden` pulse; token bg. Closed API. |
 | `spinner` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
 | `sso-provider-buttons` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
 | `stat-tile` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
 | `accordion` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `area-chart` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; config-driven area chart on the chart foundation, 3 stack modes (overlap/stacked/expand). 6 stories axe-green (dark & light); render/play 0 errors; closed API (bespoke prop type, no className/style), token-only palette + `var(--color-background)` dot fill, `data-slot` marks. Overlap translucency / stacked opacity / expand→100% normalisation verified in the montage. |
 | `bottom-sheet` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `code-block` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `cve-reference-chip` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
 | `drawer` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `dropzone` | ✅ | yes | ✅ | ✅ | ✅ | 2 |  | 1 | medium | FIXED: added `Required` story + play assert (missing-state-story cleared). Own code clean/closed-API; 10 stories, 0 render/play errors; RTL-Persian story correct. Only axe hits are the INHERITED queued `--text-faint` (#6e6880 3.27–3.53) on the `hint` across all stories — see systemic note. |
 | `error-state` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `fade-slide-scale` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `file-card` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `file-list` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `geo-choropleth-map` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `inline-edit` | ⬜ | — | — | — | — | 2 |  | 1 | medium |  |
+| `kbd` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"kbd"` via `useRender` props-object). 4 stories axe-green (sizes/chord/in-text); token chip + bottom-edge; small-caps; closed API. |
+| `lightbox` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage closed-api was a FALSE POSITIVE (pure composite — bespoke prop type, no primitive spread, no className/style accepted). 4 stories axe-green. Code-verified RTL (logical `start`/`end` + `rtl:rotate-180` chevrons), focus trap (Base UI Dialog), `aria-live` position, required `alt`. NOTE: visual montage can't stitch (portal + media `networkidle` timeout) — verified via in-browser a11y + code, not screenshot. |
 | `menu` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `password-strength-meter` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `scroll-reveal` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
@@ -81,57 +81,28 @@
 | `tree-view` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `action-sheet` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `api-key-manager` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `aspect-ratio` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `asset-row` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `bottom-navigation` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `box` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `bubble-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `click-outside` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `column-filter` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `column-visibility` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `command-palette` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `container` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `currency-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `date-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `date-range-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `device-session-list` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `donut-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `editable-cell` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `error-boundary` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `field-array` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `field-label` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `file-uploader` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `floating-action-button` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `focus-trap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `folder-tree` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `funnel-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `grade-ring-a-f` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `grid` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `grouped-stacked-bar` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `heatmap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `helper-text` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `input-group` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `landmark-regions` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `line-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `login-form` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `model-selector` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `multi-select` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `notification-center` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `number-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `pie-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `portal` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `priority-action-item` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `radar-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `reduced-motion` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `role-permission-selector` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `row-selection` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `scatter-plot` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `search-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `session-timeout-modal` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `sign-up-form` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `skeleton-templates` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `spacer` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `stack` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `stacked-area-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `swipe-actions` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `switch` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
@@ -139,15 +110,16 @@
 | `theme-toggle` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `time-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `toast` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `treemap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `validation-message` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `visually-hidden` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `app-shell` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `aspect-ratio` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `attachment-chip` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `attack-surface-widget` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `avatar-group` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `beam-glow` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `box` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `breadcrumb` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `bubble-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `bulk-actions-bar` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `callout` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `carousel` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
@@ -155,33 +127,50 @@
 | `checkbox-group` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `choice-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `citation-source-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `click-outside` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `collapse` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `column-sort` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `confirm-dialog` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `consent-banner` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `container` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `context-menu` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `conversation-thread` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `count-up-ticker` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `data-table` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `date-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `date-range-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `description-list` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `diff-viewer` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `divider` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `donut-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `editable-cell` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `expandable-rows` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `field-label` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `fieldset` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `file-preview` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `file-uploader` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `finding-vulnerability-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `first-run-onboarding` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `focus-trap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `form-actions` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `form-section` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `funnel-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `gantt-chart` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `grade-ring-a-f` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `grid` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `heatmap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `helper-text` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `hosts-by-country-map` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `hover-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `image-cropper` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `keyboard-shortcut` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `landmark-regions` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `lazy-loader` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `line-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `live-region` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `loading-overlay` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `locale-rtl-switcher` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `login-form` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `marquee` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `masonry` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `masthead` | ⬜ | — | — | — | — | 0 |  | 0 | info |  |
@@ -194,25 +183,34 @@
 | `network-graph` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `no-results` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `pagination` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `pie-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `posture-score-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `print-view` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `prompt-composer` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `pull-to-refresh` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `radar-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `rating` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `reasoning-trace` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `remediation-velocity` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `resizable-panels` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `response-feedback` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `rich-text-editor` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `role-permission-selector` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `sankey-diagram` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `scan-coverage-gauge` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `scatter-plot` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `scroll-area` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `scrollspy-nav` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `segmented-control` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `session-timeout-modal` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `sidebar` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `sign-up-form` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `skeleton-templates` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `skip-to-content` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `slider` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `spacer` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `ssl-cert-expiry-widget` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `stack` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `stagger-container` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `status-indicator` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `status-pill` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
@@ -223,8 +221,10 @@
 | `timeline` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `tool-call-block` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `tooltip` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `treemap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `two-factor-verification` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `typing-indicator` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `upload-progress` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `usage-token-meter` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `virtualized-grid` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `visually-hidden` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
