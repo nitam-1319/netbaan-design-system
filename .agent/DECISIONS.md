@@ -748,3 +748,27 @@ caret/interaction), Virtualized Grid (#141, DOM measurement), Image Cropper (#16
 browser-interaction-heavy — and Geo/Choropleth Map (#85) + Hosts-by-Country Map (#217), which need
 geo/topojson DATA this sandbox doesn't bundle. Foundations (#1–9, 11, 190, 193) remain CSS-token
 concerns, not tsx components.
+
+## 2026-07-27b — Geo / Choropleth Map ships as a static region-path renderer (same de-risking as Network Graph)
+Status: accepted
+Decision: `geo-choropleth-map.tsx` (roadmap #85, Advanced/Data Visualization, dep Chart Container) ships
+as a deterministic token-only static choropleth. The caller supplies each region's already-projected SVG
+path (`d`) + `value`; the component owns the sequential value→shade mapping (single-hue `--primary` at
+stepped opacity across `steps` buckets, darker = larger), the neutral `muted` "no data" treatment, an
+aria-hidden legend (opacity swatch + range), per-region `<title>` (label + value), and `background`
+separators. Closed API; machine gates green; added to Built list as PARTIAL (runner axes
+HUMAN_VERIFY_REQUIRED).
+Reason: 2026-07-26d deferred #85 (and #217 Hosts-by-Country) as "need geo/topojson DATA." That data
+dependency is the PROJECTION step (lon/lat → screen path) plus a bundled topology — not the choropleth
+render itself. Moving projection to the caller (they run d3-geo/topojson upstream and pass path strings)
+removes the sandbox-blocking dependency, leaving a fully headless-verifiable renderer — the same
+"caller owns the non-deterministic/data part" move accepted for Network Graph (2026-07-27) and the
+static chart renderers. Single-hue opacity ramp (not the categorical 5-slot chart palette) is used
+because a choropleth encodes ONE ordered magnitude; opacity over `--primary` keeps it token-only with no
+per-instance colour hack.
+Impact: `GeoChoroplethMap` is available for region-value maps. Hosts-by-Country Map (#217) remains
+deferred as a component ONLY because it additionally implies a bundled world-country topology; a consumer
+can already build it today by passing country paths to `GeoChoroplethMap`. A follow-up could add an
+optional bundled projection/topology as an additive, data-carrying layer. Still genuinely blocked in this
+sandbox (browser-interaction-heavy): Rich Text Editor (#53), Mention Input (#54), Virtualized Grid (#141),
+Image Cropper (#161). Foundations (#1–9, 11, 190, 193) remain CSS-token concerns, not tsx components.

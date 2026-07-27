@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/GeoChoroplethMap/Guidelines" />
+
+# Geo / Choropleth Map
+
+Geographic regions shaded by a value. Ideal for "value per country / state /
+territory" views — traffic by region, hosts by country, incidents by area.
+
+## Overview
+
+Supply each region's already-projected SVG path (`d`) and its `value`. The
+component maps values onto a single-hue sequential ramp (the `--primary` token
+at stepped opacity — darker = larger), marks regions without a value as "no
+data", and draws a matching legend. There is **no projection and no bundled
+topology**: run your projection (d3-geo / topojson, etc.) upstream and pass the
+resulting path strings, just as `NetworkGraph` takes caller-supplied node
+coordinates. Because everything is deterministic, it renders identically
+headless.
+
+## Usage
+
+- **Do** pass a `viewBox` that matches the coordinate space of your paths.
+- **Do** give every region a `label`; it drives the region's `<title>`.
+- **Do** omit `value` for regions with no data — they render in the neutral
+  `muted` token rather than a misleading shade.
+- **Do** pair the map with a table for a full, accessible account of values.
+- **Don't** expect projection, zoom/pan, or hover highlighting — this is a
+  static renderer.
+- **Don't** pass `className` / `style`; the API is closed.
+
+## Anatomy
+
+A `geo-choropleth-map` `<figure>` (`role="group"`, labelled) wrapping a
+`role="img"` `<svg>` whose `geo-choropleth-regions` group holds one
+`geo-choropleth-region` `<path>` per region (each with a `<title>`), followed by
+an optional `geo-choropleth-legend` `<figcaption>` of
+`geo-choropleth-legend-item` swatch + range entries.
+
+## Variants
+
+- `steps` — number of shade buckets (default `5`).
+- `showLegend` — toggle the legend beneath the map.
+- `viewBox` — coordinate space of the supplied paths.
+
+## States
+
+Static and deterministic — the same regions always render the same map; there is
+no internal state.
+
+## Behavior
+
+- Values are bucketed across `steps` equal intervals of the data domain
+  (`min`→`max`); each bucket maps to a fixed opacity of the `--primary` hue.
+- A flat domain (all values equal) or a single step collapses to the top shade.
+- Regions with a non-finite/absent `value` are drawn in the `muted` token and
+  flagged `data-nodata`.
+
+## Accessibility
+
+- The `<svg>` is a labelled `role="img"`; the `<figure>` is a labelled group.
+- Each region carries a `<title>` (label + value) for pointer / assistive-tech
+  discovery; shade is never the only signal — the legend gives ranges and a
+  table alternative is recommended for exact values.
+- The legend is an `aria-hidden` reading aid mirrored by the region titles.
+
+## Design tokens
+
+The sequential ramp is the `--primary` brand token at stepped opacity; "no
+data" uses `muted`; region separators use `background`; legend text uses
+`muted-foreground`. No hard-coded colour or shadow.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name (required). |
+| `regions` | `ChoroplethRegion[]` | — | `{ id, label?, d, value? }` (required). |
+| `viewBox` | `string` | `"0 0 960 600"` | Coordinate space of the paths. |
+| `steps` | `number` | `5` | Number of shade buckets. |
+| `showLegend` | `boolean` | `true` | Render the legend beneath the map. |
+| `formatValue` | `(value: number) => string` | short number | Legend value formatter. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Default** (a synthetic region grid with values, a "no data" region, and a
+five-bucket legend, with a play test asserting one path per region) and
+**NoLegend**. Works in both themes.
