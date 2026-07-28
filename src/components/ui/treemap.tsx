@@ -114,6 +114,7 @@ function TreemapTiles({
             key={p.id}
             data-slot="treemap-tile"
             data-tile={p.id}
+            role="img"
             aria-label={`${p.label}: ${valueFormat(p.value)}`}
             className={cn(
               "absolute flex flex-col justify-end overflow-hidden rounded-md p-2",
