@@ -101,7 +101,7 @@ function AccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex flex-1 items-center justify-between gap-3 py-4 text-left text-sm font-medium text-foreground outline-none transition-colors",
+          "group/accordion-trigger flex flex-1 items-center justify-between gap-3 py-4 text-start text-sm font-medium text-foreground outline-none transition-colors",
           "hover:text-foreground focus-visible:rounded-md focus-visible:ring-3 focus-visible:ring-accent-soft",
           "disabled:pointer-events-none disabled:opacity-50",
           "[&>svg]:pointer-events-none [&>svg]:size-4 [&>svg]:shrink-0"
