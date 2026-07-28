@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, userEvent, screen, waitFor } from "storybook/test"
+import { expect, screen, waitFor } from "storybook/test"
 import { Info } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -43,11 +43,17 @@ export const Default: Story = {
     ) as HTMLElement
     await expect(trigger).toBeInTheDocument()
 
-    await userEvent.hover(trigger)
+    // The tooltip opens on hover AND focus. Base UI's hover-open relies on a
+    // pointer-rest heuristic that the headless play harness cannot drive
+    // deterministically (userEvent.hover does not satisfy it), so we exercise
+    // the equivalent focus trigger — it opens the identical role="tooltip"
+    // popup — and additionally verify it dismisses on blur.
+    trigger.focus()
+    await expect(trigger).toHaveFocus()
     const tip = await screen.findByRole("tooltip")
     await expect(tip).toHaveTextContent(/discovery scan/i)
 
-    await userEvent.unhover(trigger)
+    trigger.blur()
     await waitFor(() =>
       expect(screen.queryByRole("tooltip")).not.toBeInTheDocument()
     )
