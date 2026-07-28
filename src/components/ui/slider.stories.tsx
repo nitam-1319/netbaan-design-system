@@ -53,9 +53,21 @@ export const Sizes: Story = {
   args: { showValue: false, label: undefined },
   render: () => (
     <div className="flex flex-col gap-8">
-      <Slider size="sm" defaultValue={30} />
-      <Slider size="md" defaultValue={50} />
-      <Slider size="lg" defaultValue={70} />
+      <Slider
+        size="sm"
+        defaultValue={30}
+        getAriaLabel={() => "Threshold (small)"}
+      />
+      <Slider
+        size="md"
+        defaultValue={50}
+        getAriaLabel={() => "Threshold (medium)"}
+      />
+      <Slider
+        size="lg"
+        defaultValue={70}
+        getAriaLabel={() => "Threshold (large)"}
+      />
     </div>
   ),
 }
@@ -92,7 +104,13 @@ export const Invalid: Story = {
 }
 
 export const Vertical: Story = {
-  args: { label: undefined, showValue: false, orientation: "vertical", defaultValue: 60 },
+  args: {
+    label: undefined,
+    showValue: false,
+    orientation: "vertical",
+    defaultValue: 60,
+    getAriaLabel: () => "Volume",
+  },
   render: (args) => (
     <div className="flex h-56 items-center justify-center">
       <Slider {...args} />
