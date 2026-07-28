@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 165 / 207 reviewed  ·  library @ `9f9a2f5`
+**Progress:** 168 / 207 reviewed  ·  library @ `9f9a2f5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -186,10 +186,10 @@
 | `pie-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix (stories). Axe green. QUEUED 4. |
 | `posture-score-card` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (component). Axe green. QUEUED 2. |
 | `print-view` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective issues; unchanged — review-verified this tranche. QUEUED 2. |
-| `prompt-composer` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `pull-to-refresh` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `prompt-composer` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; chat composer — auto-growing `field-sizing-content` textarea in the Input shell + AEGIS `Button` send, Enter-to-send / Shift+Enter newline (IME-guarded), optional leading slot + `count/max` counter. Closed API (`Omit<textarea, className\|style\|size\|value\|defaultValue\|onChange>`), token-only (surface-2/border-strong shell, accent focus-within ring, destructive-ink over-count), `role=group`+`aria-label`, input `aria-describedby` counter. 6 stories, 0 render/play errors, 0 NEW a11y. Montage (dark+light, en+fa) confirms default/newline/attach+count/streaming/disabled/sizes. |
+| `pull-to-refresh` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; mobile pull-gesture wrapper (pointer events, resistance curve, chevron flips at threshold). Closed API (`Omit<div, className\|style\|children\|onScroll>`), token-only (muted-foreground indicator), status is TEXT (`role=status` — Pull/Release/Refreshing…), never colour-alone; indicator `aria-hidden` until pulled. 2 stories, 0 render/play errors, 0 NEW a11y. Gesture states verified from code + play (pointer-driven; not montageable, vertical gesture needs no RTL mirroring). |
 | `radar-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `rating` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `rating` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; interactive rating is a genuine `role=radiogroup` of sr-only native radios behind star labels (native arrow/Home/End keyboard nav, focus, form submit), read-only renders one `role=img` "N out of M stars". Closed API (`Omit<div, className\|style\|defaultValue\|onChange\|children>`), token-only (fill-warning/text-warning-ink filled, muted-foreground/40 empty), hover preview, `peer-focus-visible` accent ring, disabled dim. 5 stories, 0 render/play errors, 0 NEW a11y. Montage (dark+light) confirms filled/empty/focus/read-only/disabled/ten-stars/sizes; empty-star outline stays visible on light. |
 | `reasoning-trace` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `remediation-velocity` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `resizable-panels` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
