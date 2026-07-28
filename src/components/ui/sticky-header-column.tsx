@@ -29,7 +29,13 @@ function StickyTable({ maxHeight = 360, ...props }: StickyTableProps) {
   return (
     <div
       data-slot="sticky-table-container"
-      className={cn("relative w-full overflow-auto rounded-lg border border-border")}
+      // The scroll region holds a non-focusable table, so make it focusable for
+      // keyboard scroll access (scrollable-region-focusable).
+      tabIndex={0}
+      className={cn(
+        "relative w-full overflow-auto rounded-lg border border-border",
+        "outline-none focus-visible:ring-3 focus-visible:ring-accent-soft"
+      )}
       style={{ maxHeight }}
     >
       <table
