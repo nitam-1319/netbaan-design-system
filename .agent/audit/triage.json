@@ -1,11 +1,11 @@
 {
   "scanned": 207,
-  "withFindings": 40,
+  "withFindings": 30,
   "bySeverity": {
     "high": 1,
-    "medium": 36,
+    "medium": 26,
     "low": 0,
-    "info": 8
+    "info": 5
   },
   "components": [
     {
@@ -81,15 +81,9 @@
     },
     {
       "name": "asset-row",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "attachment-chip",
@@ -153,18 +147,13 @@
     },
     {
       "name": "bottom-navigation",
-      "severity": "medium",
-      "count": 2,
+      "severity": "info",
+      "count": 1,
       "findings": [
         {
           "severity": "info",
           "check": "hardcoded-color",
           "detail": "bwUtil: text-white"
-        },
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
         }
       ]
     },
@@ -200,15 +189,9 @@
     },
     {
       "name": "button",
-      "severity": "info",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "info",
-          "check": "hardcoded-color",
-          "detail": "bwUtil: text-white"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "callout",
@@ -326,17 +309,12 @@
     {
       "name": "column-visibility",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
         {
           "severity": "medium",
           "check": "closed-api",
           "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
-        },
-        {
-          "severity": "medium",
-          "check": "no-data-slot",
-          "detail": "no data-slot attribute set (styling/anchor hook + test selector missing)"
         }
       ]
     },
@@ -348,15 +326,9 @@
     },
     {
       "name": "command-palette",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "confirm-dialog",
@@ -403,17 +375,12 @@
     {
       "name": "currency-input",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
         {
           "severity": "medium",
           "check": "missing-state-story",
           "detail": "`invalid` prop exists but no story exercises it"
-        },
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`required` prop exists but no story exercises it"
         }
       ]
     },
@@ -539,15 +506,9 @@
     },
     {
       "name": "field-array",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "field-label",
@@ -599,20 +560,9 @@
     },
     {
       "name": "floating-action-button",
-      "severity": "medium",
-      "count": 2,
-      "findings": [
-        {
-          "severity": "info",
-          "check": "hardcoded-color",
-          "detail": "bwUtil: text-white"
-        },
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "focus-trap",
@@ -622,15 +572,9 @@
     },
     {
       "name": "folder-tree",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "form-actions",
@@ -1119,15 +1063,9 @@
     },
     {
       "name": "row-selection",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "sankey-diagram",
@@ -1329,20 +1267,9 @@
     },
     {
       "name": "swipe-actions",
-      "severity": "medium",
-      "count": 2,
-      "findings": [
-        {
-          "severity": "info",
-          "check": "hardcoded-color",
-          "detail": "bwUtil: text-white"
-        },
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "switch",
@@ -1382,17 +1309,12 @@
     {
       "name": "tag-input",
       "severity": "medium",
-      "count": 2,
+      "count": 1,
       "findings": [
         {
           "severity": "medium",
           "check": "missing-state-story",
           "detail": "`invalid` prop exists but no story exercises it"
-        },
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`required` prop exists but no story exercises it"
         }
       ]
     },
@@ -1410,15 +1332,9 @@
     },
     {
       "name": "theme-toggle",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "missing-state-story",
-          "detail": "`disabled` prop exists but no story exercises it"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "time-picker",
@@ -1440,15 +1356,9 @@
     },
     {
       "name": "toast",
-      "severity": "medium",
-      "count": 1,
-      "findings": [
-        {
-          "severity": "medium",
-          "check": "closed-api",
-          "detail": "extends DOM/primitive props without `Omit<… \"className\" | \"style\">` — verify the public API is closed"
-        }
-      ]
+      "severity": "clean",
+      "count": 0,
+      "findings": []
     },
     {
       "name": "toggle",
