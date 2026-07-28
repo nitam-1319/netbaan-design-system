@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 183 / 207 reviewed  ·  library @ `d3f05fd`
+**Progress:** 185 / 207 reviewed  ·  library @ `fe8a9e5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -199,7 +199,7 @@
 | `scroll-area` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; overlay-scrollbar container on Base UI ScrollArea (native physics/keyboard preserved). Closed API (`Omit<Root, className\|style>`), token thumb (`bg-border-strong` → `muted-foreground/60` hover), `data-slot` on every part, viewport focus-visible accent ring, overscroll-contain. 3 stories axe-green (dark & light), 0 render/play errors. |
 | `scrollspy-nav` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; "on this page" rail — IntersectionObserver-driven active section + `aria-current="location"` on the active link, anchor `href` fallback, smooth scroll. Closed API (`Omit<nav, className\|style\|children>`), token-only, logical `border-s-2`/`ps-3` (RTL-safe), focus-visible accent ring. 2 stories axe-green (dark & light), 0 render/play errors. |
 | `segmented-control` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; single-select segments on Base UI ToggleGroup (roving focus, arrow-key nav, pressed coordination). Enforces "exactly one selected" (ignores deselect-to-empty). Closed API (`Omit<ToggleGroup, className\|style\|value\|defaultValue\|onValueChange\|multiple>` + `VariantProps`), token-only (surface-2/3 track, glass-panel active lift), size scale, icon-only `aria-label`, focus-visible accent ring. 7 stories axe-green (dark & light), 0 render/play errors. |
-| `session-timeout-modal` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `session-timeout-modal` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 0 | clean | FIXED: header row `text-left` → `text-start` (physical→logical; RTL_I18N lint warning cleared — title/description now mirror in Persian). Own code otherwise clean — composes Dialog (focus trap/ARIA) + Button + Progress; per-second countdown shown as text (`aria-live=polite`) AND a token-toned draining progressbar (urgency never colour-only); tone escalates default→warning→critical. Closed API (bespoke prop type, no className/style). 3 stories axe-green (dark & light), 0 render/play errors; Dialog is portaled (montage doesn't stitch, as with dialog/drawer) — verified via in-browser a11y + code. |
 | `sidebar` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `sign-up-form` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `skeleton-templates` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
@@ -214,13 +214,13 @@
 | `sticky-header-column` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `suggestion-chips` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `swipe-actions` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 5 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. Delivery gate caught a react-hooks/refs error (RTL direction ref read during render) — FIXED by lifting direction into state. |
-| `tabs` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `tabs` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; Base UI Tabs (roving tabindex, `role=tablist/tab/tabpanel`, sliding `TabsIndicator`). Closed API on every part (`Omit<…, className\|style>`), token pill track (surface-2 track / surface-3+glass-panel active), focus-visible accent ring, disabled dim. 3 stories axe-green (dark & light), 0 render/play errors. RTL VERIFIED via montage — the indicator tracks the active tab correctly in Persian. NOTE: the `left-0` on `TabsIndicator` (RTL_I18N lint warning) is an intentional, RTL-safe exemption: it pairs with Base UI's physically-*measured* `--active-tab-left` var + a physical `translate-x`, so logical `start-0` would misplace it (same justified-physical pattern as `select`). |
 | `textarea` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `theme-toggle` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 5 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
 | `timeline` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `toast` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
 | `tool-call-block` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `tooltip` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `tooltip` | ⬜ | yes | — | — | — | 0 |  | 0 | clean | NOT DELIVERED — code reviewed (closed API on all parts, `role=tooltip`, token popover surface + arrow; arrow `data-[side=left]:right/…:left` is justified-physical, keyed on Base UI's physical `data-side` — RTL-safe). BLOCKER on Tests: the `Default` play (`userEvent.hover` → `findByRole("tooltip")`) fails **consistently** in the headless harness ("Unable to find role=tooltip"), while `KeyboardFocus` (focus-open) passes — i.e. the component works, but hover-intent can't be driven reliably by `userEvent.hover` against Base UI's pointer-rest logic. Deferred rather than masked: needs a deterministic hover-open in the play (pointer-sequence) or a documented harness exemption — HUMAN_VERIFY_REQUIRED. Left ⬜ so it is re-picked next run. |
 | `treemap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `two-factor-verification` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `typing-indicator` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
