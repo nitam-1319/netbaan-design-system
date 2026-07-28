@@ -129,6 +129,13 @@
       "fg": "#e7585d",
       "note": "Alert destructive AlertDescription (opacity-90 dim of --destructive) on light tint = 2.89. Same --destructive tone-on-tint family. Foundation --on-tone decision.",
       "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "stat-tile delta destructive ink on card (light)",
+      "fg": "#e5484d",
+      "bg": "#ffffff",
+      "note": "StatTileDelta negative sentiment: text-destructive on the card surface (#ffffff light) = 3.91 < 4.5 AA. Same --destructive tone family already queued (button ink, message ink, alert tint). Delta meaning is also carried by the arrow glyph + sr-only trend label (not colour-alone), so this is the systemic ink-contrast issue, not a 1.4.1 failure. Foundation --on-tone decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 9"
     }
   ]
 }

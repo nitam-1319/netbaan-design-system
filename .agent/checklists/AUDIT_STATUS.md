@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 37 / 207 reviewed  ·  library @ `3f75a0e`
+**Progress:** 40 / 207 reviewed  ·  library @ `9f9a2f5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -52,9 +52,9 @@
 | `form-provider` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 2 | clean | Own code clean — native `<form>` coordinating root (`FormProvider`) + `FormActions` row; consolidates `validationMode`, threads server/action `errors` by field `name`, typed `onFormSubmit`. Closed API (`Omit<Form.Props, className\|style>`), token vertical rhythm; layout deferred to Box/Stack. 2 stories, 0 render/play errors. Only axe hit is the INHERITED queued destructive message ink on the `ServerErrors` story — see known-issues.json. |
 | `skeleton` | ✅ | — | — | ✅ | ✅ | 2 |  | 2 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"skeleton"` via Base UI `useRender` props-object; regex only matches JSX `data-slot=`). 2 stories axe-green (dark & light); `aria-hidden` pulse; token bg. Closed API. |
 | `spinner` | ✅ | — | — | ✅ | ✅ | 1 |  | 2 | clean | Clean; `role=status` live region + `sr-only` label (announced, not colour-alone), `LoaderCircle` glyph `aria-hidden` under `animate-spin`. Token tones (muted-foreground / primary / current), xs–xl size scale. Closed API (`Omit<span, className\|style>`). 4 stories axe-green (dark & light), 0 render/play errors. |
-| `sso-provider-buttons` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
-| `stat-tile` | ⬜ | — | — | — | — | 1 |  | 2 | clean |  |
-| `accordion` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `sso-provider-buttons` | ✅ | — | — | ✅ | ✅ | 1 |  | 2 | clean | Clean; `SSOProviderButton` + stacked `SSOProviderButtons`, built on the AEGIS Button primitive + shared `buttonVariants` (tokens/focus/states identical). 9 stories axe-green (dark & light), 0 render/play errors. Closed API (`Omit<Button, className\|style\|children>` + semantic variant/size/fullWidth/orientation), monochrome `currentColor` provider marks (no brand-hex), marks `aria-hidden` + text label (never icon-alone), `role=group`+`aria-label`. |
+| `stat-tile` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 2 | clean | Own code clean/closed-API on all 9 slot parts (`Omit<…, className\|style>`), token-driven (`glass-panel` card / muted-foreground / success·destructive delta), size context, `role=group`. Delta meaning carried by arrow glyph + `sr-only` trend label + `data-trend`/`data-sentiment` (never colour-alone → WCAG 1.4.1 OK); explicit `sentiment` decouples direction from good/bad (rising error rate = up+negative). 5 stories, 0 render/play errors; montage confirms tiles/sizes/delta/sparkline/dashboard-grid dark+light. QUEUED: delta ink contrast on the card — success #2fb680 2.58 (batch-7 signature) + destructive #e5484d/#ffffff 3.91 (registered this run) — systemic `--on-tone` foundation family, do NOT patch per component. |
+| `accordion` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 1 | clean | FIXED: trigger `text-left`→`text-start` (physical→logical, RTL_I18N lint warning cleared; RTL montage confirms triggers mirror — icon+label to the end, chevron to the start). Own code otherwise clean/closed-API on all parts (`Omit<Accordion.*, className\|style>`), token-driven (3 variants: default hairline / separated / bordered), Base UI keyboard+ARIA, chevron rotate on open, `--accordion-panel-height` height animation, focus-visible accent ring, disabled dim. 6 stories axe-green (dark & light), 0 render/play errors. |
 | `area-chart` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; config-driven area chart on the chart foundation, 3 stack modes (overlap/stacked/expand). 6 stories axe-green (dark & light); render/play 0 errors; closed API (bespoke prop type, no className/style), token-only palette + `var(--color-background)` dot fill, `data-slot` marks. Overlap translucency / stacked opacity / expand→100% normalisation verified in the montage. |
 | `bottom-sheet` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
 | `code-block` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
