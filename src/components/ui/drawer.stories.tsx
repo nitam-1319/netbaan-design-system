@@ -103,6 +103,26 @@ export const BottomSheet: Story = {
   ),
 }
 
+export const TopSheet: Story = {
+  render: () => (
+    <Drawer>
+      <DrawerTrigger render={<Button variant="outline">Announcements</Button>} />
+      <DrawerContent side="top" size="sm">
+        <DrawerHeader>
+          <DrawerTitle>System notice</DrawerTitle>
+          <DrawerDescription>
+            A banner-style panel that slides in from the top edge.
+          </DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter>
+          <DrawerClose render={<Button variant="ghost">Dismiss</Button>} />
+          <DrawerClose render={<Button>Acknowledge</Button>} />
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  ),
+}
+
 export const LargeDetail: Story = {
   render: () => (
     <Drawer>

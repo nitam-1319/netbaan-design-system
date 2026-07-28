@@ -132,7 +132,7 @@ function ColumnFilter({
               className={cn(
                 "h-9 w-full rounded-lg border border-border-strong bg-surface-2 px-3 text-sm text-foreground outline-none transition-[color,box-shadow,border-color]",
                 "placeholder:text-muted-foreground hover:border-accent-strong",
-                "focus-visible:border-accent-strong focus-visible:ring-3 focus-visible:ring-accent-soft"
+                "focus-visible:border-primary focus-visible:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-soft"
               )}
             />
           )}

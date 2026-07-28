@@ -40,6 +40,8 @@ A `Dialog` holding a `data-slot="command-palette"` inline Combobox: a search inp
 - **Filtering** — typing narrows the list by label + keywords.
 - **Empty** — no match: `emptyMessage` is shown.
 - **Highlighted** — the active option (keyboard or pointer) is accented.
+- **Disabled item** — a command with `disabled` is dimmed, `aria-disabled`, skipped by
+  keyboard highlight, and never runs its `onSelect`.
 
 ## Behavior
 

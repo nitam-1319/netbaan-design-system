@@ -105,6 +105,7 @@ function CodeBlock({
 
       {!hasHeader && showCopy && (
         <div
+          dir="ltr"
           data-slot="code-block-copy"
           className={cn("absolute end-2 top-2 z-10")}
         >
@@ -113,6 +114,7 @@ function CodeBlock({
       )}
 
       <pre
+        dir="ltr"
         data-slot="code-block-pre"
         tabIndex={0}
         role="group"

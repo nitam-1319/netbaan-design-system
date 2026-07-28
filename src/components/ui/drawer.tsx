@@ -121,8 +121,8 @@ function DrawerContent({
             data-slot="drawer-close"
             aria-label="Close"
             className={cn(
-              "absolute top-4 right-4 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none",
-              "hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-accent-soft focus-visible:border-ring",
+              "absolute top-4 end-4 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none",
+              "hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-accent-soft",
               "[&>svg]:size-4"
             )}
           >

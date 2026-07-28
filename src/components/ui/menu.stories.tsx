@@ -80,12 +80,16 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const trigger = canvas.getByRole("button", { name: "Actions" })
-    await expect(trigger).toHaveAttribute("aria-expanded", "false")
+    // Base UI wires the menu-button relationship on the trigger.
+    await expect(trigger).toHaveAttribute("aria-haspopup", "menu")
     await userEvent.click(trigger)
     // Portalled content lands on document.body.
     const menu = await screen.findByRole("menu")
     await waitFor(() => expect(menu).toBeVisible())
-    await expect(trigger).toHaveAttribute("aria-expanded", "true")
+    // The open state is reflected back onto the trigger.
+    await waitFor(() =>
+      expect(trigger).toHaveAttribute("aria-expanded", "true")
+    )
     await expect(
       screen.getByRole("menuitem", { name: /Delete/ })
     ).toBeInTheDocument()

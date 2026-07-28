@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 40 / 207 reviewed  ·  library @ `9f9a2f5`
+**Progress:** 65 / 207 reviewed  ·  library @ `9f9a2f5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -56,36 +56,36 @@
 | `stat-tile` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 2 | clean | Own code clean/closed-API on all 9 slot parts (`Omit<…, className\|style>`), token-driven (`glass-panel` card / muted-foreground / success·destructive delta), size context, `role=group`. Delta meaning carried by arrow glyph + `sr-only` trend label + `data-trend`/`data-sentiment` (never colour-alone → WCAG 1.4.1 OK); explicit `sentiment` decouples direction from good/bad (rising error rate = up+negative). 5 stories, 0 render/play errors; montage confirms tiles/sizes/delta/sparkline/dashboard-grid dark+light. QUEUED: delta ink contrast on the card — success #2fb680 2.58 (batch-7 signature) + destructive #e5484d/#ffffff 3.91 (registered this run) — systemic `--on-tone` foundation family, do NOT patch per component. |
 | `accordion` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 1 | clean | FIXED: trigger `text-left`→`text-start` (physical→logical, RTL_I18N lint warning cleared; RTL montage confirms triggers mirror — icon+label to the end, chevron to the start). Own code otherwise clean/closed-API on all parts (`Omit<Accordion.*, className\|style>`), token-driven (3 variants: default hairline / separated / bordered), Base UI keyboard+ARIA, chevron rotate on open, `--accordion-panel-height` height animation, focus-visible accent ring, disabled dim. 6 stories axe-green (dark & light), 0 render/play errors. |
 | `area-chart` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; config-driven area chart on the chart foundation, 3 stack modes (overlap/stacked/expand). 6 stories axe-green (dark & light); render/play 0 errors; closed API (bespoke prop type, no className/style), token-only palette + `var(--color-background)` dot fill, `data-slot` marks. Overlap translucency / stacked opacity / expand→100% normalisation verified in the montage. |
-| `bottom-sheet` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `code-block` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `bottom-sheet` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 1 fix applied; 6 stories axe-green (dark+light), 0 render/play errors. 4 subjective item(s) QUEUED for human confirmation. |
+| `code-block` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 2 fixes applied; 7 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
 | `cve-reference-chip` | ✅ | yes | ⏳ | ✅ | ✅ | 2 |  | 1 | medium | Own code clean — thin `Badge` wrapper (`Omit<BadgeProps, tone\|count\|max\|dot\|icon\|children\|render>`, closed API, polymorphic `render` anchor to NVD, `rel=noreferrer` on `_blank`, mono ID carries meaning, `data-slot`+`data-cve`+`data-severity`). 6 stories, 0 errors. All axe hits INHERITED queued Badge tone-ink (soft/outline `--sev-*` + solid white-on-tone) — see known-issues.json. QUEUED (foundation --on-tone decision). |
-| `drawer` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `drawer` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 3 fixes applied (tsx + stories); 6 stories axe-green (dark+light), 0 errors. 3 subjective item(s) QUEUED. |
 | `dropzone` | ✅ | yes | ✅ | ✅ | ✅ | 2 |  | 1 | medium | FIXED: added `Required` story + play assert (missing-state-story cleared). Own code clean/closed-API; 10 stories, 0 render/play errors; RTL-Persian story correct. Only axe hits are the INHERITED queued `--text-faint` (#6e6880 3.27–3.53) on the `hint` across all stories — see systemic note. |
-| `error-state` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `fade-slide-scale` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `file-card` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `file-list` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `geo-choropleth-map` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
+| `error-state` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 1 fix applied; 5 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
+| `fade-slide-scale` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | No objective fixes needed; 2 stories axe-green (dark+light), 0 errors. 4 subjective item(s) QUEUED. |
+| `file-card` | ✅ | yes | ⏳ | — | ✅ | 1 |  | 1 | clean | 3 fixes applied (sr-only status label, `dir="auto"` name/meta, Success play assert); 13 stories, 0 render/play errors. QUEUED: destructive meta ink #e5484d→#fff 3.91 (light, shared stat-tile queue). `Disabled` story text contrast (2.47–4.04) is WCAG-exempt inactive-UI, pre-existing (not a regression). 2 subjective item(s) QUEUED. |
+| `file-list` | ✅ | yes | ⏳ | — | ✅ | 1 |  | 1 | clean | 2 fixes applied (+`Disabled` story + tsx); 10 stories, 0 render/play errors. QUEUED: inherited file-card destructive meta ink 3.91 (light). New `Disabled` story surfaces WCAG-exempt inactive-UI contrast (component disabled styling unchanged, +1 line). 2 subjective item(s) QUEUED. |
+| `geo-choropleth-map` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 1 fix applied (stories); 3 stories axe-green (dark+light), 0 errors. 3 subjective item(s) QUEUED. |
 | `inline-edit` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; read-as-text → edit-in-place composing `TextField`+`Button`. Closed API (bespoke prop type, no className/style), token-driven (foreground / muted-foreground / hover:bg-muted / ring-accent-soft), `data-slot`+`data-editing`+`data-empty`, `aria-label` on trigger + save/cancel, Enter commits / Escape cancels, autoFocus on edit. 5 stories, 0 render/play errors (Cancel-reverts flow asserted); montage shows resting value / italic empty placeholder / size scale / disabled dim. Pencil `text-text-faint` is a decorative `aria-hidden` icon (exempt). |
 | `kbd` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage no-data-slot was a FALSE POSITIVE (sets `"data-slot":"kbd"` via `useRender` props-object). 4 stories axe-green (sizes/chord/in-text); token chip + bottom-edge; small-caps; closed API. |
 | `lightbox` | ✅ | — | — | ✅ | ✅ | 2 |  | 1 | medium | Clean; triage closed-api was a FALSE POSITIVE (pure composite — bespoke prop type, no primitive spread, no className/style accepted). 4 stories axe-green. Code-verified RTL (logical `start`/`end` + `rtl:rotate-180` chevrons), focus trap (Base UI Dialog), `aria-live` position, required `alt`. NOTE: visual montage can't stitch (portal + media `networkidle` timeout) — verified via in-browser a11y + code, not screenshot. |
-| `menu` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `password-strength-meter` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `scroll-reveal` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `sparkline` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `stepper` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `table` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `tag` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `toggle-group` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `toolbar` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `tree-view` | ⬜ | — | — | — | — | 1 |  | 1 | clean |  |
-| `action-sheet` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `api-key-manager` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `asset-row` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `bottom-navigation` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `column-filter` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `column-visibility` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `command-palette` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `menu` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 2 fixes applied (tsx + stories); 6 stories axe-green (dark+light), 0 errors. 4 subjective item(s) QUEUED. |
+| `password-strength-meter` | ✅ | yes | ⏳ | — | ✅ | 1 |  | 1 | clean | No objective fixes needed; 8 stories, 0 render/play errors. QUEUED: alert tone-on-tint success ink 2.39 + destructive message ink 3.62 (light) — systemic tone queue (known-issues). 3 subjective item(s) QUEUED. |
+| `scroll-reveal` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 1 fix applied (mdx docs); 3 stories axe-green (dark+light), 0 errors. 3 subjective item(s) QUEUED. |
+| `sparkline` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 1 fix applied (tsx); 5 stories axe-green (dark+light), 0 errors. 4 subjective item(s) QUEUED. |
+| `stepper` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 3 fixes applied (tsx + mdx + stories); 6 stories axe-green (dark+light), 0 errors. 3 subjective item(s) QUEUED. |
+| `table` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 1 | clean | 1 fix applied (stories); 3 stories axe-green (dark+light), 0 render/play errors. No subjective items queued. |
+| `tag` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 2 fixes applied (stories + mdx); 8 stories axe-green (dark+light), 0 errors. 4 subjective item(s) QUEUED. |
+| `toggle-group` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 3 fixes applied (stories); 6 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
+| `toolbar` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 2 fixes applied (stories). Delivery re-verify caught the new `Pressed` play querying `pressed:false` on a button with no `aria-pressed` — FIXED by making Italic `aria-pressed={false}`. 5 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
+| `tree-view` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 1 | clean | 1 fix applied (tsx); 3 stories axe-green (dark+light), 0 errors. 3 subjective item(s) QUEUED. |
+| `action-sheet` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fixes applied (stories); 4 stories axe-green (dark+light), 0 errors. 3 subjective item(s) QUEUED. |
+| `api-key-manager` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix applied (tsx); 3 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
+| `asset-row` | ✅ | yes | ⏳ | — | ✅ | 1 |  | 0 | medium | 2 fixes applied (tsx + stories); 4 stories, 0 render/play errors. QUEUED: severity-ramp soft/outline ink (critical 2.91 / high 2.21 / low 2.76, light) — systemic --sev-* tone queue. 3 subjective item(s) QUEUED. |
+| `bottom-navigation` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fixes applied (tsx + stories); 8 stories axe-green (dark+light), 0 errors. 1 subjective item QUEUED. |
+| `column-filter` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix applied (tsx); 2 stories axe-green (dark+light), 0 errors. 4 subjective item(s) QUEUED. |
+| `column-visibility` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 4 fixes applied (tsx + stories + mdx); 4 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
+| `command-palette` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fixes applied (stories + mdx); 4 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
 | `currency-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `device-session-list` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `error-boundary` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |

@@ -33,7 +33,7 @@ export type BottomNavigationItem = {
 }
 
 const itemVariants = cva(
-  "relative inline-flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[0.68rem] font-medium outline-none transition-colors select-none focus-visible:ring-[3px] focus-visible:ring-accent-soft disabled:pointer-events-none disabled:opacity-45 [&_svg]:size-5 [&_svg]:shrink-0",
+  "relative inline-flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[0.68rem] font-medium outline-none transition-colors select-none focus-visible:ring-[3px] focus-visible:ring-accent-soft disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:size-5 [&_svg]:shrink-0",
   {
     variants: {
       active: {

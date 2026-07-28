@@ -134,6 +134,15 @@ function FileCard({
 
   const showProgress = status === "uploading" && progress != null
 
+  const statusLabel =
+    status === "uploading"
+      ? "Uploading"
+      : status === "success"
+        ? "Uploaded"
+        : status === "error"
+          ? "Error"
+          : null
+
   const statusGlyph =
     status === "uploading" ? (
       <Loader2 aria-hidden className="size-4 animate-spin text-accent-strong" />
@@ -178,6 +187,7 @@ function FileCard({
       <div data-slot="file-card-body" className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span
           data-slot="file-card-name"
+          dir="auto"
           className="truncate text-sm font-medium text-foreground"
           title={name}
         >
@@ -185,6 +195,7 @@ function FileCard({
         </span>
         <span
           data-slot="file-card-meta"
+          dir="auto"
           className={cn(
             "truncate text-xs",
             status === "error" ? "text-destructive" : "text-muted-foreground"
@@ -204,6 +215,7 @@ function FileCard({
       </div>
 
       <div data-slot="file-card-trailing" className="flex shrink-0 items-center gap-1.5">
+        {statusLabel ? <span className="sr-only">{statusLabel}</span> : null}
         {statusGlyph}
         {actions}
         {onRemove ? (

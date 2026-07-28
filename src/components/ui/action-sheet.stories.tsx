@@ -56,28 +56,28 @@ export const Default: Story = {
   },
 }
 
+const onRescan = fn()
+
 export const FiresHandler: Story = {
-  render: function FiresHandlerSheet() {
-    const onRescan = fn()
-    return (
-      <ActionSheet>
-        <ActionSheetTrigger render={<Button variant="outline">Manage</Button>} />
-        <ActionSheetContent
-          title="Manage asset"
-          actions={[
-            { label: "Rescan now", icon: <RefreshCw />, onClick: onRescan },
-            { label: "Delete asset", icon: <Trash2 />, destructive: true },
-          ]}
-        />
-      </ActionSheet>
-    )
-  },
+  render: () => (
+    <ActionSheet>
+      <ActionSheetTrigger render={<Button variant="outline">Manage</Button>} />
+      <ActionSheetContent
+        title="Manage asset"
+        actions={[
+          { label: "Rescan now", icon: <RefreshCw />, onClick: onRescan },
+          { label: "Delete asset", icon: <Trash2 />, destructive: true },
+        ]}
+      />
+    </ActionSheet>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await userEvent.click(canvas.getByRole("button", { name: "Manage" }))
     await screen.findByRole("dialog")
-    // Choosing a row closes the sheet.
+    // Choosing a row fires its handler, then closes the sheet.
     await userEvent.click(screen.getByRole("button", { name: "Rescan now" }))
+    await expect(onRescan).toHaveBeenCalledOnce()
     await waitFor(() =>
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
     )
@@ -113,4 +113,13 @@ export const WithDisabledRow: Story = {
       />
     </ActionSheet>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: "Row actions" }))
+    await screen.findByRole("dialog")
+    // The disabled row is exposed as disabled and stays non-interactive.
+    await expect(
+      screen.getByRole("button", { name: "Rescan (running…)" })
+    ).toBeDisabled()
+  },
 }

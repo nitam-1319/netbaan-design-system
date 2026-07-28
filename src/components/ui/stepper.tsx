@@ -148,7 +148,7 @@ function Stepper({
             data-slot="stepper-track"
             className={cn(
               "rounded-full transition-colors",
-              trackFilled ? "bg-primary" : "bg-border",
+              trackFilled ? "bg-primary-solid" : "bg-border",
               isVertical ? "my-1 w-0.5 flex-1" : "mx-1 h-0.5 flex-1"
             )}
           />

@@ -23,7 +23,7 @@ import { SeverityBadge, type Severity } from "@/components/ui/severity-badge"
 
 type AssetRowProps = Omit<
   React.ComponentProps<typeof ListItem>,
-  "children" | "interactive"
+  "children" | "interactive" | "className" | "style"
 > & {
   /** The asset name — host, domain, or IP. Required. */
   name: React.ReactNode

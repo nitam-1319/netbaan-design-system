@@ -127,8 +127,8 @@ function TreeItem({
           {hasChildren ? (
             <ChevronRight
               className={cn(
-                "size-3.5 transition-transform rtl:rotate-180",
-                isOpen && "rotate-90 rtl:-rotate-90"
+                "size-3.5 transition-transform",
+                isOpen ? "rotate-90" : "rtl:rotate-180"
               )}
             />
           ) : null}

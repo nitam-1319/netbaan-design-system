@@ -60,7 +60,7 @@ export const Default: Story = {
 
 export const Inventory: Story = {
   render: () => (
-    <List variant="bordered">
+    <>
       <AssetRow
         name="admin.example.com"
         type="Admin panel"
@@ -88,7 +88,7 @@ export const Inventory: Story = {
         online={false}
         href="#a3"
       />
-    </List>
+    </>
   ),
 }
 

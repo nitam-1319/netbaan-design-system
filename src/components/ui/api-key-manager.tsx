@@ -87,6 +87,7 @@ function ApiKeyRow({
         <span className="flex items-center gap-1.5">
           <code
             data-slot="api-key-manager-value"
+            dir="ltr"
             className="min-w-0 truncate font-mono text-xs text-muted-foreground"
           >
             {display}

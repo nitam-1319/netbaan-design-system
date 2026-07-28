@@ -29,6 +29,7 @@ const meta = {
     },
     multiple: { control: "boolean" },
     disabled: { control: "boolean" },
+    loopFocus: { control: "boolean" },
     orientation: {
       control: "inline-radio",
       options: ["horizontal", "vertical"],
@@ -65,6 +66,12 @@ export const SingleSelect: Story = {
     await expect(board).toHaveAttribute("aria-pressed", "true")
     // Single-select: activating one releases the other.
     await expect(list).toHaveAttribute("aria-pressed", "false")
+    // Roving focus: arrow keys move between items without changing selection.
+    await expect(board).toHaveFocus()
+    await userEvent.keyboard("{ArrowRight}")
+    const graph = await screen.findByRole("button", { name: "Graph" })
+    await expect(graph).toHaveFocus()
+    await expect(board).toHaveAttribute("aria-pressed", "true")
   },
 }
 
@@ -86,6 +93,24 @@ export const MultiSelect: Story = {
     await expect(bold).toHaveAttribute("aria-pressed", "true")
     await expect(italic).toHaveAttribute("aria-pressed", "true")
   },
+}
+
+/* Both appearances: borderless `default` and bordered `outline` (the group default). */
+export const Variants: Story = {
+  render: () => (
+    <div className="flex flex-col items-center gap-4">
+      <ToggleGroup variant="default" defaultValue={["board"]}>
+        <ToggleGroupItem value="list">List</ToggleGroupItem>
+        <ToggleGroupItem value="board">Board</ToggleGroupItem>
+        <ToggleGroupItem value="graph">Graph</ToggleGroupItem>
+      </ToggleGroup>
+      <ToggleGroup variant="outline" defaultValue={["board"]}>
+        <ToggleGroupItem value="list">List</ToggleGroupItem>
+        <ToggleGroupItem value="board">Board</ToggleGroupItem>
+        <ToggleGroupItem value="graph">Graph</ToggleGroupItem>
+      </ToggleGroup>
+    </div>
+  ),
 }
 
 export const Sizes: Story = {

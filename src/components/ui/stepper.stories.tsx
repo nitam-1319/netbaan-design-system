@@ -34,6 +34,7 @@ export const Horizontal: Story = {
   args: {
     steps: checkout,
     activeStep: 2,
+    "aria-label": "Checkout progress",
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)

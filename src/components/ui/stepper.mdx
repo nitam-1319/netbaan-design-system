@@ -54,8 +54,8 @@ columns or long labels. `size` is `sm` or `md` (default).
   ("(completed)" / "(current step)" / "(upcoming)") so state is never conveyed by
   colour alone.
 - Meets WCAG 2.2 AA contrast in both themes: complete indicators use
-  `--primary-foreground` on `--primary`; current uses `--primary` text with the
-  `--accent-soft` focus-style ring; upcoming uses `--muted-foreground` on the
+  `--primary-foreground` on `--primary-solid`; current uses `--primary` text with
+  the `--accent-soft` focus-style ring; upcoming uses `--muted-foreground` on the
   page background with a `--border-strong` outline.
 - Give the `<ol>` an accessible name with `aria-label` (e.g. "Checkout
   progress") when the surrounding context doesn't already name it.
@@ -70,7 +70,8 @@ start-to-end, so progress reads naturally in both LTR and RTL.
 
 | Token | Applies to |
 | --- | --- |
-| `--primary` / `--primary-foreground` | Complete indicator fill + check; filled track |
+| `--primary-solid` / `--primary-foreground` | Complete indicator fill + check; filled track |
+| `--primary` | Current indicator text + border |
 | `--accent-soft` | Current indicator ring |
 | `--border-strong` | Upcoming indicator outline |
 | `--border` | Unfilled track |

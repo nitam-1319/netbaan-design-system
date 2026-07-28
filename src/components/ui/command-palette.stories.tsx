@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
 import { expect, fn, userEvent, screen, waitFor } from "storybook/test"
-import { FileText, Settings, User, LogOut } from "lucide-react"
+import { FileText, Settings, User, LogOut, Trash2 } from "lucide-react"
 
 import { CommandPalette } from "@/components/ui/command-palette"
 import { Button } from "@/components/ui/button"
@@ -61,5 +61,29 @@ export const Empty: Story = {
     const input = await screen.findByRole("combobox")
     await userEvent.type(input, "zzzzz")
     await expect(await screen.findByText("No results found.")).toBeVisible()
+  },
+}
+
+const ITEMS_WITH_DISABLED = [
+  ...ITEMS,
+  {
+    value: "delete",
+    label: "Delete workspace",
+    icon: <Trash2 />,
+    keywords: ["remove"],
+    disabled: true,
+  },
+]
+
+export const WithDisabledItem: Story = {
+  args: { items: ITEMS_WITH_DISABLED, defaultOpen: true, onSelect: fn() },
+  play: async ({ args }) => {
+    // A disabled command is exposed to AT as disabled and is not selectable:
+    // keyboard highlight skips it and Enter cannot run it.
+    const input = await screen.findByRole("combobox")
+    const option = await screen.findByRole("option", { name: /Delete workspace/ })
+    await expect(option).toHaveAttribute("aria-disabled", "true")
+    await userEvent.type(input, "delete{Enter}")
+    await expect(args.onSelect).not.toHaveBeenCalled()
   },
 }

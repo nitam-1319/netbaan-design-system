@@ -112,6 +112,32 @@ export const TallDetail: Story = {
   ),
 }
 
+export const FullHeight: Story = {
+  render: () => (
+    <BottomSheet>
+      <BottomSheetTrigger render={<Button variant="outline">Browse assets</Button>} />
+      <BottomSheetContent height="full">
+        <BottomSheetHeader>
+          <BottomSheetTitle>All assets</BottomSheetTitle>
+          <BottomSheetDescription>
+            A near-full-screen sheet that still reads as dismissible via the
+            rounded top, grabber, and close button.
+          </BottomSheetDescription>
+        </BottomSheetHeader>
+        <BottomSheetBody>
+          The tallest step (`height="full"`, 95dvh) suits long, read-heavy
+          lists. The body scrolls independently once its content exceeds the
+          height cap, while the header and footer stay pinned.
+        </BottomSheetBody>
+        <BottomSheetFooter>
+          <BottomSheetClose render={<Button variant="ghost">Close</Button>} />
+          <BottomSheetClose render={<Button>Select all</Button>} />
+        </BottomSheetFooter>
+      </BottomSheetContent>
+    </BottomSheet>
+  ),
+}
+
 export const WithoutGrabber: Story = {
   render: () => (
     <BottomSheet>

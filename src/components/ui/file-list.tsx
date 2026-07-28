@@ -121,6 +121,7 @@ function FileList({
           {summary != null ? (
             <span
               data-slot="file-list-summary"
+              dir="ltr"
               className="shrink-0 font-mono text-xs tabular-nums text-text-faint"
             >
               {summary}

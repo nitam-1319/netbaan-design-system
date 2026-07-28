@@ -121,4 +121,16 @@ export const SelectedRow: Story = {
       </TableBody>
     </Table>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Only the second data row is marked selected.
+    const selectedRow = canvas
+      .getByRole("cell", { name: "cdn-edge-04.netbaan.io" })
+      .closest("tr")
+    await expect(selectedRow).toHaveAttribute("data-state", "selected")
+    const unselectedRow = canvas
+      .getByRole("cell", { name: "api-gw-prod.netbaan.io" })
+      .closest("tr")
+    await expect(unselectedRow).not.toHaveAttribute("data-state")
+  },
 }

@@ -56,6 +56,10 @@ export const Small: Story = {
   args: { size: "sm" },
 }
 
+export const Disabled: Story = {
+  args: { disabled: true },
+}
+
 export const Empty: Story = {
   args: {
     files: [],

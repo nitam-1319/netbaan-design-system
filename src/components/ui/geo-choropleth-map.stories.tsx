@@ -74,3 +74,26 @@ export const NoLegend: Story = {
     expect(canvasElement.querySelector('[data-slot="geo-choropleth-legend"]')).toBeNull()
   },
 }
+
+/**
+ * A flat domain — every region shares the same value — has no range to bucket,
+ * so the shades collapse to the top step and the legend is suppressed even with
+ * `showLegend` on. Regions still render and stay pointer/AT-discoverable via
+ * their `<title>`.
+ */
+export const FlatDomain: Story = {
+  args: {
+    label: "Uniform coverage",
+    regions: regions.map((r) => ({ ...r, value: r.value === undefined ? undefined : 1000 })),
+    viewBox: "0 0 310 210",
+    steps: 5,
+  },
+  play: async ({ canvasElement }) => {
+    // All regions still render.
+    expect(canvasElement.querySelectorAll('[data-slot="geo-choropleth-region"]').length).toBe(
+      regions.length
+    )
+    // A flat domain has no meaningful buckets → the legend is suppressed.
+    expect(canvasElement.querySelector('[data-slot="geo-choropleth-legend"]')).toBeNull()
+  },
+}

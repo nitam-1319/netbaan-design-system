@@ -62,7 +62,9 @@ and wrap onto multiple lines.
 - The dismiss control is a native `<button>` with `aria-label` (`removeLabel`),
   focusable and operable with `Enter` / `Space`.
 - When the chip itself toggles, render it as a `<button>` so it is keyboard
-  operable; `selected` is exposed via `data-selected` for styling.
+  operable, and pair `selected` with `aria-pressed` so the on/off state is
+  announced — `data-selected` is only for styling and is invisible to
+  assistive technology.
 - Meaning is carried by the label text, never color alone.
 - Focus is always visible via the `--accent-soft` ring in light and dark.
 

@@ -87,31 +87,57 @@ export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-4">
       <Toolbar aria-label="Small">
-        <ToolbarButton size="sm">
+        <ToolbarButton size="sm" aria-label="Bold">
           <Bold />
         </ToolbarButton>
-        <ToolbarButton size="sm">
+        <ToolbarButton size="sm" aria-label="Italic">
           <Italic />
         </ToolbarButton>
       </Toolbar>
       <Toolbar aria-label="Medium">
-        <ToolbarButton size="md">
+        <ToolbarButton size="md" aria-label="Bold">
           <Bold />
         </ToolbarButton>
-        <ToolbarButton size="md">
+        <ToolbarButton size="md" aria-label="Italic">
           <Italic />
         </ToolbarButton>
       </Toolbar>
       <Toolbar aria-label="Large">
-        <ToolbarButton size="lg">
+        <ToolbarButton size="lg" aria-label="Bold">
           <Bold />
         </ToolbarButton>
-        <ToolbarButton size="lg">
+        <ToolbarButton size="lg" aria-label="Italic">
           <Italic />
         </ToolbarButton>
       </Toolbar>
     </div>
   ),
+}
+
+export const Pressed: Story = {
+  render: () => (
+    <Toolbar aria-label="Text formatting">
+      <ToolbarButton aria-label="Bold" aria-pressed>
+        <Bold />
+      </ToolbarButton>
+      <ToolbarButton aria-label="Italic" aria-pressed={false}>
+        <Italic />
+      </ToolbarButton>
+      <ToolbarButton aria-label="Underline" aria-pressed>
+        <Underline />
+      </ToolbarButton>
+    </Toolbar>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Items acting as toggles expose their state via aria-pressed.
+    await expect(
+      canvas.getByRole("button", { name: "Bold", pressed: true })
+    ).toBeInTheDocument()
+    await expect(
+      canvas.getByRole("button", { name: "Italic", pressed: false })
+    ).toBeInTheDocument()
+  },
 }
 
 export const Vertical: Story = {

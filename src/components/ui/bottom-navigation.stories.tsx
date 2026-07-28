@@ -94,6 +94,49 @@ export const ThreeItems: Story = {
 }
 
 /**
+ * A destination can be `disabled` — dimmed and non-interactive. This holds for
+ * both button items (native `disabled`) and link items (`aria-disabled`, so the
+ * anchor is dimmed and its clicks are suppressed).
+ */
+export const Disabled: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState("home")
+    const withDisabled: BottomNavigationItem[] = [
+      { value: "home", label: "Home", icon: <Home /> },
+      { value: "assets", label: "Assets", icon: <Layers /> },
+      { value: "search", label: "Search", icon: <Search />, disabled: true },
+      { value: "alerts", label: "Alerts", icon: <Bell />, badge: 3 },
+      {
+        value: "profile",
+        label: "Profile",
+        icon: <User />,
+        href: "#profile",
+        disabled: true,
+      },
+    ]
+    return (
+      <BottomNavigation
+        {...args}
+        items={withDisabled}
+        value={value}
+        onValueChange={setValue}
+      />
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const search = canvas.getByRole("button", { name: /Search/ })
+    await expect(search).toBeDisabled()
+    // clicking a disabled item does not change the current selection
+    await userEvent.click(search, { pointerEventsCheck: 0 })
+    await expect(search).not.toHaveAttribute("aria-current", "page")
+    // a disabled link is marked aria-disabled for assistive tech
+    const profile = canvas.getByRole("link", { name: /Profile/ })
+    await expect(profile).toHaveAttribute("aria-disabled", "true")
+  },
+}
+
+/**
  * Persian / RTL — items lay out right-to-left and the badge moves to the logical
  * corner.
  */

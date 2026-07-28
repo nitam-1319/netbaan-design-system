@@ -57,6 +57,11 @@ export const Uploading: Story = {
 
 export const Success: Story = {
   args: { status: "success", onRemove: fn() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // The success state exposes an accessible status label (the glyph is aria-hidden).
+    await expect(canvas.getByText("Uploaded")).toBeInTheDocument()
+  },
 }
 
 export const Error: Story = {

@@ -99,7 +99,7 @@ function ColumnVisibility({
         {triggerLabel}
       </MenuTrigger>
       <MenuContent side={side} align={align} aria-label={heading}>
-        <MenuGroup>
+        <MenuGroup data-slot="column-visibility">
           <MenuGroupLabel>{heading}</MenuGroupLabel>
           {columns.map((col) => {
             const locked = col.canHide === false

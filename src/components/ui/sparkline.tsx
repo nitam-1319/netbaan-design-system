@@ -34,7 +34,23 @@ const sparklineVariants = cva("inline-block align-middle", {
 
 type SparklineProps = Omit<
   React.ComponentProps<"svg">,
-  "className" | "style" | "viewBox" | "children"
+  // Closed API: no `className`/`style`, and no raw SVG paint attributes either —
+  // colour is token-only via `tone` → `currentColor`, so we drop `color`/`fill`/
+  // `stroke`/opacity/stroke-* escape hatches that would bypass the tokens.
+  | "className"
+  | "style"
+  | "viewBox"
+  | "children"
+  | "color"
+  | "fill"
+  | "stroke"
+  | "fillOpacity"
+  | "strokeOpacity"
+  | "opacity"
+  | "strokeWidth"
+  | "strokeDasharray"
+  | "strokeLinecap"
+  | "strokeLinejoin"
 > &
   VariantProps<typeof sparklineVariants> & {
     /** The series to plot. Two or more numbers. */

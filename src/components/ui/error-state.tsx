@@ -72,6 +72,7 @@ function ErrorState({
       {detail != null && (
         <p
           data-slot="error-state-detail"
+          dir="ltr"
           className="max-w-sm truncate rounded-md bg-muted px-2 py-1 font-mono text-xs text-muted-foreground"
         >
           {detail}

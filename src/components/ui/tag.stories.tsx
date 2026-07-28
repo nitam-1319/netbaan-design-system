@@ -73,17 +73,23 @@ export const Filter: Story = {
   render: () => {
     const [on, setOn] = React.useState(false)
     return (
-      <Tag selected={on} render={<button type="button" />} onClick={() => setOn((v) => !v)}>
+      <Tag
+        selected={on}
+        aria-pressed={on}
+        render={<button type="button" />}
+        onClick={() => setOn((v) => !v)}
+      >
         Active
       </Tag>
     )
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const chip = canvas.getByRole("button", { name: "Active" })
+    const chip = canvas.getByRole("button", { name: "Active", pressed: false })
     await expect(chip).not.toHaveAttribute("data-selected")
     await userEvent.click(chip)
     await expect(chip).toHaveAttribute("data-selected")
+    await expect(chip).toHaveAttribute("aria-pressed", "true")
   },
 }
 
