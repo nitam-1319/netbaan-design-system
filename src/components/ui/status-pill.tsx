@@ -26,11 +26,11 @@ const pillVariants = cva(
         neutral: "bg-muted text-muted-foreground",
         info: "bg-[color-mix(in_oklch,var(--primary),transparent_88%)] text-primary",
         success:
-          "bg-[color-mix(in_oklch,var(--success),transparent_86%)] text-success",
+          "bg-[color-mix(in_oklch,var(--success),transparent_86%)] text-success-ink",
         warning:
-          "bg-[color-mix(in_oklch,var(--warning),transparent_86%)] text-warning",
+          "bg-[color-mix(in_oklch,var(--warning),transparent_86%)] text-warning-ink",
         danger:
-          "bg-[color-mix(in_oklch,var(--destructive),transparent_88%)] text-destructive",
+          "bg-[color-mix(in_oklch,var(--destructive),transparent_88%)] text-destructive-ink",
       },
       size: {
         sm: "h-5 px-2 text-[0.65rem]",

@@ -34,7 +34,7 @@ const dropzoneVariants = cva(
     // Active drag.
     "data-[dragging=true]:border-accent-strong data-[dragging=true]:bg-accent-soft data-[dragging=true]:text-foreground",
     // Invalid.
-    "data-[invalid=true]:border-destructive data-[invalid=true]:text-destructive data-[invalid=true]:hover:border-destructive",
+    "data-[invalid=true]:border-destructive data-[invalid=true]:text-destructive-ink data-[invalid=true]:hover:border-destructive",
     // Disabled.
     "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0"
@@ -180,12 +180,12 @@ function Dropzone({
           (icon ?? (
             <UploadCloud
               aria-hidden="true"
-              className="text-muted-foreground group-hover/dropzone:text-accent-strong group-data-[dragging=true]/dropzone:text-accent-strong group-data-[invalid=true]/dropzone:text-destructive"
+              className="text-muted-foreground group-hover/dropzone:text-accent-strong group-data-[dragging=true]/dropzone:text-accent-strong group-data-[invalid=true]/dropzone:text-destructive-ink"
             />
           ))}
         <span
           data-slot="dropzone-title"
-          className="font-medium text-foreground group-data-[invalid=true]/dropzone:text-destructive"
+          className="font-medium text-foreground group-data-[invalid=true]/dropzone:text-destructive-ink"
         >
           {title}
         </span>

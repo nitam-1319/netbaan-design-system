@@ -106,7 +106,7 @@ const menuItemVariants = cva(
         default:
           "text-popover-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
         destructive:
-          "text-destructive data-[highlighted]:bg-destructive/10 data-[highlighted]:text-destructive",
+          "text-destructive-ink data-[highlighted]:bg-destructive/10 data-[highlighted]:text-destructive-ink",
       },
       inset: {
         true: "ps-8",

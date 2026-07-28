@@ -44,8 +44,8 @@ const rowTint: Record<DiffLineType, string> = {
 }
 
 const markerColor: Record<DiffLineType, string> = {
-  add: "text-success",
-  remove: "text-destructive",
+  add: "text-success-ink",
+  remove: "text-destructive-ink",
   context: "text-text-faint",
 }
 
@@ -102,8 +102,8 @@ function DiffViewer({
         </span>
         <div className="flex shrink-0 items-center gap-2">
           <span className="flex items-center gap-2 text-[0.7rem] font-medium tabular-nums">
-            <span className="text-success">+{additions}</span>
-            <span className="text-destructive">−{deletions}</span>
+            <span className="text-success-ink">+{additions}</span>
+            <span className="text-destructive-ink">−{deletions}</span>
           </span>
           {showCopy ? (
             <CopyButton value={copyText} variant="ghost" size="sm" aria-label="Copy changed source" />

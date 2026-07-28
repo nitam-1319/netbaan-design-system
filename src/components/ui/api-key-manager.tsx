@@ -136,7 +136,7 @@ function ApiKeyRow({
           onClick={() => onRevoke?.(apiKey.id)}
           aria-label={nameStr ? `${revokeLabel} ${nameStr}` : "Revoke key"}
         >
-          <Trash2 aria-hidden className="text-destructive" />
+          <Trash2 aria-hidden className="text-destructive-ink" />
         </Button>
       </span>
     </ListItem>

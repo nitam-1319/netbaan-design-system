@@ -19,13 +19,13 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-card text-card-foreground border-border",
-        info: "border-transparent bg-[color-mix(in_oklch,var(--sev-low),transparent_88%)] text-sev-low",
+        info: "border-transparent bg-[color-mix(in_oklch,var(--sev-low),transparent_88%)] text-sev-low-ink",
         success:
-          "border-transparent bg-[color-mix(in_oklch,var(--success),transparent_88%)] text-success",
+          "border-transparent bg-[color-mix(in_oklch,var(--success),transparent_88%)] text-success-ink",
         warning:
-          "border-transparent bg-[color-mix(in_oklch,var(--warning),transparent_88%)] text-warning",
+          "border-transparent bg-[color-mix(in_oklch,var(--warning),transparent_88%)] text-warning-ink",
         destructive:
-          "border-transparent bg-destructive/10 text-destructive dark:bg-destructive/15",
+          "border-transparent bg-destructive/10 text-destructive-ink dark:bg-destructive/15",
       },
     },
     defaultVariants: {
@@ -69,7 +69,7 @@ function AlertDescription({
     <div
       data-slot="alert-description"
       className={cn(
-        "col-start-2 grid justify-items-start gap-1 text-sm text-pretty opacity-90 [&_p]:leading-relaxed"
+        "col-start-2 grid justify-items-start gap-1 text-sm text-pretty [&_p]:leading-relaxed"
       )}
       {...props}
     />

@@ -77,7 +77,7 @@ const toneIconWrapVariants = cva(
     variants: {
       tone: {
         default: "bg-accent text-accent-foreground",
-        destructive: "bg-destructive/10 text-destructive",
+        destructive: "bg-destructive/10 text-destructive-ink",
       },
     },
     defaultVariants: {

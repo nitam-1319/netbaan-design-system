@@ -21,9 +21,9 @@ import { cn } from "@/lib/utils"
 const dotVariants = cva("relative inline-flex shrink-0 rounded-full bg-current", {
   variants: {
     status: {
-      online: "text-success",
-      away: "text-warning",
-      busy: "text-destructive",
+      online: "text-success-ink",
+      away: "text-warning-ink",
+      busy: "text-destructive-ink",
       offline: "text-muted-foreground",
       neutral: "text-muted-foreground",
       accent: "text-primary",

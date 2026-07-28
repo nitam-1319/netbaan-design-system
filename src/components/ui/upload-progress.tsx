@@ -132,9 +132,9 @@ function UploadProgress({
 
   const trailingGlyph =
     status === "success" ? (
-      <CheckCircle2 aria-hidden className="size-4 text-success" />
+      <CheckCircle2 aria-hidden className="size-4 text-success-ink" />
     ) : status === "error" ? (
-      <AlertCircle aria-hidden className="size-4 text-destructive" />
+      <AlertCircle aria-hidden className="size-4 text-destructive-ink" />
     ) : null
 
   const controls: IconButtonSpec[] = []
@@ -211,7 +211,7 @@ function UploadProgress({
           data-slot="upload-progress-meta"
           className={cn(
             "truncate text-xs",
-            status === "error" ? "text-destructive" : "text-text-faint"
+            status === "error" ? "text-destructive-ink" : "text-text-faint"
           )}
         >
           {metaLine}

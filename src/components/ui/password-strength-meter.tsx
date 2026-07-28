@@ -90,10 +90,10 @@ const SCORE_TONE: StrengthTone[] = [
 const labelToneVariants = cva("font-medium tabular-nums", {
   variants: {
     tone: {
-      critical: "text-destructive",
-      warning: "text-warning",
+      critical: "text-destructive-ink",
+      warning: "text-warning-ink",
       default: "text-accent-strong",
-      success: "text-success",
+      success: "text-success-ink",
     },
     size: {
       sm: "text-[0.7rem]",
@@ -200,7 +200,7 @@ function PasswordStrengthMeter({
               key={i}
               className={cn(
                 "flex items-center gap-1.5 text-xs",
-                r.met ? "text-success" : "text-muted-foreground"
+                r.met ? "text-success-ink" : "text-muted-foreground"
               )}
             >
               <span

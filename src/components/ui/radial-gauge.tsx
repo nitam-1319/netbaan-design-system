@@ -74,9 +74,9 @@ const gaugeVariants = cva(
       },
       tone: {
         accent: "text-primary",
-        success: "text-success",
-        warning: "text-warning",
-        danger: "text-destructive",
+        success: "text-success-ink",
+        warning: "text-warning-ink",
+        danger: "text-destructive-ink",
         neutral: "text-muted-foreground",
       },
     },

@@ -170,7 +170,7 @@ function CopyButton({
         <Check
           key="copied"
           aria-hidden="true"
-          className="animate-check-pop text-success"
+          className="animate-check-pop text-success-ink"
         />
       ) : (
         <Copy key="copy" aria-hidden="true" />

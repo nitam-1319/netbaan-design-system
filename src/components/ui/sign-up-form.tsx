@@ -232,7 +232,7 @@ function SignUpForm({
               disabled={locked}
             />
             {local.terms != null && (
-              <p className="text-destructive text-xs font-medium">
+              <p className="text-destructive-ink text-xs font-medium">
                 {local.terms}
               </p>
             )}

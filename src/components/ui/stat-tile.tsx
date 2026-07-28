@@ -192,8 +192,8 @@ const deltaVariants = cva(
   {
     variants: {
       sentiment: {
-        positive: "text-success",
-        negative: "text-destructive",
+        positive: "text-success-ink",
+        negative: "text-destructive-ink",
         neutral: "text-muted-foreground",
       },
       size: {

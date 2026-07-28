@@ -35,9 +35,9 @@ const validationMessageVariants = cva(
   {
     variants: {
       tone: {
-        error: "text-destructive",
-        warning: "text-warning",
-        success: "text-success",
+        error: "text-destructive-ink",
+        warning: "text-warning-ink",
+        success: "text-success-ink",
       },
       size: {
         sm: "text-[0.7rem] [&_svg]:size-3",

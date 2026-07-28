@@ -33,13 +33,13 @@ const calloutVariants = cva(
     variants: {
       tone: {
         note: "border-border border-l-border bg-muted/40 text-foreground",
-        info: "border-transparent border-l-current bg-[color-mix(in_oklch,var(--sev-low),transparent_88%)] text-sev-low",
+        info: "border-transparent border-l-current bg-[color-mix(in_oklch,var(--sev-low),transparent_88%)] text-sev-low-ink",
         success:
-          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--success),transparent_88%)] text-success",
+          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--success),transparent_88%)] text-success-ink",
         warning:
-          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--warning),transparent_88%)] text-warning",
+          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--warning),transparent_88%)] text-warning-ink",
         danger:
-          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--destructive),transparent_88%)] text-destructive",
+          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--destructive),transparent_88%)] text-destructive-ink",
       },
     },
     defaultVariants: { tone: "note" },

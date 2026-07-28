@@ -44,13 +44,13 @@ const feedbackButtonVariants = cva(
         tone: "up",
         active: true,
         className:
-          "text-success hover:text-success bg-[color-mix(in_oklch,var(--success),transparent_86%)] hover:bg-[color-mix(in_oklch,var(--success),transparent_80%)]",
+          "text-success-ink hover:text-success-ink bg-[color-mix(in_oklch,var(--success),transparent_86%)] hover:bg-[color-mix(in_oklch,var(--success),transparent_80%)]",
       },
       {
         tone: "down",
         active: true,
         className:
-          "text-destructive hover:text-destructive bg-destructive/12 hover:bg-destructive/20",
+          "text-destructive-ink hover:text-destructive-ink bg-destructive/12 hover:bg-destructive/20",
       },
     ],
     defaultVariants: { size: "md", active: false },

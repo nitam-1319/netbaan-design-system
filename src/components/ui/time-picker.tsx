@@ -144,7 +144,7 @@ function TimePicker({
         <p
           id={descId}
           data-slot="time-picker-error"
-          className="text-destructive text-xs font-medium"
+          className="text-destructive-ink text-xs font-medium"
         >
           {error}
         </p>

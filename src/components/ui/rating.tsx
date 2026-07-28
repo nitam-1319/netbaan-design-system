@@ -84,7 +84,7 @@ function Star_({
       className={cn(
         starVariants({ size }),
         filled
-          ? "fill-warning text-warning"
+          ? "fill-warning text-warning-ink"
           : "fill-transparent text-muted-foreground/40"
       )}
     />

@@ -23,9 +23,9 @@ const sparklineVariants = cva("inline-block align-middle", {
     tone: {
       accent: "text-primary",
       neutral: "text-muted-foreground",
-      success: "text-success",
-      warning: "text-warning",
-      danger: "text-destructive",
+      success: "text-success-ink",
+      warning: "text-warning-ink",
+      danger: "text-destructive-ink",
       info: "text-primary",
     },
   },

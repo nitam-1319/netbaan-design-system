@@ -149,7 +149,7 @@ function PasswordInput({
         <p
           id={descId}
           data-slot="password-input-error"
-          className="text-destructive text-xs font-medium"
+          className="text-destructive-ink text-xs font-medium"
         >
           {error}
         </p>

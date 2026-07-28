@@ -30,7 +30,7 @@ const attachmentChipVariants = cva(
     "transition-[color,background-color,border-color,box-shadow] duration-150 outline-none select-none",
     "border-border-strong bg-surface-3 text-foreground",
     "focus-visible:ring-[3px] focus-visible:ring-accent-soft focus-visible:border-accent-strong",
-    "data-[invalid=true]:border-destructive data-[invalid=true]:text-destructive",
+    "data-[invalid=true]:border-destructive data-[invalid=true]:text-destructive-ink",
     "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-45",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0"
   ),
@@ -100,7 +100,7 @@ function AttachmentChip({
     icon === false ? null : loading ? (
       <Loader2 aria-hidden className="animate-spin text-accent-strong" />
     ) : invalid ? (
-      <AlertCircle aria-hidden className="text-destructive" />
+      <AlertCircle aria-hidden className="text-destructive-ink" />
     ) : (
       (icon ??
         createElement(fileIcon(resolvedKind), {

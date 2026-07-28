@@ -106,7 +106,7 @@ function FieldArray<T>({
               disabled={!canRemove}
               aria-label={`${removeLabel} ${index + 1}`}
             >
-              <Trash2 aria-hidden className="text-destructive" />
+              <Trash2 aria-hidden className="text-destructive-ink" />
             </Button>
           </div>
         ))}

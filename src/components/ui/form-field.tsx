@@ -127,7 +127,7 @@ function FieldError(
   return (
     <FieldPrimitive.Error
       data-slot="field-error"
-      className={cn("text-destructive text-xs font-medium")}
+      className={cn("text-destructive-ink text-xs font-medium")}
       {...props}
     />
   )

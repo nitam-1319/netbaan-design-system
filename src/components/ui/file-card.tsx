@@ -147,9 +147,9 @@ function FileCard({
     status === "uploading" ? (
       <Loader2 aria-hidden className="size-4 animate-spin text-accent-strong" />
     ) : status === "success" ? (
-      <CheckCircle2 aria-hidden className="size-4 text-success" />
+      <CheckCircle2 aria-hidden className="size-4 text-success-ink" />
     ) : status === "error" ? (
-      <AlertCircle aria-hidden className="size-4 text-destructive" />
+      <AlertCircle aria-hidden className="size-4 text-destructive-ink" />
     ) : null
 
   return (
@@ -198,7 +198,7 @@ function FileCard({
           dir="auto"
           className={cn(
             "truncate text-xs",
-            status === "error" ? "text-destructive" : "text-muted-foreground"
+            status === "error" ? "text-destructive-ink" : "text-muted-foreground"
           )}
         >
           {metaLine}

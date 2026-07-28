@@ -162,7 +162,7 @@ function NumberInput({
         <p
           id={errId}
           data-slot="number-input-error"
-          className="text-destructive text-xs font-medium"
+          className="text-destructive-ink text-xs font-medium"
         >
           {error}
         </p>

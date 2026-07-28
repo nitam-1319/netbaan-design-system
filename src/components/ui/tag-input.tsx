@@ -235,7 +235,7 @@ function TagInput({
         <p
           id={descId}
           data-slot="tag-input-error"
-          className="text-destructive text-xs font-medium"
+          className="text-destructive-ink text-xs font-medium"
         >
           {error}
         </p>

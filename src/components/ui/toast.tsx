@@ -51,10 +51,10 @@ const iconByType = {
 } as const
 
 const iconToneByType = {
-  success: "text-success",
-  warning: "text-warning",
-  error: "text-destructive",
-  info: "text-sev-low",
+  success: "text-success-ink",
+  warning: "text-warning-ink",
+  error: "text-destructive-ink",
+  info: "text-sev-low-ink",
 } as const
 
 type ToastType = "default" | "success" | "warning" | "error" | "info"

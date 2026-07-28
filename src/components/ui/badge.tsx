@@ -24,22 +24,25 @@ const badgeVariants = cva(
     variants: {
       // Fill treatment — reads the tone via the `--tone` custom property below.
       variant: {
-        soft: "text-(--tone) bg-[color-mix(in_oklch,var(--tone),transparent_86%)] border-[color-mix(in_oklch,var(--tone),transparent_76%)]",
-        solid: "text-white bg-(--tone) border-transparent",
-        outline: "text-(--tone) bg-transparent border-(--tone)",
+        // Text uses the theme-aware `--tone-ink` (AA on the tint/app surface);
+        // fills/borders keep the base `--tone`. Solid uses --on-tone dark ink,
+        // which clears AA on every tone fill (white would not).
+        soft: "text-(--tone-ink) bg-[color-mix(in_oklch,var(--tone),transparent_86%)] border-[color-mix(in_oklch,var(--tone),transparent_76%)]",
+        solid: "text-on-tone bg-(--tone) border-transparent",
+        outline: "text-(--tone-ink) bg-transparent border-(--tone)",
       },
-      // Semantic hue — sets `--tone` to an AEGIS colour token (no literals).
+      // Semantic hue — sets `--tone` (fill) and `--tone-ink` (accessible text).
       tone: {
-        accent: "[--tone:var(--accent-strong)]",
-        neutral: "[--tone:var(--muted-foreground)]",
-        success: "[--tone:var(--success)]",
-        warning: "[--tone:var(--warning)]",
-        danger: "[--tone:var(--destructive)]",
-        info: "[--tone:var(--sev-info)]",
-        low: "[--tone:var(--sev-low)]",
-        medium: "[--tone:var(--sev-medium)]",
-        high: "[--tone:var(--sev-high)]",
-        critical: "[--tone:var(--sev-critical)]",
+        accent: "[--tone:var(--accent-strong)] [--tone-ink:var(--accent-strong)]",
+        neutral: "[--tone:var(--muted-foreground)] [--tone-ink:var(--muted-foreground)]",
+        success: "[--tone:var(--success)] [--tone-ink:var(--success-ink)]",
+        warning: "[--tone:var(--warning)] [--tone-ink:var(--warning-ink)]",
+        danger: "[--tone:var(--destructive)] [--tone-ink:var(--destructive-ink)]",
+        info: "[--tone:var(--sev-info)] [--tone-ink:var(--sev-info-ink)]",
+        low: "[--tone:var(--sev-low)] [--tone-ink:var(--sev-low-ink)]",
+        medium: "[--tone:var(--sev-medium)] [--tone-ink:var(--sev-medium-ink)]",
+        high: "[--tone:var(--sev-high)] [--tone-ink:var(--sev-high-ink)]",
+        critical: "[--tone:var(--sev-critical)] [--tone-ink:var(--sev-critical-ink)]",
       },
       size: {
         sm: "rounded-[6px] px-2 py-0.5 text-[11px]",

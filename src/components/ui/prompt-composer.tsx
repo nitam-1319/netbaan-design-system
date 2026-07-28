@@ -158,7 +158,7 @@ function PromptComposer({
               aria-live="polite"
               className={cn(
                 "text-xs tabular-nums",
-                over ? "text-destructive" : "text-muted-foreground"
+                over ? "text-destructive-ink" : "text-muted-foreground"
               )}
             >
               {text.length} / {maxLength}

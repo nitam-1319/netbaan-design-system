@@ -65,7 +65,7 @@ function ErrorState({
   return (
     <EmptyState data-slot="error-state" role="alert" size={size} {...props}>
       <EmptyStateIcon>
-        {icon ?? <TriangleAlert className="text-destructive" />}
+        {icon ?? <TriangleAlert className="text-destructive-ink" />}
       </EmptyStateIcon>
       <EmptyStateTitle>{title}</EmptyStateTitle>
       <EmptyStateDescription>{description}</EmptyStateDescription>
