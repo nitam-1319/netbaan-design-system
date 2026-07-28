@@ -65,6 +65,7 @@ function OTPInput({
   error,
   id,
   disabled,
+  "aria-label": ariaLabel,
   ...root
 }: OTPInputProps) {
   const reactId = React.useId()
@@ -74,14 +75,22 @@ function OTPInput({
 
   return (
     <div data-slot="otp-input" className="flex flex-col gap-1.5">
-      {label != null && (
+      {label != null ? (
         <label
           htmlFor={fieldId}
           className="text-sm font-medium text-foreground select-none"
         >
           {label}
         </label>
-      )}
+      ) : ariaLabel != null ? (
+        // No visible label, but the consumer supplied an accessible name. Base UI
+        // deliberately ignores `aria-label` on the first OTP slot ("Use a
+        // <label> or <Field.Label>"), so expose the name as a real, visually
+        // hidden <label> associated with the field's first input (id === fieldId).
+        <label htmlFor={fieldId} className="sr-only">
+          {ariaLabel}
+        </label>
+      ) : null}
 
       <OTPField.Root
         id={fieldId}
