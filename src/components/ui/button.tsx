@@ -23,7 +23,7 @@ const buttonVariants = cva(
         soft: "border border-transparent bg-accent-soft text-accent-strong hover:brightness-110",
         outline: "border border-border-strong bg-transparent text-foreground hover:bg-muted",
         ghost: "border border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
-        destructive: "border border-transparent bg-destructive text-white shadow-elevated hover:brightness-110",
+        destructive: "border border-transparent bg-destructive text-on-tone shadow-elevated hover:brightness-110",
         link: "border border-transparent bg-transparent text-accent-strong underline underline-offset-[3px] hover:brightness-110",
       },
       size: {

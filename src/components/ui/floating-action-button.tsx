@@ -31,7 +31,7 @@ const fabVariants = cva(
         surface:
           "border border-transparent bg-surface-2 text-foreground shadow-elevated hover:bg-muted",
         destructive:
-          "border border-transparent bg-destructive text-white shadow-elevated hover:brightness-110",
+          "border border-transparent bg-destructive text-on-tone shadow-elevated hover:brightness-110",
       },
       size: {
         sm: "h-11 min-w-11 text-sm [--fab-r:14px] [&_svg]:size-5",

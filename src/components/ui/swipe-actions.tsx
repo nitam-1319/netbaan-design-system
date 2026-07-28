@@ -112,7 +112,7 @@ function SwipeActions({
             className={cn(
               "flex h-full flex-col items-center justify-center gap-1 text-xs font-medium outline-none transition-[filter,background-color,color] focus-visible:ring-3 focus-visible:ring-inset focus-visible:ring-accent-soft [&_svg]:size-4",
               action.destructive
-                ? "bg-destructive text-white hover:brightness-110"
+                ? "bg-destructive text-on-tone hover:brightness-110"
                 : "bg-surface-3 text-foreground hover:bg-border"
             )}
             style={{ width: actionWidth }}
