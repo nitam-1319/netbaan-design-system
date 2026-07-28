@@ -68,6 +68,14 @@ type BubbleChartProps = {
   margin?: Partial<ChartMargin>
 }
 
+// Derived domains are padded, so evenly-sampled ticks land on values like
+// 29.449999999999996 — floating-point noise that renders a 17-char label,
+// overflowing the axis gutter. Trim the representation error (non-lossy to 6
+// decimals) unless the consumer supplies their own formatter.
+function formatTick(value: number): string {
+  return String(Number(value.toFixed(6)))
+}
+
 function extent(values: number[], fallback: [number, number]): [number, number] {
   if (values.length === 0) return fallback
   let lo = Infinity
@@ -181,7 +189,7 @@ function BubbleChart({
             domain={yd}
             tickCount={tickCount}
             showGrid={showGrid}
-            format={yFormat ? (v) => yFormat(v) : undefined}
+            format={(v) => (yFormat ? yFormat(v) : formatTick(v))}
           />
         ) : null}
         {showXAxis ? (
@@ -189,7 +197,7 @@ function BubbleChart({
             orientation="bottom"
             domain={xd}
             tickCount={tickCount}
-            format={xFormat ? (v) => xFormat(v) : undefined}
+            format={(v) => (xFormat ? xFormat(v) : formatTick(v))}
           />
         ) : null}
         <BubbleMarks

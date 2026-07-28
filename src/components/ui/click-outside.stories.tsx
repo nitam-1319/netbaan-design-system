@@ -85,6 +85,61 @@ export const StaysOpenOnInsideClick: Story = {
       </div>
     )
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Clicking a control inside the surface runs its handler and keeps it open.
+    await userEvent.click(canvas.getByRole("button", { name: "Clicked 0 times" }))
+    await expect(
+      canvas.getByRole("button", { name: "Clicked 1 times" })
+    ).toBeVisible()
+    await expect(canvas.getByText("Interactions inside are safe.")).toBeVisible()
+  },
+}
+
+export const DetectFocus: Story = {
+  render: function DetectFocusDemo() {
+    const [open, setOpen] = React.useState(true)
+    return (
+      <div className="flex flex-col items-center gap-4">
+        <p className="text-xs text-muted-foreground">
+          With <code>detectFocus</code>, moving keyboard focus outside also dismisses.
+        </p>
+        {open ? (
+          <ClickOutside onClickOutside={() => setOpen(false)} detectFocus>
+            <div className="flex w-56 flex-col items-start gap-2 rounded-lg border border-border-strong bg-popover p-4 text-sm text-popover-foreground shadow-elevated">
+              <span>Focus a control, then tab away.</span>
+              <Button variant="ghost" size="sm">
+                Inside button
+              </Button>
+            </div>
+          </ClickOutside>
+        ) : (
+          <p className="text-sm text-muted-foreground">Dismissed.</p>
+        )}
+        <Button variant="outline" size="sm">
+          Outside button
+        </Button>
+      </div>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Focus starts inside the surface; the panel stays open.
+    canvas.getByRole("button", { name: "Inside button" }).focus()
+    await expect(canvas.getByText("Focus a control, then tab away.")).toBeVisible()
+    // Tabbing focus to the outside button dismisses it (no outside pointer press).
+    await userEvent.tab()
+    // The dismiss is driven by a focusin listener + React re-render, which can
+    // land just past waitFor's default 1s window in the browser harness; give it
+    // a generous timeout so the assertion is deterministic, not a focus race.
+    await waitFor(
+      () =>
+        expect(
+          canvas.queryByText("Focus a control, then tab away.")
+        ).not.toBeInTheDocument(),
+      { timeout: 4000 }
+    )
+  },
 }
 
 export const Polymorphic: Story = {

@@ -40,6 +40,34 @@ export const Default: Story = {
   ),
 }
 
+export const Small: Story = {
+  args: { count: 5, size: "sm" },
+  render: (args) => (
+    <BulkActionsBar {...args} onClear={() => {}}>
+      <Button variant="ghost" size="sm">
+        Export
+      </Button>
+      <Button variant="destructive" size="sm">
+        Delete
+      </Button>
+    </BulkActionsBar>
+  ),
+}
+
+export const Sticky: Story = {
+  args: { count: 3, sticky: true },
+  render: (args) => (
+    <BulkActionsBar {...args} onClear={() => {}}>
+      <Button variant="ghost" size="sm">
+        Export
+      </Button>
+      <Button variant="destructive" size="sm">
+        Delete
+      </Button>
+    </BulkActionsBar>
+  ),
+}
+
 export const Interactive: Story = {
   render: () => {
     const [count, setCount] = React.useState(2)

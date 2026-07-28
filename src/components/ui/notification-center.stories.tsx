@@ -87,9 +87,23 @@ export const AllRead: Story = {
   args: {
     notifications: NOTIFICATIONS.map((n) => ({ ...n, read: true })),
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: /open notifications/i }))
+    const body = within(document.body)
+    // No unread → no count badge and no "Mark all read" action.
+    await expect(await body.findByText("Certificate renewed")).toBeInTheDocument()
+    await expect(body.queryByRole("button", { name: /mark all read/i })).toBeNull()
+  },
 }
 
 export const Empty: Story = {
   render: (args) => <Demo {...args} />,
   args: { notifications: [] },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: /open notifications/i }))
+    const body = within(document.body)
+    await expect(await body.findByText("You're all caught up.")).toBeInTheDocument()
+  },
 }

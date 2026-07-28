@@ -88,6 +88,28 @@ export const WithCollapse: Story = {
   ),
 }
 
+export const CustomSeparator: Story = {
+  render: () => (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink render={<a href="#dashboard" />}>
+            Dashboard
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator>/</BreadcrumbSeparator>
+        <BreadcrumbItem>
+          <BreadcrumbLink render={<a href="#assets" />}>Assets</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator>/</BreadcrumbSeparator>
+        <BreadcrumbItem>
+          <BreadcrumbPage>api.netbaan.io</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  ),
+}
+
 export const TwoLevel: Story = {
   render: () => (
     <Breadcrumb>

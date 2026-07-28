@@ -72,4 +72,6 @@ header and footer.
 | `AppShellContent` | `main` | `ComponentProps<"main">` | Scrolling content region. |
 | `AppShellFooter` | `footer` | `ComponentProps<"footer">` | Status/footer row. |
 
-All parts accept `className` (merged via `cn()`) and carry a `data-slot`.
+The public API is **closed**: no part accepts `className` or `style` (both are
+omitted from every part's props). Each part carries a `data-slot` attribute as the
+styling/anchor hook and test selector.

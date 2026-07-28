@@ -64,7 +64,10 @@ type ToastType = "default" | "success" | "warning" | "error" | "info"
  * the visible-at-once limit. Renders no visual element of its own.
  */
 function ToastProvider(
-  props: React.ComponentProps<typeof ToastPrimitive.Provider>
+  props: Omit<
+    React.ComponentProps<typeof ToastPrimitive.Provider>,
+    "className" | "style"
+  >
 ) {
   return <ToastPrimitive.Provider {...props} />
 }

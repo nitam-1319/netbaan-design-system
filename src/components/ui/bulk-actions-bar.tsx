@@ -75,7 +75,7 @@ function BulkActionsBar({
           {countText}
         </span>
         {onClear ? (
-          <Button variant="ghost" size={size === "sm" ? "sm" : "sm"} onClick={onClear}>
+          <Button variant="ghost" size="sm" onClick={onClear}>
             {clearLabel}
           </Button>
         ) : null}

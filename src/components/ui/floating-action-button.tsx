@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils"
  */
 
 const fabVariants = cva(
-  "group/fab relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden font-semibold whitespace-nowrap outline-none select-none transition-[filter,box-shadow,background-color,color] duration-150 focus-visible:focus-accent active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "group/fab relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden font-semibold whitespace-nowrap outline-none select-none transition-[filter,box-shadow,background-color,color] duration-150 focus-visible:focus-accent active:scale-[0.96] active:brightness-[0.94] disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {

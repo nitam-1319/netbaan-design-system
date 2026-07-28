@@ -72,6 +72,18 @@ export const NoSwatch: Story = {
       <ChartTooltip {...args} />
     </ChartContainer>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const tip = canvas.getByRole("tooltip")
+    const rows = within(tip).getAllByRole("listitem")
+    await expect(rows).toHaveLength(3)
+    // Rows without a series `key`/`colorVar` render no swatch.
+    await expect(
+      tip.querySelectorAll('[data-slot="chart-tooltip-swatch"]')
+    ).toHaveLength(0)
+    await expect(within(tip).getByText("Error rate")).toBeInTheDocument()
+    await expect(within(tip).getByText("0.65%")).toBeInTheDocument()
+  },
 }
 
 export const Indicators: Story = {

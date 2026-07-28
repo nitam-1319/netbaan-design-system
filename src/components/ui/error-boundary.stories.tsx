@@ -83,6 +83,28 @@ export const CustomMessage: Story = {
       </ErrorBoundary>
     )
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText("Widget is healthy.")).toBeVisible()
+    // Break it → the boundary shows the custom title/description.
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Simulate outage" })
+    )
+    await expect(await canvas.findByRole("alert")).toBeVisible()
+    await expect(
+      canvas.getByRole("heading", { name: "Chart unavailable" })
+    ).toBeVisible()
+    await expect(
+      canvas.getByText(
+        "The metrics service didn't respond. You can retry in a moment."
+      )
+    ).toBeVisible()
+    // Retry recovers the healthy subtree.
+    await userEvent.click(canvas.getByRole("button", { name: "Try again" }))
+    await waitFor(() =>
+      expect(canvas.getByText("Widget is healthy.")).toBeVisible()
+    )
+  },
 }
 
 export const RenderPropFallback: Story = {
@@ -108,6 +130,22 @@ export const RenderPropFallback: Story = {
           </Button>
         </div>
       </ErrorBoundary>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText("Widget is healthy.")).toBeVisible()
+    // Break it → the render-prop fallback shows the caught error message.
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Break the widget" })
+    )
+    await expect(
+      await canvas.findByText("Widget failed to render (simulated).")
+    ).toBeVisible()
+    // The render-prop's reset() clears the boundary.
+    await userEvent.click(canvas.getByRole("button", { name: "Reload widget" }))
+    await waitFor(() =>
+      expect(canvas.getByText("Widget is healthy.")).toBeVisible()
     )
   },
 }

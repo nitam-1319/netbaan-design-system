@@ -58,7 +58,7 @@ export const NoOverflow: Story = {
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      {(["xs", "sm", "md", "lg"] as const).map((size) => (
+      {(["xs", "sm", "md", "lg", "xl"] as const).map((size) => (
         <AvatarGroup key={size} size={size} max={4}>
           {people(size)}
         </AvatarGroup>

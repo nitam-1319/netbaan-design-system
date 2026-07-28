@@ -153,13 +153,13 @@ function SortableColumnHeader({
 
   return (
     <th
+      {...props}
       data-slot="sortable-column-header"
       data-align={align}
       aria-sort={ariaSort}
       className={cn(
         "h-10 px-3 text-start align-middle font-medium text-muted-foreground whitespace-nowrap"
       )}
-      {...props}
     >
       <div className={cn("flex items-center", alignClass[align])}>
         <Button

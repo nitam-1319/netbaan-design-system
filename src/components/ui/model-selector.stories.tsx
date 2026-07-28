@@ -90,6 +90,16 @@ export const Grouped: Story = {
   args: { models: GROUPED, label: "Model or agent", placeholder: "Choose…" },
 }
 
+export const Variants: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-4">
+      <ModelSelector {...args} variant="outline" defaultValue="sonnet" />
+      <ModelSelector {...args} variant="filled" defaultValue="sonnet" />
+      <ModelSelector {...args} variant="flush" defaultValue="sonnet" />
+    </div>
+  ),
+}
+
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-col gap-4">

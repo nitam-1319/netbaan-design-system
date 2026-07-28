@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 65 / 207 reviewed  ·  library @ `9f9a2f5`
+**Progress:** 115 / 207 reviewed  ·  library @ `9f9a2f5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -86,56 +86,56 @@
 | `column-filter` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix applied (tsx); 2 stories axe-green (dark+light), 0 errors. 4 subjective item(s) QUEUED. |
 | `column-visibility` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 4 fixes applied (tsx + stories + mdx); 4 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
 | `command-palette` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fixes applied (stories + mdx); 4 stories axe-green (dark+light), 0 errors. 2 subjective item(s) QUEUED. |
-| `currency-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `device-session-list` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `error-boundary` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `field-array` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `floating-action-button` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `folder-tree` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `grouped-stacked-bar` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `input-group` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `model-selector` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `multi-select` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `notification-center` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `number-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `portal` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `priority-action-item` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `reduced-motion` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `row-selection` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `search-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `stacked-area-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `swipe-actions` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `switch` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `tag-input` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `theme-toggle` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `time-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `toast` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `validation-message` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `app-shell` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `aspect-ratio` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `attachment-chip` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `attack-surface-widget` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `avatar-group` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `beam-glow` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `box` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `breadcrumb` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `bubble-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `bulk-actions-bar` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `callout` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `carousel` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `chart-tooltip` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `checkbox-group` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `choice-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `citation-source-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `click-outside` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `collapse` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `column-sort` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `confirm-dialog` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `consent-banner` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `container` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `context-menu` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `conversation-thread` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `count-up-ticker` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `currency-input` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 8 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `device-session-list` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `error-boundary` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 1 subjective item(s) QUEUED. The 3 console errors are the intentional simulated throw the boundary catches (by-design); play verifies catch→fallback→recover. |
+| `field-array` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 0 | medium | 4 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. |
+| `floating-action-button` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 9 stories axe-green (dark+light), 0 render/play errors this session. 4 subjective item(s) QUEUED. |
+| `folder-tree` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 2 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `grouped-stacked-bar` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | No objective fixes needed; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `input-group` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix applied (focus-within border → `primary`); 6 stories, 0 render/play errors this session. Only axe hit is the QUEUED segment divider/addon faint-ink contrast (2.59 dark / 2.17 light) — systemic token, pre-existing (not a regression). 4 subjective item(s) QUEUED. |
+| `model-selector` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 6 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `multi-select` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `notification-center` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `number-input` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 0 | medium | 5 fix(es) applied; 8 stories axe-green (dark+light), 0 render/play errors this session. |
+| `portal` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. |
+| `priority-action-item` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `reduced-motion` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `row-selection` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fix(es) applied; 8 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. Delivery re-verify: new Disabled play used toBeDisabled() on a custom span role=checkbox (aria-disabled, not native) — FIXED to assert aria-disabled. |
+| `search-input` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 7 stories axe-green (dark+light), 0 render/play errors this session. |
+| `stacked-area-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `swipe-actions` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 5 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. Delivery gate caught a react-hooks/refs error (RTL direction ref read during render) — FIXED by lifting direction into state. |
+| `switch` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 5 fix(es) applied; 7 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `tag-input` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 5 fix(es) applied; 8 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `theme-toggle` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 5 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `time-picker` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 7 stories axe-green (dark+light), 0 render/play errors this session. 1 subjective item(s) QUEUED. |
+| `toast` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `validation-message` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 6 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `app-shell` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 2 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `aspect-ratio` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 5 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `attachment-chip` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 12 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `attack-surface-widget` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective fixes needed; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `avatar-group` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 5 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `beam-glow` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix(es) applied; 5 stories axe-green (dark+light), 0 render/play errors this session. 4 subjective item(s) QUEUED. |
+| `box` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 6 fix(es) applied; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `breadcrumb` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `bubble-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix(es) applied; 2 stories axe-green (dark+light), 0 render/play errors this session. 4 subjective item(s) QUEUED. |
+| `bulk-actions-bar` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 3 fix(es) applied; 4 stories, 0 render/play errors this session. Only axe hit is the QUEUED destructive white-on-#e5484d 3.91<4.5 on the delete action — systemic --on-tone token family (same as button), pre-existing (not a regression). 2 subjective item(s) QUEUED. |
+| `callout` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 3 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `carousel` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 4 subjective item(s) QUEUED. |
+| `chart-tooltip` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `checkbox-group` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `choice-card` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `citation-source-card` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 5 stories axe-green (dark+light), 0 render/play errors this session. 4 subjective item(s) QUEUED. |
+| `click-outside` | ✅ | yes | ✅ | ✅ | ✅ | 1 |  | 0 | medium | 2 fix(es) applied; 8 stories axe-green (dark+light), 0 render/play errors this session. Delivery re-verify: DetectFocus dismiss landed just past waitFor's 1s window — FIXED with a 4s timeout for determinism. |
+| `collapse` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 8 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. Delivery re-verify: new Disabled play used toBeDisabled() on an aria-disabled native button — FIXED to assert aria-disabled. |
+| `column-sort` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix(es) applied; 4 stories axe-green (dark+light), 0 render/play errors this session. 4 subjective item(s) QUEUED. |
+| `confirm-dialog` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied (incl. `text-left`→`text-start` RTL); 5 stories, 0 render/play errors this session. Only axe hit is the QUEUED destructive confirm button white-on-#e5484d 3.91 — inherited systemic tone (see button/dialog queue), pre-existing. 3 subjective item(s) QUEUED. |
+| `consent-banner` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fix(es) applied; 10 stories axe-green (dark+light), 0 render/play errors this session. 1 subjective item(s) QUEUED. |
+| `container` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 5 fix(es) applied; 6 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `context-menu` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 5 fix(es) applied; 5 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
+| `conversation-thread` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective fixes needed; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
+| `count-up-ticker` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix(es) applied; 6 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
 | `data-table` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `date-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `date-range-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |

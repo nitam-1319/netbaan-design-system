@@ -124,6 +124,23 @@ export const Disabled: Story = {
   },
 }
 
+export const Required: Story = {
+  args: {
+    label: "Tags",
+    required: true,
+    description: "At least one tag is required.",
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const input = canvas.getByRole("textbox", { name: "Tags" })
+    // Required applies while the field is empty…
+    await expect(input).toBeRequired()
+    // …and lifts once a tag is committed.
+    await userEvent.type(input, "asm{Enter}")
+    await expect(input).not.toBeRequired()
+  },
+}
+
 export const Empty: Story = {
   args: {
     label: "Recipients",

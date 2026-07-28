@@ -66,6 +66,7 @@ export const WithHelperText: Story = {
     label: "Rate limit (req/s)",
     description: "Requests above this threshold are throttled.",
     defaultValue: 100,
+    max: 1000,
     step: 10,
   },
 }
@@ -76,6 +77,16 @@ export const Error: Story = {
     defaultValue: 70000,
     max: 65535,
     error: "Port must be between 0 and 65535.",
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByLabelText("Port")).toHaveAttribute(
+      "aria-invalid",
+      "true"
+    )
+    await expect(
+      canvas.getByText(/between 0 and 65535/i)
+    ).toBeInTheDocument()
   },
 }
 

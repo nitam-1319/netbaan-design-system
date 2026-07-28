@@ -160,12 +160,16 @@ function CountUpTicker({
       className={cn(countUpVariants({ size }))}
       {...props}
     >
-      <span aria-hidden="true">
+      {/* Numbers are formatted LTR (grouped digits, dot decimals); isolate the
+          direction so an RTL context can't reorder the value and its affixes
+          (e.g. render "100 pts" as "pts 100"). Matches the sibling numeric
+          pattern (attachment-chip, file-list, api-key-manager). */}
+      <span aria-hidden="true" dir="ltr">
         {prefix}
         {fmt(displayed)}
         {suffix}
       </span>
-      <span className="sr-only">
+      <span className="sr-only" dir="ltr">
         {prefix}
         {fmt(value)}
         {suffix}

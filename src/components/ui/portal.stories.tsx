@@ -85,7 +85,7 @@ export const CustomContainer: Story = {
         </p>
         {ready ? (
           <Portal container={() => hostRef.current}>
-            <span className="rounded-md bg-primary px-2 py-1 text-xs font-medium text-primary-foreground">
+            <span className="rounded-md bg-primary-solid px-2 py-1 text-xs font-medium text-white">
               Portalled here
             </span>
           </Portal>

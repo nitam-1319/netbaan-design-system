@@ -103,4 +103,13 @@ export const WithDots: Story = {
     ],
     showDots: true,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const img = canvas.getByRole("img", { name: "Revenue by tier" })
+    await expect(
+      img.querySelectorAll("[data-slot=area-chart-series]")
+    ).toHaveLength(3)
+    // a dot at every point of every band: 3 series × 4 quarters
+    await expect(img.querySelectorAll("[data-slot=area-chart-dot]")).toHaveLength(12)
+  },
 }

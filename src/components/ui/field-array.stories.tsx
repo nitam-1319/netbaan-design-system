@@ -99,3 +99,79 @@ function BoundedDemo() {
 export const Bounded: Story = {
   render: () => <BoundedDemo />,
 }
+
+function DisabledDemo() {
+  const [emails, setEmails] = React.useState<string[]>(["ada@example.com", "grace@example.com"])
+  return (
+    <FieldArray<string>
+      label="Notification emails"
+      value={emails}
+      onChange={setEmails}
+      newItem={() => ""}
+      addLabel="Add email"
+      disabled
+      renderItem={({ item, index }) => (
+        <TextField
+          aria-label={`Email ${index + 1}`}
+          type="email"
+          placeholder="name@example.com"
+          value={item}
+          disabled
+          onChange={(e) => {
+            const next = [...emails]
+            next[index] = (e.target as HTMLInputElement).value
+            setEmails(next)
+          }}
+        />
+      )}
+    />
+  )
+}
+
+export const Disabled: Story = {
+  render: () => <DisabledDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Every control is disabled: add and all remove buttons.
+    await expect(canvas.getByRole("button", { name: /add email/i })).toBeDisabled()
+    await expect(canvas.getByRole("button", { name: /remove 1/i })).toBeDisabled()
+    await expect(canvas.getByRole("button", { name: /remove 2/i })).toBeDisabled()
+  },
+}
+
+function EmptyDemo() {
+  const [items, setItems] = React.useState<string[]>([])
+  return (
+    <FieldArray<string>
+      label="Notification emails"
+      value={items}
+      onChange={setItems}
+      newItem={() => ""}
+      addLabel="Add email"
+      renderItem={({ item, index }) => (
+        <TextField
+          aria-label={`Email ${index + 1}`}
+          type="email"
+          placeholder="name@example.com"
+          value={item}
+          onChange={(e) => {
+            const next = [...items]
+            next[index] = (e.target as HTMLInputElement).value
+            setItems(next)
+          }}
+        />
+      )}
+    />
+  )
+}
+
+export const Empty: Story = {
+  render: () => <EmptyDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Empty state placeholder shows; adding a row replaces it.
+    await expect(canvas.getByText(/no entries yet/i)).toBeInTheDocument()
+    await userEvent.click(canvas.getByRole("button", { name: /add email/i }))
+    await expect(canvas.getByLabelText("Email 1")).toBeInTheDocument()
+  },
+}

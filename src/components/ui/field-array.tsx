@@ -58,6 +58,7 @@ function FieldArray<T>({
   const isControlled = value != null
   const [internal, setInternal] = React.useState<T[]>(defaultValue)
   const items = isControlled ? value : internal
+  const labelId = React.useId()
 
   const commit = (next: T[]) => {
     if (!isControlled) setInternal(next)
@@ -77,9 +78,9 @@ function FieldArray<T>({
   const canRemove = !disabled && items.length > min
 
   return (
-    <div data-slot="field-array" role="group" aria-label={typeof label === "string" ? label : undefined} className={cn("flex flex-col gap-3")}>
+    <div data-slot="field-array" role="group" aria-labelledby={label != null ? labelId : undefined} className={cn("flex flex-col gap-3")}>
       {label != null ? (
-        <span data-slot="field-array-label" className="text-sm font-medium text-foreground">
+        <span id={labelId} data-slot="field-array-label" className="text-sm font-medium text-foreground">
           {label}
         </span>
       ) : null}

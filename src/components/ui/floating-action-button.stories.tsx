@@ -65,6 +65,21 @@ export const ExtendedSizes: Story = {
   ),
 }
 
+/**
+ * Disabled — non-interactive (pointer events off, reduced opacity). Shown for a
+ * circle, a secondary circle, and an extended pill.
+ */
+export const Disabled: Story = {
+  args: { disabled: true, onClick: fn() },
+  render: (args) => (
+    <div className="flex items-center gap-4">
+      <FloatingActionButton {...args} variant="primary" aria-label="Create" />
+      <FloatingActionButton {...args} variant="secondary" aria-label="Edit" icon={<Pencil />} />
+      <FloatingActionButton {...args} label="New scan" aria-label={undefined} />
+    </div>
+  ),
+}
+
 export const Pinned: Story = {
   parameters: { layout: "fullscreen" },
   args: { placement: "bottom-end", onClick: fn() },

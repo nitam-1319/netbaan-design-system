@@ -60,7 +60,7 @@ export const Default: Story = {
 
 export const Queue: Story = {
   render: () => (
-    <List variant="bordered">
+    <>
       <PriorityActionItem
         rank={1}
         severity="critical"
@@ -85,7 +85,7 @@ export const Queue: Story = {
         impact="Revokes stale credentials"
         href="#a3"
       />
-    </List>
+    </>
   ),
 }
 

@@ -38,7 +38,7 @@ type FolderNode = {
 
 type FolderTreeProps = Omit<
   React.ComponentProps<typeof TreeView>,
-  "nodes" | "children"
+  "nodes" | "children" | "className" | "style"
 > & {
   /** The file-system entries. */
   items: FolderNode[]

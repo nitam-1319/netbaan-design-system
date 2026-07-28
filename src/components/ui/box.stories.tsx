@@ -29,8 +29,8 @@ export const Default: Story = {
         <div className="bg-surface border-border rounded-lg border p-4 text-sm" />
       }
     >
-      A Box renders a plain <code>div</code> by default and merges any utility
-      classes you give it.
+      A Box renders a plain <code>div</code> by default; here the styling lives on
+      the element passed to <code>render</code>, not on <code>Box</code> itself.
     </Box>
   ),
   play: async ({ canvasElement }) => {

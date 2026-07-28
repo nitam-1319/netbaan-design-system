@@ -134,5 +134,13 @@ export const Empty: Story = {
   args: {
     label: "Amount",
     placeholder: "0.00",
+    required: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const input = canvas.getByLabelText("Amount") as HTMLInputElement
+    // Empty, required field: no committed value and native required is set.
+    await expect(input).toHaveValue("")
+    await expect(input).toBeRequired()
   },
 }

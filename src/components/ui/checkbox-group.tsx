@@ -76,12 +76,14 @@ function CheckboxGroupItem({
       data-slot="checkbox-group-item"
       className={cn(
         "flex items-center gap-2.5 text-sm text-foreground select-none",
-        "has-data-[disabled]:cursor-not-allowed has-data-[disabled]:opacity-60",
+        "has-data-[disabled]:cursor-not-allowed",
         "not-has-data-[disabled]:cursor-pointer"
       )}
     >
       <Checkbox name={value} {...props} />
-      {children != null ? <span className="leading-none">{children}</span> : null}
+      {children != null ? (
+        <span className="leading-none peer-data-[disabled]:opacity-45">{children}</span>
+      ) : null}
     </label>
   )
 }
@@ -105,12 +107,14 @@ function CheckboxGroupSelectAll({
       data-slot="checkbox-group-select-all"
       className={cn(
         "flex items-center gap-2.5 text-sm font-medium text-foreground select-none",
-        "has-data-[disabled]:cursor-not-allowed has-data-[disabled]:opacity-60",
+        "has-data-[disabled]:cursor-not-allowed",
         "not-has-data-[disabled]:cursor-pointer"
       )}
     >
       <Checkbox parent {...props} />
-      {children != null ? <span className="leading-none">{children}</span> : null}
+      {children != null ? (
+        <span className="leading-none peer-data-[disabled]:opacity-45">{children}</span>
+      ) : null}
     </label>
   )
 }

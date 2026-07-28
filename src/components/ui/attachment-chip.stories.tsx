@@ -72,6 +72,23 @@ export const NoSize: Story = {
 }
 
 /**
+ * As a download link — `render={<a>}` makes the chip keyboard-focusable and
+ * exposes the AEGIS focus ring automatically.
+ */
+export const AsLink: Story = {
+  args: {
+    render: <a href="/files/quarterly-report.pdf" download />,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const link = canvas.getByRole("link", { name: /quarterly-report\.pdf/ })
+    await waitFor(() => expect(link).toBeVisible())
+    link.focus()
+    await expect(link).toHaveFocus()
+  },
+}
+
+/**
  * Persian / RTL — logical spacing (`gap`, `ms/me`) mirrors the layout; the file
  * glyph and dismiss icon are non-directional and are not flipped.
  */

@@ -26,8 +26,9 @@ import { useTheme } from "@/components/theme-provider"
 
 const themeToggleVariants = cva(
   cn(
-    "group/theme-toggle inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border font-medium whitespace-nowrap transition-colors select-none",
+    "group/theme-toggle inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border font-medium whitespace-nowrap select-none transition-[color,background-color,border-color,box-shadow,filter] duration-150",
     "outline-none focus-visible:border-accent-strong focus-visible:ring-3 focus-visible:ring-accent-soft",
+    "active:scale-[0.98] active:brightness-[0.94]",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0"
   ),

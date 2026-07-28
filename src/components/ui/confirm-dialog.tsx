@@ -144,7 +144,7 @@ function ConfirmDialogContent({
       >
         <div
           data-slot="confirm-dialog-header"
-          className="flex items-start gap-3 text-left"
+          className="flex items-start gap-3 text-start"
         >
           {showIcon ? (
             <span

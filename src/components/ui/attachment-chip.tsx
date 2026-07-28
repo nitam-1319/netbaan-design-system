@@ -132,6 +132,7 @@ function AttachmentChip({
           {sizeText ? (
             <span
               data-slot="attachment-chip-size"
+              dir="ltr"
               className="shrink-0 font-mono text-[0.9em] tabular-nums text-text-faint"
             >
               {sizeText}

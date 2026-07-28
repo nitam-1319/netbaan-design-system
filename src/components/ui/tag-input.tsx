@@ -28,14 +28,15 @@ import { Tag } from "@/components/ui/tag"
 const shellVariants = cva(
   cn(
     "flex w-full flex-wrap items-center gap-1.5 rounded-lg border border-border-strong bg-background text-foreground transition-colors",
-    "focus-within:border-accent-strong focus-within:ring-3 focus-within:ring-accent-soft",
+    "hover:border-accent-strong",
+    "focus-within:border-primary focus-within:ring-3 focus-within:ring-accent-soft",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     "data-[invalid]:border-destructive data-[invalid]:focus-within:ring-destructive/30"
   ),
   {
     variants: {
       size: {
-        sm: "min-h-8 px-1.5 py-1 text-[0.8rem]",
+        sm: "min-h-8 px-1.5 py-1 text-xs",
         md: "min-h-10 px-2 py-1.5 text-sm",
         lg: "min-h-12 px-2.5 py-2 text-base",
       },

@@ -26,20 +26,20 @@ import { cn } from "@/lib/utils"
 
 const calloutVariants = cva(
   cn(
-    "w-full rounded-lg border border-l-4 px-4 py-3 text-sm text-pretty",
+    "w-full rounded-lg border-y border-e border-s-4 px-4 py-3 text-sm text-pretty",
     "[&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4"
   ),
   {
     variants: {
       tone: {
-        note: "border-border border-l-border bg-muted/40 text-foreground",
-        info: "border-transparent border-l-current bg-[color-mix(in_oklch,var(--sev-low),transparent_88%)] text-sev-low-ink",
+        note: "border-border border-s-border bg-muted/40 text-foreground",
+        info: "border-transparent border-s-current bg-[color-mix(in_oklch,var(--sev-low),transparent_88%)] text-sev-low-ink",
         success:
-          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--success),transparent_88%)] text-success-ink",
+          "border-transparent border-s-current bg-[color-mix(in_oklch,var(--success),transparent_88%)] text-success-ink",
         warning:
-          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--warning),transparent_88%)] text-warning-ink",
+          "border-transparent border-s-current bg-[color-mix(in_oklch,var(--warning),transparent_88%)] text-warning-ink",
         danger:
-          "border-transparent border-l-current bg-[color-mix(in_oklch,var(--destructive),transparent_88%)] text-destructive-ink",
+          "border-transparent border-s-current bg-[color-mix(in_oklch,var(--destructive),transparent_88%)] text-destructive-ink",
       },
     },
     defaultVariants: { tone: "note" },

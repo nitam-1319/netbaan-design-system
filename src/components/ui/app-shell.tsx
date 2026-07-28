@@ -30,7 +30,7 @@ function AppShell(
 }
 
 const appShellSidebarVariants = cva(
-  "bg-sidebar text-sidebar-foreground border-sidebar-border flex shrink-0 flex-col border-r transition-[width] duration-200",
+  "bg-sidebar text-sidebar-foreground border-sidebar-border flex shrink-0 flex-col border-e transition-[width] duration-200",
   {
     variants: {
       width: {

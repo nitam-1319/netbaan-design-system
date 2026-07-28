@@ -54,6 +54,18 @@ function Demo() {
         variant="outline"
         onClick={() =>
           toast.add({
+            type: "warning",
+            title: "Certificate expiring",
+            description: "TLS cert for api-gw-prod expires in 7 days.",
+          })
+        }
+      >
+        Warning
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() =>
+          toast.add({
             type: "error",
             title: "Export failed",
             description: "The report service timed out. Try again.",
@@ -110,5 +122,15 @@ export const Success: Story = {
     await userEvent.click(canvas.getByRole("button", { name: "Success" }))
     const successTitle = await screen.findByText("Finding remediated")
     await waitFor(() => expect(successTitle).toBeVisible())
+  },
+}
+
+export const Warning: Story = {
+  render: () => <Demo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: "Warning" }))
+    const warningTitle = await screen.findByText("Certificate expiring")
+    await waitFor(() => expect(warningTitle).toBeVisible())
   },
 }

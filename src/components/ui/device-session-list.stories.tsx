@@ -90,6 +90,39 @@ export const SingleSession: Story = {
   },
 }
 
+export const DeviceTypes: Story = {
+  args: {
+    sessions: [
+      {
+        id: "s1",
+        device: "MacBook Pro",
+        type: "desktop",
+        browser: "Chrome on macOS",
+        location: "Tehran, IR",
+        lastActive: "Active now",
+        current: true,
+      },
+      {
+        id: "s2",
+        device: "iPhone 15",
+        type: "mobile",
+        browser: "Safari on iOS",
+        lastActive: "2h ago",
+      },
+      {
+        id: "s3",
+        device: "iPad Air",
+        type: "tablet",
+        location: "Berlin, DE",
+      },
+      {
+        id: "s4",
+        device: "Unknown device",
+      },
+    ],
+  },
+}
+
 export const Empty: Story = {
   args: { sessions: [] },
 }

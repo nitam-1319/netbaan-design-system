@@ -49,36 +49,47 @@ function SwipeActions({
   ...props
 }: SwipeActionsProps) {
   const total = actions.length * actionWidth
-  const [offset, setOffset] = React.useState(0)
+  // Reveal amount in px (0 = closed, `total` = fully open), direction-agnostic.
+  const [openAmount, setOpenAmount] = React.useState(0)
   const startX = React.useRef<number | null>(null)
-  const startOffset = React.useRef(0)
+  const startOpen = React.useRef(0)
+  // 1 = LTR, -1 = RTL; resolved from the element's computed direction on grab.
+  // Held in state (not a ref) because it drives the render transform.
+  const [dir, setDir] = React.useState(1)
+  const dirRef = React.useRef(1)
   const [dragging, setDragging] = React.useState(false)
 
-  const clamp = (v: number) => Math.min(0, Math.max(-total, v))
+  const clamp = (v: number) => Math.min(total, Math.max(0, v))
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (disabled || actions.length === 0) return
+    const resolved =
+      getComputedStyle(e.currentTarget).direction === "rtl" ? -1 : 1
+    dirRef.current = resolved
+    setDir(resolved)
     startX.current = e.clientX
-    startOffset.current = offset
+    startOpen.current = openAmount
     setDragging(true)
   }
   const onPointerMove = (e: React.PointerEvent) => {
     if (startX.current == null) return
-    setOffset(clamp(startOffset.current + (e.clientX - startX.current)))
+    // In LTR a leftward drag opens; in RTL a rightward drag opens.
+    setOpenAmount(clamp(startOpen.current - dirRef.current * (e.clientX - startX.current)))
   }
   const endDrag = () => {
     if (startX.current == null) return
     startX.current = null
     setDragging(false)
-    setOffset((o) => (o < -total / 2 ? -total : 0))
+    setOpenAmount((o) => (o > total / 2 ? total : 0))
   }
 
-  const close = () => setOffset(0)
+  const close = () => setOpenAmount(0)
 
   return (
     <div
       data-slot="swipe-actions"
-      data-open={offset <= -total && total > 0 ? "" : undefined}
+      role="listitem"
+      data-open={openAmount >= total && total > 0 ? "" : undefined}
       className={cn("relative overflow-hidden")}
       {...props}
     >
@@ -99,7 +110,7 @@ function SwipeActions({
               close()
             }}
             className={cn(
-              "flex h-full flex-col items-center justify-center gap-1 text-xs font-medium outline-none transition-[filter] focus-visible:ring-3 focus-visible:ring-inset focus-visible:ring-accent-soft [&_svg]:size-4",
+              "flex h-full flex-col items-center justify-center gap-1 text-xs font-medium outline-none transition-[filter,background-color,color] focus-visible:ring-3 focus-visible:ring-inset focus-visible:ring-accent-soft [&_svg]:size-4",
               action.destructive
                 ? "bg-destructive text-white hover:brightness-110"
                 : "bg-surface-3 text-foreground hover:bg-border"
@@ -119,9 +130,11 @@ function SwipeActions({
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className="relative touch-pan-y bg-card"
+        className="relative flex touch-pan-y items-center gap-3 bg-card px-3 py-2"
         style={{
-          transform: offset ? `translateX(${offset}px)` : undefined,
+          transform: openAmount
+            ? `translateX(${-dir * openAmount}px)`
+            : undefined,
           transition: dragging ? undefined : "transform 200ms ease-out",
         }}
       >

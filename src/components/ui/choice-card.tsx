@@ -122,7 +122,7 @@ function ChoiceCard({
           )}
         >
           <RadioPrimitive.Indicator className="flex items-center justify-center">
-            <span className="bg-primary-foreground size-1.5 rounded-full" />
+            <span className="bg-primary-foreground animate-dot-pop size-1.5 rounded-full" />
           </RadioPrimitive.Indicator>
         </span>
       ) : null}

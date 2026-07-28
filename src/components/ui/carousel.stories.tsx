@@ -105,6 +105,13 @@ export const Default: Story = {
     )
     await expect(canvas.getByLabelText("Previous slide")).toBeInTheDocument()
     await expect(canvas.getByLabelText("Next slide")).toBeInTheDocument()
+
+    // Edge affordances (non-loop): at the first slide Previous is disabled and
+    // Next becomes enabled once the viewport is measured.
+    await waitFor(() =>
+      expect(canvas.getByLabelText("Next slide")).toBeEnabled()
+    )
+    await expect(canvas.getByLabelText("Previous slide")).toBeDisabled()
   },
 }
 

@@ -3,7 +3,7 @@ import { expect, userEvent, within, fn } from "storybook/test"
 import { Archive, Trash2 } from "lucide-react"
 
 import { SwipeActions } from "@/components/ui/swipe-actions"
-import { List, ListItem } from "@/components/ui/list"
+import { List } from "@/components/ui/list"
 
 /**
  * Theme (Light/Dark) and direction (LTR/RTL) come from the global Storybook
@@ -20,7 +20,7 @@ const meta = {
       { label: "Archive", icon: <Archive aria-hidden />, onClick: fn() },
       { label: "Delete", icon: <Trash2 aria-hidden />, onClick: fn(), destructive: true },
     ],
-    children: <ListItem>Swipe this row left</ListItem>,
+    children: "Swipe this row left",
   },
   decorators: [
     (Story) => (
@@ -56,9 +56,16 @@ export const SingleAction: Story = {
   },
 }
 
+/** Gesture disabled — the row no longer swipes (actions stay reachable elsewhere). */
+export const Disabled: Story = {
+  args: { disabled: true },
+}
+
 export const Rows: Story = {
+  // The `List` wrapper comes from the decorator, so the rows are valid
+  // `role="listitem"` children of a single semantic list.
   render: () => (
-    <List variant="bordered">
+    <>
       {["Alert from web-01", "Scan completed", "Cert expiring"].map((t) => (
         <SwipeActions
           key={t}
@@ -67,9 +74,9 @@ export const Rows: Story = {
             { label: "Delete", icon: <Trash2 aria-hidden />, onClick: () => {}, destructive: true },
           ]}
         >
-          <ListItem>{t}</ListItem>
+          {t}
         </SwipeActions>
       ))}
-    </List>
+    </>
   ),
 }

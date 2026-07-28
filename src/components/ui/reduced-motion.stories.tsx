@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect, within } from "storybook/test"
 
+// The default test environment does not request reduced motion, so the
+// full-motion / no-preference branch renders in these play tests.
+
 import {
   ReducedMotion,
   usePrefersReducedMotion,
@@ -34,8 +37,6 @@ export const Gate: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    // The default test environment does not request reduced motion, so the
-    // full-motion branch renders.
     await expect(
       canvas.getByText("Full motion — showing the animated version.")
     ).toBeVisible()
@@ -52,6 +53,10 @@ export const RenderProp: Story = {
       )}
     </ReducedMotion>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText("no-preference")).toBeVisible()
+  },
 }
 
 export const HookReadout: Story = {
@@ -72,5 +77,9 @@ export const HookReadout: Story = {
         </p>
       </div>
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByTestId("value")).toHaveTextContent("false")
   },
 }

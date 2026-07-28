@@ -15,7 +15,7 @@ component standardises the interaction and the revealed action buttons.
 
 ## Usage
 
-- **Do** wrap **ListItem** rows and pass 1–3 trailing `actions`.
+- **Do** place rows inside a **List** and pass row content plus 1–3 trailing `actions`.
 - **Do** mark irreversible actions `destructive`.
 - **Do** provide an equivalent action reachable by keyboard/AT elsewhere (swipe is
   pointer-only).
@@ -23,9 +23,11 @@ component standardises the interaction and the revealed action buttons.
 
 ## Anatomy
 
-A clipping wrapper (`data-slot="swipe-actions"`, `data-open`) with a trailing
-action bank (`swipe-actions-actions`) of buttons (`swipe-action`) behind the
-swipeable content (`swipe-actions-content`).
+A clipping wrapper (`data-slot="swipe-actions"`, `role="listitem"`, `data-open`)
+with a trailing action bank (`swipe-actions-actions`) of buttons
+(`swipe-action`) behind the swipeable content (`swipe-actions-content`). The
+wrapper carries the list-item semantics, so it drops straight into a **List**
+without a nested `ListItem`.
 
 ## Variants
 
@@ -39,8 +41,8 @@ No visual variants; each action can be `destructive`. Action width is tunable.
 
 ## Behavior
 
-- Pointer drag translates the content left; on release it snaps open or closed at
-  the halfway point.
+- Pointer drag translates the content toward the leading edge (left in LTR, right
+  in RTL); on release it snaps open or closed at the halfway point.
 - Activating an action fires its `onClick` and closes the row.
 - Actions remain in the DOM (operable/testable) even when hidden.
 

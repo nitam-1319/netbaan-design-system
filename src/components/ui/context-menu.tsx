@@ -119,7 +119,7 @@ const contextMenuItemVariants = cva(
           "text-destructive-ink data-[highlighted]:bg-destructive/10 data-[highlighted]:text-destructive-ink",
       },
       inset: {
-        true: "pl-8",
+        true: "ps-8",
         false: "",
       },
     },
@@ -197,13 +197,13 @@ function ContextMenuCheckboxItem({
       data-slot="context-menu-checkbox-item"
       className={cn(
         "text-popover-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
-        "relative flex w-full cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-none transition-colors",
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-md py-1.5 pe-2 ps-8 text-sm outline-none transition-colors",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-4 items-center justify-center">
+      <span className="absolute start-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.CheckboxItemIndicator data-slot="context-menu-checkbox-item-indicator">
           <Check aria-hidden />
         </ContextMenuPrimitive.CheckboxItemIndicator>
@@ -243,13 +243,13 @@ function ContextMenuRadioItem({
       data-slot="context-menu-radio-item"
       className={cn(
         "text-popover-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
-        "relative flex w-full cursor-default select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-none transition-colors",
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-md py-1.5 pe-2 ps-8 text-sm outline-none transition-colors",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg]:pointer-events-none [&_svg]:size-2 [&_svg]:shrink-0"
       )}
       {...props}
     >
-      <span className="absolute left-2 flex size-4 items-center justify-center">
+      <span className="absolute start-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.RadioItemIndicator data-slot="context-menu-radio-item-indicator">
           <Circle className="fill-current" aria-hidden />
         </ContextMenuPrimitive.RadioItemIndicator>
@@ -265,7 +265,7 @@ function ContextMenuShortcut({ children }: { children: React.ReactNode }) {
   return (
     <span
       data-slot="context-menu-shortcut"
-      className={cn("text-muted-foreground ml-auto text-xs tracking-widest")}
+      className={cn("text-muted-foreground ms-auto text-xs tracking-widest")}
     >
       {children}
     </span>
@@ -306,7 +306,7 @@ function ContextMenuSubTrigger({
       {children}
       <ChevronRight
         data-slot="context-menu-sub-trigger-icon"
-        className="ml-auto rtl:rotate-180"
+        className="ms-auto rtl:rotate-180"
         aria-hidden
       />
     </ContextMenuPrimitive.SubmenuTrigger>

@@ -122,6 +122,7 @@ function MultiSelect({
                   data-slot="multi-select-chip"
                   className={cn(
                     "inline-flex max-w-full items-center gap-1 rounded-md border border-border-strong bg-surface-2 py-0.5 ps-2 pe-1 text-xs text-foreground",
+                    "animate-chip-pop transition-colors",
                     "data-[highlighted]:border-primary data-[highlighted]:ring-3 data-[highlighted]:ring-accent-soft"
                   )}
                 >

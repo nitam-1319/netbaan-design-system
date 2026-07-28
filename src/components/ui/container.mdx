@@ -44,7 +44,7 @@ sets the padding.
 | `--spacing` scale | `gutter` padding steps |
 | Tailwind `screen-*` widths | `size` max-width breakpoints |
 
-Colors are never set by `Container`; pass token utilities via `className`.
+Colors are never set by `Container`. The API is closed (no `className`/`style`) — apply token utilities on the `render` element or on children instead.
 
 ## API
 
@@ -53,6 +53,6 @@ Colors are never set by `Container`; pass token utilities via `className`.
 | `size` | `"sm" \| "md" \| "lg" \| "xl" \| "2xl" \| "prose" \| "full"` | `"xl"` | Max width. |
 | `gutter` | `"none" \| "sm" \| "md" \| "lg"` | `"md"` | Horizontal padding. |
 | `render` | `ReactElement \| fn` | `<div />` | Change the rendered element (via `Box`). |
-| `className` | `string` | — | Merged via `cn()`. |
+| `...props` | `Omit<ComponentProps<"div">, "className" \| "style">` | — | Native attributes spread onto the rendered element. The API is closed: `className`/`style` are not accepted. |
 
 Carries `data-slot="container"`.

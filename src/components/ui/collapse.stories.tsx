@@ -42,7 +42,10 @@ export const Default: Story = {
         render={
           <Button variant="outline" data-icon="inline-end">
             <span>Details</span>
-            <ChevronDown className="transition-transform duration-200 [[data-panel-open]_&]:rotate-180" />
+            <ChevronDown
+              aria-hidden
+              className="transition-transform duration-200 [[data-panel-open]_&]:rotate-180"
+            />
           </Button>
         }
       />
@@ -75,6 +78,40 @@ export const OpenByDefault: Story = {
       </CollapseContent>
     </Collapse>
   ),
+}
+
+export const Disabled: Story = {
+  render: () => (
+    <Collapse defaultOpen={false} disabled>
+      <CollapseTrigger
+        render={
+          <Button variant="outline" data-icon="inline-end">
+            <span>Details</span>
+            <ChevronDown
+              aria-hidden
+              className="transition-transform duration-200 [[data-panel-open]_&]:rotate-180"
+            />
+          </Button>
+        }
+      />
+      <CollapseContent>
+        <div className="pt-3 text-sm text-muted-foreground">
+          This region cannot be toggled while the Collapse is disabled.
+        </div>
+      </CollapseContent>
+    </Collapse>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const trigger = canvas.getByRole("button", { name: /Details/ })
+    // The disabled Collapse trigger renders a native <button> that stays
+    // discoverable but is marked aria-disabled (not the native `disabled`
+    // attribute), so assert the ARIA state rather than jest-dom's toBeDisabled.
+    await expect(trigger).toHaveAttribute("aria-disabled", "true")
+    await expect(trigger).toHaveAttribute("aria-expanded", "false")
+    await userEvent.click(trigger)
+    await expect(trigger).toHaveAttribute("aria-expanded", "false")
+  },
 }
 
 export const Controlled: Story = {

@@ -59,6 +59,26 @@ export const Floating: Story = {
   ),
 }
 
+export const Bottom: Story = {
+  parameters: { layout: "fullscreen" },
+  args: { placement: "bottom", onManage: fn(), onDismiss: fn() },
+  render: (args) => (
+    <div className="relative h-[22rem] w-full overflow-hidden rounded-lg bg-surface-2">
+      <ConsentBanner {...args} />
+    </div>
+  ),
+}
+
+export const Top: Story = {
+  parameters: { layout: "fullscreen" },
+  args: { placement: "top", onManage: fn(), onDismiss: fn() },
+  render: (args) => (
+    <div className="relative h-[22rem] w-full overflow-hidden rounded-lg bg-surface-2">
+      <ConsentBanner {...args} />
+    </div>
+  ),
+}
+
 export const CustomCopy: Story = {
   args: {
     title: "Cookies & tracking",

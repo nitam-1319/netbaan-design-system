@@ -97,7 +97,7 @@ export const ThumbnailGrid: Story = {
   ),
 }
 
-/** All named ratios side by side. */
+/** A representative selection of named ratios side by side. */
 export const AllRatios: Story = {
   render: () => (
     <div className="grid w-[36rem] grid-cols-3 gap-4">

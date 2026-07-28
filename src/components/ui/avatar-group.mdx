@@ -6,7 +6,7 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 A compact, overlapping stack of **Avatar**s for showing the people on a thread,
 team, or shared resource. Pass `Avatar` elements as children; the group overlaps
-them, rings each in the `background` colour so they read as separate, and — when
+them, rings each in the `card` colour so they read as separate, and — when
 `max` is set — collapses the remainder into a "+N" chip.
 
 ## When to use
@@ -22,23 +22,24 @@ them, rings each in the `background` colour so they read as separate, and — wh
 ## Anatomy
 
 1. **Group** — the overlapping flex row.
-2. **Items** — each child `Avatar`, wrapped with a `background` ring for
+2. **Items** — each child `Avatar`, wrapped with a `card` ring for
    separation.
-3. **Overflow chip** — a "+N" `muted` circle shown when more than `max` avatars
-   are provided.
+3. **Overflow chip** — a "+N" circle (`surface-3` fill, `border-strong` edge)
+   shown when more than `max` avatars are provided.
 
 ## Sizes
 
-`size` (`xs` / `sm` / `default` / `lg` / `xl`) sets the overlap amount and the
-overflow chip's text, matching the **Avatar** size scale (24 / 32 / 36 / 44 /
-56px). Give the child `Avatar`s the same `size`.
+`size` (`xs` / `sm` / `md` / `lg` / `xl`) sets the overlap amount and the
+overflow chip's diameter, matching the **Avatar** size scale (24 / 32 / 40 / 64 /
+88px). Give the child `Avatar`s the same `size`.
 
 ## Behavior
 
 - Children are rendered in order; when more than `max` are supplied, the first
   `max` show and the rest collapse into the overflow chip.
-- Without `max`, every avatar is shown.
-- The ring uses the `background` token so avatars separate against any surface.
+- `max` defaults to `4`; set it to `0` (or a value at least the child count) to
+  show every avatar.
+- The ring uses the `card` token so avatars separate against any surface.
 
 ## Accessibility
 
@@ -53,8 +54,10 @@ overflow chip's text, matching the **Avatar** size scale (24 / 32 / 36 / 44 /
 
 | Token | Applies to |
 | --- | --- |
-| `--background` | Separator ring around each avatar |
-| `--muted` / `--muted-foreground` | Overflow chip fill / text |
+| `--card` | Separator ring around each avatar |
+| `--surface-3` | Overflow chip fill |
+| `--border-strong` | Overflow chip border |
+| `--muted-foreground` | Overflow chip text |
 
 ## API
 
@@ -62,8 +65,8 @@ overflow chip's text, matching the **Avatar** size scale (24 / 32 / 36 / 44 /
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `size` | `"xs" \| "sm" \| "default" \| "lg" \| "xl"` | `"default"` | Overlap + chip scale (match the child avatars). |
-| `max` | `number` | — | Max avatars before collapsing into "+N". |
+| `size` | `"xs" \| "sm" \| "md" \| "lg" \| "xl"` | `"md"` | Overlap + chip scale (match the child avatars). |
+| `max` | `number` | `4` | Max avatars before collapsing into "+N". |
 | `children` | `Avatar[]` | — | The avatars to stack. |
 
 The public API is closed: there is no `className` or `style` prop.

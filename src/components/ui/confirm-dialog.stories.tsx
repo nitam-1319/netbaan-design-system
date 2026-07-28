@@ -95,6 +95,32 @@ export const WithBody: Story = {
   ),
 }
 
+export const ConfirmDisabled: Story = {
+  render: () => (
+    <ConfirmDialog>
+      <ConfirmDialogTrigger render={<Button variant="outline">Delete account</Button>} />
+      <ConfirmDialogContent
+        tone="destructive"
+        title="Delete your account?"
+        description="This is permanent. The confirm action stays disabled until a precondition is met."
+        confirmLabel="Delete"
+        confirmDisabled
+        onConfirm={onConfirmSpy}
+      />
+    </ConfirmDialog>
+  ),
+  play: async ({ canvasElement }) => {
+    onConfirmSpy.mockClear()
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: "Delete account" }))
+    const dialog = await screen.findByRole("alertdialog")
+    await waitFor(() => expect(dialog).toBeVisible())
+    const confirm = within(dialog).getByRole("button", { name: "Delete" })
+    await expect(confirm).toBeDisabled()
+    await expect(onConfirmSpy).not.toHaveBeenCalled()
+  },
+}
+
 export const Controlled: Story = {
   render: function ControlledRender() {
     const [open, setOpen] = React.useState(false)

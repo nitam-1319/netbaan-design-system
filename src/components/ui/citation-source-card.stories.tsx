@@ -58,6 +58,10 @@ export const WithoutSnippet: Story = {
   args: { snippet: undefined },
 }
 
+export const WithGlyph: Story = {
+  args: { index: undefined },
+}
+
 export const List: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>

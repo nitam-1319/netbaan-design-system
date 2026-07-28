@@ -38,8 +38,14 @@ const INVOICES: Invoice[] = [
   { id: "inv-3", number: "INV-1003", client: "Initech" },
 ]
 
-function SelectableTable() {
-  const selection = useRowSelection()
+function SelectableTable({
+  defaultSelectedIds,
+  disabled = false,
+}: {
+  defaultSelectedIds?: string[]
+  disabled?: boolean
+}) {
+  const selection = useRowSelection({ defaultSelectedIds })
   const allIds = INVOICES.map((i) => i.id)
   return (
     <div className="flex flex-col gap-2">
@@ -53,6 +59,7 @@ function SelectableTable() {
             <RowSelectionHeader
               state={selection.getToggleAllState(allIds)}
               onToggleAll={(checked) => selection.toggleAll(allIds, checked)}
+              disabled={disabled}
             />
             <TableHead>Number</TableHead>
             <TableHead>Client</TableHead>
@@ -67,6 +74,7 @@ function SelectableTable() {
                   selected={selected}
                   onSelectedChange={(checked) => selection.toggle(row.id, checked)}
                   label={`Select ${row.number}`}
+                  disabled={disabled}
                 />
                 <TableCell>{row.number}</TableCell>
                 <TableCell>{row.client}</TableCell>
@@ -112,5 +120,44 @@ export const Interactive: Story = {
     // Toggle select-all off clears the selection.
     await userEvent.click(selectAll)
     await waitFor(() => expect(canvas.getByText("0 selected")).toBeInTheDocument())
+  },
+}
+
+/**
+ * A partial (some-but-not-all) selection: the header box shows the tri-state
+ * `indeterminate` (`aria-checked="mixed"`) treatment and the selected row picks
+ * up the `Table`'s `data-[state=selected]:bg-accent-soft` surface.
+ */
+export const Indeterminate: Story = {
+  args: STUB_ARGS,
+  render: () => <SelectableTable defaultSelectedIds={["inv-1"]} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const selectAll = canvas.getByRole("checkbox", { name: "Select all rows" })
+    await waitFor(() => expect(selectAll).toHaveAttribute("aria-checked", "mixed"))
+    expect(canvas.getByText("1 selected")).toBeInTheDocument()
+  },
+}
+
+/**
+ * Disabled select-all and per-row boxes — e.g. while the table is loading or the
+ * viewer lacks permission. A pre-selected row shows the disabled+checked box.
+ */
+export const Disabled: Story = {
+  args: STUB_ARGS,
+  render: () => <SelectableTable defaultSelectedIds={["inv-2"]} disabled />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // The boxes are custom <span role="checkbox"> controls disabled via
+    // aria-disabled (jest-dom's toBeDisabled only recognises native form
+    // controls), so assert the ARIA state instead.
+    expect(canvas.getByRole("checkbox", { name: "Select all rows" })).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    )
+    expect(canvas.getByRole("checkbox", { name: "Select INV-1001" })).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    )
   },
 }

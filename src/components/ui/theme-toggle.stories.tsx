@@ -72,3 +72,11 @@ export const WithLabel: Story = {
     await expect(canvas.getByText("Theme")).toBeInTheDocument()
   },
 }
+
+export const Disabled: Story = {
+  args: { disabled: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole("button")).toBeDisabled()
+  },
+}

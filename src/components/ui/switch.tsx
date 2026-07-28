@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils"
  * accent gradient, the 3px accent-soft focus ring, an `error` (invalid-required)
  * ring, a `loading` state (thumb spinner + locked + aria-busy), optional
  * `showIcons` thumb glyphs (check on / bar off), and built-in `label` +
- * `description` slots. Off-track uses `bg-surface-3` (closest token to the
- * reference `--track` groove). Built on the Base UI Switch primitive, which
+ * `description` slots. Off-track uses `bg-track` (the reference `--track`
+ * groove). Built on the Base UI Switch primitive, which
  * supplies `role="switch"`, `aria-checked`, a paired hidden input for forms, and
  * keyboard support. Closed API — no `className` / `style`; polymorphism via
  * `render`. Tokens only. See `.agent/rules/REFERENCE_FIDELITY.md`.
@@ -25,7 +25,7 @@ const switchTrackVariants = cva(
   {
     variants: {
       size: {
-        sm: "h-[20px] w-9 p-[2px]",
+        sm: "h-[20px] w-9 px-[3px] py-[2px]",
         md: "h-[26px] w-11 p-[3px]",
         lg: "h-[30px] w-13 p-[3px]",
       },
@@ -39,9 +39,9 @@ const switchThumbVariants = cva(
   {
     variants: {
       size: {
-        sm: "size-4 data-[checked]:translate-x-[16px]",
-        md: "size-5 data-[checked]:translate-x-[18px]",
-        lg: "size-6 data-[checked]:translate-x-[22px]",
+        sm: "size-4 ltr:data-[checked]:translate-x-[14px] rtl:data-[checked]:-translate-x-[14px]",
+        md: "size-5 ltr:data-[checked]:translate-x-[18px] rtl:data-[checked]:-translate-x-[18px]",
+        lg: "size-6 ltr:data-[checked]:translate-x-[22px] rtl:data-[checked]:-translate-x-[22px]",
       },
     },
     defaultVariants: { size: "md" },
@@ -98,7 +98,7 @@ function Switch({
             <Check
               aria-hidden
               strokeWidth={3}
-              className="hidden size-2.5 text-primary in-data-[checked]:block"
+              className="hidden size-2.5 text-accent-strong in-data-[checked]:block"
             />
             <span
               aria-hidden

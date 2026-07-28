@@ -45,7 +45,7 @@ export const Default: Story = {
   args: { items: FRUITS, placeholder: "Add fruit…", "aria-label": "Fruit" },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const input = canvas.getByRole("combobox")
+    const input = canvas.getByRole("combobox", { name: "Fruit" })
     await userEvent.click(input)
     // Pick two values (multiselect keeps the list open).
     await userEvent.click(await screen.findByRole("option", { name: "Apple" }))
@@ -68,6 +68,16 @@ export const Prefilled: Story = {
     defaultValue: ["Cherry", "Mango"],
     placeholder: "Add fruit…",
     "aria-label": "Fruit",
+  },
+}
+
+export const Disabled: Story = {
+  args: {
+    items: FRUITS,
+    defaultValue: ["Cherry", "Mango"],
+    placeholder: "Add fruit…",
+    "aria-label": "Fruit",
+    disabled: true,
   },
 }
 

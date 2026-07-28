@@ -62,7 +62,6 @@ function CitationSourceCard({
           {index != null ? (
             <span
               data-slot="citation-source-card-index"
-              aria-hidden
               className="flex size-6 shrink-0 items-center justify-center rounded-md bg-accent-soft font-mono text-xs font-semibold tabular-nums text-accent-strong"
             >
               {index}

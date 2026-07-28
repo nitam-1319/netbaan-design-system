@@ -95,4 +95,16 @@ export const Static: Story = {
       </div>
     </BeamGlow>
   ),
+  play: async ({ canvasElement }) => {
+    // The decorative frame is present…
+    const frame = canvasElement.querySelector('[data-slot="beam-glow"]')
+    await expect(frame).not.toBeNull()
+    // …but with active={false} the beam ring is static (no spin animation).
+    await expect(
+      canvasElement.querySelector(".animate-beam-spin")
+    ).toBeNull()
+    await expect(
+      canvasElement.querySelector(".animate-beam-spin-fast")
+    ).toBeNull()
+  },
 }
