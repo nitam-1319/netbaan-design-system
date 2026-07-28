@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect, within } from "storybook/test"
+import { expect } from "storybook/test"
 
 import { Grid } from "@/components/ui/grid"
 
@@ -46,18 +46,34 @@ export const ThreeColumns: Story = {
   },
 }
 
-export const Responsive: Story = {
+export const ColumnFlow: Story = {
   render: () => (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+    <Grid cols={3} flow="column" gap="sm">
       <Cell>Assets</Cell>
       <Cell>Findings</Cell>
       <Cell>Hosts</Cell>
       <Cell>Certs</Cell>
-    </div>
+    </Grid>
   ),
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await expect(canvas.getByText("Findings")).toBeVisible()
+    const grid = canvasElement.querySelector("[data-slot='grid']")
+    await expect(grid).toHaveClass("grid-flow-col")
+  },
+}
+
+export const Alignment: Story = {
+  render: () => (
+    <Grid cols={3} gap="md" align="center">
+      <Cell>Short</Cell>
+      <div className="bg-surface-2 border-border rounded-md border px-3 py-8 text-center text-sm">
+        Tall
+      </div>
+      <Cell>Short</Cell>
+    </Grid>
+  ),
+  play: async ({ canvasElement }) => {
+    const grid = canvasElement.querySelector("[data-slot='grid']")
+    await expect(grid).toHaveClass("items-center")
   },
 }
 

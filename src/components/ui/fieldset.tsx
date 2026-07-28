@@ -62,7 +62,10 @@ function Fieldset({
       {legend != null && (
         <BaseFieldset.Legend
           data-slot="fieldset-legend"
-          className="text-sm font-semibold text-foreground select-none"
+          className={cn(
+            "text-sm font-semibold text-foreground select-none",
+            disabled && "opacity-50"
+          )}
         >
           {legend}
         </BaseFieldset.Legend>
@@ -72,7 +75,10 @@ function Fieldset({
         <p
           id={descId}
           data-slot="fieldset-description"
-          className="mt-1 text-muted-foreground text-xs"
+          className={cn(
+            "mt-1 text-muted-foreground text-xs",
+            disabled && "opacity-50"
+          )}
         >
           {description}
         </p>

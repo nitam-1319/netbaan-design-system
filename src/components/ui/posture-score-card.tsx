@@ -89,6 +89,7 @@ function PostureScoreCard({
               }
               variant="soft"
               size="sm"
+              dir="ltr"
               data-slot="posture-score-card-grade"
             >
               Grade {grade}
@@ -119,6 +120,7 @@ function PostureScoreCard({
             {delta != null ? (
               <StatTileDelta
                 trend={trend}
+                dir="ltr"
                 srTrendLabel={
                   trend === "up" ? "Improved" : trend === "down" ? "Declined" : "No change"
                 }

@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 115 / 207 reviewed  ·  library @ `9f9a2f5`
+**Progress:** 165 / 207 reviewed  ·  library @ `9f9a2f5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -136,56 +136,56 @@
 | `context-menu` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 5 fix(es) applied; 5 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
 | `conversation-thread` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective fixes needed; 3 stories axe-green (dark+light), 0 render/play errors this session. 3 subjective item(s) QUEUED. |
 | `count-up-ticker` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix(es) applied; 6 stories axe-green (dark+light), 0 render/play errors this session. 2 subjective item(s) QUEUED. |
-| `data-table` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `date-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `date-range-picker` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `description-list` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `diff-viewer` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `divider` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `donut-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `editable-cell` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `expandable-rows` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `field-label` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `fieldset` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `file-preview` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `file-uploader` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `finding-vulnerability-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `first-run-onboarding` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `focus-trap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `form-actions` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `form-section` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `funnel-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `gantt-chart` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `grade-ring-a-f` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `grid` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `heatmap` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `helper-text` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `hosts-by-country-map` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `hover-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `image-cropper` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `keyboard-shortcut` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `landmark-regions` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `lazy-loader` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `line-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `live-region` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `loading-overlay` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `locale-rtl-switcher` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `login-form` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `marquee` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `masonry` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `masthead` | ⬜ | — | — | — | — | 0 |  | 0 | info |  |
-| `mention-input` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `message-bubble` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `mobile-app-bar` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `multi-step-form` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `navbar` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `navigation-menu` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `network-graph` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `no-results` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `pagination` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `pie-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
-| `posture-score-card` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `print-view` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `data-table` | ✅ | yes | ⏳ | ✅ | — | 0 |  | 0 | clean | 1 fix (selectable skeleton size/radius). 8 stories axe-checked. Tests —: Selectable shows sev-critical soft-tone tint text 4.09<4.5 (dark) — PRE-EXISTING story data, not from this fix; queued. QUEUED 3. |
+| `date-picker` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix (stories). Axe green dark+light. QUEUED 2. |
+| `date-range-picker` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fixes (stories). Axe green. QUEUED 4. |
+| `description-list` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (component). Axe green. QUEUED 3. |
+| `diff-viewer` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 3 fixes (component+mdx). Axe green. QUEUED 2. |
+| `divider` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (component+mdx). Axe green. QUEUED 2. |
+| `donut-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | No objective issues; unchanged — review-verified this tranche. QUEUED 3. |
+| `editable-cell` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fixes (stories). Axe green. QUEUED 2. |
+| `expandable-rows` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 3 fixes (stories+mdx). Axe green. QUEUED 3. |
+| `field-label` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix (mdx). Axe: only hit is exempt disabled-state label text (WCAG 1.4.3). QUEUED 3. |
+| `fieldset` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (component). Axe green. QUEUED 3. |
+| `file-preview` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (component). Axe: only hits are exempt disabled-state text (1.4.3). QUEUED 3. |
+| `file-uploader` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 2 fixes (stories). Axe: only hits exempt disabled-state file-card text (1.4.3). QUEUED 2. |
+| `finding-vulnerability-card` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (component). Axe green. QUEUED 3. |
+| `first-run-onboarding` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (stories). Axe green. QUEUED 2. |
+| `focus-trap` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | No objective issues; unchanged — review-verified this tranche. QUEUED 2. |
+| `form-actions` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective issues; unchanged — review-verified this tranche. QUEUED 2. |
+| `form-section` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (stories). Axe green. QUEUED 2. |
+| `funnel-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix (component). Axe green. QUEUED 3. |
+| `gantt-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 4 fixes (component+stories+mdx). Axe green. QUEUED 3. |
+| `grade-ring-a-f` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fixes (component+stories+mdx). Axe green. QUEUED 2. |
+| `grid` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 3 fixes (component+stories+mdx). Axe green. QUEUED 2. |
+| `heatmap` | ✅ | yes | ⏳ | ✅ | — | 1 |  | 0 | medium | 1 fix (stories). Tests —: FixedScale cell labels ~2.99–3.x<4.5 on scale fills (component untouched — PRE-EXISTING data-viz scale) — queued. QUEUED 3. |
+| `helper-text` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | No objective issues; unchanged — review-verified this tranche. QUEUED 3. |
+| `hosts-by-country-map` | ✅ | yes | ⏳ | — | ✅ | 0 |  | 0 | clean | 1 fix (stories). Axe green. DS —: PRE-EXISTING physical-direction utils in component (RTL lint) — queued. QUEUED 1. |
+| `hover-card` | ✅ | yes | ⏳ | — | ✅ | 0 |  | 0 | clean | 2 fixes (stories). Axe green. DS —: PRE-EXISTING physical-direction util in component (RTL lint) — queued. QUEUED 2. |
+| `image-cropper` | ✅ | yes | ⏳ | — | ✅ | 0 |  | 0 | clean | 2 fixes (component). Axe green. DS —: physical-direction utils remain (RTL lint) — queued. QUEUED 3. |
+| `keyboard-shortcut` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (component). Axe green. QUEUED 3. |
+| `landmark-regions` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | No objective issues; unchanged — review-verified this tranche. QUEUED 3. |
+| `lazy-loader` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective issues; unchanged — review-verified this tranche. QUEUED 2. |
+| `line-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | No objective issues; unchanged — review-verified this tranche. QUEUED 3. |
+| `live-region` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (stories). Axe green. QUEUED 4. |
+| `loading-overlay` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (stories). Axe green. QUEUED 3. |
+| `locale-rtl-switcher` | ✅ | yes | ⏳ | ✅ | — | 0 |  | 0 | clean | 1 fix (stories). Tests —: audit resolver found no stories under this id this session — axe not run; tsc/lint/build green. QUEUED 4. |
+| `login-form` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 4 fixes (component+stories). Axe green. QUEUED 4. |
+| `marquee` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (component+mdx). Axe green. QUEUED 5. |
+| `masonry` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (component+stories). Axe green. QUEUED 3. |
+| `masthead` | ✅ | yes | ⏳ | — | ✅ | 0 |  | 0 | info | 1 fix (stories). Axe green. DS —: PRE-EXISTING physical-direction util in component (RTL lint) — queued. QUEUED 2. |
+| `mention-input` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 objective fix KEPT (aria-controls only when matches>0). Delivery RESTORED the added Empty story — it surfaced a pre-existing aria-allowed-attr (aria-expanded on role=textbox); queued for a role=combobox decision. QUEUED 5. |
+| `message-bubble` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (mdx). Axe green. QUEUED 2. |
+| `mobile-app-bar` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (stories). Axe green. QUEUED 3. |
+| `multi-step-form` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (Blocked story); delivery CORRECTED its play click (pointerEventsCheck:0 for the disabled Next). Axe green. QUEUED 2. |
+| `navbar` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 1 fix (stories). Axe green. QUEUED 3. |
+| `navigation-menu` | ✅ | yes | ⏳ | — | — | 0 |  | 0 | clean | 1 objective fix KEPT (content radius xl→lg). Delivery RESTORED the added disabled-trigger story (broken .toBeDisabled on Base UI aria-disabled trigger). Tests/DS —: PRE-EXISTING aria-hidden-focus on Base UI focus guards (present on unmodified story) + physical-direction util (RTL lint) — both queued. QUEUED 5. |
+| `network-graph` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective issues; unchanged — review-verified this tranche. QUEUED 3. |
+| `no-results` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective issues; unchanged — review-verified this tranche. QUEUED 2. |
+| `pagination` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 3 fixes (component+mdx). Axe green. QUEUED 2. |
+| `pie-chart` | ✅ | yes | ⏳ | ✅ | ✅ | 1 |  | 0 | medium | 1 fix (stories). Axe green. QUEUED 4. |
+| `posture-score-card` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | 2 fixes (component). Axe green. QUEUED 2. |
+| `print-view` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective issues; unchanged — review-verified this tranche. QUEUED 2. |
 | `prompt-composer` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `pull-to-refresh` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `radar-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |

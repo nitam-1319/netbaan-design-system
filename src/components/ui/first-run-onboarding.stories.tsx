@@ -96,3 +96,19 @@ export const NoSteps: Story = {
     steps: undefined,
   },
 }
+
+export const Sizes: Story = {
+  args: {
+    steps: [
+      { title: "Connect a data source" },
+      { title: "Configure alerts" },
+    ],
+  },
+  render: (args) => (
+    <div className="flex flex-col divide-y divide-border">
+      <FirstRunOnboarding {...args} size="sm" title="Small" />
+      <FirstRunOnboarding {...args} size="default" title="Default" />
+      <FirstRunOnboarding {...args} size="lg" title="Large" />
+    </div>
+  ),
+}

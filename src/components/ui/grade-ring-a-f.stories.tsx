@@ -9,7 +9,7 @@ import { GradeRing } from "@/components/ui/grade-ring-a-f"
  * ever passed to an AEGIS component.
  */
 const meta = {
-  title: "Components/GradeRing",
+  title: "Components/Grade Ring A-F",
   component: GradeRing,
   parameters: { layout: "centered" },
   tags: ["autodocs"],

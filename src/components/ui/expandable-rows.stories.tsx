@@ -18,7 +18,7 @@ import {
  * ever passed to an AEGIS component.
  */
 const meta = {
-  title: "Components/ExpandableRow",
+  title: "Components/ExpandableRows",
   component: ExpandableRow,
   parameters: { layout: "padded" },
   tags: ["autodocs"],
@@ -44,7 +44,9 @@ export const Default: Story = {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{""}</TableHead>
+            <TableHead>
+              <span className="sr-only">Expand row</span>
+            </TableHead>
             <TableHead>Asset</TableHead>
             <TableHead>Host</TableHead>
             <TableHead>Status</TableHead>
@@ -80,7 +82,9 @@ export const Controlled: Story = {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{""}</TableHead>
+              <TableHead>
+                <span className="sr-only">Expand row</span>
+              </TableHead>
               <TableHead>Finding</TableHead>
               <TableHead>Severity</TableHead>
             </TableRow>

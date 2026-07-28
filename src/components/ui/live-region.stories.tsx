@@ -54,6 +54,7 @@ export const Assertive: Story = {
     // Assertive region is exposed as an alert.
     const region = canvas.getByRole("alert")
     await expect(region).toHaveAttribute("aria-live", "assertive")
+    await expect(region).toHaveAttribute("aria-atomic", "true")
   },
 }
 
@@ -71,5 +72,16 @@ export const ScreenReaderOnly: Story = {
         <LiveRegion>{msg}</LiveRegion>
       </div>
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // The region is present in the a11y tree as a polite status, but clipped
+    // out of view (never display:none, which would drop it from announcements).
+    const region = canvas.getByRole("status")
+    await expect(region).toHaveAttribute("aria-live", "polite")
+    await expect(region).toHaveClass("absolute")
+    // Updating its children announces the new message without moving focus.
+    await userEvent.click(canvas.getByRole("button", { name: "Copy CVE" }))
+    await expect(region).toHaveTextContent("Copied CVE reference to clipboard.")
   },
 }

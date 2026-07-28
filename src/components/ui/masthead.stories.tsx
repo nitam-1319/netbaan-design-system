@@ -91,4 +91,17 @@ export const PageHeader: Story = {
       </MastheadActions>
     </Masthead>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText("Button")).toBeVisible()
+    await expect(
+      canvas.getByText("FOUNDATIONS / ACTIONS / BUTTON")
+    ).toBeVisible()
+    await expect(
+      canvas.getByRole("button", { name: /library/i })
+    ).toBeVisible()
+    await expect(
+      canvas.getByRole("button", { name: /view spec/i })
+    ).toBeVisible()
+  },
 }

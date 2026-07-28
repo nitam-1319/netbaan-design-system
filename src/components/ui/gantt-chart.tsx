@@ -106,6 +106,9 @@ function GanttChart({
       data-slot="gantt-chart"
       role="group"
       aria-label={label}
+      // Times read left→right by convention; force LTR so RTL locales don't
+      // re-anchor the SVG axis/label text and clip it off-canvas.
+      dir="ltr"
       className={cn("w-full text-foreground [&_svg]:overflow-visible")}
       {...props}
     >
@@ -138,7 +141,7 @@ function GanttChart({
                   x={x}
                   y={HEADER - 10}
                   textAnchor="middle"
-                  className="fill-muted-foreground text-[11px]"
+                  className="fill-muted-foreground text-xs"
                 >
                   {formatTick(t)}
                 </text>

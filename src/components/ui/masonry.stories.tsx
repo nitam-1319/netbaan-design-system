@@ -51,8 +51,20 @@ export const Default: Story = {
   },
 }
 
+export const SingleColumn: Story = {
+  args: { columns: 1 },
+}
+
 export const TwoColumns: Story = {
   args: { columns: 2 },
+}
+
+export const FiveColumns: Story = {
+  args: { columns: 5 },
+}
+
+export const SmallGap: Story = {
+  args: { gap: "sm" },
 }
 
 export const LargeGap: Story = {

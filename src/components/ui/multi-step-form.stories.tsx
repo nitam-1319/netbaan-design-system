@@ -91,6 +91,21 @@ export const Vertical: Story = {
   args: { orientation: "vertical" },
 }
 
+export const Blocked: Story = {
+  args: { nextDisabled: true },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement)
+    // Advancing is gated while the current step is invalid.
+    await expect(canvas.getByRole("button", { name: /next/i })).toBeDisabled()
+    // A disabled control has `pointer-events: none`; bypass the pointer check so
+    // the click still dispatches and we can assert it is inert (no step change).
+    await userEvent.click(canvas.getByRole("button", { name: /next/i }), {
+      pointerEventsCheck: 0,
+    })
+    await expect(args.onStepChange).not.toHaveBeenCalled()
+  },
+}
+
 export const Submitting: Story = {
   args: { defaultActiveStep: 2, submitting: true },
 }

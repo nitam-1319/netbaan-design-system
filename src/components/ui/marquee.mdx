@@ -26,7 +26,7 @@ direction, a pause-on-hover affordance, and an automatic reduced-motion fallback
 
 An `overflow-hidden` `data-slot="marquee"` track (with `data-direction`) holding
 `repeat` identical, animated copies of the content. Only the first copy is in the
-accessibility tree; the rest are `aria-hidden`.
+accessibility tree; the rest are `aria-hidden` and `inert`.
 
 ## Variants
 
@@ -50,8 +50,9 @@ accessibility tree; the rest are `aria-hidden`.
 
 ## Accessibility
 
-- Duplicated copies are `aria-hidden`, so screen readers announce the content
-  once, not once per repeat.
+- Duplicated copies are `aria-hidden` and `inert`, so screen readers announce the
+  content once (not once per repeat) and any interactive content in a copy stays
+  out of the tab order.
 - Motion is decorative and pauses on hover; reduced-motion users get a static
   strip. Avoid placing content here that must be reached in tab order.
 

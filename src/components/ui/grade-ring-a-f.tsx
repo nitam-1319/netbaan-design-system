@@ -75,7 +75,11 @@ function GradeRing({
       size={size}
       thickness={thickness}
       {...props}
-    />
+    >
+      {/* Grade is an LTR identifier ("A+", "B-"); isolate it so the +/−
+          modifier is not reordered under RTL (e.g. rendering as "+A"). */}
+      {showValue ? <span dir="ltr">{grade}</span> : undefined}
+    </RadialGauge>
   )
 }
 

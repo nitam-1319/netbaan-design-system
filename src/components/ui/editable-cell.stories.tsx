@@ -56,7 +56,7 @@ export const NumericEnd: Story = {
 
 export const InTable: Story = {
   render: () => (
-    <table style={{ borderCollapse: "collapse", width: 420 }}>
+    <table style={{ borderCollapse: "collapse", width: "100%" }}>
       <thead>
         <tr>
           <th style={{ textAlign: "start", padding: "8px", fontSize: 12 }}>Host</th>
@@ -83,6 +83,10 @@ export const InTable: Story = {
       </tbody>
     </table>
   ),
+}
+
+export const Empty: Story = {
+  args: { label: "Owner", defaultValue: "", placeholder: "Unassigned" },
 }
 
 export const Disabled: Story = {

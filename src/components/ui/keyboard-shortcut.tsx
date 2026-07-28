@@ -191,7 +191,11 @@ function KeyboardShortcut({
       className={cn("inline-flex w-fit items-center gap-1 align-middle")}
       {...props}
     >
-      <span aria-hidden className="inline-flex items-center gap-1">
+      <span
+        aria-hidden
+        dir="ltr"
+        className="inline-flex items-center gap-1"
+      >
         {tokens.map((token, i) => (
           <React.Fragment key={`${token}-${i}`}>
             {i > 0 ? (

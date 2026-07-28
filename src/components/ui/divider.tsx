@@ -52,14 +52,14 @@ function Divider({
       >
         <span
           aria-hidden
-          className={cn(dividerVariants({ orientation, tone }))}
+          className={cn(dividerVariants({ orientation, tone }), "w-auto flex-1")}
         />
         <span data-slot="divider-label" className="shrink-0 whitespace-nowrap">
           {children}
         </span>
         <span
           aria-hidden
-          className={cn(dividerVariants({ orientation, tone }))}
+          className={cn(dividerVariants({ orientation, tone }), "w-auto flex-1")}
         />
       </div>
     )

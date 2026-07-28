@@ -5,9 +5,10 @@ import { Meta } from "@storybook/addon-docs/blocks"
 # Grid
 
 A two-dimensional CSS-grid layout wrapper built on the `Box` primitive. `Grid`
-exposes a fixed `cols` count and a token-driven `gap`, plus a `flow` option for
-auto-placement. Responsive column changes are applied with Tailwind breakpoint
-utilities through `className`, which merge cleanly over the base variant.
+exposes a fixed `cols` count and a token-driven `gap`, plus `flow` for
+auto-placement and `align` for cross-axis alignment. Like every layout primitive
+it is a **closed API** — there is no public `className`/`style`; layout is
+expressed only through token props.
 
 ## When to use
 
@@ -15,7 +16,6 @@ utilities through `className`, which merge cleanly over the base variant.
   that needs alignment across both rows and columns.
 - **Do** combine `cols={12}` with `col-span-*` on children for classic 12-column
   layouts.
-- **Do** add `md:grid-cols-*` utilities via `className` for responsive reflow.
 - **Don't** use `Grid` for a single axis of evenly-spaced items — use `Stack`.
 
 ## Anatomy
@@ -25,11 +25,11 @@ utilities through `className`, which merge cleanly over the base variant.
 
 ## Behavior
 
-- `cols` sets `grid-template-columns` (1–6, 12, or `none` for custom templates via
-  `className`).
+- `cols` sets `grid-template-columns` (1–6, 12, or `none` to opt out of a column
+  template so children place themselves).
 - `gap` maps to the AEGIS spacing scale.
 - `flow` chooses `row`, `column`, or `dense` auto-placement.
-- Responsive overrides (e.g. `lg:grid-cols-4`) are supplied through `className`.
+- `align` sets cross-axis item alignment (`start` / `center` / `end` / `stretch`).
 - Extends `Box`, so `render` can change the element.
 
 ## Accessibility
@@ -45,7 +45,8 @@ utilities through `className`, which merge cleanly over the base variant.
 | --- | --- |
 | `--spacing` scale | `gap` steps (`xs`–`xl`) |
 
-Colors are never set by `Grid`; pass token utilities via `className`.
+Colors are never set by `Grid`; apply color tokens to the child elements you
+place inside it.
 
 ## API
 
@@ -56,6 +57,6 @@ Colors are never set by `Grid`; pass token utilities via `className`.
 | `flow` | `"row" \| "column" \| "dense"` | `"row"` | Auto-placement flow. |
 | `align` | `"start" \| "center" \| "end" \| "stretch"` | `"stretch"` | Cross-axis item alignment. |
 | `render` | `ReactElement \| fn` | `<div />` | Change the rendered element (via `Box`). |
-| `className` | `string` | — | Merged via `cn()`; add responsive `grid-cols-*` here. |
 
-Carries `data-slot="grid"`.
+`Grid` is a **closed API**: `className` and `style` are not accepted. Carries
+`data-slot="grid"`.

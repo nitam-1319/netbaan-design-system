@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils"
  *
  * Two-dimensional CSS-grid wrapper. Polymorphic via `render`. Layout is
  * expressed through token props (`cols` / `gap` / `flow` / `align`) — there is
- * no public `className`/`style`. Responsive column counts are exposed as
- * dedicated props rather than raw breakpoint utilities.
+ * no public `className`/`style`, and therefore no raw breakpoint escape hatch —
+ * the column count is a fixed token prop.
  */
 
 const gridVariants = cva("grid", {

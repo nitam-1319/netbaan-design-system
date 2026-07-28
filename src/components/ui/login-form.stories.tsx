@@ -77,6 +77,15 @@ export const NoRemember: Story = {
   args: { showRemember: false, forgotHref: "#reset" },
 }
 
+/** The whole form is inert — fields, submit, SSO-less forgot link and checkbox. */
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    defaultEmail: "sam@netbaan.io",
+    onForgotPassword: fn(),
+  },
+}
+
 /**
  * Persian / RTL — labels, the forgot link, and the SSO row all mirror.
  */

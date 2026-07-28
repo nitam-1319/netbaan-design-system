@@ -79,6 +79,7 @@ function Marquee({
         <div
           key={i}
           aria-hidden={i > 0 || undefined}
+          inert={i > 0 || undefined}
           className={cn(
             "flex shrink-0 justify-around",
             vertical ? "flex-col" : "flex-row",

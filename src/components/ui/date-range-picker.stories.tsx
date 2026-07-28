@@ -96,3 +96,29 @@ export const Sizes: Story = {
     </div>
   ),
 }
+
+export const WithMinMax: Story = {
+  args: {
+    defaultMonth: JUNE_2026,
+    label: "Choose date range",
+    minDate: new Date(2026, 5, 10),
+    maxDate: new Date(2026, 5, 20),
+  },
+  render: (args) => {
+    const [value, setValue] = React.useState<DateRange | null>(null)
+    return <DateRangePicker {...args} value={value} onValueChange={setValue} />
+  },
+}
+
+export const Invalid: Story = {
+  args: { label: "Choose date range", invalid: true, defaultMonth: JUNE_2026 },
+}
+
+export const Disabled: Story = {
+  args: { label: "Choose date range", disabled: true, defaultMonth: JUNE_2026 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const trigger = canvas.getByRole("button", { name: "Choose date range" })
+    await expect(trigger).toBeDisabled()
+  },
+}

@@ -40,7 +40,7 @@ benefit from jumping to a specific page. It is a dependency of `Data Table`.
 
 Page controls use `buttonVariants`: the active page renders as the `outline`
 button, inactive pages and prev/next as `ghost`. Size is `icon` for numbers and
-`default` (label + chevron) for previous/next.
+`md` (label + chevron) for previous/next.
 
 ## States
 
@@ -87,7 +87,7 @@ structural wrappers with no special props.
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `isActive` | `boolean` | `false` | Marks the current page (`outline` + `aria-current`). |
-| `size` | `"icon" \| "default"` | `"icon"` | Number vs. labelled control sizing. |
+| `size` | `"icon" \| "md"` | `"icon"` | Number vs. labelled control sizing. |
 | `render` | `ReactElement \| (props, state) => ReactElement` | `<a/>` | Element to render as. |
 
 `PaginationPrevious` / `PaginationNext` — same as `PaginationLink` minus

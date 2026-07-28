@@ -102,4 +102,13 @@ export const SingleValue: Story = {
     label: "All clear",
     data: [{ key: "ok", label: "Healthy", value: 100, color: 2 }],
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const img = canvas.getByRole("img", { name: "All clear" })
+    // full-circle: a single wedge is drawn (the 360° arc special case)
+    await expect(
+      img.querySelectorAll("[data-slot=pie-chart-slice]")
+    ).toHaveLength(1)
+    await expect(canvas.getAllByRole("listitem")).toHaveLength(1)
+  },
 }

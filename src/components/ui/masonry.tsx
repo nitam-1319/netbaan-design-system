@@ -35,16 +35,21 @@ const columnClass: Record<NonNullable<MasonryProps["columns"]>, string> = {
   5: "columns-1 sm:columns-2 lg:columns-3 xl:columns-5",
 }
 
+/**
+ * Gap scale mirrors the canonical layout tokens shared by Grid / Stack
+ * (`sm` → 2, `md` → 4, `lg` → 6) so `gap="md"` means the same spacing on every
+ * layout primitive. Column gap and item bottom-margin are kept in lock-step.
+ */
 const gapClass: Record<NonNullable<MasonryProps["gap"]>, string> = {
-  sm: "gap-3",
-  md: "gap-5",
-  lg: "gap-8",
+  sm: "gap-2",
+  md: "gap-4",
+  lg: "gap-6",
 }
 
 const itemGap: Record<NonNullable<MasonryProps["gap"]>, string> = {
-  sm: "mb-3",
-  md: "mb-5",
-  lg: "mb-8",
+  sm: "mb-2",
+  md: "mb-4",
+  lg: "mb-6",
 }
 
 function Masonry({

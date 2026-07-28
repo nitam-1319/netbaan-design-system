@@ -240,7 +240,7 @@ function MentionInput({
         aria-multiline="true"
         aria-autocomplete="list"
         aria-expanded={open || undefined}
-        aria-controls={open ? listId : undefined}
+        aria-controls={open && matches.length > 0 ? listId : undefined}
         aria-activedescendant={activeDescendant}
         data-slot="mention-input-control"
         className={cn(

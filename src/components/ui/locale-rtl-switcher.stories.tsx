@@ -43,6 +43,12 @@ export const Default: Story = {
 
 export const IconOnly: Story = {
   args: { showLabel: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole("button")
+    // With no visible label the button must still expose an accessible name.
+    await expect(button).toHaveAccessibleName(/switch language/i)
+  },
 }
 
 export const Variants: Story = {

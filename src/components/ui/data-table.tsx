@@ -355,7 +355,7 @@ function DataTable<TRow>({
                     {selectable ? (
                       <TableCell>
                         <div className={cellDensityClass[density]}>
-                          <Skeleton render={<div className="size-4 rounded-[4px]" />} />
+                          <Skeleton render={<div className="size-5 rounded-[6px]" />} />
                         </div>
                       </TableCell>
                     ) : null}

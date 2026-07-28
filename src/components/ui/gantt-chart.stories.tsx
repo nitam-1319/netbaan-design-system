@@ -68,3 +68,21 @@ export const NoGrid: Story = {
     showGrid: false,
   },
 }
+
+/** Edge case: no tasks renders a bare, labelled axis without crashing. */
+export const Empty: Story = {
+  args: {
+    label: "Empty timeline",
+    tasks: [],
+    domain: [0, 8],
+    tickCount: 5,
+    formatTick: (v) => days[Math.round(v)] ?? String(v),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    expect(canvas.getByRole("img", { name: "Empty timeline" })).toBeInTheDocument()
+    // No task bars are drawn when there are no tasks.
+    const bars = canvasElement.querySelectorAll('[data-slot="gantt-bar"]')
+    expect(bars.length).toBe(0)
+  },
+}

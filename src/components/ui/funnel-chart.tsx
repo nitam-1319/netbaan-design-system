@@ -75,7 +75,10 @@ function FunnelBars({
               <span className="truncate font-medium text-foreground">
                 {stage.label}
               </span>
-              <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+              <span
+                dir="ltr"
+                className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground"
+              >
                 {valueFormat(stage.value)}
                 {showConversion && i > 0 ? (
                   <span className="ms-2 text-text-faint">{conversion}%</span>

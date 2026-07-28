@@ -81,6 +81,16 @@ export const SpinnerOnly: Story = {
       <Panel />
     </LoadingOverlay>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // The busy status is still exposed to assistive tech (Spinner keeps the
+    // accessible label)…
+    await expect(canvas.getByRole("status", { busy: true })).toBeInTheDocument()
+    // …but the visible label text is not rendered.
+    await expect(
+      canvasElement.querySelector('[data-slot="loading-overlay-label"]'),
+    ).toBeNull()
+  },
 }
 
 /** When `open` is false the scrim is gone and the content is interactive. */

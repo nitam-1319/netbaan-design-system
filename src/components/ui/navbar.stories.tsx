@@ -101,3 +101,21 @@ export const Compact: Story = {
     </Navbar>
   ),
 }
+
+export const EndAligned: Story = {
+  render: () => (
+    <Navbar>
+      <NavbarBrand>
+        <ShieldCheck />
+        AEGIS
+      </NavbarBrand>
+      <NavbarContent justify="end">
+        <NavbarItem href="#" active>
+          Overview
+        </NavbarItem>
+        <NavbarItem href="#">Findings</NavbarItem>
+        <NavbarItem href="#">Assets</NavbarItem>
+      </NavbarContent>
+    </Navbar>
+  ),
+}

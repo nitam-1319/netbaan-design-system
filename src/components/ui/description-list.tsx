@@ -51,6 +51,7 @@ function DescriptionTerm(
   return (
     <dt
       data-slot="description-term"
+      dir="auto"
       className={cn("font-medium text-muted-foreground")}
       {...props}
     />
@@ -63,6 +64,7 @@ function DescriptionDetails(
   return (
     <dd
       data-slot="description-details"
+      dir="auto"
       className={cn("m-0 text-foreground")}
       {...props}
     />

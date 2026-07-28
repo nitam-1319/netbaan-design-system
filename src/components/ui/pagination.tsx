@@ -73,7 +73,11 @@ function PaginationLink({
         buttonVariants({
           variant: isActive ? "outline" : "ghost",
           size,
-        })
+        }),
+        // `buttonVariants` omits inline padding/gap (Button applies it on an
+        // inner content span); reproduce it here so labelled controls
+        // (Previous/Next) don't collapse their text/chevron to the edges.
+        size === "md" && "gap-2 px-4"
       ),
       ...props,
     },
@@ -122,7 +126,7 @@ function PaginationEllipsis(
       data-slot="pagination-ellipsis"
       role="presentation"
       aria-hidden="true"
-      className={cn("flex size-8 items-center justify-center")}
+      className={cn("flex size-[38px] items-center justify-center")}
       {...props}
     >
       <MoreHorizontal className="size-4 text-muted-foreground" />

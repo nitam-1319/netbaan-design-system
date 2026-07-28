@@ -89,4 +89,10 @@ export const NoHeader: Story = {
       <TextField label="Search query" type="search" />
     </FormSection>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Without a title the section exposes no accessible name, so it must not
+    // become a `region` landmark (documented behavior).
+    await expect(canvas.queryByRole("region")).not.toBeInTheDocument()
+  },
 }

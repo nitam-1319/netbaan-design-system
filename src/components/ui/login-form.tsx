@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Mail } from "lucide-react"
 
+import { cn } from "@/lib/utils"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -172,12 +173,22 @@ function LoginForm({
               (forgotHref != null ? (
                 <a
                   href={forgotHref}
-                  className="text-xs font-medium text-accent-strong underline underline-offset-[3px] outline-none hover:brightness-110 focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-accent-soft"
+                  aria-disabled={locked || undefined}
+                  tabIndex={locked ? -1 : undefined}
+                  className={cn(
+                    "text-xs font-medium text-accent-strong underline underline-offset-[3px] outline-none hover:brightness-110 focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-accent-soft",
+                    locked && "pointer-events-none opacity-45"
+                  )}
                 >
                   {forgotLabel}
                 </a>
               ) : (
-                <Button variant="link" size="sm" onClick={onForgotPassword}>
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={onForgotPassword}
+                  disabled={locked}
+                >
                   {forgotLabel}
                 </Button>
               ))}

@@ -43,6 +43,27 @@ export const WithSeededFiles: Story = {
   },
 }
 
+/** Parent-driven upload progress: an item mid-transfer shows a labelled progressbar. */
+export const Uploading: Story = {
+  args: {
+    defaultFiles: [
+      { id: "up-1", name: "keynote.mp4", bytes: 82_000_000, status: "uploading", progress: 45 },
+      { id: "up-2", name: "cover.png", bytes: 640_000, status: "success" },
+    ],
+  },
+}
+
+/** The full size scale — the Dropzone grows sm → md → lg (the list stays md). */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-6">
+      <FileUploader {...args} size="sm" hint="Small" />
+      <FileUploader {...args} size="md" hint="Medium" />
+      <FileUploader {...args} size="lg" hint="Large" />
+    </div>
+  ),
+}
+
 export const SingleFile: Story = {
   args: {
     multiple: false,

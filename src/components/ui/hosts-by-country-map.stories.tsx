@@ -102,3 +102,35 @@ export const NoLegend: Story = {
     </div>
   ),
 }
+
+/**
+ * No-data state: every country has an omitted or zero `hosts` count, so regions
+ * render as "no data", the fleet total is 0, and the ranking is suppressed.
+ */
+export const Empty: Story = {
+  args: {
+    countries: [
+      { id: "US", label: "United States", d: "M120 180 L320 180 L320 300 L120 300 Z" },
+      { id: "DE", label: "Germany", d: "M470 150 L540 150 L540 210 L470 210 Z", hosts: 0 },
+    ],
+  },
+  render: (args) => (
+    <div style={{ maxWidth: 620 }}>
+      <HostsByCountryMap {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const root = canvas
+      .getByText("Hosts by country")
+      .closest("[data-slot=hosts-by-country-map]")
+    await expect(root).toHaveAttribute(
+      "aria-label",
+      "Hosts by country — 0 hosts across 0 countries"
+    )
+    // No positive counts means no ranking is rendered.
+    await expect(
+      root?.querySelector("[data-slot=hosts-by-country-map-ranking]")
+    ).toBeNull()
+  },
+}

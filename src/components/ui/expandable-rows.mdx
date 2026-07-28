@@ -1,6 +1,6 @@
 import { Meta } from "@storybook/addon-docs/blocks"
 
-<Meta title="Components/ExpandableRow/Guidelines" />
+<Meta title="Components/ExpandableRows/Guidelines" />
 
 # Expandable Rows
 
@@ -17,8 +17,10 @@ rows keep the table scannable while letting a user open any row in place. Drop
 
 ## Usage
 
-- **Do** add a leading, empty `TableHead` in the header to line up with the
-  toggle column.
+- **Do** add a leading `TableHead` in the header to line up with the toggle
+  column, and give it a visually-hidden label (e.g.
+  `<span className="sr-only">Expand row</span>`) so the column header is not
+  empty for assistive tech.
 - **Do** pass `colSpan` equal to the total number of columns (including the
   toggle column) so the detail panel spans the full width.
 - **Do** use `defaultExpanded` for uncontrolled rows, or `expanded` +

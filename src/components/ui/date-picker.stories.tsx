@@ -103,3 +103,12 @@ export const Sizes: Story = {
 export const Invalid: Story = {
   args: { label: "Choose date", invalid: true, defaultMonth: JUNE_2026 },
 }
+
+export const Disabled: Story = {
+  args: { label: "Choose date", disabled: true, defaultMonth: JUNE_2026 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const trigger = canvas.getByRole("button", { name: "Choose date" })
+    await expect(trigger).toBeDisabled()
+  },
+}

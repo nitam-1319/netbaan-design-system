@@ -72,3 +72,30 @@ export const Activity: Story = {
     ],
   },
 }
+
+/**
+ * A fixed `min`/`max` scale (so multiple heatmaps stay comparable) with a custom
+ * `valueFormat`. The formatter drives both the visible number and the cell's
+ * accessible name.
+ */
+export const FixedScale: Story = {
+  args: {
+    label: "Control coverage by team and function",
+    colorIndex: 4,
+    xLabels: ["Detect", "Respond", "Recover"],
+    yLabels: ["SOC", "IR", "Platform"],
+    values: [
+      [90, 60, 40],
+      [75, 85, 55],
+      [50, 30, 95],
+    ],
+    min: 0,
+    max: 100,
+    valueFormat: (v) => `${v}%`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Fixed [0,100] scale + custom formatter drive the accessible name.
+    await expect(canvas.getByText("SOC, Detect: 90%")).toBeInTheDocument()
+  },
+}

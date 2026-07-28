@@ -179,6 +179,7 @@ function FilePreview({
           <div className="flex min-w-0 flex-1 flex-col">
             <span
               data-slot="file-preview-name"
+              dir="auto"
               className="truncate font-medium text-foreground"
               title={name}
             >
@@ -187,6 +188,7 @@ function FilePreview({
             {meta ? (
               <span
                 data-slot="file-preview-meta"
+                dir="auto"
                 className="truncate text-xs text-muted-foreground"
               >
                 {meta}

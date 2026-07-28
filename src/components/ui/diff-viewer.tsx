@@ -112,6 +112,7 @@ function DiffViewer({
       </div>
 
       <div
+        dir="ltr"
         data-slot="diff-viewer-body"
         tabIndex={0}
         role="group"
@@ -131,13 +132,13 @@ function DiffViewer({
                   <>
                     <td
                       aria-hidden
-                      className="w-10 select-none px-2 text-end align-top text-text-faint tabular-nums"
+                      className="w-10 select-none px-2 text-end align-top text-muted-foreground tabular-nums"
                     >
                       {line.oldLine ?? ""}
                     </td>
                     <td
                       aria-hidden
-                      className="w-10 select-none px-2 text-end align-top text-text-faint tabular-nums"
+                      className="w-10 select-none px-2 text-end align-top text-muted-foreground tabular-nums"
                     >
                       {line.newLine ?? ""}
                     </td>

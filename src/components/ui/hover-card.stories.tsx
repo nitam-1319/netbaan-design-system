@@ -57,9 +57,45 @@ export const Default: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
+    // The trigger must be a genuinely focusable element (a link/button) so
+    // keyboard and screen-reader users can open the card via focus.
     const trigger = canvas.getByRole("link", { name: "@ada" })
-    await userEvent.hover(trigger)
-    // Portalled content lands on document.body.
+    await expect(trigger).toBeVisible()
+    await userEvent.tab()
+    await expect(trigger).toHaveFocus()
+  },
+}
+
+export const Open: Story = {
+  render: () => (
+    <HoverCard defaultOpen>
+      <HoverCardTrigger
+        render={
+          <a
+            href="#ada"
+            className="font-medium text-primary underline underline-offset-4"
+          >
+            @ada
+          </a>
+        }
+      />
+      <HoverCardContent>
+        <div className="flex gap-3">
+          <Avatar>
+            <AvatarFallback>AL</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="font-semibold text-foreground">Ada Lovelace</p>
+            <p className="text-muted-foreground">
+              First programmer. Writes about analytical engines and looping.
+            </p>
+          </div>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  ),
+  play: async () => {
+    // Portalled content lands on document.body; assert it renders and is shown.
     const card = await screen.findByText("Ada Lovelace")
     await waitFor(() => expect(card).toBeVisible())
   },

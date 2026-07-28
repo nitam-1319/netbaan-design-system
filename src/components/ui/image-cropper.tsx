@@ -209,10 +209,10 @@ function ImageCropper({
   }
   const handleCorners: Corner[] = ["nw", "ne", "sw", "se"]
   const cornerPos: Record<Corner, string> = {
-    nw: "start-0 top-0 -translate-x-1/2 -translate-y-1/2",
-    ne: "end-0 top-0 translate-x-1/2 -translate-y-1/2",
-    sw: "start-0 bottom-0 -translate-x-1/2 translate-y-1/2",
-    se: "end-0 bottom-0 translate-x-1/2 translate-y-1/2",
+    nw: "left-0 top-0 -translate-x-1/2 -translate-y-1/2",
+    ne: "right-0 top-0 translate-x-1/2 -translate-y-1/2",
+    sw: "left-0 bottom-0 -translate-x-1/2 translate-y-1/2",
+    se: "right-0 bottom-0 translate-x-1/2 translate-y-1/2",
   }
 
   return (
@@ -246,11 +246,11 @@ function ImageCropper({
             style={{ height: pct(1 - crop.y - crop.height) }}
           />
           <div
-            className="absolute start-0 bg-background/60"
+            className="absolute left-0 bg-background/60"
             style={{ top: pct(crop.y), height: pct(crop.height), width: pct(crop.x) }}
           />
           <div
-            className="absolute end-0 bg-background/60"
+            className="absolute right-0 bg-background/60"
             style={{ top: pct(crop.y), height: pct(crop.height), width: pct(1 - crop.x - crop.width) }}
           />
         </div>

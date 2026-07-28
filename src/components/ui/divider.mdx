@@ -60,4 +60,6 @@ are supplied).
 | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Rule axis. |
 | `tone` | `"default" \| "strong" \| "faint"` | `"default"` | Rule color weight. |
 | `children` | `ReactNode` | — | Inline label (horizontal only). |
-| `className` | `string` | — | Merged onto the element via `cn()`. |
+
+The API is closed: `className` and `style` are not accepted — all styling comes
+from the `tone` and `orientation` props so the rule stays token-only.

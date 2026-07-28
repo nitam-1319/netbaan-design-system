@@ -102,19 +102,23 @@ export const Sizes: Story = {
   render: () => (
     <div className="flex w-[380px] max-w-full flex-col gap-4">
       {(["sm", "default", "lg"] as const).map((size) => (
-        <MobileAppBar key={size} size={size} placement="static">
-          <MobileAppBarLeading>
-            <Button variant="ghost" size="icon-sm" aria-label="Open menu">
-              <Menu />
-            </Button>
-          </MobileAppBarLeading>
-          <MobileAppBarTitle>{size}</MobileAppBarTitle>
-          <MobileAppBarActions>
-            <Button variant="ghost" size="icon-sm" aria-label="Search">
-              <Search />
-            </Button>
-          </MobileAppBarActions>
-        </MobileAppBar>
+        // Each demo bar is scoped inside a labelled <section> so its <header>
+        // is not a top-level banner landmark — a real screen has exactly one.
+        <section key={size} aria-label={`${size} app bar`}>
+          <MobileAppBar size={size} placement="static">
+            <MobileAppBarLeading>
+              <Button variant="ghost" size="icon-sm" aria-label="Open menu">
+                <Menu />
+              </Button>
+            </MobileAppBarLeading>
+            <MobileAppBarTitle>{size}</MobileAppBarTitle>
+            <MobileAppBarActions>
+              <Button variant="ghost" size="icon-sm" aria-label="Search">
+                <Search />
+              </Button>
+            </MobileAppBarActions>
+          </MobileAppBar>
+        </section>
       ))}
     </div>
   ),
