@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 168 / 207 reviewed  ·  library @ `9f9a2f5`
+**Progress:** 171 / 207 reviewed  ·  library @ `9f9a2f5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -188,12 +188,12 @@
 | `print-view` | ✅ | yes | ⏳ | ✅ | ✅ | 0 |  | 0 | clean | No objective issues; unchanged — review-verified this tranche. QUEUED 2. |
 | `prompt-composer` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; chat composer — auto-growing `field-sizing-content` textarea in the Input shell + AEGIS `Button` send, Enter-to-send / Shift+Enter newline (IME-guarded), optional leading slot + `count/max` counter. Closed API (`Omit<textarea, className\|style\|size\|value\|defaultValue\|onChange>`), token-only (surface-2/border-strong shell, accent focus-within ring, destructive-ink over-count), `role=group`+`aria-label`, input `aria-describedby` counter. 6 stories, 0 render/play errors, 0 NEW a11y. Montage (dark+light, en+fa) confirms default/newline/attach+count/streaming/disabled/sizes. |
 | `pull-to-refresh` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; mobile pull-gesture wrapper (pointer events, resistance curve, chevron flips at threshold). Closed API (`Omit<div, className\|style\|children\|onScroll>`), token-only (muted-foreground indicator), status is TEXT (`role=status` — Pull/Release/Refreshing…), never colour-alone; indicator `aria-hidden` until pulled. 2 stories, 0 render/play errors, 0 NEW a11y. Gesture states verified from code + play (pointer-driven; not montageable, vertical gesture needs no RTL mirroring). |
-| `radar-chart` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
+| `radar-chart` | ✅ | — | — | ✅ | ✅ | 1 |  | 0 | clean | Clean; static SVG radar on the chart foundation (ChartContainer/Plot/Legend) — concentric grid rings + one spoke/label per axis + one token-coloured polygon per series (`seriesByKey` colorVar, `var(--color-chart-*)` fallback, fillOpacity 0.15). Closed API (bespoke semantic props, no className/style), token strokes (`stroke-border`, `fill-muted-foreground` labels). 2 stories, 0 render/play errors, 0 NEW a11y (current triage clean — tracker "medium" was stale). Montage confirms grid/spokes/labels/multi+single-series geometry; bottom `Data` label is within the 380² SVG bounds (R+14 vs bottom margin) — the montage row-crop just clips the panel, not the component. |
 | `rating` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; interactive rating is a genuine `role=radiogroup` of sr-only native radios behind star labels (native arrow/Home/End keyboard nav, focus, form submit), read-only renders one `role=img` "N out of M stars". Closed API (`Omit<div, className\|style\|defaultValue\|onChange\|children>`), token-only (fill-warning/text-warning-ink filled, muted-foreground/40 empty), hover preview, `peer-focus-visible` accent ring, disabled dim. 5 stories, 0 render/play errors, 0 NEW a11y. Montage (dark+light) confirms filled/empty/focus/read-only/disabled/ten-stars/sizes; empty-star outline stays visible on light. |
-| `reasoning-trace` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `reasoning-trace` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; AI chain-of-thought disclosure composing a single `Accordion` item (inherits keyboard/ARIA/open-close anim), collapsed by default so it never competes with the answer. Brain glyph in `accent-soft`/`accent-strong`, `Thought for Ns`/`Thinking…` (animate-pulse) header, numbered `ol` steps or freeform children. Closed API (`Omit<div, className\|style\|children>`), token-only (muted-foreground, text-faint step numbers — AA now), logical `ps-0`. 5 stories, 0 render/play errors, 0 NEW a11y. |
 | `remediation-velocity` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `resizable-panels` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `response-feedback` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `response-feedback` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; thumbs up/down single-choice toggle for rating an assistant response (re-press clears). Native buttons with `aria-pressed` + `aria-label`, `role=group`+`aria-label`, 3px accent-soft focus ring. Closed API (`Omit<div, className\|style\|onChange\|defaultValue>`), token pressed states — success-ink on success color-mix (up), destructive-ink on destructive/12 (down). 5 stories, 0 render/play errors, 0 NEW a11y. Montage (dark+light) confirms default/sizes/preselected/disabled/in-context + pressed tints + focus ring. |
 | `rich-text-editor` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `role-permission-selector` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `sankey-diagram` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
