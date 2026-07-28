@@ -14,18 +14,21 @@ so the next run continues where you left off. Spend tool calls like the scarce
 resource they are (this is what capped past runs): batch shell commands, write each
 file in one Write, don't re-run a gate you already saw pass, and push in batches.
 
-## Branch & coexistence
-- NEVER push to `main` or `aegis/build` directly. The build task may still be pushing
-  to `aegis/build`; keep the two separate. Mask the PAT in all output through
+## Branch model
+- The build phase is retired, so **`aegis/build` is the mainline and audit is its only
+  writer** — you DELIVER each green batch straight to `aegis/build` via git (see
+  "Deliver the batch"). Never touch `main`. Mask the PAT in all output through
   `sed -E 's/github_pat_[A-Za-z0-9_]+/***TOKEN***/g'`.
-- `aegis/audit` is a **short-lived integration branch = latest `aegis/build` + the
-  current batch of fixes.** At the **start of each batch**, re-sync it so every PR is a
-  clean, reviewable diff and you automatically pick up any new components the build task
-  shipped:
+- `aegis/audit` is a **short-lived working branch = latest `aegis/build` + the current
+  batch.** At the **start of each batch**, re-sync it from the mainline so you always
+  continue from delivered progress and never re-audit an already-done component:
   ```
   git fetch origin && git switch -C aegis/audit origin/aegis/build
   ```
-  (`gh` is NOT installed — use the GitHub REST API via curl for PRs; see below.)
+- **Do NOT use `gh` or the GitHub REST API (api.github.com).** They are gated in this
+  sandbox ("access not enabled for this session") — that is the failure that stranded
+  past batches on `*-ready` branches and made later runs re-audit the same components.
+  Delivery is git-only. `git push` with the PAT in the clone URL works.
 - `npm ci` (stop and report if it fails).
 
 ## One-time per run: build the review harness
@@ -116,42 +119,42 @@ A column is ✅ **only if the check actually ran and passed this session** — n
 gate you didn't run (AGENT.md §3; a tracker that lies is worse than none). Bump the
 Progress line.
 
-## Pull request — one per batch, MERGE ON GREEN (REST API, no gh)
-Commit per component (Conventional Commits, e.g. `fix(badge): token contrast on solid tones`),
-then `git push -f origin aegis/audit` (force is safe — the branch is defined as
-build+batch). Open **one PR per batch** into `aegis/build` and merge it **only if you
-personally ran every gate this run and saw them all green** (`gh` is absent, so you are
-the green check). Use curl with the PAT in `$TOKEN` (never echo it):
+## Deliver the batch to `aegis/build` (git-only — MUST happen while green)
+Commit per component (Conventional Commits, e.g. `fix(badge): token contrast on solid tones`).
+When the batch is fully green (all gates + `audit-checks.mjs` re-run clean), DELIVER it
+to the mainline immediately — never end a run leaving a green batch undelivered (that is
+what caused duplicate re-audits):
 ```
-# create PR (body via a heredoc file to keep JSON clean)
-PR=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
-  https://api.github.com/repos/nitam-1319/netbaan-design-system/pulls \
-  -d "$(jq -n --arg t 'audit: <batch title>' --arg h aegis/audit --arg b aegis/build --arg body "$PR_BODY" \
-        '{title:$t, head:$h, base:$b, body:$body}')" | jq -r .number)
-# merge ONLY if all gates were green:
-curl -s -X PUT -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
-  https://api.github.com/repos/nitam-1319/netbaan-design-system/pulls/$PR/merge \
-  -d '{"merge_method":"squash"}'
+git fetch origin aegis/build
+git rebase origin/aegis/build          # incorporate any concurrent run; resolve tracker conflicts by keeping BOTH sets of ✅
+git push origin aegis/audit:aegis/build   # fast-forward the mainline to this batch
 ```
-The PR body must contain: **Components reviewed**, **Problems discovered**, **Fixes
-applied**, **Testing performed** (gates + which checks ran green in-browser), **Queued
-for confirmation** (subjective), **Remaining concerns**. If any gate is RED: do NOT
-merge — leave the PR open, and **stop the run** (don't start another batch — the next
-batch would reset this branch and orphan the open PR). Report the red PR in the run
-report. After a successful merge, the next batch re-syncs `aegis/audit` from the updated
-`aegis/build` (top of this section).
+If the push is REJECTED (another run advanced `aegis/build` first), re-run
+`git fetch && git rebase origin/aegis/build`, re-run the fast per-component gates to
+confirm still-green, and push again. Do NOT fall back to `*-ready` branches, PRs, or the
+API — keep retrying the git push until the batch is on `aegis/build`. After delivery, the
+next batch re-syncs `aegis/audit` from the now-updated mainline and continues with the
+NEXT unreviewed components.
+
+Record the batch summary in the commit body / run report (not a PR): **Components
+reviewed**, **Problems discovered**, **Fixes applied**, **Testing performed** (gates +
+which checks ran green in-browser), **Queued for confirmation** (subjective, left
+unapplied), **Remaining concerns**. If a gate is RED and can't be fixed: do NOT deliver
+that component — `git restore` its partial changes so the rest of the batch stays green
+and deliverable, and report the red item.
 
 ## Stop conditions
 - **Queue empty** — every component is ✅ reviewed (and re-audits from dependency
   changes are done). Report the library production-ready.
-- **Budget** — near the session limit: finish the component in progress, commit/push,
-  open the batch PR, update the tracker, then End of run. Don't leave a component
-  half-audited on the branch.
+- **Budget** — near the session limit: finish the component in progress, update the
+  tracker, and **deliver the batch to `aegis/build` (git push) before ending** — a
+  green-but-undelivered batch makes the next run repeat it. Don't leave a component
+  half-audited on the branch (`git restore` partials).
 - **Blocker** — a hard gate can't pass and can't be fixed, or the SAME fix recurs 3×
   (systemic). Stop and report `BLOCKED` with the exact step/cause.
 
 ## End-of-run report (AGENT.md §6)
 Components audited this run; issues found & fixed; subjective items queued; gate results
-tagged PASS/FAILED/BLOCKED/HUMAN_VERIFY_REQUIRED; PR link(s) + merge status; the Progress
-line; why the run ended (queue empty / budget — turns or context); any doc inconsistency.
-Never push to `main` or `aegis/build` directly. Never print the token.
+tagged PASS/FAILED/BLOCKED/HUMAN_VERIFY_REQUIRED; **confirm the batch was delivered to
+`aegis/build` (git push succeeded)**; the Progress line; why the run ended (queue empty /
+budget — turns or context); any doc inconsistency. Never touch `main`. Never print the token.
