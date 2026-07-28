@@ -79,7 +79,15 @@ function UsageTokenMeter({
       className={cn("flex w-full flex-col gap-1.5")}
       {...props}
     >
-      <Progress value={clamped} max={safeLimit} tone={tone}>
+      <Progress
+        value={clamped}
+        max={safeLimit}
+        tone={tone}
+        // With no visible label there is no ProgressLabel to name the bar, so
+        // give the progressbar an explicit accessible name (values are carried
+        // by aria-valuenow/valuemax on the underlying primitive).
+        aria-label={label == null ? "Usage" : undefined}
+      >
         {(label != null || showValue) && (
           <div className="flex items-baseline justify-between gap-3">
             {label != null ? (
