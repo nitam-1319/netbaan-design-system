@@ -52,7 +52,7 @@ const FRUITS = [
 export const Default: Story = {
   render: () => (
     <Combobox items={FRUITS}>
-      <ComboboxInput placeholder="Search fruit…" />
+      <ComboboxInput aria-label="Search fruit" placeholder="Search fruit…" />
       <ComboboxContent>
         <ComboboxEmpty>No fruit found.</ComboboxEmpty>
         <ComboboxList>
@@ -63,7 +63,7 @@ export const Default: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const input = canvas.getByRole("combobox")
+    const input = canvas.getByRole("combobox", { name: "Search fruit" })
     await userEvent.click(input)
     await userEvent.type(input, "pea")
     // Filtered options are portalled to document.body.
@@ -87,7 +87,7 @@ export const Grouped: Story = {
     ]
     return (
       <Combobox items={items.map((i) => i.value)}>
-        <ComboboxInput placeholder="Search browser…" />
+        <ComboboxInput aria-label="Search browser" placeholder="Search browser…" />
         <ComboboxContent>
           <ComboboxEmpty>No match.</ComboboxEmpty>
           <ComboboxList>
@@ -106,7 +106,7 @@ export const Grouped: Story = {
 export const WithStaticGroups: Story = {
   render: () => (
     <Combobox items={["Read", "Write", "Admin", "Owner"]}>
-      <ComboboxInput placeholder="Assign role…" />
+      <ComboboxInput aria-label="Assign role" placeholder="Assign role…" />
       <ComboboxContent>
         <ComboboxEmpty>No role.</ComboboxEmpty>
         <ComboboxList>
@@ -128,7 +128,7 @@ export const Sizes: Story = {
     <div className="flex flex-col gap-4">
       {(["sm", "md", "lg"] as const).map((size) => (
         <Combobox key={size} items={FRUITS}>
-          <ComboboxInput size={size} placeholder={`Size ${size}…`} />
+          <ComboboxInput size={size} aria-label={`Size ${size}`} placeholder={`Size ${size}…`} />
           <ComboboxContent>
             <ComboboxEmpty>No fruit found.</ComboboxEmpty>
             <ComboboxList>
