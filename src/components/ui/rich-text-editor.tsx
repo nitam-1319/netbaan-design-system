@@ -110,6 +110,7 @@ function RichTextEditor({
 }: RichTextEditorProps) {
   const reactId = React.useId()
   const editorId = `${reactId}-rte`
+  const labelId = `${reactId}-rte-label`
   const editorRef = React.useRef<HTMLDivElement>(null)
 
   const [empty, setEmpty] = React.useState(() => isHtmlEmpty(value ?? defaultValue))
@@ -189,10 +190,22 @@ function RichTextEditor({
       {...props}
     >
       {label != null ? (
+        // The editor is a contenteditable div (not a labelable element), so
+        // `htmlFor` can't associate it — use `aria-labelledby` for the name and
+        // wire click-to-focus manually. `onMouseDown` preventDefault keeps the
+        // caret placement from the programmatic focus.
         <label
           data-slot="rich-text-editor-label"
-          htmlFor={editorId}
-          className={cn("text-sm font-medium text-foreground")}
+          id={labelId}
+          onMouseDown={(e) => {
+            if (disabled || readOnly) return
+            e.preventDefault()
+            editorRef.current?.focus()
+          }}
+          className={cn(
+            "text-sm font-medium text-foreground",
+            !disabled && !readOnly && "cursor-text"
+          )}
         >
           {label}
         </label>
@@ -255,7 +268,8 @@ function RichTextEditor({
             data-slot="rich-text-editor-content"
             role="textbox"
             aria-multiline="true"
-            aria-label={typeof label === "string" ? label : "Rich text editor"}
+            aria-labelledby={label != null ? labelId : undefined}
+            aria-label={label == null ? "Rich text editor" : undefined}
             aria-readonly={readOnly || undefined}
             aria-disabled={disabled || undefined}
             contentEditable={!disabled && !readOnly}
