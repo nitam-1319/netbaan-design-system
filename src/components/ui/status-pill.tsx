@@ -24,7 +24,7 @@ const pillVariants = cva(
     variants: {
       tone: {
         neutral: "bg-muted text-muted-foreground",
-        info: "bg-[color-mix(in_oklch,var(--primary),transparent_88%)] text-primary",
+        info: "bg-[color-mix(in_oklch,var(--primary),transparent_88%)] text-accent-strong",
         success:
           "bg-[color-mix(in_oklch,var(--success),transparent_86%)] text-success-ink",
         warning:

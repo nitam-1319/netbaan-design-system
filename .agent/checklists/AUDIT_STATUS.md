@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 171 / 207 reviewed  ·  library @ `9f9a2f5`
+**Progress:** 173 / 207 reviewed  ·  library @ `9f9a2f5`
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
@@ -212,8 +212,8 @@
 | `ssl-cert-expiry-widget` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `stack` | ⬜ | — | — | — | — | 1 |  | 0 | medium |  |
 | `stagger-container` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `status-indicator` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
-| `status-pill` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
+| `status-indicator` | ✅ | — | — | ✅ | ✅ | 0 |  | 0 | clean | Clean; bare presence/health dot (+ optional label). Status conveyed by TEXT — visible `label` or an `sr-only` word per status (Online/Away/Busy/Offline) — never colour-alone (WCAG 1.4.1). Closed API (`Omit<span, className\|style>`), token dots (success-ink/warning-ink/destructive-ink/muted-foreground/primary), `bg-current` dot, `animate-pulse-dot`/`animate-status-ping`, dot `aria-hidden`. 5 stories, 0 render/play errors, 0 NEW a11y. |
+| `status-pill` | ✅ | yes | ✅ | ✅ | ✅ | 0 |  | 0 | clean | FIXED (objective contrast): `info` tone used raw `text-primary` (#7c53d4 on soft primary tint = 4.10:1 light, AA fail — the one tone left on the pre-tone-ink pattern) → `text-accent-strong` (5.18:1 light / 5.75:1 dark), preserving the brand-purple hue; `bg-current` dot inherits it so dot+label still agree. Other tones already AA (`text-*-ink`). Closed API (`Omit<span, className\|style>`), soft color-mix tints, label carries meaning (dot decorative `aria-hidden`). 4 stories, re-run audit-checks 0 NEW a11y; tsc/lint/build/conformance/tokens green. Montage confirms all 5 tones readable + sizes + live pulse. |
 | `sticky-header-column` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `suggestion-chips` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
 | `tabs` | ⬜ | — | — | — | — | 0 |  | 0 | clean |  |
