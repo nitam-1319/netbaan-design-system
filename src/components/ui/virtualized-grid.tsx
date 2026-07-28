@@ -197,15 +197,23 @@ function VirtualizedGrid<TRow>({
       ) : (
         <div
           data-slot="virtualized-grid-viewport"
+          // The body rows live in a rowgroup so `role="grid"` owns proper `row`
+          // children (aria-required-children). `tabIndex={0}` gives the scroll
+          // region keyboard access (scrollable-region-focusable).
+          role="rowgroup"
+          tabIndex={0}
           onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
-          className={cn("relative overflow-y-auto")}
+          className={cn(
+            "relative overflow-y-auto outline-none focus-visible:ring-3 focus-visible:ring-accent-soft"
+          )}
           style={{ height: viewportHeight }}
         >
           {/* Full-height spacer establishes the scrollable range; rows are
-              absolutely positioned within it at their true offset. */}
+              absolutely positioned within it at their true offset. It is purely
+              presentational so the rows are exposed directly to the rowgroup. */}
           <div
             data-slot="virtualized-grid-canvas"
-            aria-hidden={false}
+            role="presentation"
             className={cn("relative w-full")}
             style={{ height: total * rowHeight }}
           >
