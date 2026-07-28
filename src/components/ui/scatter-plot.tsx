@@ -77,19 +77,44 @@ type ScatterPlotProps = {
   margin?: Partial<ChartMargin>
 }
 
-function extent(values: number[], fallback: [number, number]): [number, number] {
+/** Round a raw step up to the nearest 1/2/5 × 10ⁿ "nice" value. */
+function niceStep(raw: number): number {
+  if (!(raw > 0)) return 1
+  const exp = Math.floor(Math.log10(raw))
+  const base = Math.pow(10, exp)
+  const f = raw / base
+  const nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10
+  return nf * base
+}
+
+/**
+ * A "nice" domain for a linear axis: bounds snap to round multiples of a
+ * 1/2/5 step so the `tickCount` evenly-spaced ticks land on clean numbers
+ * (e.g. 0,2,4,6,8) instead of the padded-extent floats (1.65,3.575,…) that
+ * render as long, overflowing labels like "8.99999999".
+ */
+function niceDomain(
+  values: number[],
+  fallback: [number, number],
+  tickCount: number
+): [number, number] {
   if (values.length === 0) return fallback
-  let lo = Infinity
-  let hi = -Infinity
-  for (const v of values) {
-    if (v < lo) lo = v
-    if (v > hi) hi = v
+  let lo = Math.min(...values)
+  let hi = Math.max(...values)
+  if (!(hi > lo)) {
+    lo -= 1
+    hi += 1
   }
-  if (lo === hi) {
-    return [lo - 1, hi + 1]
+  const steps = Math.max(1, tickCount - 1)
+  let step = niceStep((hi - lo) / steps)
+  let niceLo = Math.floor(lo / step) * step
+  // Grow the step through the 1/2/5 ladder until the range covers the data.
+  let guard = 0
+  while (niceLo + step * steps < hi && guard++ < 20) {
+    step = niceStep(step * 1.5)
+    niceLo = Math.floor(lo / step) * step
   }
-  const pad = (hi - lo) * 0.05
-  return [lo - pad, hi + pad]
+  return [niceLo, niceLo + step * steps]
 }
 
 function ScatterMarks({
@@ -156,8 +181,8 @@ function ScatterPlot({
 }: ScatterPlotProps) {
   const allX = series.flatMap((s) => s.points.map((p) => p.x))
   const allY = series.flatMap((s) => s.points.map((p) => p.y))
-  const xd = xDomain ?? extent(allX, [0, 1])
-  const yd = yDomain ?? extent(allY, [0, 1])
+  const xd = xDomain ?? niceDomain(allX, [0, 1], tickCount)
+  const yd = yDomain ?? niceDomain(allY, [0, 1], tickCount)
   const legend = showLegend ?? series.length > 1
   const seriesMeta = series.map((s) => ({ key: s.key, label: s.label, color: s.color }))
 
