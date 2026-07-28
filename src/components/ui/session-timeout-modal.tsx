@@ -79,7 +79,7 @@ function SessionTimeoutModal({
         showClose={false}
         data-slot="session-timeout-modal"
       >
-        <div className="flex items-start gap-3 text-left">
+        <div className="flex items-start gap-3 text-start">
           <span
             data-slot="session-timeout-modal-icon"
             aria-hidden
