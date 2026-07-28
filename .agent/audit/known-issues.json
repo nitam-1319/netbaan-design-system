@@ -79,6 +79,56 @@
       "bg": "#7d8798",
       "note": "Badge SOLID variant: white ink on --sev-info fails AA. 'solid white-on-tone' Badge family queued in badge batch 1. Foundation --on-tone decision — do NOT patch per component.",
       "queuedIn": "aegis/audit batch 5"
+    },
+    {
+      "label": "alert tone-on-tint ink — success",
+      "fg": "#2fb680",
+      "note": "Alert success variant: text-success ink on the color-mix success tint fails AA (light 2.15, dark tint similar). Same tone-on-tint family as badge/severity soft ink — root cause is a tone color used as text on a same-hue tint. Foundation --on-tone decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "alert tone-on-tint ink — success (description opacity-90)",
+      "fg": "#41bc8b",
+      "note": "Alert success AlertDescription applies opacity-90, dimming text-success to ~#41bc8b on the success tint (light 1.99). Same success tone-on-tint family. Foundation --on-tone decision.",
+      "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "alert tone-on-tint ink — sev-low (description opacity-90)",
+      "fg": "#4b9fd7",
+      "note": "Alert info AlertDescription dims text-sev-low to ~#4b9fd7 on the sev-low tint (light 2.39). Sev-low soft/outline ink already queued (#3a97d4). Same family. Foundation --on-tone decision.",
+      "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "alert tone-on-tint ink — warning (description opacity-90)",
+      "fg": "#edb840",
+      "note": "Alert warning AlertDescription dims text-warning to ~#edb840 on the warning tint (light 1.57). Warning soft ink already queued (#ecb22e). Same family. Foundation --on-tone decision.",
+      "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "alert tone-on-tint ink — destructive (dark tint)",
+      "fg": "#e5484d",
+      "bg": "#2a1215",
+      "note": "Alert destructive variant title: text-destructive on bg-destructive/10 in DARK = 4.48 < 4.5 AA. Same --destructive tone family already queued (button ink, message ink). Foundation --on-tone decision — do NOT patch per component.",
+      "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "alert tone-on-tint ink — destructive (light tint)",
+      "fg": "#e5484d",
+      "bg": "#f4e5e8",
+      "note": "Alert destructive variant title: text-destructive on bg-destructive/10 in LIGHT = 3.20 < 4.5 AA. Same --destructive tone family (button/message ink). Foundation --on-tone decision.",
+      "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "alert tone-on-tint ink — destructive description (dark)",
+      "fg": "#d24347",
+      "note": "Alert destructive AlertDescription (opacity-90 dim of --destructive) on dark tint = 3.87. Same --destructive tone-on-tint family. Foundation --on-tone decision.",
+      "queuedIn": "aegis/audit batch 7"
+    },
+    {
+      "label": "alert tone-on-tint ink — destructive description (light)",
+      "fg": "#e7585d",
+      "note": "Alert destructive AlertDescription (opacity-90 dim of --destructive) on light tint = 2.89. Same --destructive tone-on-tint family. Foundation --on-tone decision.",
+      "queuedIn": "aegis/audit batch 7"
     }
   ]
 }
