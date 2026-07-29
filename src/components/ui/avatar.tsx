@@ -176,7 +176,7 @@ function Avatar({
           aria-hidden
           data-slot="avatar-status"
           className={cn(
-            "absolute right-0 bottom-0 rounded-full border-solid border-card",
+            "absolute end-0 bottom-0 rounded-full border-solid border-card",
             DOT_SIZE[key],
             STATUS_COLOR[status]
           )}
