@@ -91,7 +91,7 @@ function Button({
         {loading ? (
           <span
             aria-hidden
-            className="mr-2 inline-block size-3.5 animate-spin rounded-full border-2 border-current/40 border-t-current"
+            className="me-2 inline-block size-3.5 animate-spin rounded-full border-2 border-current/40 border-t-current"
           />
         ) : null}
         {children}
