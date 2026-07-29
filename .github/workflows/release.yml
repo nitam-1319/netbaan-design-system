@@ -1,0 +1,40 @@
+name: Release (private GitHub Packages)
+
+# Publishes @netbaan-project/ui to the org's private GitHub Packages registry.
+# Runs as the repository via the built-in GITHUB_TOKEN, which has package-write
+# rights to this repo's org — so releasing does NOT depend on any individual's
+# personal org membership or personal access token.
+#
+# Trigger by pushing a version tag (git push --tags after `npm version <bump>`)
+# or manually from the Actions tab (Run workflow).
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Install deps (also brings in bunchee + tailwind CLI needed by prepack).
+      - run: npm ci
+
+      # `npm publish` runs prepack (gen:barrel -> build:js -> build:css ->
+      # build:catalog) and ships only `files` (dist/ + catalog/AGENTS/CATALOG/
+      # RECIPES). Routing + scope come from the committed .npmrc; the token is
+      # the repo's GITHUB_TOKEN.
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -7,6 +7,27 @@ published to the public npm registry (the scope is pinned to
 
 Only `dist/` + the knowledge files ship (`files` allowlist) — **no source leaks**.
 
+## Recommended: release via CI (GitHub Actions)
+
+`.github/workflows/release.yml` publishes using the repo's built-in
+`GITHUB_TOKEN`, which has package-write rights to its own org — so releasing
+does **not** depend on any person's org membership or personal token (this is
+what fixes `403 permission_denied: create_package` from a personal account).
+
+```sh
+npm version patch          # bump + tag locally (or minor | major)
+git push                   # push the bump commit
+git push origin vX.Y.Z     # pushing the tag triggers the release workflow
+```
+
+Or run it manually: **Actions → Release → Run workflow**.
+
+> First release only: if even CI is denied `create_package`, an org **owner**
+> must allow the repo's Actions to create packages (Org/Repo → Settings →
+> Actions/Packages), or publish v0.0.x once by hand to create the package.
+
+## Manual release (fallback — requires org package-publish rights)
+
 ## One-time setup
 
 1. **Keep the GitHub repo private.** Package visibility follows the repo; a
