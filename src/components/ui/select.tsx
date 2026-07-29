@@ -182,7 +182,7 @@ function SelectItem({ children, label, ...props }: SelectItemProps) {
       data-slot="select-item"
       label={resolvedLabel}
       className={cn(
-        "text-muted-foreground relative flex w-full cursor-default items-center justify-between gap-2.5 rounded-[7px] py-2 pr-2 pl-2.5 text-[0.8rem] font-medium outline-none transition-colors select-none",
+        "text-muted-foreground relative flex w-full cursor-default items-center justify-between gap-2.5 rounded-[7px] py-2 pe-2 ps-2.5 text-[0.8rem] font-medium outline-none transition-colors select-none",
         "data-[highlighted]:bg-accent-soft data-[highlighted]:text-foreground",
         "data-[selected]:bg-accent-soft data-[selected]:text-foreground",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
