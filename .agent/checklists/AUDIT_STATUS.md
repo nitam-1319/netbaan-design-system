@@ -9,7 +9,7 @@
 > (imported by many others), or static-triage findings are audited first.
 > Do not re-audit a ✅-reviewed component unless a dependency it uses changed.
 
-**Progress:** 207 / 207 reviewed  ·  library @ `95a920d`  ·  **all components audited — production-ready** (one queued foundation item: `--success-ink` on the Badge soft-success tint, see tool-call-block)
+**Progress:** 207 / 207 reviewed  ·  **all components audited — production-ready.** RTL hardening batch (this run): whole-project lint surfaced 36 physical-direction advisories; 12 genuine leaks fixed → logical props across 8 ✅ components (button spinner `mr-2`→`me-2`, avatar status-dot `right-0`→`end-0`, select item `pr-2 pl-2.5`→`pe-2 ps-2.5`, combobox `pr-2 pl-2`→`px-2`, currency-input `text-right`→`text-end`, hosts-by-country-map 3× `text-right`→`text-end`, choice-card `text-left`→`text-start` + `ml-auto`→`ms-auto`, avatar-group 5× `-ml-*`→`-ms-*`). Remaining 21 advisories are verified-EXEMPT false positives (symmetric `left-1/2 -translate-x-1/2` ripples/beams/modals; Base UI `data-[side]` positioner arrows; image-cropper geometric crop handles/overlay; drawer's intentionally physically-named `side:right/left` variants). One still-queued foundation item: `--on-tone` ink contrast on soft/solid tints (badge/severity/alert/stat-tile family — subjective palette decision, awaiting human confirm).
 
 ## Legend
 - **Reviewed** — full audit pass completed (context, DS-compliance, visual, code, a11y, tests).
