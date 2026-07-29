@@ -87,6 +87,14 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(() => {
+    // SSR-safe: `localStorage` does not exist on the server, so fall back to
+    // the default during render. On the client this initializer re-runs during
+    // hydration and reads the stored value; the effect below then applies the
+    // resolved theme to the DOM.
+    if (typeof localStorage === "undefined") {
+      return defaultTheme
+    }
+
     const storedTheme = localStorage.getItem(storageKey)
     if (isTheme(storedTheme)) {
       return storedTheme
