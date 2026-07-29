@@ -1,4 +1,4 @@
-# @netbaan/ui — Composition Recipes (seed)
+# @netbaan-project/ui — Composition Recipes (seed)
 
 A **small, deliberately non-exhaustive** set of patterns that teach how AEGIS
 primitives fit together. This is a grammar primer, not a lookup table — an agent

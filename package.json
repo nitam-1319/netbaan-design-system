@@ -1,9 +1,13 @@
 {
-  "name": "@netbaan/ui",
+  "name": "@netbaan-project/ui",
   "version": "0.0.1",
   "type": "module",
   "description": "AEGIS design system — sealed, immutable React component library.",
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netbaan-project/front-npm.git"
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -28,7 +32,8 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "dev": "vite",

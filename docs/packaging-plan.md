@@ -82,7 +82,7 @@ Build output:
 
 `package.json` changes:
 
-- Remove `"private": true`; set scoped name (e.g. `@netbaan/ui`).
+- Remove `"private": true`; set scoped name (e.g. `@netbaan-project/ui`).
 - **peerDependencies**: `react`, `react-dom`, `@base-ui/react` (consider `lucide-react`).
 - **dependencies**: `clsx`, `class-variance-authority`, `tailwind-merge`.
 - Add `exports` map, `module`, `types`, `sideEffects: ["*.css"]`, `files: ["dist"]`.
@@ -92,7 +92,7 @@ Immutability enforcement (practical, not cryptographic):
 - Compiled output lives in `node_modules` — git-ignored, regenerated on install, uncommittable. Edits are ephemeral and unshippable.
 - **Minified + no source maps** → nothing meaningful to hand-edit.
 - **`AGENTS.md` rule** in each consuming project: sealed dependency; never edit `node_modules`; use components only via typed props; never pass `className`.
-- Optional CI/pre-commit check rejecting staged changes under `node_modules/@netbaan/ui`.
+- Optional CI/pre-commit check rejecting staged changes under `node_modules/@netbaan-project/ui`.
 
 ---
 
@@ -166,7 +166,7 @@ A hand-written recipe list would be capped by imagination and high-maintenance, 
 - **Phase 0 — Decisions** (see §8).
 - ✅ **Phase 1 — `"use client"`** — DONE. Marked **all 208** component files (uniform stability-first rule, not just interactive ones; reversible). Codemod: `.agent/scripts/add-use-client.mjs`. `tsc --noEmit` clean.
 - ✅ **Phase 2 — Barrel `src/index.ts`** — DONE (first pass exports everything). Generator: `.agent/scripts/build-barrel.mjs` (idempotent, fails loudly on new export-name collisions). Found + resolved 1 collision: two `FormActions` → provider's aliased to `FormProviderActions`. **Follow-up:** the two `FormActions` (`form-actions.tsx` vs `form-provider.tsx`) are a real duplicate to consolidate during catalog work (Phase 6). Public-API curation (hiding internal helpers) deferred.
-- ✅ **Phase 3 — `package.json`** — DONE. Name `@netbaan/ui`, `private` removed, deps split (peer: react/react-dom/@base-ui/react/lucide-react; runtime: clsx/cva/tailwind-merge; rest→dev), `exports`/`sideEffects`/`files`/`publishConfig` set. Lockfile reconciled by installs.
+- ✅ **Phase 3 — `package.json`** — DONE. Name `@netbaan-project/ui`, `private` removed, deps split (peer: react/react-dom/@base-ui/react/lucide-react; runtime: clsx/cva/tailwind-merge; rest→dev), `exports`/`sideEffects`/`files`/`publishConfig` set. Lockfile reconciled by installs.
 - ✅ **Phase 4 — Build config** — DONE. Chose **bunchee** (not tsup — its directive plugin was stale/esbuild-pinned). Output: per-component ESM chunks (tree-shakeable), `"use client"` preserved on all 208 chunks (survives minify), peers + runtime deps externalized, `.d.ts` emitted (`@/` aliases resolved), no consumer source maps. `build:js`.
 - ✅ **Phase 5 — CSS** — DONE. Extracted shared `src/theme.css` (one token source, used by app `index.css` + library `styles.css`). `build:css` compiles `dist/styles.css` (128 KB, `source(none)` + `@source ./components` for deterministic output) via `@tailwindcss/cli`, and copies opt-in `dist/fonts.css`. App `index.css` refactor verified non-breaking. Exports `./styles.css` + `./fonts.css`.
 - 🟡 **Phase 6 — AI knowledge layer** — CORE DONE. `.agent/scripts/build-catalog.mjs` generates `catalog.json` (227 KB) + `CATALOG.md` (164 KB) from component sources + `.mdx` docs: per-component concept, **when-to-use / avoid** (from Do/Don't bullets — 206/207), `composesWith` (92 have a real composition graph), exports, `import` snippet, inferred category (13). `AGENTS.md` (search-before-build + sealed + no-`className` contract) and `RECIPES.md` (composition grammar seed) authored. All shipped in the package (`files` + `./catalog.json` export) and wired into `npm run build`. Fixed a multiline-`export {}` parser gap in both codegen scripts.
@@ -178,7 +178,7 @@ A hand-written recipe list would be capped by imagination and high-maintenance, 
 - ✅ **Phase 7 — Consumer smoke test** — DONE. Packed (`npm pack` → 260 KB, no src/map/stories/mdx leak, `--no-sourcemap`), installed into a throwaway consumer (esbuild): `exports` resolves, `.d.ts` type-checks clean, **tree-shaking confirmed** (Button/Badge/Dialog excluded ~200 other components). Then a real **Next.js 16 App Router** app (a server page rendering our client Badge/Button/Dialog/ThemeProvider): `next build` → `✓ Compiled`, TypeScript passed, `✓ 3/3 static pages`; prerendered HTML contains the server-rendered markup (`data-slot="badge"`, `SSR-rendered`, `<button>`). RSC / `"use client"` boundaries verified in a real server. Two real SSR bugs found & fixed:
   - **Bug 1:** `ThemeProvider` read `localStorage` in its `useState` initializer (runs during render) → SSR `ReferenceError`. Guarded with `typeof localStorage`; client reads stored value on hydration.
   - **Bug 2:** bunchee emitted **classic** JSX (`React.createElement`) because the root `tsconfig.json` set `paths` but not `jsx`; components without `import React` crashed with `React is not defined`. Added `"jsx": "react-jsx"` to root tsconfig → all 208 chunks now use `react/jsx-runtime`, zero bare `React.`.
-- **Phase 8 — Release**: Changesets, private registry publish.
+- 🟡 **Phase 8 — Release** — SET UP (publish pending). Target: **GitHub Packages (private)** — access follows the private repo, nothing on public npm. Renamed `@netbaan-project/ui` → **`@netbaan-project/ui`** (GitHub Packages requires scope = repo owner `netbaan-project`); catalog/barrel/docs regenerate the name from `package.json`. `publishConfig.registry` pinned to `npm.pkg.github.com` + committed `.npmrc` (token via `NODE_AUTH_TOKEN` env, no secret committed). `prepack` runs the full build on publish; `files` allowlist keeps source out. `RELEASING.md` documents the flow. **`npm publish --dry-run` confirms** "Publishing to https://npm.pkg.github.com … restricted access". **Remaining (user action):** create a GitHub PAT (`write:packages`), ensure the repo is private, then `npm version <bump>` + `npm publish` — outward-facing, not run by the agent.
 
 ## 10. Progress log (execution)
 
@@ -190,7 +190,7 @@ Not yet started: **Phase 6 (AI knowledge layer)** — the catalog/`AGENTS.md`/re
 
 ## 8. Open decisions (to resolve before Phase 1)
 
-- [ ] Package name / scope (`@netbaan/ui`?).
+- [ ] Package name / scope (`@netbaan-project/ui`?).
 - [ ] Private registry choice (GitHub Packages / Verdaccio / npm private).
 - [ ] ESM-only vs ESM+CJS (recommend **ESM-only** — simplest, works in Next/Vite, cleanest `"use client"` preservation).
 - [ ] Public vs internal component split (what the barrel exports).

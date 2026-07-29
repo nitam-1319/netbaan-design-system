@@ -21,7 +21,7 @@
       "accordionVariants"
     ],
     "typeExports": [],
-    "import": "import { Accordion } from \"@netbaan/ui\";"
+    "import": "import { Accordion } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ActionSheet",
@@ -50,7 +50,7 @@
       "ActionSheetContentProps",
       "ActionSheetAction"
     ],
-    "import": "import { ActionSheet } from \"@netbaan/ui\";"
+    "import": "import { ActionSheet } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Alert",
@@ -73,7 +73,7 @@
       "alertVariants"
     ],
     "typeExports": [],
-    "import": "import { Alert } from \"@netbaan/ui\";"
+    "import": "import { Alert } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AnimatePresence",
@@ -97,7 +97,7 @@
       "AnimatePresenceProps",
       "PresenceState"
     ],
-    "import": "import { AnimatePresence } from \"@netbaan/ui\";"
+    "import": "import { AnimatePresence } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ApiKeyManager",
@@ -126,7 +126,7 @@
       "ApiKeyManagerProps",
       "ApiKey"
     ],
-    "import": "import { ApiKeyManager } from \"@netbaan/ui\";"
+    "import": "import { ApiKeyManager } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AppShell",
@@ -152,7 +152,7 @@
       "appShellSidebarVariants"
     ],
     "typeExports": [],
-    "import": "import { AppShell } from \"@netbaan/ui\";"
+    "import": "import { AppShell } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AreaChart",
@@ -182,7 +182,7 @@
       "AreaChartDatum",
       "AreaStackMode"
     ],
-    "import": "import { AreaChart } from \"@netbaan/ui\";"
+    "import": "import { AreaChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AspectRatio",
@@ -205,7 +205,7 @@
       "AspectRatioProps",
       "AspectRatioValue"
     ],
-    "import": "import { AspectRatio } from \"@netbaan/ui\";"
+    "import": "import { AspectRatio } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AssetRow",
@@ -231,7 +231,7 @@
     "typeExports": [
       "AssetRowProps"
     ],
-    "import": "import { AssetRow } from \"@netbaan/ui\";"
+    "import": "import { AssetRow } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AttachmentChip",
@@ -256,7 +256,7 @@
     "typeExports": [
       "AttachmentChipProps"
     ],
-    "import": "import { AttachmentChip } from \"@netbaan/ui\";"
+    "import": "import { AttachmentChip } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AttackSurfaceWidget",
@@ -281,7 +281,7 @@
     "typeExports": [
       "AttackSurfaceWidgetProps"
     ],
-    "import": "import { AttackSurfaceWidget } from \"@netbaan/ui\";"
+    "import": "import { AttackSurfaceWidget } from \"@netbaan-project/ui\";"
   },
   {
     "name": "AvatarGroup",
@@ -304,7 +304,7 @@
     "typeExports": [
       "AvatarGroupProps"
     ],
-    "import": "import { AvatarGroup } from \"@netbaan/ui\";"
+    "import": "import { AvatarGroup } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Avatar",
@@ -330,7 +330,7 @@
       "AvatarProps",
       "AvatarStatus"
     ],
-    "import": "import { Avatar } from \"@netbaan/ui\";"
+    "import": "import { Avatar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Axis",
@@ -357,7 +357,7 @@
       "AxisTick",
       "AxisOrientation"
     ],
-    "import": "import { Axis } from \"@netbaan/ui\";"
+    "import": "import { Axis } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Badge",
@@ -380,7 +380,7 @@
     "typeExports": [
       "BadgeProps"
     ],
-    "import": "import { Badge } from \"@netbaan/ui\";"
+    "import": "import { Badge } from \"@netbaan-project/ui\";"
   },
   {
     "name": "BarChart",
@@ -409,7 +409,7 @@
       "BarChartSeries",
       "BarChartDatum"
     ],
-    "import": "import { BarChart } from \"@netbaan/ui\";"
+    "import": "import { BarChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "BeamGlow",
@@ -432,7 +432,7 @@
     "typeExports": [
       "BeamGlowProps"
     ],
-    "import": "import { BeamGlow } from \"@netbaan/ui\";"
+    "import": "import { BeamGlow } from \"@netbaan-project/ui\";"
   },
   {
     "name": "BottomNavigation",
@@ -456,7 +456,7 @@
       "BottomNavigationItem",
       "BottomNavigationProps"
     ],
-    "import": "import { BottomNavigation } from \"@netbaan/ui\";"
+    "import": "import { BottomNavigation } from \"@netbaan-project/ui\";"
   },
   {
     "name": "BottomSheet",
@@ -488,7 +488,7 @@
     "typeExports": [
       "BottomSheetContentProps"
     ],
-    "import": "import { BottomSheet } from \"@netbaan/ui\";"
+    "import": "import { BottomSheet } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Box",
@@ -510,7 +510,7 @@
     "typeExports": [
       "BoxProps"
     ],
-    "import": "import { Box } from \"@netbaan/ui\";"
+    "import": "import { Box } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Breadcrumb",
@@ -537,7 +537,7 @@
       "BreadcrumbEllipsis"
     ],
     "typeExports": [],
-    "import": "import { Breadcrumb } from \"@netbaan/ui\";"
+    "import": "import { Breadcrumb } from \"@netbaan-project/ui\";"
   },
   {
     "name": "BubbleChart",
@@ -565,7 +565,7 @@
       "BubbleSeries",
       "BubblePoint"
     ],
-    "import": "import { BubbleChart } from \"@netbaan/ui\";"
+    "import": "import { BubbleChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "BulkActionsBar",
@@ -591,7 +591,7 @@
     "typeExports": [
       "BulkActionsBarProps"
     ],
-    "import": "import { BulkActionsBar } from \"@netbaan/ui\";"
+    "import": "import { BulkActionsBar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Button",
@@ -611,7 +611,7 @@
       "buttonVariants"
     ],
     "typeExports": [],
-    "import": "import { Button } from \"@netbaan/ui\";"
+    "import": "import { Button } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Callout",
@@ -634,7 +634,7 @@
     "typeExports": [
       "CalloutProps"
     ],
-    "import": "import { Callout } from \"@netbaan/ui\";"
+    "import": "import { Callout } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Card",
@@ -661,7 +661,7 @@
       "cardVariants"
     ],
     "typeExports": [],
-    "import": "import { Card } from \"@netbaan/ui\";"
+    "import": "import { Card } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Carousel",
@@ -691,7 +691,7 @@
       "CarouselProps",
       "CarouselItemProps"
     ],
-    "import": "import { Carousel } from \"@netbaan/ui\";"
+    "import": "import { Carousel } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ChartContainer",
@@ -723,7 +723,7 @@
       "ChartColorIndex",
       "ChartContextValue"
     ],
-    "import": "import { ChartContainer } from \"@netbaan/ui\";"
+    "import": "import { ChartContainer } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ChartLegend",
@@ -748,7 +748,7 @@
     "typeExports": [
       "ChartLegendProps"
     ],
-    "import": "import { ChartLegend } from \"@netbaan/ui\";"
+    "import": "import { ChartLegend } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ChartTooltip",
@@ -774,7 +774,7 @@
       "ChartTooltipProps",
       "ChartTooltipItem"
     ],
-    "import": "import { ChartTooltip } from \"@netbaan/ui\";"
+    "import": "import { ChartTooltip } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CheckboxGroup",
@@ -798,7 +798,7 @@
       "CheckboxGroupSelectAll"
     ],
     "typeExports": [],
-    "import": "import { CheckboxGroup } from \"@netbaan/ui\";"
+    "import": "import { CheckboxGroup } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Checkbox",
@@ -820,7 +820,7 @@
       "checkboxVariants"
     ],
     "typeExports": [],
-    "import": "import { Checkbox } from \"@netbaan/ui\";"
+    "import": "import { Checkbox } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ChoiceCard",
@@ -844,7 +844,7 @@
       "ChoiceCardGroupProps",
       "ChoiceCardProps"
     ],
-    "import": "import { ChoiceCard } from \"@netbaan/ui\";"
+    "import": "import { ChoiceCard } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CitationSourceCard",
@@ -868,7 +868,7 @@
     "typeExports": [
       "CitationSourceCardProps"
     ],
-    "import": "import { CitationSourceCard } from \"@netbaan/ui\";"
+    "import": "import { CitationSourceCard } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ClickOutside",
@@ -893,7 +893,7 @@
       "ClickOutsideHandler",
       "UseClickOutsideOptions"
     ],
-    "import": "import { ClickOutside } from \"@netbaan/ui\";"
+    "import": "import { ClickOutside } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CodeBlock",
@@ -919,7 +919,7 @@
     "typeExports": [
       "CodeBlockProps"
     ],
-    "import": "import { CodeBlock } from \"@netbaan/ui\";"
+    "import": "import { CodeBlock } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Collapse",
@@ -941,7 +941,7 @@
       "CollapseContent"
     ],
     "typeExports": [],
-    "import": "import { Collapse } from \"@netbaan/ui\";"
+    "import": "import { Collapse } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ColorPicker",
@@ -968,7 +968,7 @@
       "ColorPickerProps",
       "HSL"
     ],
-    "import": "import { ColorPicker } from \"@netbaan/ui\";"
+    "import": "import { ColorPicker } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ColumnFilter",
@@ -995,7 +995,7 @@
       "ColumnFilterProps",
       "ColumnFilterOption"
     ],
-    "import": "import { ColumnFilter } from \"@netbaan/ui\";"
+    "import": "import { ColumnFilter } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ColumnSort",
@@ -1021,7 +1021,7 @@
       "ColumnSortDirection",
       "ColumnComparators"
     ],
-    "import": "import { ColumnSort } from \"@netbaan/ui\";"
+    "import": "import { ColumnSort } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ColumnVisibility",
@@ -1048,7 +1048,7 @@
       "ColumnVisibilityItem",
       "VisibilityMap"
     ],
-    "import": "import { ColumnVisibility } from \"@netbaan/ui\";"
+    "import": "import { ColumnVisibility } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Combobox",
@@ -1076,7 +1076,7 @@
       "ComboboxSeparator"
     ],
     "typeExports": [],
-    "import": "import { Combobox } from \"@netbaan/ui\";"
+    "import": "import { Combobox } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CommandPalette",
@@ -1102,7 +1102,7 @@
       "CommandPaletteProps",
       "CommandPaletteItem"
     ],
-    "import": "import { CommandPalette } from \"@netbaan/ui\";"
+    "import": "import { CommandPalette } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ConfirmDialog",
@@ -1126,7 +1126,7 @@
       "ConfirmDialogContent"
     ],
     "typeExports": [],
-    "import": "import { ConfirmDialog } from \"@netbaan/ui\";"
+    "import": "import { ConfirmDialog } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ConsentBanner",
@@ -1151,7 +1151,7 @@
     "typeExports": [
       "ConsentBannerProps"
     ],
-    "import": "import { ConsentBanner } from \"@netbaan/ui\";"
+    "import": "import { ConsentBanner } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Container",
@@ -1172,7 +1172,7 @@
       "containerVariants"
     ],
     "typeExports": [],
-    "import": "import { Container } from \"@netbaan/ui\";"
+    "import": "import { Container } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ContextMenu",
@@ -1205,7 +1205,7 @@
       "ContextMenuSubTrigger"
     ],
     "typeExports": [],
-    "import": "import { ContextMenu } from \"@netbaan/ui\";"
+    "import": "import { ContextMenu } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ConversationThread",
@@ -1228,7 +1228,7 @@
     "typeExports": [
       "ConversationThreadProps"
     ],
-    "import": "import { ConversationThread } from \"@netbaan/ui\";"
+    "import": "import { ConversationThread } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CopyToClipboard",
@@ -1254,7 +1254,7 @@
       "UseCopyToClipboardOptions",
       "UseCopyToClipboardResult"
     ],
-    "import": "import { CopyToClipboard } from \"@netbaan/ui\";"
+    "import": "import { CopyToClipboard } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CountUpTicker",
@@ -1277,7 +1277,7 @@
     "typeExports": [
       "CountUpTickerProps"
     ],
-    "import": "import { CountUpTicker } from \"@netbaan/ui\";"
+    "import": "import { CountUpTicker } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CurrencyInput",
@@ -1300,7 +1300,7 @@
     "typeExports": [
       "CurrencyInputProps"
     ],
-    "import": "import { CurrencyInput } from \"@netbaan/ui\";"
+    "import": "import { CurrencyInput } from \"@netbaan-project/ui\";"
   },
   {
     "name": "CveReferenceChip",
@@ -1326,7 +1326,7 @@
       "CveReferenceChipProps",
       "CveSeverity"
     ],
-    "import": "import { CveReferenceChip } from \"@netbaan/ui\";"
+    "import": "import { CveReferenceChip } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DataTable",
@@ -1357,7 +1357,7 @@
       "DataTableSortDirection",
       "DataTableDensity"
     ],
-    "import": "import { DataTable } from \"@netbaan/ui\";"
+    "import": "import { DataTable } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DatePicker",
@@ -1382,7 +1382,7 @@
     "typeExports": [
       "DatePickerSize"
     ],
-    "import": "import { DatePicker } from \"@netbaan/ui\";"
+    "import": "import { DatePicker } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DateRangePicker",
@@ -1407,7 +1407,7 @@
     "typeExports": [
       "DateRangePickerSize"
     ],
-    "import": "import { DateRangePicker } from \"@netbaan/ui\";"
+    "import": "import { DateRangePicker } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DescriptionList",
@@ -1432,7 +1432,7 @@
     "typeExports": [
       "DescriptionListProps"
     ],
-    "import": "import { DescriptionList } from \"@netbaan/ui\";"
+    "import": "import { DescriptionList } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DeviceSessionList",
@@ -1460,7 +1460,7 @@
       "DeviceSession",
       "DeviceType"
     ],
-    "import": "import { DeviceSessionList } from \"@netbaan/ui\";"
+    "import": "import { DeviceSessionList } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Dialog",
@@ -1488,7 +1488,7 @@
       "dialogContentVariants"
     ],
     "typeExports": [],
-    "import": "import { Dialog } from \"@netbaan/ui\";"
+    "import": "import { Dialog } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DiffViewer",
@@ -1513,7 +1513,7 @@
       "DiffLine",
       "DiffLineType"
     ],
-    "import": "import { DiffViewer } from \"@netbaan/ui\";"
+    "import": "import { DiffViewer } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Divider",
@@ -1534,7 +1534,7 @@
       "dividerVariants"
     ],
     "typeExports": [],
-    "import": "import { Divider } from \"@netbaan/ui\";"
+    "import": "import { Divider } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DonutChart",
@@ -1561,7 +1561,7 @@
       "DonutChartProps",
       "DonutChartDatum"
     ],
-    "import": "import { DonutChart } from \"@netbaan/ui\";"
+    "import": "import { DonutChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Drawer",
@@ -1590,7 +1590,7 @@
       "drawerContentVariants"
     ],
     "typeExports": [],
-    "import": "import { Drawer } from \"@netbaan/ui\";"
+    "import": "import { Drawer } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Dropzone",
@@ -1614,7 +1614,7 @@
     "typeExports": [
       "DropzoneProps"
     ],
-    "import": "import { Dropzone } from \"@netbaan/ui\";"
+    "import": "import { Dropzone } from \"@netbaan-project/ui\";"
   },
   {
     "name": "EditableCell",
@@ -1638,7 +1638,7 @@
     "typeExports": [
       "EditableCellProps"
     ],
-    "import": "import { EditableCell } from \"@netbaan/ui\";"
+    "import": "import { EditableCell } from \"@netbaan-project/ui\";"
   },
   {
     "name": "EmptyState",
@@ -1663,7 +1663,7 @@
       "emptyStateVariants"
     ],
     "typeExports": [],
-    "import": "import { EmptyState } from \"@netbaan/ui\";"
+    "import": "import { EmptyState } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ErrorBoundary",
@@ -1688,7 +1688,7 @@
       "ErrorBoundaryProps",
       "ErrorBoundaryFallbackProps"
     ],
-    "import": "import { ErrorBoundary } from \"@netbaan/ui\";"
+    "import": "import { ErrorBoundary } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ErrorState",
@@ -1714,7 +1714,7 @@
     "typeExports": [
       "ErrorStateProps"
     ],
-    "import": "import { ErrorState } from \"@netbaan/ui\";"
+    "import": "import { ErrorState } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ExpandableRows",
@@ -1737,7 +1737,7 @@
     "typeExports": [
       "ExpandableRowProps"
     ],
-    "import": "import { ExpandableRows } from \"@netbaan/ui\";"
+    "import": "import { ExpandableRows } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FadeSlideScale",
@@ -1766,7 +1766,7 @@
       "Preset",
       "Speed"
     ],
-    "import": "import { FadeSlideScale } from \"@netbaan/ui\";"
+    "import": "import { FadeSlideScale } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FieldArray",
@@ -1790,7 +1790,7 @@
     "typeExports": [
       "FieldArrayProps"
     ],
-    "import": "import { FieldArray } from \"@netbaan/ui\";"
+    "import": "import { FieldArray } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FieldLabel",
@@ -1813,7 +1813,7 @@
     "typeExports": [
       "LabelProps"
     ],
-    "import": "import { FieldLabel } from \"@netbaan/ui\";"
+    "import": "import { FieldLabel } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Fieldset",
@@ -1836,7 +1836,7 @@
     "typeExports": [
       "FieldsetProps"
     ],
-    "import": "import { Fieldset } from \"@netbaan/ui\";"
+    "import": "import { Fieldset } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FileCard",
@@ -1864,7 +1864,7 @@
       "FileCardProps",
       "FileCardStatus"
     ],
-    "import": "import { FileCard } from \"@netbaan/ui\";"
+    "import": "import { FileCard } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FileList",
@@ -1892,7 +1892,7 @@
       "FileListProps",
       "FileListItem"
     ],
-    "import": "import { FileList } from \"@netbaan/ui\";"
+    "import": "import { FileList } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FilePreview",
@@ -1919,7 +1919,7 @@
     "typeExports": [
       "FilePreviewProps"
     ],
-    "import": "import { FilePreview } from \"@netbaan/ui\";"
+    "import": "import { FilePreview } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FileUploader",
@@ -1946,7 +1946,7 @@
     "typeExports": [
       "FileUploaderProps"
     ],
-    "import": "import { FileUploader } from \"@netbaan/ui\";"
+    "import": "import { FileUploader } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FindingVulnerabilityCard",
@@ -1974,7 +1974,7 @@
       "FindingVulnerabilityCardProps",
       "FindingStatus"
     ],
-    "import": "import { FindingVulnerabilityCard } from \"@netbaan/ui\";"
+    "import": "import { FindingVulnerabilityCard } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FirstRunOnboarding",
@@ -2000,7 +2000,7 @@
       "FirstRunOnboardingProps",
       "OnboardingStep"
     ],
-    "import": "import { FirstRunOnboarding } from \"@netbaan/ui\";"
+    "import": "import { FirstRunOnboarding } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FloatingActionButton",
@@ -2023,7 +2023,7 @@
     "typeExports": [
       "FloatingActionButtonProps"
     ],
-    "import": "import { FloatingActionButton } from \"@netbaan/ui\";"
+    "import": "import { FloatingActionButton } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FocusTrap",
@@ -2048,7 +2048,7 @@
       "FocusTrapProps",
       "UseFocusTrapOptions"
     ],
-    "import": "import { FocusTrap } from \"@netbaan/ui\";"
+    "import": "import { FocusTrap } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FolderTree",
@@ -2072,7 +2072,7 @@
       "FolderTreeProps",
       "FolderNode"
     ],
-    "import": "import { FolderTree } from \"@netbaan/ui\";"
+    "import": "import { FolderTree } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FormActions",
@@ -2095,7 +2095,7 @@
     "typeExports": [
       "FormActionsProps"
     ],
-    "import": "import { FormActions } from \"@netbaan/ui\";"
+    "import": "import { FormActions } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FormField",
@@ -2119,7 +2119,7 @@
       "FieldError"
     ],
     "typeExports": [],
-    "import": "import { FormField } from \"@netbaan/ui\";"
+    "import": "import { FormField } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FormProvider",
@@ -2141,7 +2141,7 @@
     "typeExports": [
       "FormProviderProps"
     ],
-    "import": "import { FormProvider } from \"@netbaan/ui\";"
+    "import": "import { FormProvider } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FormSection",
@@ -2165,7 +2165,7 @@
       "FormSectionProps",
       "HeadingLevel"
     ],
-    "import": "import { FormSection } from \"@netbaan/ui\";"
+    "import": "import { FormSection } from \"@netbaan-project/ui\";"
   },
   {
     "name": "FunnelChart",
@@ -2189,7 +2189,7 @@
       "FunnelChartProps",
       "FunnelStage"
     ],
-    "import": "import { FunnelChart } from \"@netbaan/ui\";"
+    "import": "import { FunnelChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "GanttChart",
@@ -2215,7 +2215,7 @@
       "GanttChartProps",
       "GanttTask"
     ],
-    "import": "import { GanttChart } from \"@netbaan/ui\";"
+    "import": "import { GanttChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "GeoChoroplethMap",
@@ -2240,7 +2240,7 @@
       "GeoChoroplethMapProps",
       "ChoroplethRegion"
     ],
-    "import": "import { GeoChoroplethMap } from \"@netbaan/ui\";"
+    "import": "import { GeoChoroplethMap } from \"@netbaan-project/ui\";"
   },
   {
     "name": "GradeRingAF",
@@ -2266,7 +2266,7 @@
       "GradeRingProps",
       "GradeLetter"
     ],
-    "import": "import { GradeRingAF } from \"@netbaan/ui\";"
+    "import": "import { GradeRingAF } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Grid",
@@ -2286,7 +2286,7 @@
       "gridVariants"
     ],
     "typeExports": [],
-    "import": "import { Grid } from \"@netbaan/ui\";"
+    "import": "import { Grid } from \"@netbaan-project/ui\";"
   },
   {
     "name": "GroupedStackedBar",
@@ -2310,7 +2310,7 @@
       "GroupedStackedBarProps",
       "GroupedStackedBarMode"
     ],
-    "import": "import { GroupedStackedBar } from \"@netbaan/ui\";"
+    "import": "import { GroupedStackedBar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Heatmap",
@@ -2334,7 +2334,7 @@
     "typeExports": [
       "HeatmapProps"
     ],
-    "import": "import { Heatmap } from \"@netbaan/ui\";"
+    "import": "import { Heatmap } from \"@netbaan-project/ui\";"
   },
   {
     "name": "HelperText",
@@ -2357,7 +2357,7 @@
     "typeExports": [
       "HelperTextProps"
     ],
-    "import": "import { HelperText } from \"@netbaan/ui\";"
+    "import": "import { HelperText } from \"@netbaan-project/ui\";"
   },
   {
     "name": "HostsByCountryMap",
@@ -2382,7 +2382,7 @@
       "HostsByCountryMapProps",
       "HostCountry"
     ],
-    "import": "import { HostsByCountryMap } from \"@netbaan/ui\";"
+    "import": "import { HostsByCountryMap } from \"@netbaan-project/ui\";"
   },
   {
     "name": "HoverCard",
@@ -2406,7 +2406,7 @@
     "typeExports": [
       "HoverCardContentProps"
     ],
-    "import": "import { HoverCard } from \"@netbaan/ui\";"
+    "import": "import { HoverCard } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ImageCropper",
@@ -2428,7 +2428,7 @@
     "typeExports": [
       "ImageCropperProps"
     ],
-    "import": "import { ImageCropper } from \"@netbaan/ui\";"
+    "import": "import { ImageCropper } from \"@netbaan-project/ui\";"
   },
   {
     "name": "InlineEdit",
@@ -2453,7 +2453,7 @@
     "typeExports": [
       "InlineEditProps"
     ],
-    "import": "import { InlineEdit } from \"@netbaan/ui\";"
+    "import": "import { InlineEdit } from \"@netbaan-project/ui\";"
   },
   {
     "name": "InputGroup",
@@ -2476,7 +2476,7 @@
       "inputGroupVariants"
     ],
     "typeExports": [],
-    "import": "import { InputGroup } from \"@netbaan/ui\";"
+    "import": "import { InputGroup } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Kbd",
@@ -2499,7 +2499,7 @@
     "typeExports": [
       "KbdProps"
     ],
-    "import": "import { Kbd } from \"@netbaan/ui\";"
+    "import": "import { Kbd } from \"@netbaan-project/ui\";"
   },
   {
     "name": "KeyboardShortcut",
@@ -2523,7 +2523,7 @@
     "typeExports": [
       "KeyboardShortcutProps"
     ],
-    "import": "import { KeyboardShortcut } from \"@netbaan/ui\";"
+    "import": "import { KeyboardShortcut } from \"@netbaan-project/ui\";"
   },
   {
     "name": "LandmarkRegions",
@@ -2549,7 +2549,7 @@
       "Search"
     ],
     "typeExports": [],
-    "import": "import { LandmarkRegions } from \"@netbaan/ui\";"
+    "import": "import { LandmarkRegions } from \"@netbaan-project/ui\";"
   },
   {
     "name": "LazyLoader",
@@ -2571,7 +2571,7 @@
     "typeExports": [
       "LazyLoaderProps"
     ],
-    "import": "import { LazyLoader } from \"@netbaan/ui\";"
+    "import": "import { LazyLoader } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Lightbox",
@@ -2596,7 +2596,7 @@
       "LightboxProps",
       "LightboxImage"
     ],
-    "import": "import { Lightbox } from \"@netbaan/ui\";"
+    "import": "import { Lightbox } from \"@netbaan-project/ui\";"
   },
   {
     "name": "LineChart",
@@ -2625,7 +2625,7 @@
       "LineChartSeries",
       "LineChartDatum"
     ],
-    "import": "import { LineChart } from \"@netbaan/ui\";"
+    "import": "import { LineChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "List",
@@ -2650,7 +2650,7 @@
       "listItemVariants"
     ],
     "typeExports": [],
-    "import": "import { List } from \"@netbaan/ui\";"
+    "import": "import { List } from \"@netbaan-project/ui\";"
   },
   {
     "name": "LiveRegion",
@@ -2672,7 +2672,7 @@
     "typeExports": [
       "LiveRegionProps"
     ],
-    "import": "import { LiveRegion } from \"@netbaan/ui\";"
+    "import": "import { LiveRegion } from \"@netbaan-project/ui\";"
   },
   {
     "name": "LoadingOverlay",
@@ -2696,7 +2696,7 @@
     "typeExports": [
       "LoadingOverlayProps"
     ],
-    "import": "import { LoadingOverlay } from \"@netbaan/ui\";"
+    "import": "import { LoadingOverlay } from \"@netbaan-project/ui\";"
   },
   {
     "name": "LocaleRtlSwitcher",
@@ -2721,7 +2721,7 @@
       "LocaleSwitcherProps",
       "Locale"
     ],
-    "import": "import { LocaleRtlSwitcher } from \"@netbaan/ui\";"
+    "import": "import { LocaleRtlSwitcher } from \"@netbaan-project/ui\";"
   },
   {
     "name": "LoginForm",
@@ -2752,7 +2752,7 @@
       "LoginValues",
       "LoginFormProps"
     ],
-    "import": "import { LoginForm } from \"@netbaan/ui\";"
+    "import": "import { LoginForm } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Marquee",
@@ -2774,7 +2774,7 @@
     "typeExports": [
       "MarqueeProps"
     ],
-    "import": "import { Marquee } from \"@netbaan/ui\";"
+    "import": "import { Marquee } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Masonry",
@@ -2795,7 +2795,7 @@
     "typeExports": [
       "MasonryProps"
     ],
-    "import": "import { Masonry } from \"@netbaan/ui\";"
+    "import": "import { Masonry } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Masthead",
@@ -2823,7 +2823,7 @@
       "MastheadActions"
     ],
     "typeExports": [],
-    "import": "import { Masthead } from \"@netbaan/ui\";"
+    "import": "import { Masthead } from \"@netbaan-project/ui\";"
   },
   {
     "name": "MentionInput",
@@ -2847,7 +2847,7 @@
       "MentionInputProps",
       "MentionOption"
     ],
-    "import": "import { MentionInput } from \"@netbaan/ui\";"
+    "import": "import { MentionInput } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Menu",
@@ -2880,7 +2880,7 @@
       "MenuSubTrigger"
     ],
     "typeExports": [],
-    "import": "import { Menu } from \"@netbaan/ui\";"
+    "import": "import { Menu } from \"@netbaan-project/ui\";"
   },
   {
     "name": "MessageBubble",
@@ -2904,7 +2904,7 @@
       "MessageBubbleProps",
       "MessageAuthor"
     ],
-    "import": "import { MessageBubble } from \"@netbaan/ui\";"
+    "import": "import { MessageBubble } from \"@netbaan-project/ui\";"
   },
   {
     "name": "MobileAppBar",
@@ -2928,7 +2928,7 @@
       "mobileAppBarVariants"
     ],
     "typeExports": [],
-    "import": "import { MobileAppBar } from \"@netbaan/ui\";"
+    "import": "import { MobileAppBar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ModelSelector",
@@ -2953,7 +2953,7 @@
       "ModelSelectorProps",
       "ModelOption"
     ],
-    "import": "import { ModelSelector } from \"@netbaan/ui\";"
+    "import": "import { ModelSelector } from \"@netbaan-project/ui\";"
   },
   {
     "name": "MultiSelect",
@@ -2977,7 +2977,7 @@
     "typeExports": [
       "MultiSelectProps"
     ],
-    "import": "import { MultiSelect } from \"@netbaan/ui\";"
+    "import": "import { MultiSelect } from \"@netbaan-project/ui\";"
   },
   {
     "name": "MultiStepForm",
@@ -3003,7 +3003,7 @@
       "MultiStepFormProps",
       "MultiStepFormStep"
     ],
-    "import": "import { MultiStepForm } from \"@netbaan/ui\";"
+    "import": "import { MultiStepForm } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Navbar",
@@ -3028,7 +3028,7 @@
       "navbarVariants"
     ],
     "typeExports": [],
-    "import": "import { Navbar } from \"@netbaan/ui\";"
+    "import": "import { Navbar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "NavigationMenu",
@@ -3055,7 +3055,7 @@
       "NavigationMenuViewport"
     ],
     "typeExports": [],
-    "import": "import { NavigationMenu } from \"@netbaan/ui\";"
+    "import": "import { NavigationMenu } from \"@netbaan-project/ui\";"
   },
   {
     "name": "NetworkGraph",
@@ -3083,7 +3083,7 @@
       "NetworkGraphNode",
       "NetworkGraphLink"
     ],
-    "import": "import { NetworkGraph } from \"@netbaan/ui\";"
+    "import": "import { NetworkGraph } from \"@netbaan-project/ui\";"
   },
   {
     "name": "NoResults",
@@ -3109,7 +3109,7 @@
     "typeExports": [
       "NoResultsProps"
     ],
-    "import": "import { NoResults } from \"@netbaan/ui\";"
+    "import": "import { NoResults } from \"@netbaan-project/ui\";"
   },
   {
     "name": "NotificationCenter",
@@ -3137,7 +3137,7 @@
       "NotificationCenterProps",
       "Notification"
     ],
-    "import": "import { NotificationCenter } from \"@netbaan/ui\";"
+    "import": "import { NotificationCenter } from \"@netbaan-project/ui\";"
   },
   {
     "name": "NumberInput",
@@ -3160,7 +3160,7 @@
     "typeExports": [
       "NumberInputProps"
     ],
-    "import": "import { NumberInput } from \"@netbaan/ui\";"
+    "import": "import { NumberInput } from \"@netbaan-project/ui\";"
   },
   {
     "name": "OtpInput",
@@ -3183,7 +3183,7 @@
     "typeExports": [
       "OTPInputProps"
     ],
-    "import": "import { OtpInput } from \"@netbaan/ui\";"
+    "import": "import { OtpInput } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Pagination",
@@ -3211,7 +3211,7 @@
       "PaginationEllipsis"
     ],
     "typeExports": [],
-    "import": "import { Pagination } from \"@netbaan/ui\";"
+    "import": "import { Pagination } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PasswordInput",
@@ -3234,7 +3234,7 @@
     "typeExports": [
       "PasswordInputProps"
     ],
-    "import": "import { PasswordInput } from \"@netbaan/ui\";"
+    "import": "import { PasswordInput } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PasswordStrengthMeter",
@@ -3262,7 +3262,7 @@
       "PasswordRequirement",
       "PasswordStrengthMeterProps"
     ],
-    "import": "import { PasswordStrengthMeter } from \"@netbaan/ui\";"
+    "import": "import { PasswordStrengthMeter } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PieChart",
@@ -3288,7 +3288,7 @@
       "PieChartProps",
       "PieChartDatum"
     ],
-    "import": "import { PieChart } from \"@netbaan/ui\";"
+    "import": "import { PieChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Popover",
@@ -3313,7 +3313,7 @@
       "PopoverDescription"
     ],
     "typeExports": [],
-    "import": "import { Popover } from \"@netbaan/ui\";"
+    "import": "import { Popover } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Portal",
@@ -3336,7 +3336,7 @@
       "PortalProps",
       "PortalContainer"
     ],
-    "import": "import { Portal } from \"@netbaan/ui\";"
+    "import": "import { Portal } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PostureScoreCard",
@@ -3364,7 +3364,7 @@
     "typeExports": [
       "PostureScoreCardProps"
     ],
-    "import": "import { PostureScoreCard } from \"@netbaan/ui\";"
+    "import": "import { PostureScoreCard } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PrintView",
@@ -3392,7 +3392,7 @@
       "PrintViewProps",
       "PrintButtonProps"
     ],
-    "import": "import { PrintView } from \"@netbaan/ui\";"
+    "import": "import { PrintView } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PriorityActionItem",
@@ -3417,7 +3417,7 @@
     "typeExports": [
       "PriorityActionItemProps"
     ],
-    "import": "import { PriorityActionItem } from \"@netbaan/ui\";"
+    "import": "import { PriorityActionItem } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Progress",
@@ -3440,7 +3440,7 @@
       "progressIndicatorVariants"
     ],
     "typeExports": [],
-    "import": "import { Progress } from \"@netbaan/ui\";"
+    "import": "import { Progress } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PromptComposer",
@@ -3465,7 +3465,7 @@
     "typeExports": [
       "PromptComposerProps"
     ],
-    "import": "import { PromptComposer } from \"@netbaan/ui\";"
+    "import": "import { PromptComposer } from \"@netbaan-project/ui\";"
   },
   {
     "name": "PullToRefresh",
@@ -3486,7 +3486,7 @@
     "typeExports": [
       "PullToRefreshProps"
     ],
-    "import": "import { PullToRefresh } from \"@netbaan/ui\";"
+    "import": "import { PullToRefresh } from \"@netbaan-project/ui\";"
   },
   {
     "name": "RadarChart",
@@ -3512,7 +3512,7 @@
       "RadarChartProps",
       "RadarSeries"
     ],
-    "import": "import { RadarChart } from \"@netbaan/ui\";"
+    "import": "import { RadarChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "RadialGauge",
@@ -3535,7 +3535,7 @@
     "typeExports": [
       "RadialGaugeProps"
     ],
-    "import": "import { RadialGauge } from \"@netbaan/ui\";"
+    "import": "import { RadialGauge } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Radio",
@@ -3558,7 +3558,7 @@
       "radioVariants"
     ],
     "typeExports": [],
-    "import": "import { Radio } from \"@netbaan/ui\";"
+    "import": "import { Radio } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Rating",
@@ -3581,7 +3581,7 @@
     "typeExports": [
       "RatingProps"
     ],
-    "import": "import { Rating } from \"@netbaan/ui\";"
+    "import": "import { Rating } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ReasoningTrace",
@@ -3605,7 +3605,7 @@
     "typeExports": [
       "ReasoningTraceProps"
     ],
-    "import": "import { ReasoningTrace } from \"@netbaan/ui\";"
+    "import": "import { ReasoningTrace } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ReducedMotion",
@@ -3628,7 +3628,7 @@
     "typeExports": [
       "ReducedMotionProps"
     ],
-    "import": "import { ReducedMotion } from \"@netbaan/ui\";"
+    "import": "import { ReducedMotion } from \"@netbaan-project/ui\";"
   },
   {
     "name": "RemediationVelocity",
@@ -3653,7 +3653,7 @@
     "typeExports": [
       "RemediationVelocityProps"
     ],
-    "import": "import { RemediationVelocity } from \"@netbaan/ui\";"
+    "import": "import { RemediationVelocity } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ResizablePanels",
@@ -3675,7 +3675,7 @@
     "typeExports": [
       "ResizablePanelsProps"
     ],
-    "import": "import { ResizablePanels } from \"@netbaan/ui\";"
+    "import": "import { ResizablePanels } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ResponseFeedback",
@@ -3699,7 +3699,7 @@
       "ResponseFeedbackProps",
       "FeedbackValue"
     ],
-    "import": "import { ResponseFeedback } from \"@netbaan/ui\";"
+    "import": "import { ResponseFeedback } from \"@netbaan-project/ui\";"
   },
   {
     "name": "RichTextEditor",
@@ -3725,7 +3725,7 @@
       "RichTextControl",
       "RichTextEditorProps"
     ],
-    "import": "import { RichTextEditor } from \"@netbaan/ui\";"
+    "import": "import { RichTextEditor } from \"@netbaan-project/ui\";"
   },
   {
     "name": "RolePermissionSelector",
@@ -3751,7 +3751,7 @@
       "PermissionGroup",
       "Permission"
     ],
-    "import": "import { RolePermissionSelector } from \"@netbaan/ui\";"
+    "import": "import { RolePermissionSelector } from \"@netbaan-project/ui\";"
   },
   {
     "name": "RowSelection",
@@ -3775,7 +3775,7 @@
       "RowSelectionCell"
     ],
     "typeExports": [],
-    "import": "import { RowSelection } from \"@netbaan/ui\";"
+    "import": "import { RowSelection } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SankeyDiagram",
@@ -3802,7 +3802,7 @@
       "SankeyNode",
       "SankeyLink"
     ],
-    "import": "import { SankeyDiagram } from \"@netbaan/ui\";"
+    "import": "import { SankeyDiagram } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ScanCoverageGauge",
@@ -3827,7 +3827,7 @@
     "typeExports": [
       "ScanCoverageGaugeProps"
     ],
-    "import": "import { ScanCoverageGauge } from \"@netbaan/ui\";"
+    "import": "import { ScanCoverageGauge } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ScatterPlot",
@@ -3855,7 +3855,7 @@
       "ScatterSeries",
       "ScatterPoint"
     ],
-    "import": "import { ScatterPlot } from \"@netbaan/ui\";"
+    "import": "import { ScatterPlot } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ScrollArea",
@@ -3877,7 +3877,7 @@
     "typeExports": [
       "ScrollAreaOrientation"
     ],
-    "import": "import { ScrollArea } from \"@netbaan/ui\";"
+    "import": "import { ScrollArea } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ScrollReveal",
@@ -3899,7 +3899,7 @@
     "typeExports": [
       "ScrollRevealProps"
     ],
-    "import": "import { ScrollReveal } from \"@netbaan/ui\";"
+    "import": "import { ScrollReveal } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ScrollspyNav",
@@ -3921,7 +3921,7 @@
       "ScrollspyNavProps",
       "ScrollspyItem"
     ],
-    "import": "import { ScrollspyNav } from \"@netbaan/ui\";"
+    "import": "import { ScrollspyNav } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SearchInput",
@@ -3944,7 +3944,7 @@
     "typeExports": [
       "SearchInputProps"
     ],
-    "import": "import { SearchInput } from \"@netbaan/ui\";"
+    "import": "import { SearchInput } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SegmentedControl",
@@ -3969,7 +3969,7 @@
       "SegmentedControlProps",
       "SegmentedControlItem"
     ],
-    "import": "import { SegmentedControl } from \"@netbaan/ui\";"
+    "import": "import { SegmentedControl } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Select",
@@ -3997,7 +3997,7 @@
       "selectTriggerVariants"
     ],
     "typeExports": [],
-    "import": "import { Select } from \"@netbaan/ui\";"
+    "import": "import { Select } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SessionTimeoutModal",
@@ -4024,7 +4024,7 @@
     "typeExports": [
       "SessionTimeoutModalProps"
     ],
-    "import": "import { SessionTimeoutModal } from \"@netbaan/ui\";"
+    "import": "import { SessionTimeoutModal } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SeverityBadge",
@@ -4050,7 +4050,7 @@
       "SeverityBadgeProps",
       "Severity"
     ],
-    "import": "import { SeverityBadge } from \"@netbaan/ui\";"
+    "import": "import { SeverityBadge } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Sidebar",
@@ -4076,7 +4076,7 @@
       "SidebarFooter"
     ],
     "typeExports": [],
-    "import": "import { Sidebar } from \"@netbaan/ui\";"
+    "import": "import { Sidebar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SignUpForm",
@@ -4108,7 +4108,7 @@
       "SignUpValues",
       "SignUpFormProps"
     ],
-    "import": "import { SignUpForm } from \"@netbaan/ui\";"
+    "import": "import { SignUpForm } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SkeletonTemplates",
@@ -4138,7 +4138,7 @@
       "SkeletonListProps",
       "SkeletonTableProps"
     ],
-    "import": "import { SkeletonTemplates } from \"@netbaan/ui\";"
+    "import": "import { SkeletonTemplates } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Skeleton",
@@ -4158,7 +4158,7 @@
       "Skeleton"
     ],
     "typeExports": [],
-    "import": "import { Skeleton } from \"@netbaan/ui\";"
+    "import": "import { Skeleton } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SkipToContent",
@@ -4181,7 +4181,7 @@
     "typeExports": [
       "SkipToContentProps"
     ],
-    "import": "import { SkipToContent } from \"@netbaan/ui\";"
+    "import": "import { SkipToContent } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Slider",
@@ -4205,7 +4205,7 @@
     "typeExports": [
       "SliderProps"
     ],
-    "import": "import { Slider } from \"@netbaan/ui\";"
+    "import": "import { Slider } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Spacer",
@@ -4227,7 +4227,7 @@
     "typeExports": [
       "SpacerProps"
     ],
-    "import": "import { Spacer } from \"@netbaan/ui\";"
+    "import": "import { Spacer } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Sparkline",
@@ -4250,7 +4250,7 @@
     "typeExports": [
       "SparklineProps"
     ],
-    "import": "import { Sparkline } from \"@netbaan/ui\";"
+    "import": "import { Sparkline } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Spinner",
@@ -4271,7 +4271,7 @@
       "spinnerVariants"
     ],
     "typeExports": [],
-    "import": "import { Spinner } from \"@netbaan/ui\";"
+    "import": "import { Spinner } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SslCertExpiryWidget",
@@ -4295,7 +4295,7 @@
     "typeExports": [
       "SslCertExpiryWidgetProps"
     ],
-    "import": "import { SslCertExpiryWidget } from \"@netbaan/ui\";"
+    "import": "import { SslCertExpiryWidget } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SsoProviderButtons",
@@ -4324,7 +4324,7 @@
       "ProviderKey",
       "ProviderMark"
     ],
-    "import": "import { SsoProviderButtons } from \"@netbaan/ui\";"
+    "import": "import { SsoProviderButtons } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Stack",
@@ -4345,7 +4345,7 @@
       "stackVariants"
     ],
     "typeExports": [],
-    "import": "import { Stack } from \"@netbaan/ui\";"
+    "import": "import { Stack } from \"@netbaan-project/ui\";"
   },
   {
     "name": "StackedAreaChart",
@@ -4368,7 +4368,7 @@
     "typeExports": [
       "StackedAreaChartProps"
     ],
-    "import": "import { StackedAreaChart } from \"@netbaan/ui\";"
+    "import": "import { StackedAreaChart } from \"@netbaan-project/ui\";"
   },
   {
     "name": "StaggerContainer",
@@ -4391,7 +4391,7 @@
     "typeExports": [
       "StaggerContainerProps"
     ],
-    "import": "import { StaggerContainer } from \"@netbaan/ui\";"
+    "import": "import { StaggerContainer } from \"@netbaan-project/ui\";"
   },
   {
     "name": "StatTile",
@@ -4426,7 +4426,7 @@
       "StatTileTrend",
       "StatTileSentiment"
     ],
-    "import": "import { StatTile } from \"@netbaan/ui\";"
+    "import": "import { StatTile } from \"@netbaan-project/ui\";"
   },
   {
     "name": "StatusIndicator",
@@ -4449,7 +4449,7 @@
     "typeExports": [
       "StatusIndicatorProps"
     ],
-    "import": "import { StatusIndicator } from \"@netbaan/ui\";"
+    "import": "import { StatusIndicator } from \"@netbaan-project/ui\";"
   },
   {
     "name": "StatusPill",
@@ -4472,7 +4472,7 @@
     "typeExports": [
       "StatusPillProps"
     ],
-    "import": "import { StatusPill } from \"@netbaan/ui\";"
+    "import": "import { StatusPill } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Stepper",
@@ -4496,7 +4496,7 @@
       "StepperProps",
       "StepperStep"
     ],
-    "import": "import { Stepper } from \"@netbaan/ui\";"
+    "import": "import { Stepper } from \"@netbaan-project/ui\";"
   },
   {
     "name": "StickyHeaderColumn",
@@ -4524,7 +4524,7 @@
       "StickyTableCaption"
     ],
     "typeExports": [],
-    "import": "import { StickyHeaderColumn } from \"@netbaan/ui\";"
+    "import": "import { StickyHeaderColumn } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SuggestionChips",
@@ -4550,7 +4550,7 @@
       "SuggestionChipProps",
       "SuggestionItem"
     ],
-    "import": "import { SuggestionChips } from \"@netbaan/ui\";"
+    "import": "import { SuggestionChips } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SwipeActions",
@@ -4573,7 +4573,7 @@
       "SwipeActionsProps",
       "SwipeAction"
     ],
-    "import": "import { SwipeActions } from \"@netbaan/ui\";"
+    "import": "import { SwipeActions } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Switch",
@@ -4595,7 +4595,7 @@
     "typeExports": [
       "SwitchProps"
     ],
-    "import": "import { Switch } from \"@netbaan/ui\";"
+    "import": "import { Switch } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Table",
@@ -4622,7 +4622,7 @@
       "TableCaption"
     ],
     "typeExports": [],
-    "import": "import { Table } from \"@netbaan/ui\";"
+    "import": "import { Table } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Tabs",
@@ -4645,7 +4645,7 @@
       "TabsPanel"
     ],
     "typeExports": [],
-    "import": "import { Tabs } from \"@netbaan/ui\";"
+    "import": "import { Tabs } from \"@netbaan-project/ui\";"
   },
   {
     "name": "TagInput",
@@ -4670,7 +4670,7 @@
     "typeExports": [
       "TagInputProps"
     ],
-    "import": "import { TagInput } from \"@netbaan/ui\";"
+    "import": "import { TagInput } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Tag",
@@ -4694,7 +4694,7 @@
     "typeExports": [
       "TagProps"
     ],
-    "import": "import { Tag } from \"@netbaan/ui\";"
+    "import": "import { Tag } from \"@netbaan-project/ui\";"
   },
   {
     "name": "TextField",
@@ -4719,7 +4719,7 @@
     "typeExports": [
       "TextFieldProps"
     ],
-    "import": "import { TextField } from \"@netbaan/ui\";"
+    "import": "import { TextField } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Textarea",
@@ -4744,7 +4744,7 @@
     "typeExports": [
       "TextareaProps"
     ],
-    "import": "import { Textarea } from \"@netbaan/ui\";"
+    "import": "import { Textarea } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ThemeToggle",
@@ -4766,7 +4766,7 @@
     "typeExports": [
       "ThemeToggleProps"
     ],
-    "import": "import { ThemeToggle } from \"@netbaan/ui\";"
+    "import": "import { ThemeToggle } from \"@netbaan-project/ui\";"
   },
   {
     "name": "TimePicker",
@@ -4789,7 +4789,7 @@
     "typeExports": [
       "TimePickerProps"
     ],
-    "import": "import { TimePicker } from \"@netbaan/ui\";"
+    "import": "import { TimePicker } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Timeline",
@@ -4816,7 +4816,7 @@
     "typeExports": [
       "TimelineItemProps"
     ],
-    "import": "import { Timeline } from \"@netbaan/ui\";"
+    "import": "import { Timeline } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Toast",
@@ -4841,7 +4841,7 @@
     "typeExports": [
       "ToastType"
     ],
-    "import": "import { Toast } from \"@netbaan/ui\";"
+    "import": "import { Toast } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ToggleGroup",
@@ -4865,7 +4865,7 @@
       "ToggleGroupItem"
     ],
     "typeExports": [],
-    "import": "import { ToggleGroup } from \"@netbaan/ui\";"
+    "import": "import { ToggleGroup } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Toggle",
@@ -4886,7 +4886,7 @@
       "toggleVariants"
     ],
     "typeExports": [],
-    "import": "import { Toggle } from \"@netbaan/ui\";"
+    "import": "import { Toggle } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ToolCallBlock",
@@ -4913,7 +4913,7 @@
       "ToolCallBlockProps",
       "ToolCallStatus"
     ],
-    "import": "import { ToolCallBlock } from \"@netbaan/ui\";"
+    "import": "import { ToolCallBlock } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Toolbar",
@@ -4941,7 +4941,7 @@
       "ToolbarButtonProps",
       "ToolbarLinkProps"
     ],
-    "import": "import { Toolbar } from \"@netbaan/ui\";"
+    "import": "import { Toolbar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Tooltip",
@@ -4963,7 +4963,7 @@
       "TooltipProvider"
     ],
     "typeExports": [],
-    "import": "import { Tooltip } from \"@netbaan/ui\";"
+    "import": "import { Tooltip } from \"@netbaan-project/ui\";"
   },
   {
     "name": "TreeView",
@@ -4986,7 +4986,7 @@
       "TreeViewProps",
       "TreeNode"
     ],
-    "import": "import { TreeView } from \"@netbaan/ui\";"
+    "import": "import { TreeView } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Treemap",
@@ -5010,7 +5010,7 @@
       "TreemapProps",
       "TreemapItem"
     ],
-    "import": "import { Treemap } from \"@netbaan/ui\";"
+    "import": "import { Treemap } from \"@netbaan-project/ui\";"
   },
   {
     "name": "TwoFactorVerification",
@@ -5035,7 +5035,7 @@
     "typeExports": [
       "TwoFactorVerificationProps"
     ],
-    "import": "import { TwoFactorVerification } from \"@netbaan/ui\";"
+    "import": "import { TwoFactorVerification } from \"@netbaan-project/ui\";"
   },
   {
     "name": "TypingIndicator",
@@ -5058,7 +5058,7 @@
     "typeExports": [
       "TypingIndicatorProps"
     ],
-    "import": "import { TypingIndicator } from \"@netbaan/ui\";"
+    "import": "import { TypingIndicator } from \"@netbaan-project/ui\";"
   },
   {
     "name": "UploadProgress",
@@ -5085,7 +5085,7 @@
       "UploadProgressProps",
       "UploadStatus"
     ],
-    "import": "import { UploadProgress } from \"@netbaan/ui\";"
+    "import": "import { UploadProgress } from \"@netbaan-project/ui\";"
   },
   {
     "name": "UsageTokenMeter",
@@ -5109,7 +5109,7 @@
     "typeExports": [
       "UsageTokenMeterProps"
     ],
-    "import": "import { UsageTokenMeter } from \"@netbaan/ui\";"
+    "import": "import { UsageTokenMeter } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ValidationMessage",
@@ -5126,7 +5126,7 @@
     "typeExports": [
       "ValidationMessageProps"
     ],
-    "import": "import { ValidationMessage } from \"@netbaan/ui\";"
+    "import": "import { ValidationMessage } from \"@netbaan-project/ui\";"
   },
   {
     "name": "VirtualizedGrid",
@@ -5149,7 +5149,7 @@
     "typeExports": [
       "VirtualizedGridAlign"
     ],
-    "import": "import { VirtualizedGrid } from \"@netbaan/ui\";"
+    "import": "import { VirtualizedGrid } from \"@netbaan-project/ui\";"
   },
   {
     "name": "VisuallyHidden",
@@ -5172,6 +5172,6 @@
     "typeExports": [
       "VisuallyHiddenProps"
     ],
-    "import": "import { VisuallyHidden } from \"@netbaan/ui\";"
+    "import": "import { VisuallyHidden } from \"@netbaan-project/ui\";"
   }
 ]
