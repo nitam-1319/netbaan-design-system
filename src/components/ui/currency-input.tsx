@@ -254,7 +254,7 @@ function CurrencyInput({
           aria-describedby={description != null || invalid ? descId : undefined}
           data-slot="currency-input-control"
           className={cn(
-            "w-full min-w-0 flex-1 bg-transparent px-2.5 text-right tabular-nums outline-none",
+            "w-full min-w-0 flex-1 bg-transparent px-2.5 text-end tabular-nums outline-none",
             "placeholder:text-muted-foreground",
             "disabled:cursor-not-allowed"
           )}
