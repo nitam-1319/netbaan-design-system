@@ -123,7 +123,7 @@ function HostsByCountryMap({
         </span>
         <span
           data-slot="hosts-by-country-map-total"
-          className={cn("text-right leading-tight")}
+          className={cn("text-end leading-tight")}
         >
           <span className="block font-heading text-lg font-semibold tabular-nums text-foreground">
             {formatCount(model.total)}
@@ -155,14 +155,14 @@ function HostsByCountryMap({
               data-slot="hosts-by-country-map-rank"
               className={cn("flex items-center gap-2 text-sm")}
             >
-              <span className="w-4 shrink-0 text-right font-mono text-xs text-text-faint tabular-nums">
+              <span className="w-4 shrink-0 text-end font-mono text-xs text-text-faint tabular-nums">
                 {i + 1}
               </span>
               <span className="min-w-0 flex-1 truncate text-foreground">{c.label}</span>
               <span className="shrink-0 font-medium tabular-nums text-foreground">
                 {formatCount(c.hosts)}
               </span>
-              <span className="w-12 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+              <span className="w-12 shrink-0 text-end text-xs tabular-nums text-muted-foreground">
                 {(c.share * 100).toFixed(c.share >= 0.1 ? 0 : 1)}%
               </span>
             </li>
