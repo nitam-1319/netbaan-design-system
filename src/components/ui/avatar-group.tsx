@@ -19,11 +19,11 @@ import { cn } from "@/lib/utils"
 const overlapVariants = cva("flex items-center", {
   variants: {
     size: {
-      xs: "[&>*:not(:first-child)]:-ml-1.5",
-      sm: "[&>*:not(:first-child)]:-ml-2",
-      md: "[&>*:not(:first-child)]:-ml-2.5",
-      lg: "[&>*:not(:first-child)]:-ml-3.5",
-      xl: "[&>*:not(:first-child)]:-ml-5",
+      xs: "[&>*:not(:first-child)]:-ms-1.5",
+      sm: "[&>*:not(:first-child)]:-ms-2",
+      md: "[&>*:not(:first-child)]:-ms-2.5",
+      lg: "[&>*:not(:first-child)]:-ms-3.5",
+      xl: "[&>*:not(:first-child)]:-ms-5",
     },
   },
   defaultVariants: { size: "md" },
