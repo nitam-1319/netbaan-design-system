@@ -1,3 +1,5 @@
+"use client";
+
 import { useRender } from "@base-ui/react/use-render"
 import { X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"

@@ -1,3 +1,5 @@
+"use client";
+
 import { BarChart, type BarChartProps } from "@/components/ui/bar-chart"
 
 /**

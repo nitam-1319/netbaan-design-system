@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { Eye, EyeOff, KeyRound, Trash2 } from "lucide-react"
 

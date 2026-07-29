@@ -1,3 +1,5 @@
+"use client";
+
 import { createElement } from "react"
 import { useRender } from "@base-ui/react/use-render"
 import { AlertCircle, Loader2, X } from "lucide-react"

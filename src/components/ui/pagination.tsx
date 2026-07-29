@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { useRender } from "@base-ui/react/use-render"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"

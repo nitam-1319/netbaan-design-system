@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { CheckboxGroup as CheckboxGroupPrimitive } from "@base-ui/react/checkbox-group"
 import { cva, type VariantProps } from "class-variance-authority"

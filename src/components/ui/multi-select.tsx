@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { cva, type VariantProps } from "class-variance-authority"

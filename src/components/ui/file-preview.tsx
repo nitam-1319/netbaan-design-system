@@ -1,3 +1,5 @@
+"use client";
+
 import { createElement, useState } from "react"
 import type * as React from "react"
 import { Eye } from "lucide-react"

@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { ArrowDown, Loader2 } from "lucide-react"
 

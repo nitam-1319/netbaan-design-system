@@ -164,14 +164,25 @@ A hand-written recipe list would be capped by imagination and high-maintenance, 
 ## 7. Phased sequencing
 
 - **Phase 0 — Decisions** (see §8).
-- **Phase 1 — `"use client"`** on the ~86 stateful files (scripted + verified) + build preservation.
-- **Phase 2 — Barrel `src/index.ts`** + curate public API.
-- **Phase 3 — `package.json`** rework (peer deps, exports, private off).
-- **Phase 4 — Build config** (tsup: ESM, minified, dts, externals, alias rewrite, directive preservation, no consumer source maps).
-- **Phase 5 — CSS**: precompiled `styles.css` (tokens + custom animations) + separate `fonts.css`.
-- **Phase 6 — AI knowledge layer**: `build-catalog.mjs` → `catalog.json` + `CATALOG.md`; `RECIPES.md` seed; disambiguation tables; `AGENTS.md`; wire Storybook MCP; publish Storybook.
-- **Phase 7 — Consumer smoke test**: throwaway Next.js App Router app, install tarball (`npm pack`), verify SSR + client components + styles + immutability rule.
+- ✅ **Phase 1 — `"use client"`** — DONE. Marked **all 208** component files (uniform stability-first rule, not just interactive ones; reversible). Codemod: `.agent/scripts/add-use-client.mjs`. `tsc --noEmit` clean.
+- ✅ **Phase 2 — Barrel `src/index.ts`** — DONE (first pass exports everything). Generator: `.agent/scripts/build-barrel.mjs` (idempotent, fails loudly on new export-name collisions). Found + resolved 1 collision: two `FormActions` → provider's aliased to `FormProviderActions`. **Follow-up:** the two `FormActions` (`form-actions.tsx` vs `form-provider.tsx`) are a real duplicate to consolidate during catalog work (Phase 6). Public-API curation (hiding internal helpers) deferred.
+- ✅ **Phase 3 — `package.json`** — DONE. Name `@netbaan/ui`, `private` removed, deps split (peer: react/react-dom/@base-ui/react/lucide-react; runtime: clsx/cva/tailwind-merge; rest→dev), `exports`/`sideEffects`/`files`/`publishConfig` set. Lockfile reconciled by installs.
+- ✅ **Phase 4 — Build config** — DONE. Chose **bunchee** (not tsup — its directive plugin was stale/esbuild-pinned). Output: per-component ESM chunks (tree-shakeable), `"use client"` preserved on all 208 chunks (survives minify), peers + runtime deps externalized, `.d.ts` emitted (`@/` aliases resolved), no consumer source maps. `build:js`.
+- ✅ **Phase 5 — CSS** — DONE. Extracted shared `src/theme.css` (one token source, used by app `index.css` + library `styles.css`). `build:css` compiles `dist/styles.css` (128 KB, `source(none)` + `@source ./components` for deterministic output) via `@tailwindcss/cli`, and copies opt-in `dist/fonts.css`. App `index.css` refactor verified non-breaking. Exports `./styles.css` + `./fonts.css`.
+- 🟡 **Phase 6 — AI knowledge layer** — CORE DONE. `.agent/scripts/build-catalog.mjs` generates `catalog.json` (227 KB) + `CATALOG.md` (164 KB) from component sources + `.mdx` docs: per-component concept, **when-to-use / avoid** (from Do/Don't bullets — 206/207), `composesWith` (92 have a real composition graph), exports, `import` snippet, inferred category (13). `AGENTS.md` (search-before-build + sealed + no-`className` contract) and `RECIPES.md` (composition grammar seed) authored. All shipped in the package (`files` + `./catalog.json` export) and wired into `npm run build`. Fixed a multiline-`export {}` parser gap in both codegen scripts.
+
+**Polish (done):**
+- **Disambiguation phrasing** — Do/Don't bullets now strip the "use it to/for" filler lead, capitalise, and render under **Do:** / **Don't:** labels; concept text truncates at a word boundary (`…`), never mid-word. Result reads as clean guidance ("Don't: A short confirmation — use a `Dialog`; Transient feedback — use a `Toast`").
+- **Storybook MCP** — `@storybook/addon-mcp` is registered in `.storybook/main.ts`; the MCP endpoint is exposed whenever `storybook dev` runs, giving agents a live, queryable catalog on top of the static `catalog.json`.
+- **Published Storybook docs** — `build-storybook` produces the static docs artifact (207 components + `.mdx` guidelines). Deploy path: Chromatic is wired (`chromatic.config.json` + dep) — `npx chromatic` publishes a hosted Storybook (needs `CHROMATIC_PROJECT_TOKEN`); the static `storybook-static/` can also be dropped on any static host. Actual deploy is an outward-facing, user-triggered step.
+- 🟡 **Phase 7 — Consumer smoke test** — LARGELY DONE. Packed (`npm pack` → 260 KB, 215 files, **no src/map/stories/mdx leak**, `--no-sourcemap` enforced for sealing), installed into a throwaway consumer (peers resolved, 0 vulns). Verified: `exports` map resolves (main + `styles.css`), package `.d.ts` type-checks clean with standard consumer setup (`@types/react` + `*.css` decl, both Next-provided), esbuild bundles (resolves all chunks, handles 208 `"use client"`), **tree-shaking confirmed** (importing Button/Badge/Dialog excluded ~200 other components), CSS import works. **Remaining:** real Next.js App Router **RSC runtime** test (SSR server-rendering a client component) — directives are preserved + bundler-validated, but not yet exercised in an actual Next server.
 - **Phase 8 — Release**: Changesets, private registry publish.
+
+## 10. Progress log (execution)
+
+Phases 1–5 complete, Phase 7 largely complete. Working tree: ~218 changed/new paths (208 `"use client"` files + build config + `src/index.ts` barrel + `src/theme.css`/`styles.css`/`fonts.css` + `package.json` + 2 codegen scripts). Nothing committed yet. `dist/` builds clean via `npm run build`.
+
+Not yet started: **Phase 6 (AI knowledge layer)** — the catalog/`AGENTS.md`/recipes that serve the "understand, compose, don't duplicate" goals — and **Phase 8 (release)**.
 
 ---
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { AreaChart, type AreaChartProps } from "@/components/ui/area-chart"
 
 /**

@@ -1,0 +1,11 @@
+/* Published library stylesheet — compiled to dist/styles.css and exported as
+ * `@netbaan/ui/styles.css`. Contains the AEGIS design tokens + every Tailwind
+ * utility used by the components. NO fonts (see fonts.css for opt-in fonts).
+ *
+ * `source(none)` disables Tailwind's automatic content detection so the output
+ * is deterministic: only classes actually used by the components are emitted. */
+@import "tailwindcss" source(none);
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "./theme.css";
+@source "./components/**/*.{ts,tsx}";

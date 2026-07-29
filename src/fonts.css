@@ -1,0 +1,4 @@
+/* Opt-in font faces for the AEGIS design system, exported as `@netbaan/ui/fonts.css`.
+ * Import this ONLY if you want the bundled type stack; the components reference the
+ * families via CSS variables and fall back to system fonts when this is absent. */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap");

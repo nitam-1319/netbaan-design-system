@@ -1,3 +1,5 @@
+"use client";
+
 import { cva, type VariantProps } from "class-variance-authority"
 import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
 

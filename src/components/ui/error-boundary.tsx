@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 
 import { ErrorState } from "@/components/ui/error-state"

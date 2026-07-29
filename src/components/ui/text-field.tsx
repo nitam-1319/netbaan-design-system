@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { Field as FieldPrimitive } from "@base-ui/react/field"
 import { cva, type VariantProps } from "class-variance-authority"

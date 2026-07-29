@@ -1,3 +1,5 @@
+"use client";
+
 import type * as React from "react"
 import { AlertCircle, CheckCircle2, Pause, Play, RotateCcw, X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"

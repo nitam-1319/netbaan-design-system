@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { ShieldCheck, ShieldX } from "lucide-react"
 

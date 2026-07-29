@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react"
 import { Bold, Italic, List, ListOrdered, Underline } from "lucide-react"
 
