@@ -23,7 +23,7 @@ import { SeverityBadge, type Severity } from "@/components/ui/severity-badge"
 
 type PriorityActionItemProps = Omit<
   React.ComponentProps<typeof ListItem>,
-  "children" | "interactive"
+  "children" | "interactive" | "title"
 > & {
   /** The action title. Required. */
   title: React.ReactNode

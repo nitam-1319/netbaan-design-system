@@ -118,6 +118,12 @@ type SSOProviderButtonProps = Omit<
     variant?: SSOVariant
     size?: SSOSize
     /**
+     * Shows a spinner in place of the provider mark, holds the label, and marks
+     * the control `aria-busy` + non-interactive (mirrors `Button.loading`). Use
+     * while the provider's authorization URL is being fetched.
+     */
+    loading?: boolean
+    /**
      * Label template. `{provider}` is replaced with the provider name.
      * Default: `"Continue with {provider}"`. Pass a node to override entirely.
      */
@@ -140,6 +146,7 @@ function SSOProviderButton({
   size = "md",
   fullWidth = true,
   label,
+  loading = false,
   disabled,
   ...props
 }: SSOProviderButtonProps) {
@@ -156,7 +163,8 @@ function SSOProviderButton({
     <ButtonPrimitive
       data-slot="sso-provider-button"
       data-provider={typeof provider === "string" ? provider : undefined}
-      disabled={disabled}
+      aria-busy={loading || undefined}
+      disabled={disabled || loading}
       className={cn(
         buttonVariants({ variant, size }),
         ssoButtonVariants({ fullWidth })
@@ -173,7 +181,11 @@ function SSOProviderButton({
           aria-hidden
           className="inline-flex size-[1.15em] shrink-0 items-center justify-center [&_svg]:size-full"
         >
-          {mark.icon}
+          {loading ? (
+            <span className="inline-block size-[0.9em] animate-spin rounded-full border-2 border-current/40 border-t-current" />
+          ) : (
+            mark.icon
+          )}
         </span>
         <span className="min-w-0 truncate">{text}</span>
       </span>
@@ -196,6 +208,14 @@ type SSOProviderButtonsProps = Omit<
   orientation?: "vertical" | "horizontal"
   /** Label template applied to every button. See `SSOProviderButton.label`. */
   label?: string
+  /** Disables every button in the group (forwarded to each child). */
+  disabled?: boolean
+  /**
+   * Loading (spinner) state. `true` spins every button; pass the provider
+   * key/mark (or an array of them) to spin only those — the rest stay
+   * interactive, so one provider can fetch while the others remain clickable.
+   */
+  loading?: boolean | ProviderInput | ProviderInput[]
   /** Fired with the provider key (or mark) when a button is activated. */
   onSelectProvider?: (provider: ProviderInput) => void
   /** Accessible name for the group. Default `"Sign in with a provider"`. */
@@ -209,10 +229,23 @@ function SSOProviderButtons({
   fullWidth = true,
   orientation = "vertical",
   label,
+  disabled = false,
+  loading = false,
   onSelectProvider,
   groupLabel = "Sign in with a provider",
   ...props
 }: SSOProviderButtonsProps) {
+  // Resolve the group-level `loading` to a per-provider predicate: `true` spins
+  // all, a single provider/array spins only the named ones.
+  const loadingSet =
+    Array.isArray(loading)
+      ? new Set(loading)
+      : typeof loading === "boolean"
+        ? null
+        : new Set([loading])
+  const isLoading = (provider: ProviderInput) =>
+    loadingSet ? loadingSet.has(provider) : loading === true
+
   return (
     <div
       data-slot="sso-provider-buttons"
@@ -232,6 +265,8 @@ function SSOProviderButtons({
           size={size}
           fullWidth={fullWidth}
           label={label}
+          disabled={disabled}
+          loading={isLoading(provider)}
           onClick={
             onSelectProvider
               ? () => onSelectProvider(provider)

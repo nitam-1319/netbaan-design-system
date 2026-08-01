@@ -65,6 +65,7 @@ function Button({
   ...props
 }: ButtonProps) {
   const isPrimary = variant === "primary"
+  const isDisabled = Boolean(disabled) || loading
   const pad = contentPad[size ?? "md"] ?? "gap-2 px-4"
 
   return (
@@ -79,9 +80,15 @@ function Button({
         <>
           {/* Signature beam: rotating conic-gradient revealed as a 1.5px border,
               floated on the accent underglow (shadow-soft). Reference geometry:
-              200% square, 3.4s spin, 68/84/92% stops. */}
+              200% square, 3.4s spin, 68/84/92% stops. When disabled the rotating
+              arc is swapped for a flat, edge-aligned frame so no bright beam
+              overhangs the (dimmed) button edge. */}
           <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]">
-            <span className="absolute top-1/2 left-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin-fast bg-[conic-gradient(from_0deg,transparent_0_68%,var(--primary)_84%,var(--accent-strong)_92%,transparent_100%)]" />
+            {isDisabled ? (
+              <span className="absolute inset-0 bg-border-strong" />
+            ) : (
+              <span className="absolute top-1/2 left-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin-fast bg-[conic-gradient(from_0deg,transparent_0_68%,var(--primary)_84%,var(--accent-strong)_92%,transparent_100%)]" />
+            )}
           </span>
           <span
             aria-hidden

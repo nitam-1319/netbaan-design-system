@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react"
+import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -127,16 +128,26 @@ function CardHeader({
   )
 }
 
-function CardTitle({
-  ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
-  return (
-    <div
-      data-slot="card-title"
-      className={cn("font-heading leading-none font-semibold tracking-tight")}
-      {...props}
-    />
-  )
+type CardTitleProps = Omit<
+  useRender.ComponentProps<"div">,
+  "className" | "style"
+>
+
+/**
+ * The card's title. Renders a styled `div` by default, but is polymorphic via
+ * `render` (Base UI `useRender`) so it can carry real heading semantics — e.g.
+ * `render={<h2 />}` — without losing the AEGIS styling. Reach for a heading so
+ * the title is exposed as `role="heading"` and page structure stays navigable.
+ */
+function CardTitle({ render = <div />, ...props }: CardTitleProps) {
+  return useRender({
+    render,
+    props: {
+      "data-slot": "card-title",
+      className: cn("font-heading leading-none font-semibold tracking-tight"),
+      ...props,
+    },
+  })
 }
 
 function CardDescription({
@@ -199,3 +210,4 @@ export {
   CardFooter,
   cardVariants,
 }
+export type { CardProps, CardTitleProps }

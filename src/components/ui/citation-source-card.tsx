@@ -22,7 +22,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 type CitationSourceCardProps = Omit<
   React.ComponentProps<"div">,
-  "className" | "style" | "children"
+  "className" | "style" | "children" | "title"
 > & {
   /** The source title / headline. Required — becomes the link's accessible name. */
   title: React.ReactNode

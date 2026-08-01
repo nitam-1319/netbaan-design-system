@@ -26,6 +26,13 @@ type TreeNode = {
   label: React.ReactNode
   /** Optional custom icon (overrides the folder/file default). */
   icon?: React.ReactNode
+  /**
+   * Trailing row actions (e.g. a "Set as default" button), rendered *outside*
+   * the selectable/focusable row so activating them neither selects the node
+   * nor nests an interactive control inside the `treeitem` row. Clicks here do
+   * not bubble to row selection.
+   */
+  actions?: React.ReactNode
   /** Child nodes; presence makes the node a branch. */
   children?: TreeNode[]
 }
@@ -101,47 +108,62 @@ function TreeItem({
       aria-expanded={hasChildren ? isOpen : undefined}
       aria-selected={isSelected}
     >
-      <div
-        data-slot="tree-view-row"
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-        onClick={() => {
-          onSelect(node.id)
-          if (hasChildren) onToggle(node.id)
-        }}
-        className={cn(
-          "flex cursor-pointer items-center gap-1.5 rounded-md py-1 pe-2 text-sm outline-none transition-colors",
-          "hover:bg-muted focus-visible:ring-3 focus-visible:ring-accent-soft",
-          isSelected
-            ? "bg-accent-soft font-medium text-accent-strong"
-            : "text-foreground"
-        )}
-      >
-        {/* Depth indentation via spacer cells (no inline style). */}
-        {Array.from({ length: depth }).map((_, i) => (
-          <span key={i} aria-hidden className="w-4 shrink-0" />
-        ))}
-        <span
-          data-slot="tree-view-toggle"
-          aria-hidden
-          className="flex size-4 shrink-0 items-center justify-center text-text-faint"
+      {/* Row line: the selectable/focusable row + an optional trailing actions
+          slot. Actions live *outside* the focusable row so they never nest an
+          interactive control inside it, and a stopPropagation guard keeps their
+          clicks from reaching row selection. */}
+      <div data-slot="tree-view-row-line" className="flex items-center gap-1">
+        <div
+          data-slot="tree-view-row"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          onClick={() => {
+            onSelect(node.id)
+            if (hasChildren) onToggle(node.id)
+          }}
+          className={cn(
+            "flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded-md py-1 pe-2 text-sm outline-none transition-colors",
+            "hover:bg-muted focus-visible:ring-3 focus-visible:ring-accent-soft",
+            isSelected
+              ? "bg-accent-soft font-medium text-accent-strong"
+              : "text-foreground"
+          )}
         >
-          {hasChildren ? (
-            <ChevronRight
-              className={cn(
-                "size-3.5 transition-transform",
-                isOpen ? "rotate-90" : "rtl:rotate-180"
-              )}
-            />
-          ) : null}
-        </span>
-        <span
-          data-slot="tree-view-icon"
-          className="flex size-4 shrink-0 items-center justify-center text-muted-foreground [&>svg]:size-4"
-        >
-          {node.icon ?? defaultIcon}
-        </span>
-        <span className="min-w-0 flex-1 truncate">{node.label}</span>
+          {/* Depth indentation via spacer cells (no inline style). */}
+          {Array.from({ length: depth }).map((_, i) => (
+            <span key={i} aria-hidden className="w-4 shrink-0" />
+          ))}
+          <span
+            data-slot="tree-view-toggle"
+            aria-hidden
+            className="flex size-4 shrink-0 items-center justify-center text-text-faint"
+          >
+            {hasChildren ? (
+              <ChevronRight
+                className={cn(
+                  "size-3.5 transition-transform",
+                  isOpen ? "rotate-90" : "rtl:rotate-180"
+                )}
+              />
+            ) : null}
+          </span>
+          <span
+            data-slot="tree-view-icon"
+            className="flex size-4 shrink-0 items-center justify-center text-muted-foreground [&>svg]:size-4"
+          >
+            {node.icon ?? defaultIcon}
+          </span>
+          <span className="min-w-0 flex-1 truncate">{node.label}</span>
+        </div>
+        {node.actions != null ? (
+          <span
+            data-slot="tree-view-actions"
+            className="flex shrink-0 items-center gap-1 pe-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {node.actions}
+          </span>
+        ) : null}
       </div>
 
       {hasChildren && isOpen ? (

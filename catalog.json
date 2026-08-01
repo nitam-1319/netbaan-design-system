@@ -660,7 +660,10 @@
       "CardFooter",
       "cardVariants"
     ],
-    "typeExports": [],
+    "typeExports": [
+      "CardProps",
+      "CardTitleProps"
+    ],
     "import": "import { Card } from \"@netbaan-project/ui\";"
   },
   {
