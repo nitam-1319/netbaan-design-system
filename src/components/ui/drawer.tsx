@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils"
 const drawerContentVariants = cva(
   [
     "bg-popover text-popover-foreground ring-border-strong fixed z-50 flex flex-col gap-4 p-6 shadow-elevated ring-1 outline-none",
-    "transition-[transform,opacity] duration-300 ease-out data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
+    "transition-[transform,opacity] duration-300 ease-out data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
   ],
   {
     variants: {
@@ -109,7 +109,7 @@ function DrawerContent({
         data-slot="drawer-backdrop"
         className={cn(
           "fixed inset-0 z-50 bg-background/70 backdrop-blur-sm",
-          "transition-opacity duration-300 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
+          "transition-opacity duration-300 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
         )}
       />
       <DialogPrimitive.Popup

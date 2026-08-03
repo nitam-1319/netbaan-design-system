@@ -22,7 +22,10 @@ function Skeleton({
     props: {
       "data-slot": "skeleton",
       "aria-hidden": true,
-      className: cn("bg-surface-3/70 animate-pulse rounded-md"),
+      // E8: the gradient itself lives in theme.css (keyed off data-slot) so the
+      // sweep and its reduced-motion fallback stay in one place. Here we only
+      // set the animation and the base fill the gradient sits on.
+      className: cn("bg-surface-3 animate-skeleton rounded-md"),
       ...props,
     },
   })

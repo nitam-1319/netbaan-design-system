@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -16,16 +16,20 @@ import { cn } from "@/lib/utils"
  */
 
 const buttonVariants = cva(
-  "group/button relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[var(--r,10px)] font-semibold whitespace-nowrap outline-none select-none transition-[filter,color,background-color,border-color,box-shadow] duration-150 focus-visible:focus-accent active:scale-[0.98] active:brightness-[0.94] disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-[1.1em] [&_svg]:shrink-0",
+  "group/button relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[var(--r,10px)] font-semibold whitespace-nowrap transition-[filter,color,background-color,border-color,box-shadow] duration-150 outline-none select-none focus-visible:focus-accent active:scale-[0.98] active:brightness-[0.94] disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-[1.1em] [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         primary: "text-foreground shadow-soft hover:brightness-[1.08]",
-        secondary: "border border-border-strong bg-card text-foreground hover:brightness-110",
+        secondary:
+          "border border-border-strong bg-card text-foreground hover:brightness-110",
         soft: "border border-transparent bg-accent-soft text-accent-strong hover:brightness-110",
-        outline: "border border-border-strong bg-transparent text-foreground hover:bg-muted",
-        ghost: "border border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
-        destructive: "border border-transparent bg-destructive text-on-tone shadow-elevated hover:brightness-110",
+        outline:
+          "border border-border-strong bg-transparent text-foreground hover:bg-muted",
+        ghost:
+          "border border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
+        destructive:
+          "border border-transparent bg-destructive text-on-tone shadow-elevated hover:brightness-110",
         link: "border border-transparent bg-transparent text-accent-strong underline underline-offset-[3px] hover:brightness-110",
       },
       size: {
@@ -83,7 +87,11 @@ function Button({
               200% square, 3.4s spin, 68/84/92% stops. When disabled the rotating
               arc is swapped for a flat, edge-aligned frame so no bright beam
               overhangs the (dimmed) button edge. */}
-          <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]">
+          <span
+            data-slot="beam"
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
+          >
             {isDisabled ? (
               <span className="absolute inset-0 bg-border-strong" />
             ) : (
@@ -96,7 +104,12 @@ function Button({
           />
         </>
       ) : null}
-      <span className={cn("relative z-10 inline-flex items-center justify-center", pad)}>
+      <span
+        className={cn(
+          "relative z-10 inline-flex items-center justify-center",
+          pad
+        )}
+      >
         {loading ? (
           <span
             aria-hidden

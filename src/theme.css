@@ -121,6 +121,30 @@
     --animate-spin: spin 0.7s linear infinite;
     --animate-marquee: marquee 20s linear infinite;
     --animate-marquee-vertical: marqueeVertical 20s linear infinite;
+    /* B5 — the indeterminate sweep was the only kebab-case keyframe AND the only
+       one with no --animate-* token, so its single call site had to spell it as
+       an arbitrary `animate-[…]` value. Convention: keyframe identifiers are
+       camelCase; the --animate-* token wrapping them is kebab-case. */
+    --animate-progress-indeterminate: progressIndeterminate 1.2s ease-in-out infinite;
+    /* E8 — Skeleton sweep (replaces the opacity pulse, which read as blinking). */
+    --animate-skeleton: skeletonSweep 1.4s ease-in-out infinite;
+
+    /* E1 — elevation scale exposed as `shadow-elevation-*` utilities. */
+    --shadow-elevation-0: var(--elevation-0);
+    --shadow-elevation-1: var(--elevation-1);
+    --shadow-elevation-2: var(--elevation-2);
+    --shadow-elevation-3: var(--elevation-3);
+    --shadow-elevation-4: var(--elevation-4);
+    --shadow-elevation-5: var(--elevation-5);
+
+    /* A4 — categorical (non-severity) data ink. See the :root block for why
+       these are cool-only and why that is the actual fix. */
+    --color-cat-1: var(--cat-1);
+    --color-cat-2: var(--cat-2);
+    --color-cat-3: var(--cat-3);
+    --color-cat-4: var(--cat-4);
+    --color-cat-5: var(--cat-5);
+    --color-cat-6: var(--cat-6);
 }
 
 /* Light theme (AEGIS light palette) */
@@ -286,6 +310,134 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * E1/E2 — ordered elevation scale.
+ *
+ * The system had four shadow names (--glass, --shadow-bloom, --shadow-soft,
+ * --shadow) with no ordering, so "which sits higher" was a guess and new
+ * components picked by vibe. This is a 0–5 scale of HOW HIGH a surface sits,
+ * orthogonal to how it is tinted.
+ *
+ *   0  flush, hairline border only   table rows, list items, flush panels
+ *   1  resting content surface       Card, StatTile, Callout
+ *   2  hovered / raised              Card interactive:hover, dragged row
+ *   3  attached overlay              Menu, Popover, Tooltip, Select list
+ *   4  detached overlay              Dialog, Drawer, CommandPalette, Toast
+ *   5  dragged / floating            Lightbox, drag preview, FAB
+ *
+ * Every level is TWO layers: a tight low-opacity CONTACT shadow that grounds
+ * the surface, plus a wide diffuse AMBIENT shadow that gives it height. That
+ * pairing is what reads as expensive, and it changes no colour.
+ *
+ * Levels 1 and 2 keep the top inner highlight — that is what makes AEGIS cards
+ * read as glass on near-black, and it is preserved exactly from --glass.
+ *
+ * NOTE: contrary to the audit's claim that the old names become "aliases, so
+ * nothing breaks", these ARE new values. The aliases below keep the old NAMES
+ * working, but shadows across the system shift. That is intended, and is why
+ * this is a redesign rather than a refactor.
+ * ------------------------------------------------------------------ */
+:root {
+    --elevation-0: none;
+    --elevation-1:
+        inset 0 1px 0 rgba(255, 255, 255, 0.70),
+        0 1px 2px -1px rgba(90, 68, 150, 0.12),
+        0 8px 24px -16px rgba(90, 68, 150, 0.14);
+    --elevation-2:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        0 2px 4px -2px rgba(90, 68, 150, 0.14),
+        0 14px 34px -18px rgba(90, 68, 150, 0.20);
+    --elevation-3:
+        0 1px 2px -1px rgba(90, 68, 150, 0.16),
+        0 12px 30px -12px rgba(90, 68, 150, 0.22);
+    --elevation-4:
+        0 2px 6px -2px rgba(90, 68, 150, 0.18),
+        0 18px 50px -22px rgba(90, 68, 150, 0.32);
+    --elevation-5:
+        0 4px 10px -3px rgba(90, 68, 150, 0.20),
+        0 28px 70px -26px rgba(90, 68, 150, 0.38);
+
+    /* E4 — recessed elevation. The system had raised surfaces but no wells;
+       this is the missing half of the `highlight-top` utility. */
+    --shadow-inset: rgba(90, 68, 150, 0.14);
+}
+
+.dark {
+    --elevation-0: none;
+    --elevation-1:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 1px 2px -1px rgba(0, 0, 0, 0.60),
+        0 8px 24px -16px rgba(0, 0, 0, 0.55);
+    --elevation-2:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 2px 4px -2px rgba(0, 0, 0, 0.62),
+        0 14px 34px -18px rgba(0, 0, 0, 0.62);
+    --elevation-3:
+        0 1px 2px -1px rgba(0, 0, 0, 0.55),
+        0 12px 30px -12px rgba(0, 0, 0, 0.60);
+    --elevation-4:
+        0 2px 6px -2px rgba(0, 0, 0, 0.55),
+        0 18px 50px -18px rgba(0, 0, 0, 0.70);
+    --elevation-5:
+        0 4px 10px -3px rgba(0, 0, 0, 0.55),
+        0 28px 70px -22px rgba(0, 0, 0, 0.78);
+
+    --shadow-inset: rgba(0, 0, 0, 0.45);
+}
+
+/* E1 — the four legacy names now resolve to scale levels, so existing call
+   sites keep working while the vocabulary consolidates. Deprecated: prefer
+   `shadow-elevation-*`. These override the per-theme values declared above. */
+:root, .dark {
+    --glass: var(--elevation-1);
+    --shadow: var(--elevation-4);
+    --shadow-soft: 0 0 0 1px var(--border-strong), var(--elevation-3);
+    --shadow-bloom: var(--elevation-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * A4 — categorical (non-severity) data ink.
+ *
+ * `--chart-1..5` IS the severity ramp, so a chart of assets-by-environment
+ * rendered in critical/high/medium and read as "12 critical, 38 high".
+ *
+ * The audit's proposed palette did not fix this: four of its six hues WERE
+ * severity colours (--cat-2 = --sev-low, --cat-4 = --sev-medium,
+ * --cat-6 = --sev-info, --cat-3 = --success), so the confusion survived.
+ *
+ * The real separator is TEMPERATURE. The severity ramp is warm-led (#f0506e
+ * red, #f5872b orange, #ecb22e amber) plus one blue and one slate; --success
+ * owns green; --destructive owns red. So this palette is COOL-ONLY and
+ * contains no warm hue at all — which is what makes a categorical chart
+ * unmistakably not an alarm, at a glance, before any legend is read.
+ *
+ * Lightness deliberately alternates light/dark so the series stay separable in
+ * greyscale and under CVD, where several of these hues converge. Hue alone is
+ * NOT relied upon.
+ *
+ * Identical in both themes: this is data ink, not a surface.
+ * ------------------------------------------------------------------ */
+/* A3 — hatch stroke ink for the non-colour severity channel.
+   Two inks rather than one: the audit stroked every level in a single
+   near-black (`--on-tone`), which is close to invisible on the darker fills.
+   The red and blue slots take a light ink; amber and orange take a dark one.
+   Theme-independent, because the severity fills they sit on are too. */
+:root, .dark {
+    --sev-hatch-1: #ffffff;   /* on critical */
+    --sev-hatch-2: #3d2600;   /* on high     */
+    --sev-hatch-3: #3d2f00;   /* on medium   */
+    --sev-hatch-4: #ffffff;   /* on low      */
+}
+
+:root, .dark {
+    --cat-1: #9373d9;   /* violet      — brand, leads every series */
+    --cat-2: #56c8d8;   /* cyan        — lightest                  */
+    --cat-3: #3f4fb8;   /* indigo      — dark                      */
+    --cat-4: #d17fc9;   /* orchid      — light                     */
+    --cat-5: #2b8a8a;   /* teal        — mid-dark                  */
+    --cat-6: #6b4a94;   /* deep purple — darkest                   */
+}
+
+/* ------------------------------------------------------------------ *
  * Theme-independent constants. These carry no colour, so they are declared
  * once rather than duplicated across the light/dark blocks above.
  * ------------------------------------------------------------------ */
@@ -301,6 +453,50 @@
        running under prefers-reduced-motion, at ~2x the resting duration and
        with any scale/translate component removed. */
     --duration-essential: 1.4s;
+
+    /* ------------------------------------------------------------------ *
+     * E6 — motion grammar as enter/exit PAIRS.
+     *
+     * The keyframes were fine; the grammar was missing. Exits shared the
+     * entrance duration, which makes dismissal feel sluggish — a thing being
+     * removed should leave faster than it arrived.
+     *
+     * Entrances decelerate (fast -> slow, the thing settles into place);
+     * exits accelerate (slow -> fast, the thing leaves).
+     * ------------------------------------------------------------------ */
+    --ease-enter: cubic-bezier(0.16, 1, 0.30, 1);
+    --ease-exit: cubic-bezier(0.40, 0.00, 1.00, 1.00);
+    --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1.00);
+
+    --duration-enter: 180ms;
+    --duration-exit: 120ms;   /* ~2/3 of the entrance */
+    --duration-pop: 200ms;    /* the existing check / dot / chip pops */
+
+    --motion-enter: var(--duration-enter) var(--ease-enter);
+    --motion-exit: var(--duration-exit) var(--ease-exit);
+    --motion-pop: var(--duration-pop) var(--ease-pop);
+
+    /* RULE: --ease-pop is the only easing with overshoot, and is permitted
+       ONLY on elements <= 24px — checkbox marks, radio dots, chips, badge
+       dots. Never on a card, dialog or panel: overshoot on a large surface
+       reads as instability, not delight. */
+
+    /* Formalises the hand-rolled delay in StaggerContainer. Set to 80ms to
+       match what that component actually does — the audit proposed 40ms, which
+       would have made the token contradict the system it claims to describe. */
+    --stagger-step: 80ms;
+
+    /* ------------------------------------------------------------------ *
+     * E7 — the beam is the one hero motif, so it gets an intensity dial
+     * rather than being duplicated per context. Dense dashboards set
+     * --beam-opacity on a section root so the motif stays identifiable but
+     * stops competing with data. --beam-still is the static equivalent used
+     * for reduced-motion and print.
+     * ------------------------------------------------------------------ */
+    --beam-opacity: 1;
+    --beam-speed-surface: 6.5s;
+    --beam-speed-control: 3.4s;
+    --beam-still: linear-gradient(145deg, var(--primary), var(--accent-strong));
 }
 
 /* Soft accent-tinted elevation — the reference's softer shadows. Declared as
@@ -329,6 +525,29 @@
 /* Subtle inner top highlight that lifts filled controls off the flat plane. */
 @utility highlight-top {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+/* E4 — recessed (inset) elevation for wells: the missing half of
+   `highlight-top`. The 1px inset ring is also what carries WCAG 1.4.11's 3:1
+   on a groove boundary (see --track-border). Apply to filled TextField,
+   Textarea, Switch off-track, Slider/Progress/RadialGauge tracks,
+   SegmentedControl and TabsList tracks. */
+@utility elevation-inset {
+    box-shadow:
+        inset 0 0 0 1px var(--track-border),
+        inset 0 1px 2px var(--shadow-inset);
+}
+/* E6 — entrance/exit as a PAIR. Entrances decelerate into place; exits
+   accelerate away. Applied as `data-[ending-style]:motion-exit`, which
+   overrides only the closing half — authored entrance durations are left
+   alone, because a large surface (Drawer, BottomSheet) legitimately enters
+   more slowly than a Tooltip and should not be flattened to one number. */
+@utility motion-enter {
+    transition-duration: var(--duration-enter);
+    transition-timing-function: var(--ease-enter);
+}
+@utility motion-exit {
+    transition-duration: var(--duration-exit);
+    transition-timing-function: var(--ease-exit);
 }
 /* A2 — the AEGIS focus treatment is OUTLINE + RING, not ring alone.
      outline — the guaranteed layer: it is the only one that survives
@@ -430,6 +649,34 @@
     }
 }
 
+/* E7 — beam intensity dial. The rotating arc is the direct child of the
+   [data-slot="beam"] clip wrapper in Button, Card, BeamGlow, FAB and Masthead. */
+[data-slot="beam"] > span {
+    opacity: var(--beam-opacity);
+}
+
+/* E7 — print: the beam is ink-expensive and meaningless on paper. */
+@media print {
+    [data-slot="beam"] > span {
+        animation: none;
+        background: var(--beam-still);
+    }
+}
+
+/* E8 — Skeleton: a neutral left-to-right sweep reads as "streaming in" where
+   the previous opacity pulse read as blinking. Two existing surface steps, no
+   new colour. The reduced-motion block flattens this to a static fill. */
+[data-slot="skeleton"] {
+    background-image: linear-gradient(
+        90deg,
+        var(--surface-3) 0%,
+        var(--surface-2) 20%,
+        var(--surface-3) 40%,
+        var(--surface-3) 100%
+    );
+    background-size: 200% 100%;
+}
+
 /* A2 (second half) — let the focus ring escape clipping ancestors.
    `overflow:hidden` clips a descendant's outline just as it clips its
    box-shadow, so switching to an outline is not on its own a fix. `overflow:
@@ -441,8 +688,16 @@
     overflow-clip-margin: var(--focus-escape, 6px);
 }
 
+/* E8 — Skeleton sweep. A neutral left-to-right pass reads as "streaming in",
+   where the previous opacity pulse read as blinking. Adds no colour: it moves
+   between two existing surface steps. */
+@keyframes skeletonSweep {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
 /* Indeterminate progress-bar sweep (used by the Progress component). */
-@keyframes progress-indeterminate {
+@keyframes progressIndeterminate {
     0% {
         transform: translateX(-100%);
     }
@@ -538,9 +793,12 @@
     /* Essential-motion allowlist. Each selector is more specific than the `*`
        sweep above, so these win without needing a second !important tier.
        `data-motion="essential"` is the opt-in for anything not listed. */
+    /* Skeleton is deliberately NOT here. A spinner that stops is
+       indistinguishable from a hung one, which is why it must keep turning —
+       but a skeleton's SHAPE already communicates "content pending", so it
+       stays legible frozen and is calmer flat. See the rule further down. */
     [data-motion="essential"],
     [data-slot="spinner"],
-    [data-slot="skeleton"],
     [data-slot="progress-indicator"][data-indeterminate],
     [data-slot="badge-dot"] > span {
         animation-duration: var(--duration-essential) !important;
@@ -550,6 +808,20 @@
     /* pulseDot and statusPing both scale; swap for a pure opacity fade. */
     [data-slot="badge-dot"] > span {
         animation-name: pulseDotReduced !important;
+    }
+
+    /* E8 — the sweep translates a gradient rather than a box, but at rest the
+       skeleton is calmer as a flat fill. It is still visibly a placeholder. */
+    [data-slot="skeleton"] {
+        animation: none !important;
+        background-image: none !important;
+    }
+
+    /* E7 — the beam is decorative, not stateful: freeze it to its static
+       fallback rather than leaving it parked mid-rotation. */
+    [data-slot="beam"] > span {
+        animation: none !important;
+        background: var(--beam-still) !important;
     }
 }
 

@@ -161,7 +161,7 @@ function ComboboxContent({
           data-slot="combobox-content"
           className={cn(
             "bg-popover text-popover-foreground ring-border-strong w-[var(--anchor-width)] max-h-[min(24rem,var(--available-height))] min-w-40 overflow-y-auto rounded-lg p-1 text-sm shadow-elevated ring-1 outline-none",
-            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
+            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
           )}
           {...props}
         >

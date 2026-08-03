@@ -51,7 +51,9 @@ function Progress({
       {children}
       <ProgressPrimitive.Track
         data-slot="progress-track"
-        className="bg-surface-3 relative h-2 w-full overflow-hidden rounded-full"
+        // E4: recessed groove — inset elevation plus the 1px ring that carries
+        // the track boundary's 3:1 contrast (WCAG 1.4.11).
+        className="bg-surface-3 elevation-inset relative h-2 w-full overflow-hidden rounded-full"
       >
         <ProgressPrimitive.Indicator
           data-slot="progress-indicator"
@@ -61,8 +63,10 @@ function Progress({
           data-indeterminate={indeterminate || undefined}
           className={cn(
             progressIndicatorVariants({ tone }),
+            // B5: was an arbitrary `animate-[…]` value, the only keyframe with
+            // no --animate-* token to reference.
             indeterminate &&
-              "w-1/3 flex-none animate-[progress-indeterminate_1.2s_ease-in-out_infinite] rounded-full"
+              "animate-progress-indeterminate w-1/3 flex-none rounded-full"
           )}
         />
       </ProgressPrimitive.Track>

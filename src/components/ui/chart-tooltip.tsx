@@ -49,7 +49,7 @@ type ChartTooltipItem = {
 }
 
 const tooltipVariants = cva(
-  "pointer-events-none inline-block min-w-[8rem] rounded-lg bg-popover text-popover-foreground shadow-elevated ring-1 ring-border-strong",
+  "pointer-events-none inline-block min-w-[8rem] rounded-lg bg-popover text-popover-foreground shadow-elevation-3 ring-1 ring-border-strong",
   {
     variants: {
       size: {
