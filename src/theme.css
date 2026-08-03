@@ -12,10 +12,15 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-    --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    /* B1 — Vazirmatn is appended to the Latin stacks as a LAST resort and put
+       FIRST in --font-fa. IBM Plex Sans has no Arabic-script coverage, so
+       without this a Persian run inside otherwise-Latin content dropped
+       straight to an arbitrary system font. Latin text is unaffected: it is
+       fully covered by Plex/Space Grotesk and never reaches Vazirmatn. */
+    --font-heading: "Space Grotesk", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+    --font-sans: "IBM Plex Sans", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-    --font-fa: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+    --font-fa: "Vazirmatn", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
 
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -158,6 +163,12 @@
     --shadow-bloom: 0 16px 42px -22px rgba(124, 83, 212, 0.38);
     /* Off-track groove (reference --track): low-opacity ink on light. */
     --track: rgba(24, 20, 34, 0.14);
+    /* A6 / WCAG 1.4.11. The groove FILL measures ~1.1:1 against --surface-2,
+       so the off state of a Switch is effectively invisible — only the thumb
+       carries it. Brightening the fill to 3:1 would make every off-switch
+       shout, so the 3:1 is carried by a defined EDGE instead.
+       Measured 3.09:1 composited over #f8f6fc (--surface-2, light). */
+    --track-border: rgba(24, 20, 34, 0.47);
     /* Subtle glass-panel depth for light cards — crisp top highlight + soft violet-tinted drop. */
     --glass: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 10px 30px -22px rgba(90, 68, 150, 0.16);
     /* Deep purple for text-bearing solid fills; white ≥ 4.5:1. */
@@ -235,6 +246,9 @@
     /* Off-track groove for the toggle + resting chip remove-button (reference --track):
        a low-opacity translucent white/ink, so it reads as a muted groove on any surface. */
     --track: rgba(255, 255, 255, 0.10);
+    /* A6: measured 3.11:1 composited over #1b1922 (--surface-2, dark).
+       See the light-theme block for the rationale. */
+    --track-border: rgba(255, 255, 255, 0.34);
     /* Subtle "glass panel" depth for resting cards on the near-black canvas — a faint
        top inner highlight + a soft NEUTRAL drop (no accent tint). True backdrop-blur is
        invisible on a dark uniform bg, so the glass read comes from the edge highlight. */
@@ -271,6 +285,24 @@
     --sidebar-ring: #9373d9;
 }
 
+/* ------------------------------------------------------------------ *
+ * Theme-independent constants. These carry no colour, so they are declared
+ * once rather than duplicated across the light/dark blocks above.
+ * ------------------------------------------------------------------ */
+:root {
+    /* Focus geometry (A2). Named so the treatment is not re-typed per
+       component. The outline layer is the guaranteed one — it is the only
+       part that survives forced-colors, where box-shadow is suppressed. */
+    --focus-width: 2px;
+    --focus-offset: 2px;
+    --focus-halo: 3px;
+
+    /* Essential motion (A5). Motion that communicates SYSTEM STATE keeps
+       running under prefers-reduced-motion, at ~2x the resting duration and
+       with any scale/translate component removed. */
+    --duration-essential: 1.4s;
+}
+
 /* Soft accent-tinted elevation — the reference's softer shadows. Declared as
    first-class utilities backed by per-theme --shadow-* vars (not --shadow-*
    theme keys) so Tailwind/Lightning emit the value verbatim instead of
@@ -298,11 +330,18 @@
 @utility highlight-top {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
-/* Button focus treatment — the reference's 3px accent-soft ring PLUS an accent
-   drop-glow (`0 0 0 3px var(--accent-soft), 0 6px 18px -8px var(--accent)`),
-   combined into one box-shadow so both layers render and can transition. */
+/* A2 — the AEGIS focus treatment is OUTLINE + RING, not ring alone.
+     outline — the guaranteed layer: it is the only one that survives
+               forced-colors, where box-shadow is suppressed entirely.
+     ring    — the brand layer: the reference's 3px accent-soft halo plus the
+               accent drop-glow, preserved verbatim.
+   NOTE: the outline does NOT solve ring clipping. `overflow:hidden` clips a
+   descendant's outline exactly as it clips its box-shadow; see the
+   `focus-escape` utility below for that half. */
 @utility focus-accent {
-    box-shadow: 0 0 0 3px var(--accent-soft), 0 6px 18px -8px var(--primary);
+    outline: var(--focus-width) solid var(--ring);
+    outline-offset: var(--focus-offset);
+    box-shadow: 0 0 0 var(--focus-halo) var(--accent-soft), 0 6px 18px -8px var(--primary);
 }
 /* Subtle glass-panel depth for resting cards/tiles — a faint top inner highlight
    + a soft NEUTRAL drop (per theme via --glass). Replaces the non-reference
@@ -324,6 +363,82 @@
     h1, h2, h3, h4, h5, h6 {
         font-family: var(--font-heading);
     }
+
+    /* ------------------------------------------------------------------ *
+     * B1 — bind the Persian face.
+     *
+     * `--font-fa` was declared and four weights of Vazirmatn were downloaded,
+     * but nothing referenced it, so Persian text rendered in whatever system
+     * font the UA picked.
+     *
+     * Bound by LANGUAGE, not direction: direction is not language. Urdu,
+     * Hebrew, Arabic and Divehi are all RTL and none of them is served by
+     * Vazirmatn, so a `[dir="rtl"]` hook would mis-assign the face for those
+     * and miss Persian text sitting inside an LTR document.
+     * ------------------------------------------------------------------ */
+    :lang(fa),
+    [lang^="fa"] {
+        font-family: var(--font-fa);
+        /* Vazirmatn's figures are proportional by default; AEGIS is a data
+           product and wants them tabular so columns align. */
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* The mono face has no Persian coverage, so a Persian run inside
+       otherwise-mono content would fall through to a system font. Latin
+       payloads (hostnames, CVE ids, hashes) still resolve to Plex Mono
+       first — Vazirmatn is only reached for the Arabic-script block. */
+    :lang(fa) :is(code, kbd, samp, pre, [data-slot="code-block"]),
+    [lang^="fa"] :is(code, kbd, samp, pre, [data-slot="code-block"]) {
+        font-family: var(--font-mono), var(--font-fa);
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ * A2 — guaranteed focus indication.
+ *
+ * Focus in this system is overwhelmingly expressed with Tailwind `ring-*`
+ * (~142 call sites: ring-accent-soft x71, ring-3 x42, ring-[3px] x29), which
+ * compiles to box-shadow. box-shadow is dropped entirely under forced-colors,
+ * and 82 files additionally set `outline-none` — so a fallback declared
+ * inside @layer base would simply lose to those utilities.
+ *
+ * This rule is therefore deliberately UNLAYERED: unlayered normal
+ * declarations outrank every @layer, including Tailwind's `utilities`, so the
+ * outline lands even on components that opted out. Opt back out per element
+ * with `data-focus-outline="none"` where a component draws focus on a child.
+ * ------------------------------------------------------------------ */
+:focus-visible:not([data-focus-outline="none"]) {
+    outline: var(--focus-width) solid var(--ring);
+    outline-offset: var(--focus-offset);
+}
+
+/* Composite fields (SearchInput, Combobox, TagInput, …) draw the focus
+   treatment on the WRAPPER via `focus-within`, so an additional outline on the
+   inner control would be a redundant second ring — and, where the wrapper also
+   clips, a clipped one. Wrappers tag themselves with the `focus-delegate`
+   marker class, which sits in the same cva string as their `focus-within:`
+   treatment so the two can never drift apart.
+
+   Scoped to `not (forced-colors: active)` on purpose: under forced-colors the
+   wrapper's ring is a box-shadow and is suppressed, so the inner control must
+   get its outline back. Without the media scope this rule would outrank the
+   forced-colors block on specificity and silently reintroduce the bug. */
+@media not (forced-colors: active) {
+    .focus-delegate:focus-within :focus-visible {
+        outline: none;
+    }
+}
+
+/* A2 (second half) — let the focus ring escape clipping ancestors.
+   `overflow:hidden` clips a descendant's outline just as it clips its
+   box-shadow, so switching to an outline is not on its own a fix. `overflow:
+   clip` with a clip margin is: it still clips content, but permits painting
+   --focus-escape px past the edge, which is enough for the ring. Apply to any
+   container that clips and can contain a focusable descendant. */
+@utility focus-escape {
+    overflow: clip;
+    overflow-clip-margin: var(--focus-escape, 6px);
 }
 
 /* Indeterminate progress-bar sweep (used by the Progress component). */
@@ -390,7 +505,26 @@
     to { transform: translateY(calc(-100% - var(--marquee-gap, 0px))); }
 }
 
-/* Respect reduced-motion: disable the AEGIS signature animations. */
+/* A5 — opacity-only substitute for pulseDot under reduced motion. The scale
+   component is the part that provokes vestibular symptoms; the fade is not,
+   and the fade alone still reads as "live". */
+@keyframes pulseDotReduced {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+}
+
+/* ------------------------------------------------------------------ *
+ * A5 — reduced motion: sweep everything, then allow essential motion back.
+ *
+ * The previous blanket rule also stopped Spinner (`animate-spin`) and
+ * Skeleton (`animate-pulse`): iteration-count:1 at 0.001ms runs them once,
+ * instantly, and leaves them parked on their final frame. A reduced-motion
+ * user saw a motionless spinner and could not tell "loading" from "hung".
+ *
+ * Motion that communicates system state is ESSENTIAL and must keep running.
+ * It is slowed and stripped of scale/translate, not killed. Decorative motion
+ * is still swept.
+ * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -398,5 +532,92 @@
         animation-duration: 0.001ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Essential-motion allowlist. Each selector is more specific than the `*`
+       sweep above, so these win without needing a second !important tier.
+       `data-motion="essential"` is the opt-in for anything not listed. */
+    [data-motion="essential"],
+    [data-slot="spinner"],
+    [data-slot="skeleton"],
+    [data-slot="progress-indicator"][data-indeterminate],
+    [data-slot="badge-dot"] > span {
+        animation-duration: var(--duration-essential) !important;
+        animation-iteration-count: infinite !important;
+    }
+
+    /* pulseDot and statusPing both scale; swap for a pure opacity fade. */
+    [data-slot="badge-dot"] > span {
+        animation-name: pulseDotReduced !important;
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ * A1 — forced-colors (Windows High Contrast).
+ *
+ * Two things break in this mode:
+ *   1. Focus is expressed as `ring-*` across the system, which compiles to
+ *      box-shadow, and box-shadow is suppressed here — so focus disappears
+ *      everywhere. Outline is not suppressed, which is what this restores.
+ *   2. `Button variant="primary"` sets no background: its fill is a
+ *      `z-index:-1` span and its border is a rotating conic-gradient. Both
+ *      are dropped, leaving the primary action invisible.
+ *
+ * NOTE: this block deliberately does NOT set `forced-color-adjust: none` on
+ * the button. That property opts an element OUT of the forced palette, which
+ * would defeat the very system-colour fill being assigned here.
+ * ------------------------------------------------------------------ */
+@media (forced-colors: active) {
+    /* box-shadow is suppressed in this mode — outline is not. */
+    *:focus-visible {
+        outline: 2px solid Highlight;
+        outline-offset: 2px;
+    }
+
+    /* Primary button: the beam layers are dropped, so give it a real fill. */
+    [data-slot="button"] {
+        border: 1px solid ButtonBorder;
+        background: ButtonFace;
+        color: ButtonText;
+    }
+    /* The two beam layers are the only direct-child aria-hidden spans; the
+       label wrapper is not aria-hidden, so the label survives. */
+    [data-slot="button"] > span[aria-hidden] {
+        display: none;
+    }
+
+    /* Tone-carrying surfaces: hue is gone, so restore the border that
+       shape-codes them. */
+    [data-slot="badge"],
+    [data-slot="severity-badge"],
+    [data-slot="status-pill"],
+    [data-slot="tag"],
+    [data-slot="alert"],
+    [data-slot="callout"] {
+        border: 1px solid CanvasText;
+        background: Canvas;
+        color: CanvasText;
+    }
+
+    /* Status dots carry meaning; keep them as filled shapes. */
+    [data-slot="badge-dot"] > span {
+        background: CanvasText;
+    }
+
+    /* Elevated surfaces lose their shadow; a border is the only separation. */
+    [data-slot="dialog"],
+    [data-slot="menu"],
+    [data-slot="popover"],
+    [data-slot="toast"],
+    [data-slot="tooltip"] {
+        border: 1px solid CanvasText;
+    }
+
+    /* Filled controls: the accent gradient is dropped. */
+    [data-slot="switch"][data-checked],
+    [data-slot="progress-indicator"],
+    [data-slot="slider-indicator"] {
+        background: Highlight;
     }
 }

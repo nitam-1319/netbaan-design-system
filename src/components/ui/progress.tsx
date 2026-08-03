@@ -55,6 +55,10 @@ function Progress({
       >
         <ProgressPrimitive.Indicator
           data-slot="progress-indicator"
+          // A5: marks the sweep as essential motion, so the reduced-motion
+          // allowlist can keep it running (a frozen indeterminate bar is
+          // indistinguishable from a hung one).
+          data-indeterminate={indeterminate || undefined}
           className={cn(
             progressIndicatorVariants({ tone }),
             indeterminate &&

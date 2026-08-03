@@ -217,7 +217,7 @@ function RichTextEditor({
         data-slot="rich-text-editor-shell"
         className={cn(
           "flex flex-col gap-2 rounded-lg border border-border-strong bg-surface-2 p-2",
-          "focus-within:border-primary focus-within:ring-[3px] focus-within:ring-accent-soft",
+          "focus-delegate focus-within:border-primary focus-within:ring-[3px] focus-within:ring-accent-soft",
           "transition-[color,background-color,border-color,box-shadow] duration-150"
         )}
       >

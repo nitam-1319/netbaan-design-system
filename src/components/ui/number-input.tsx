@@ -26,7 +26,7 @@ const groupVariants = cva(
   cn(
     "flex w-full items-stretch overflow-hidden rounded-lg border border-border-strong bg-background text-foreground transition-colors",
     "hover:border-accent-strong",
-    "focus-within:border-primary focus-within:ring-3 focus-within:ring-accent-soft",
+    "focus-delegate focus-within:border-primary focus-within:ring-3 focus-within:ring-accent-soft",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     "data-[invalid]:border-destructive data-[invalid]:focus-within:ring-destructive/30"
   ),
