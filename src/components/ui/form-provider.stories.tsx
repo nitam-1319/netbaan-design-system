@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect, fn, userEvent, within } from "storybook/test"
 
-import { FormProvider, FormActions } from "@/components/ui/form-provider"
+import { FormProvider } from "@/components/ui/form-provider"
+import { FormActions } from "@/components/ui/form-actions"
 import {
   FormField,
   FieldLabel,

@@ -14,7 +14,26 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 ## [Unreleased]
 
 ### Migration notes (curated)
-_None yet._
+
+#### `FormProviderActions` removed
+Breaking: `form-provider.tsx` exported a second `FormActions` that the barrel had to
+alias to `FormProviderActions` to avoid a name collision — two exports doing the same
+job under near-identical names. The standalone `form-actions.tsx` is now the single
+public component.
+
+Migration:
+
+    import { FormProviderActions } from "@netbaan-project/ui";
+    <FormProviderActions>…</FormProviderActions>
+
+    ->
+
+    import { FormActions } from "@netbaan-project/ui";
+    <FormActions stack>…</FormActions>
+
+`stack` reproduces the removed component's behaviour (reversed column below `sm`, so
+the primary action sits on top on narrow viewports). Omit it if you want the default
+single-row layout. The removed component had no other props.
 
 <!-- Template for a breaking change:
 

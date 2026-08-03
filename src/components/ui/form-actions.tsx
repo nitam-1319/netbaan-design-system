@@ -38,11 +38,20 @@ const formActionsVariants = cva("flex flex-wrap items-center gap-3", {
       true: "sticky bottom-0 z-10 border-t border-border bg-background/80 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60",
       false: "",
     },
+    // C2: carried over from the FormProvider-local FormActions this component
+    // replaced. On narrow viewports the row becomes a reversed column, so the
+    // primary action (last in DOM order, and so last in the tab order) sits on
+    // top where a thumb reaches it first.
+    stack: {
+      true: "flex-col-reverse sm:flex-row",
+      false: "",
+    },
   },
   defaultVariants: {
     align: "end",
     divider: false,
     sticky: false,
+    stack: false,
   },
 })
 
@@ -57,12 +66,18 @@ type FormActionsProps = Omit<
     divider?: boolean
     /** Pin the row to the bottom of a scrolling form. Default `false`. */
     sticky?: boolean
+    /**
+     * Stack the actions as a reversed column below the `sm` breakpoint, so the
+     * primary action sits on top on narrow viewports. Default `false`.
+     */
+    stack?: boolean
   }
 
 function FormActions({
   align = "end",
   divider = false,
   sticky = false,
+  stack = false,
   ...props
 }: FormActionsProps) {
   return (
@@ -70,7 +85,7 @@ function FormActions({
       data-slot="form-actions"
       role="group"
       data-align={align}
-      className={cn(formActionsVariants({ align, divider, sticky }))}
+      className={cn(formActionsVariants({ align, divider, sticky, stack }))}
       {...props}
     />
   )

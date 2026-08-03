@@ -18,9 +18,11 @@ const check = process.argv.includes("--check");
 // by the alphabetically-first module; the other module re-exports under an alias.
 // A NEW, unlisted collision makes generation fail loudly (see below) so duplicates
 // are resolved on purpose, never silently shadowed.
-const ALIASES = {
-  "form-provider": { FormActions: "FormProviderActions" },
-};
+// C2: `form-provider` no longer exports a second `FormActions` — the standalone
+// `form-actions.tsx` is the single public component — so the alias that existed
+// to break that collision is gone. Add an entry here only for a genuine
+// cross-file name collision that cannot be resolved by consolidating.
+const ALIASES = {};
 
 const isComponent = (n) =>
   n.endsWith(".tsx") && !n.endsWith(".stories.tsx") && !n.endsWith(".test.tsx");
