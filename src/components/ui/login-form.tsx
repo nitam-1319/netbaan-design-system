@@ -144,7 +144,7 @@ function LoginForm({
       )}
 
       {errors?.form != null && (
-        <Alert variant="destructive">
+        <Alert tone="danger">
           <AlertDescription>{errors.form}</AlertDescription>
         </Alert>
       )}
