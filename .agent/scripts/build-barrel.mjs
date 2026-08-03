@@ -27,6 +27,29 @@ const ALIASES = {};
 const isComponent = (n) =>
   n.endsWith(".tsx") && !n.endsWith(".stories.tsx") && !n.endsWith(".test.tsx");
 
+/**
+ * C5 — visibility marker.
+ *
+ * Everything the barrel exports is API you cannot break without a major bump,
+ * so implementation detail must be able to opt out. A file whose LEADING block
+ * comment contains `@internal` is skipped here and in build-catalog.mjs.
+ *
+ *   /** @internal — not part of the public API; may change without a major bump. *\/
+ *
+ * Scoped to the leading comment on purpose: a stray `@internal` on some inner
+ * helper further down the file must not silently unpublish the whole module.
+ *
+ * NOTE: as of this writing no file is marked. All 207 components ship a story
+ * and a catalog entry, i.e. each is deliberately public — the audit's premise
+ * that some are implementation detail did not hold. The mechanism exists so the
+ * first genuinely-internal helper can be marked rather than leaking into the
+ * public surface by default.
+ */
+const isInternal = (src) => {
+  const lead = src.match(/^\s*(?:\/\/[^\n]*\n|\s)*\/\*\*?([\s\S]*?)\*\//);
+  return !!lead && /@internal\b/.test(lead[1]);
+};
+
 // Parse the export names from a source file. Returns {values:[], types:[]}.
 // Handles single declarations and `export { ... }` / `export type { ... }`
 // blocks, including multiline blocks ([^}] spans newlines).
@@ -49,9 +72,20 @@ function parseExports(src) {
   return { values: [...values], types: [...types] };
 }
 
-const files = readdirSync(UI_DIR)
+const allFiles = readdirSync(UI_DIR)
   .filter((n) => statSync(join(UI_DIR, n)).isFile() && isComponent(n))
   .sort();
+
+// C5: drop @internal modules before anything else, so their exports neither
+// reach the barrel nor participate in collision detection.
+const internal = [];
+const files = allFiles.filter((n) => {
+  if (isInternal(readFileSync(join(UI_DIR, n), "utf8"))) {
+    internal.push(n.replace(/\.tsx$/, ""));
+    return false;
+  }
+  return true;
+});
 
 const owners = new Map(); // name -> [modules]
 const perFile = [];
@@ -67,6 +101,10 @@ for (const name of files) {
 
 const collisions = [...owners.entries()].filter(([, mods]) => mods.length > 1);
 console.log(`Scanned ${files.length} component files.`);
+// Report skips explicitly — an accidentally-@internal module would otherwise
+// vanish from the public API silently.
+if (internal.length)
+  console.log(`Skipped ${internal.length} @internal module(s): ${internal.join(", ")}`);
 console.log(`Distinct exported names: ${owners.size}`);
 console.log(`Collisions (same name, multiple files): ${collisions.length}`);
 for (const [name, mods] of collisions) console.log(`  ${name}  <-  ${mods.join(", ")}`);
