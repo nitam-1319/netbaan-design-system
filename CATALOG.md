@@ -366,7 +366,8 @@ The coordinating root for a form. It renders a native `<form>` and consolidates 
 
 - **Do:** Wrap any group of fields the user submits together (login, settings, filters); Feed server-side validation back through `errors`, keyed by field `name`
 - **Don't:** A single, non-submitted input — a bare `FormField` is enough
-- **Exports:** FormProvider, FormActions
+- **Composes with:** FormActions
+- **Exports:** FormProvider
 
 #### FormSection
 

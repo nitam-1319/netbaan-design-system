@@ -2136,10 +2136,11 @@
     "whenNotToUse": [
       "A single, non-submitted input — a bare `FormField` is enough"
     ],
-    "composesWith": [],
-    "exports": [
-      "FormProvider",
+    "composesWith": [
       "FormActions"
+    ],
+    "exports": [
+      "FormProvider"
     ],
     "typeExports": [
       "FormProviderProps"
