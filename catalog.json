@@ -72,7 +72,11 @@
       "AlertDescription",
       "alertVariants"
     ],
-    "typeExports": [],
+    "typeExports": [
+      "AlertProps",
+      "AlertTone",
+      "AlertVariant"
+    ],
     "import": "import { Alert } from \"@netbaan-project/ui\";"
   },
   {
@@ -715,7 +719,8 @@
       "ChartContainer",
       "ChartPlot",
       "useChart",
-      "CHART_PALETTE"
+      "CHART_PALETTE",
+      "CAT_PALETTE"
     ],
     "typeExports": [
       "ChartContainerProps",
@@ -724,7 +729,8 @@
       "ResolvedChartSeries",
       "ChartMargin",
       "ChartColorIndex",
-      "ChartContextValue"
+      "ChartContextValue",
+      "ChartPalette"
     ],
     "import": "import { ChartContainer } from \"@netbaan-project/ui\";"
   },
@@ -2136,10 +2142,11 @@
     "whenNotToUse": [
       "A single, non-submitted input — a bare `FormField` is enough"
     ],
-    "composesWith": [],
-    "exports": [
-      "FormProvider",
+    "composesWith": [
       "FormActions"
+    ],
+    "exports": [
+      "FormProvider"
     ],
     "typeExports": [
       "FormProviderProps"

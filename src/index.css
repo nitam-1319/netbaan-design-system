@@ -1,6 +1,12 @@
 /* App / Storybook stylesheet. Fonts are loaded here for the dev app; the shared
- * AEGIS design layer lives in ./theme.css (also used by the published styles.css). */
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap");
+ * AEGIS design layer lives in ./theme.css (also used by the published styles.css).
+ *
+ * D4: this used to carry its own Google Fonts @import, identical to the one in
+ * fonts.css. Fixing only fonts.css would have left the render-blocking
+ * third-party request in place for the dev app and Storybook, so both now use
+ * the self-hosted stack. `styles.css` deliberately does NOT import this —
+ * fonts stay opt-in for consumers. */
+@import "./fonts.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";

@@ -19,16 +19,22 @@ import { cn } from "@/lib/utils"
  * `accent-soft` focus ring, and `shadow-elevated` on the thumb.
  */
 
-const trackSizeVariants = cva("relative w-full rounded-full bg-surface-3", {
-  variants: {
-    size: {
-      sm: "h-1",
-      md: "h-1.5",
-      lg: "h-2.5",
+// E4: the groove is a recessed surface, so it carries inset elevation rather
+// than sitting flush. The 1px inset ring is also what gives the boundary its
+// 3:1 (WCAG 1.4.11) against the panel behind it.
+const trackSizeVariants = cva(
+  "relative w-full rounded-full bg-surface-3 elevation-inset",
+  {
+    variants: {
+      size: {
+        sm: "h-1",
+        md: "h-1.5",
+        lg: "h-2.5",
+      },
     },
-  },
-  defaultVariants: { size: "md" },
-})
+    defaultVariants: { size: "md" },
+  }
+)
 
 const thumbSizeVariants = cva(
   cn(

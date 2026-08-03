@@ -18,19 +18,54 @@
  * Exit 0 = clean. Exit 1 = at least one dangling token reference.
  */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname, resolve } from "node:path";
 
-const CSS = "src/index.css";
+// Both stylesheet entry points. Neither declares tokens itself — each is a list
+// of @imports — so the definitions must be collected by FOLLOWING those imports
+// (see collectDefined). Reading only the entry file finds zero declarations and
+// reports every var() in the library as dangling.
+const ENTRIES = ["src/index.css", "src/styles.css"];
 const UI = "src/components/ui";
 
-if (!existsSync(CSS)) {
-  console.error(`Missing ${CSS}`);
-  process.exit(1);
+for (const entry of ENTRIES) {
+  if (!existsSync(entry)) {
+    console.error(`Missing ${entry}`);
+    process.exit(1);
+  }
 }
 
-// 1) Everything defined in the stylesheet (all --x: declarations, any scope).
-const css = readFileSync(CSS, "utf8");
-const defined = new Set([...css.matchAll(/--([a-z0-9-]+)\s*:/gi)].map((m) => m[1].toLowerCase()));
+/**
+ * Collect every `--x:` declaration reachable from an entry stylesheet, following
+ * RELATIVE @import chains (`@import "./theme.css"`, `@import url("./theme.css")`).
+ * Bare specifiers (`tailwindcss`, `shadcn/tailwind.css`) and remote URLs are not
+ * followed — anything those legitimately provide belongs in RUNTIME below.
+ */
+function collectDefined(entries) {
+  const defined = new Set();
+  const seen = new Set();
+  const queue = entries.map((e) => resolve(e));
+
+  while (queue.length) {
+    const file = queue.shift();
+    if (seen.has(file) || !existsSync(file)) continue;
+    seen.add(file);
+
+    const css = readFileSync(file, "utf8");
+    for (const m of css.matchAll(/--([a-z0-9-]+)\s*:/gi)) {
+      defined.add(m[1].toLowerCase());
+    }
+
+    // @import "./x.css" | @import url("./x.css") | @import './x.css' layer(...)
+    for (const m of css.matchAll(/@import\s+(?:url\(\s*)?["']([^"']+)["']/gi)) {
+      const spec = m[1];
+      if (!spec.startsWith(".")) continue; // bare package or remote
+      queue.push(resolve(dirname(file), spec));
+    }
+  }
+  return { defined, files: seen };
+}
+
+const { defined, files: cssFiles } = collectDefined(ENTRIES);
 
 // 2) Variables the runtime (Base UI positioner/collapsible/tabs, Tailwind, and
 //    our own pointer handler) sets on the fly — legitimately not in the CSS.
@@ -77,6 +112,10 @@ for (const file of files) {
 }
 
 console.log("Token integrity check (dangling var(--*) references):\n");
+console.log(
+  `  Scanned ${cssFiles.size} stylesheet(s), ${defined.size} token(s) defined; ` +
+    `${files.length} component(s).\n`
+);
 if (violations === 0) {
   console.log("  All var(--*) references resolve ✓");
   process.exit(0);
@@ -84,6 +123,6 @@ if (violations === 0) {
 report.forEach((r) => console.log(r));
 console.error(
   `\nTOKEN INTEGRITY FAILED — ${violations} dangling reference(s). Define the token in ` +
-    `src/index.css, add a fallback \`var(--x, …)\`, or (if the library sets it) add it to RUNTIME.`
+    `src/theme.css, add a fallback \`var(--x, …)\`, or (if the library sets it) add it to RUNTIME.`
 );
 process.exit(1);

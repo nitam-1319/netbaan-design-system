@@ -76,8 +76,8 @@ function TooltipContent({
           data-slot="tooltip-content"
           role="tooltip"
           className={cn(
-            "bg-popover text-popover-foreground ring-border-strong relative max-w-[18rem] rounded-md px-2.5 py-1.5 text-xs leading-relaxed font-medium text-pretty shadow-elevated ring-1",
-            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
+            "bg-popover text-popover-foreground ring-border-strong relative max-w-[18rem] rounded-md px-2.5 py-1.5 text-xs leading-relaxed font-medium text-pretty shadow-elevation-3 ring-1",
+            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
           )}
           {...props}
         >

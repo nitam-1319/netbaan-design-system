@@ -123,7 +123,7 @@ function Lightbox({
           data-slot="lightbox-backdrop"
           className={cn(
             "fixed inset-0 z-50 bg-background/90 backdrop-blur-sm",
-            "transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
+            "transition-opacity duration-200 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
           )}
         />
         <DialogPrimitive.Popup
@@ -131,7 +131,7 @@ function Lightbox({
           onKeyDown={onKeyDown}
           className={cn(
             "fixed inset-0 z-50 flex flex-col gap-3 p-4 outline-none sm:p-6",
-            "transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
+            "transition-opacity duration-200 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
           )}
         >
           <DialogPrimitive.Title data-slot="lightbox-title" className="sr-only">
@@ -196,7 +196,7 @@ function Lightbox({
                 src={current.src}
                 alt={current.alt}
                 className={cn(
-                  "max-h-full max-w-full rounded-[var(--radius-lg)] object-contain shadow-elevated"
+                  "max-h-full max-w-full rounded-[var(--radius-lg)] object-contain shadow-elevation-5"
                 )}
               />
             ) : null}

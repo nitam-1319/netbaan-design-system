@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
@@ -23,17 +23,17 @@ import { cn } from "@/lib/utils"
  */
 
 const fabVariants = cva(
-  "group/fab relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden font-semibold whitespace-nowrap outline-none select-none transition-[filter,box-shadow,background-color,color] duration-150 focus-visible:focus-accent active:scale-[0.96] active:brightness-[0.94] disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "group/fab relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden font-semibold whitespace-nowrap transition-[filter,box-shadow,background-color,color] duration-150 outline-none select-none focus-visible:focus-accent active:scale-[0.96] active:brightness-[0.94] disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         primary: "text-foreground shadow-bloom hover:brightness-[1.08]",
         secondary:
-          "border border-border-strong bg-card text-foreground shadow-elevated hover:brightness-110",
+          "border border-border-strong bg-card text-foreground shadow-elevation-5 hover:brightness-110",
         surface:
-          "border border-transparent bg-surface-2 text-foreground shadow-elevated hover:bg-muted",
+          "border border-transparent bg-surface-2 text-foreground shadow-elevation-5 hover:bg-muted",
         destructive:
-          "border border-transparent bg-destructive text-on-tone shadow-elevated hover:brightness-110",
+          "border border-transparent bg-destructive text-on-tone shadow-elevation-5 hover:brightness-110",
       },
       size: {
         sm: "h-11 min-w-11 text-sm [--fab-r:14px] [&_svg]:size-5",
@@ -42,8 +42,8 @@ const fabVariants = cva(
       },
       placement: {
         inline: "",
-        "bottom-end": "fixed bottom-5 end-5 z-50",
-        "bottom-start": "fixed bottom-5 start-5 z-50",
+        "bottom-end": "fixed end-5 bottom-5 z-50",
+        "bottom-start": "fixed start-5 bottom-5 z-50",
         "bottom-center": "fixed bottom-5 left-1/2 z-50 -translate-x-1/2",
       },
       extended: { true: "", false: "aspect-square" },
@@ -107,6 +107,7 @@ function FloatingActionButton({
         <>
           {/* Signature accent beam — the FAB's raised, active affordance. */}
           <span
+            data-slot="beam"
             aria-hidden
             className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           >
@@ -121,7 +122,8 @@ function FloatingActionButton({
       <span
         className={cn(
           "relative z-10 inline-flex items-center justify-center",
-          extended && (size === "sm" ? "gap-1.5" : size === "lg" ? "gap-2.5" : "gap-2")
+          extended &&
+            (size === "sm" ? "gap-1.5" : size === "lg" ? "gap-2.5" : "gap-2")
         )}
       >
         <span aria-hidden className="inline-flex items-center justify-center">

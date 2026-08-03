@@ -44,7 +44,7 @@ import { cn } from "@/lib/utils"
 const bottomSheetContentVariants = cva(
   [
     "bg-popover text-popover-foreground ring-border-strong fixed inset-x-0 bottom-0 z-50 flex w-full flex-col gap-4 rounded-t-2xl border-t p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-elevated ring-1 outline-none",
-    "transition-[transform,opacity] duration-300 ease-out data-[ending-style]:translate-y-full data-[ending-style]:opacity-0 data-[starting-style]:translate-y-full data-[starting-style]:opacity-0",
+    "transition-[transform,opacity] duration-300 ease-out data-[ending-style]:translate-y-full data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:translate-y-full data-[starting-style]:opacity-0",
   ],
   {
     variants: {
@@ -109,7 +109,7 @@ function BottomSheetContent({
         data-slot="bottom-sheet-backdrop"
         className={cn(
           "fixed inset-0 z-50 bg-background/70 backdrop-blur-sm",
-          "transition-opacity duration-300 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
+          "transition-opacity duration-300 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
         )}
       />
       <DialogPrimitive.Popup

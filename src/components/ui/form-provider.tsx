@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react"
 import { Form as FormPrimitive } from "@base-ui/react/form"
 
 import { cn } from "@/lib/utils"
@@ -38,18 +37,13 @@ function FormProvider<
   )
 }
 
-/** Optional grouping: an actions row (submit / cancel) pinned after the fields. */
-function FormActions({
-  ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
-  return (
-    <div
-      data-slot="form-actions"
-      className={cn("mt-1 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end")}
-      {...props}
-    />
-  )
-}
+/* C2: this module used to export a second `FormActions`, which the barrel had
+   to alias to `FormProviderActions` to avoid a collision — two exports doing
+   the same job under near-identical names. The standalone `form-actions.tsx`
+   is now the single public component; its `stack` variant reproduces the
+   mobile-stacking behaviour this copy provided. Import it directly:
 
-export { FormProvider, FormActions }
+     import { FormActions } from "@/components/ui/form-actions"   */
+
+export { FormProvider }
 export type { FormProviderProps }

@@ -82,8 +82,8 @@ function MenuContent({
         <MenuPrimitive.Popup
           data-slot="menu-content"
           className={cn(
-            "bg-popover text-popover-foreground ring-border-strong min-w-40 max-w-[calc(100vw-2rem)] rounded-lg p-1 text-sm shadow-elevated ring-1 outline-none",
-            "animate-menu-in origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0"
+            "bg-popover text-popover-foreground ring-border-strong min-w-40 max-w-[calc(100vw-2rem)] rounded-lg p-1 text-sm shadow-elevation-3 ring-1 outline-none",
+            "animate-menu-in origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0"
           )}
           {...props}
         >

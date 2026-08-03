@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { useRender } from "@base-ui/react/use-render"
@@ -23,19 +23,16 @@ import { cn } from "@/lib/utils"
  *                 revealed as a 1.5px frame around an inset panel (masthead beam).
  */
 
-const cardVariants = cva(
-  "text-card-foreground flex flex-col gap-6 py-6",
-  {
-    variants: {
-      variant: {
-        default: "bg-card rounded-xl border border-border glass-panel",
-        elevated: "bg-card rounded-xl border border-border shadow-elevated",
-        beam: "rounded-[18.5px] bg-card",
-      },
+const cardVariants = cva("flex flex-col gap-6 py-6 text-card-foreground", {
+  variants: {
+    variant: {
+      default: "rounded-xl border border-border bg-card glass-panel",
+      elevated: "rounded-xl border border-border bg-card shadow-elevated",
+      beam: "rounded-[18.5px] bg-card",
     },
-    defaultVariants: { variant: "default" },
-  }
-)
+  },
+  defaultVariants: { variant: "default" },
+})
 
 type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
   VariantProps<typeof cardVariants> & {
@@ -78,6 +75,7 @@ function Card({
       >
         {/* Signature beam: rotating conic-gradient arc clipped to a 1.5px frame. */}
         <span
+          data-slot="beam"
           aria-hidden
           className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
         >
@@ -106,7 +104,7 @@ function Card({
       {interactive ? (
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 bg-[radial-gradient(240px_circle_at_var(--mx,50%)_var(--my,50%),var(--accent-soft),transparent_60%)]"
+          className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(240px_circle_at_var(--mx,50%)_var(--my,50%),var(--accent-soft),transparent_60%)] opacity-0 transition-opacity duration-300 group-hover/card:opacity-100"
         />
       ) : null}
       {children}
@@ -156,7 +154,7 @@ function CardDescription({
   return (
     <div
       data-slot="card-description"
-      className={cn("text-muted-foreground text-sm text-pretty")}
+      className={cn("text-sm text-pretty text-muted-foreground")}
       {...props}
     />
   )
@@ -179,13 +177,7 @@ function CardAction({
 function CardContent({
   ...props
 }: Omit<React.ComponentProps<"div">, "className" | "style">) {
-  return (
-    <div
-      data-slot="card-content"
-      className={cn("px-6")}
-      {...props}
-    />
-  )
+  return <div data-slot="card-content" className={cn("px-6")} {...props} />
 }
 
 function CardFooter({

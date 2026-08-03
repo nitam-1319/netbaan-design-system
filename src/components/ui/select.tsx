@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
  * md), the resting / placeholder / hover / open-focus / error / disabled states,
  * a chevron that rotates 180° while open, a selected-row accent tint + check, and
  * a floating menu that enters with the signature `animate-menu-in` and carries the
- * shared `shadow-elevated` elevation. Built on the Base UI Select primitive —
+ * shared `shadow-elevation-3` elevation. Built on the Base UI Select primitive —
  * portalling, floating-engine positioning, typeahead, roving focus, modal focus
  * management, native form integration and dismissal come from the primitive.
  *
@@ -148,8 +148,8 @@ function SelectContent({
         <SelectPrimitive.Popup
           data-slot="select-content"
           className={cn(
-            "bg-popover text-popover-foreground ring-border-strong max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-[11px] p-1.5 text-sm shadow-elevated ring-1 outline-none",
-            "animate-menu-in origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0"
+            "bg-popover text-popover-foreground ring-border-strong max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-[11px] p-1.5 text-sm shadow-elevation-3 ring-1 outline-none",
+            "animate-menu-in origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0"
           )}
           {...props}
         >

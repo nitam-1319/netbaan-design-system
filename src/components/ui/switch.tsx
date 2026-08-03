@@ -23,7 +23,13 @@ import { cn } from "@/lib/utils"
  */
 
 const switchTrackVariants = cva(
-  "peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full outline-none transition-[background-color,box-shadow] duration-200 bg-track data-[checked]:accent-fill focus-visible:ring-[3px] focus-visible:ring-accent-soft aria-invalid:ring-[3px] aria-invalid:ring-destructive/30 disabled:cursor-not-allowed disabled:opacity-45 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
+  // A6/WCAG 1.4.11: the off-state groove fill alone is ~1.1:1 against
+  // --surface-2, so the unchecked track is effectively invisible. `inset-ring`
+  // supplies the required 3:1 on the boundary without brightening the fill,
+  // and composes with (rather than clobbering) the focus/invalid `ring-*`,
+  // because Tailwind keeps inset-ring on its own shadow layer. The checked
+  // state already carries 3:1 via the accent fill, so it drops the edge.
+  "peer relative inline-flex shrink-0 cursor-pointer items-center rounded-full outline-none transition-[background-color,box-shadow] duration-200 bg-track inset-ring-1 inset-ring-(--track-border) data-[checked]:accent-fill data-[checked]:inset-ring-transparent focus-visible:ring-[3px] focus-visible:ring-accent-soft aria-invalid:ring-[3px] aria-invalid:ring-destructive/30 disabled:cursor-not-allowed disabled:opacity-45 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
   {
     variants: {
       size: {

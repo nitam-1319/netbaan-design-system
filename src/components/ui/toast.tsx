@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils"
 const toastVariants = cva(
   [
     "group pointer-events-auto relative flex w-[22rem] max-w-[calc(100vw-2rem)] items-start gap-3 rounded-lg border bg-popover p-4 text-popover-foreground ring-1 ring-border-strong shadow-elevated",
-    "transition-[transform,opacity] duration-300 ease-out data-[starting-style]:translate-y-2 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0",
+    "transition-[transform,opacity] duration-300 ease-out data-[starting-style]:translate-y-2 data-[starting-style]:opacity-0 data-[ending-style]:motion-exit data-[ending-style]:opacity-0",
   ],
   {
     variants: {

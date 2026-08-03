@@ -29,8 +29,13 @@ const accordionVariants = cva("w-full", {
       // Each item boxed on its own surface.
       separated: "flex flex-col gap-2",
       // Single outlined container with divided rows.
+      // A2: triggers are flush to all four edges of this container, so plain
+      // `overflow-hidden` clips their focus ring (outline included — overflow
+      // clips a descendant's outline exactly as it clips its box-shadow).
+      // `focus-escape` still clips content but permits the ring to paint past
+      // the edge.
       bordered:
-        "divide-y divide-border/70 overflow-hidden rounded-lg border border-border/70 bg-surface-2/40",
+        "divide-y divide-border/70 focus-escape rounded-lg border border-border/70 bg-surface-2/40",
     },
   },
   defaultVariants: {

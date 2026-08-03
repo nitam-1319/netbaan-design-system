@@ -33,7 +33,7 @@ import { Button } from "@/components/ui/button"
 const confirmDialogContentVariants = cva(
   [
     "bg-popover text-popover-foreground ring-border-strong fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl p-6 shadow-elevated ring-1 outline-none",
-    "origin-[var(--transform-origin)] transition-[transform,opacity] duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
+    "origin-[var(--transform-origin)] transition-[transform,opacity] duration-200 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
   ],
   {
     variants: {
@@ -136,7 +136,7 @@ function ConfirmDialogContent({
         data-slot="confirm-dialog-backdrop"
         className={cn(
           "fixed inset-0 z-50 bg-background/70 backdrop-blur-sm",
-          "transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
+          "transition-opacity duration-200 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
         )}
       />
       <AlertDialogPrimitive.Popup

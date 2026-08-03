@@ -366,7 +366,8 @@ The coordinating root for a form. It renders a native `<form>` and consolidates 
 
 - **Do:** Wrap any group of fields the user submits together (login, settings, filters); Feed server-side validation back through `errors`, keyed by field `name`
 - **Don't:** A single, non-submitted input — a bare `FormField` is enough
-- **Exports:** FormProvider, FormActions
+- **Composes with:** FormActions
+- **Exports:** FormProvider
 
 #### FormSection
 
@@ -1175,7 +1176,7 @@ The foundation every AEGIS chart is built on. It establishes one shared coordina
 
 - **Do:** Wrap every chart in a Chart Container and give it a `label` — that is the chart's accessible name; Declare a `series` list so colours and labels stay consistent across the marks, legend, and tooltip; Read geometry and colour from `useChart()` inside your mark components rather than hard-coding coordinates or colours
 - **Don't:** Pass raw pixel colours to marks — use the resolved `colorVar` from the series context (a chart token); Reach for a full Chart Container for a tiny inline trend — use Sparkline instead
-- **Exports:** ChartContainer, ChartPlot, useChart, CHART_PALETTE
+- **Exports:** ChartContainer, ChartPlot, useChart, CHART_PALETTE, CAT_PALETTE
 
 #### ChartLegend
 

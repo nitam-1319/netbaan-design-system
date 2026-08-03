@@ -26,7 +26,7 @@ const shellVariants = cva(
   cn(
     "group/composer flex w-full flex-col gap-2 bg-surface-2 text-foreground transition-[color,background-color,border-color,box-shadow] duration-150",
     "border border-border-strong",
-    "focus-within:border-accent-strong focus-within:bg-surface focus-within:ring-[3px] focus-within:ring-accent-soft",
+    "focus-delegate focus-within:border-accent-strong focus-within:bg-surface focus-within:ring-[3px] focus-within:ring-accent-soft",
     "has-[textarea:disabled]:pointer-events-none has-[textarea:disabled]:opacity-50"
   ),
   {

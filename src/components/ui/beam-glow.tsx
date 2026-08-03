@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils"
  */
 
 const beamGlowVariants = cva(
-  "relative isolate [--beam-w:1.5px] rounded-[var(--beam-r)]",
+  "relative isolate rounded-[var(--beam-r)] [--beam-w:1.5px]",
   {
     variants: {
       radius: {
@@ -107,6 +107,7 @@ function BeamGlow({
         <>
           {/* Signature accent beam — a conic gradient clipped to the frame. */}
           <span
+            data-slot="beam"
             aria-hidden
             className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           >

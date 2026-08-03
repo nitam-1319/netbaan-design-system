@@ -43,22 +43,22 @@ export const Default: Story = {
 export const Variants: Story = {
   render: () => (
     <div className="space-y-3">
-      <Alert variant="info">
+      <Alert tone="info">
         <Info />
         <AlertTitle>New assets discovered</AlertTitle>
         <AlertDescription>12 hosts were added to your inventory.</AlertDescription>
       </Alert>
-      <Alert variant="success">
+      <Alert tone="success">
         <CircleCheck />
         <AlertTitle>Posture improved</AlertTitle>
         <AlertDescription>Your grade rose from B to A− this week.</AlertDescription>
       </Alert>
-      <Alert variant="warning">
+      <Alert tone="warning">
         <TriangleAlert />
         <AlertTitle>Certificate expiring</AlertTitle>
         <AlertDescription>api.netbaan.io expires in 6 days.</AlertDescription>
       </Alert>
-      <Alert variant="destructive">
+      <Alert tone="danger">
         <ShieldAlert />
         <AlertTitle>Critical vulnerability</AlertTitle>
         <AlertDescription>
@@ -71,7 +71,7 @@ export const Variants: Story = {
 
 export const TitleOnly: Story = {
   render: () => (
-    <Alert variant="warning">
+    <Alert tone="warning">
       <TriangleAlert />
       <AlertTitle>4 findings require review</AlertTitle>
     </Alert>

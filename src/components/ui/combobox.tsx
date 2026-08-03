@@ -42,7 +42,7 @@ function Combobox(props: React.ComponentProps<typeof ComboboxPrimitive.Root>) {
 const comboboxShellVariants = cva(
   cn(
     "flex w-full items-stretch overflow-hidden rounded-lg border border-border-strong bg-background text-foreground transition-colors",
-    "focus-within:border-primary focus-within:ring-3 focus-within:ring-accent-soft",
+    "focus-delegate focus-within:border-primary focus-within:ring-3 focus-within:ring-accent-soft",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
   ),
   {
@@ -161,7 +161,7 @@ function ComboboxContent({
           data-slot="combobox-content"
           className={cn(
             "bg-popover text-popover-foreground ring-border-strong w-[var(--anchor-width)] max-h-[min(24rem,var(--available-height))] min-w-40 overflow-y-auto rounded-lg p-1 text-sm shadow-elevated ring-1 outline-none",
-            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
+            "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0"
           )}
           {...props}
         >

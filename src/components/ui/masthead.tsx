@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 
@@ -34,6 +34,7 @@ function Masthead({
     >
       {/* Signature beam: rotating conic-gradient arc revealed as a 1.5px frame. */}
       <span
+        data-slot="beam"
         aria-hidden
         className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
       >
@@ -110,7 +111,7 @@ function MastheadTitle(
     <h1
       data-slot="masthead-title"
       className={cn(
-        "font-heading text-[clamp(1.75rem,1.2rem+2vw,2.5rem)] leading-[1.15] font-bold tracking-tight text-foreground text-balance"
+        "font-heading text-[clamp(1.75rem,1.2rem+2vw,2.5rem)] leading-[1.15] font-bold tracking-tight text-balance text-foreground"
       )}
       {...props}
     />
@@ -125,7 +126,7 @@ function MastheadDescription(
     <p
       data-slot="masthead-description"
       className={cn(
-        "mt-3 max-w-[640px] text-sm leading-relaxed text-muted-foreground text-pretty"
+        "mt-3 max-w-[640px] text-sm leading-relaxed text-pretty text-muted-foreground"
       )}
       {...props}
     />

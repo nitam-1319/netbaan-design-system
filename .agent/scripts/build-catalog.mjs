@@ -139,8 +139,27 @@ function parseMdx(md) {
 }
 
 // --- build -----------------------------------------------------------------
+/**
+ * C5 — mirror the barrel's visibility marker. A module whose LEADING block
+ * comment contains `@internal` is not public API, so it must not appear in the
+ * agent-facing catalog either: listing it there invites exactly the coupling
+ * the marker exists to prevent. Kept in sync with build-barrel.mjs.
+ */
+const isInternal = (src) => {
+  const lead = src.match(/^\s*(?:\/\/[^\n]*\n|\s)*\/\*\*?([\s\S]*?)\*\//);
+  return !!lead && /@internal\b/.test(lead[1]);
+};
+
+const skippedInternal = [];
 const files = readdirSync(UI_DIR)
   .filter((n) => statSync(join(UI_DIR, n)).isFile() && isComponent(n))
+  .filter((n) => {
+    if (isInternal(readFileSync(join(UI_DIR, n), "utf8"))) {
+      skippedInternal.push(n.replace(/\.tsx$/, ""));
+      return false;
+    }
+    return true;
+  })
   .sort();
 
 const entries = [];
@@ -193,6 +212,8 @@ for (const cat of cats) {
 }
 writeFileSync("CATALOG.md", md, "utf8");
 
+if (skippedInternal.length)
+  console.log(`Skipped ${skippedInternal.length} @internal module(s): ${skippedInternal.join(", ")}`);
 console.log(`Wrote catalog.json + CATALOG.md — ${entries.length} components across ${cats.length} categories.`);
 const missing = entries.filter((e) => !e.concept).length;
 if (missing) console.log(`  (${missing} components had no extractable concept)`);

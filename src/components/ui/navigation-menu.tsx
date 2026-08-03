@@ -155,7 +155,7 @@ function NavigationMenuContent(
       className={cn(
         "w-max p-2",
         "transition-[opacity,transform] duration-200 ease-out",
-        "data-[starting-style]:opacity-0 data-[ending-style]:opacity-0",
+        "data-[starting-style]:opacity-0 data-[ending-style]:motion-exit data-[ending-style]:opacity-0",
         "data-[activation-direction=left]:data-[starting-style]:translate-x-2",
         "data-[activation-direction=right]:data-[starting-style]:-translate-x-2"
       )}
@@ -194,9 +194,9 @@ function NavigationMenuViewport({
         <NavigationMenuPrimitive.Popup
           data-slot="navigation-menu-content-surface"
           className={cn(
-            "bg-popover text-popover-foreground ring-border-strong relative min-w-40 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg text-sm shadow-elevated ring-1 outline-none",
+            "bg-popover text-popover-foreground ring-border-strong relative min-w-40 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg text-sm shadow-elevation-3 ring-1 outline-none",
             "origin-[var(--transform-origin)] transition-[transform,opacity] duration-200 ease-out",
-            "data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0"
+            "data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0"
           )}
         >
           {showArrow ? (
