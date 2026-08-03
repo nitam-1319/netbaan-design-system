@@ -36,7 +36,7 @@ Peer dependencies (installed by you, not bundled): `react` ^19, `react-dom` ^19,
 
 ```tsx
 import "@netbaan-project/ui/styles.css";   // required — tokens + utilities
-import "@netbaan-project/ui/fonts.css";    // optional — the bundled type stack
+import "@netbaan-project/ui/fonts.css";    // optional — self-hosted type stack
 
 import { Button, ThemeProvider } from "@netbaan-project/ui";
 
@@ -91,6 +91,7 @@ npm install
 npm run storybook     # component workbench at :6006 — the primary dev surface
 npm run verify        # typecheck + lint + conformance + token integrity
 npm run build         # barrel -> js/d.ts -> css -> catalog
+npm run build:fonts   # regenerate src/fonts.css + woff2 from @fontsource
 ```
 
 `npm run verify` is what CI gates on. `verify:conformance` enforces the sealed API

@@ -29,7 +29,8 @@
     "./styles.css": "./dist/styles.css",
     "./fonts.css": "./dist/fonts.css",
     "./catalog.json": "./catalog.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./fonts/*": "./dist/fonts/*"
   },
   "publishConfig": {
     "access": "restricted",
@@ -38,7 +39,7 @@
   "scripts": {
     "dev": "vite",
     "build:js": "bunchee -m --no-sourcemap",
-    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && cp src/fonts.css dist/fonts.css",
+    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && cp src/fonts.css dist/fonts.css && mkdir -p dist/fonts && cp src/fonts/*.woff2 dist/fonts/",
     "build:catalog": "node .agent/scripts/build-catalog.mjs",
     "build": "npm run gen:barrel && npm run build:js && npm run build:css && npm run build:catalog",
     "prepack": "npm run build",
@@ -51,7 +52,8 @@
     "verify": "npm run typecheck && npm run lint && npm run verify:conformance && npm run verify:tokens",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "build:fonts": "node .agent/scripts/build-fonts.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -69,6 +71,10 @@
     "@chromatic-com/storybook": "^5.2.1",
     "@eslint/js": "^10",
     "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/ibm-plex-sans": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@fontsource-variable/vazirmatn": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@storybook/addon-a11y": "^10.5.2",
     "@storybook/addon-docs": "^10.5.2",
     "@storybook/addon-mcp": "^0.7.0",
