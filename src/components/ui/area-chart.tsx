@@ -219,6 +219,9 @@ function AreaMarks({
       {bands.map(({ key, points }) => {
         const resolved = seriesByKey[key]
         const color = resolved?.colorVar ?? "var(--color-chart-1)"
+        // A3: the band is an area, so it can carry the hatch channel; the
+        // boundary line stays a flat colour (a pattern on a 1px stroke is noise).
+        const areaFill = resolved?.fillVar ?? color
         const upper = points.map((p, i) => [xAt(i), yAt(p.upper)] as const)
         const lowerRev = points
           .map((p, i) => [xAt(i), yAt(p.lower)] as const)
@@ -243,7 +246,7 @@ function AreaMarks({
               <path
                 data-slot="area-chart-area"
                 d={areaPath}
-                fill={color}
+                fill={areaFill}
                 fillOpacity={fillOpacity}
                 stroke="none"
               />

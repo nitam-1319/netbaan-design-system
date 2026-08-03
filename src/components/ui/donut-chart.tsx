@@ -194,7 +194,7 @@ function DonutMarks({
     const before = fracs.slice(0, idx).reduce((s, f) => s + f, 0)
     const a0 = startAngle + before * full + pad * idx
     const a1 = a0 + fracs[idx] * full
-    const color = seriesByKey[d.key]?.colorVar ?? "var(--color-chart-1)"
+    const color = seriesByKey[d.key]?.fillVar ?? "var(--color-chart-1)"
     return { d, a0, a1, color }
   })
 

@@ -165,7 +165,7 @@ function PieMarks({
     const a0 = startAngle + before * full + pad * idx
     const a1 = a0 + frac * full
     const mid = (a0 + a1) / 2
-    const color = seriesByKey[d.key]?.colorVar ?? "var(--color-chart-1)"
+    const color = seriesByKey[d.key]?.fillVar ?? "var(--color-chart-1)"
     return { d, a0, a1, mid, frac, color }
   })
 

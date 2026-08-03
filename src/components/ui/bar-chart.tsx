@@ -168,7 +168,7 @@ function BarMarks({
             <g key={i} data-slot="bar-chart-band">
               {seriesKeys.map((key) => {
                 const v = toNumber(d[key])
-                const color = seriesByKey[key]?.colorVar ?? "var(--color-chart-1)"
+                const color = seriesByKey[key]?.fillVar ?? "var(--color-chart-1)"
                 let y: number
                 let h: number
                 if (v >= 0) {
@@ -206,7 +206,7 @@ function BarMarks({
           <g key={i} data-slot="bar-chart-band">
             {seriesKeys.map((key, s) => {
               const v = toNumber(d[key])
-              const color = seriesByKey[key]?.colorVar ?? "var(--color-chart-1)"
+              const color = seriesByKey[key]?.fillVar ?? "var(--color-chart-1)"
               const top = Math.min(yAt(v), baseY)
               const h = Math.abs(baseY - yAt(v))
               return (

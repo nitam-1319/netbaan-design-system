@@ -41,7 +41,10 @@ import { cn } from "@/lib/utils"
 
 /* ----------------------------------------------------------------- palette -- */
 
-/** The AEGIS categorical chart palette, in order. */
+/**
+ * The severity-mapped palette: `--chart-1..5` IS the severity ramp
+ * (critical, high, medium, low, info). Correct when the series ARE severities.
+ */
 const CHART_PALETTE = [
   "--color-chart-1",
   "--color-chart-2",
@@ -50,8 +53,35 @@ const CHART_PALETTE = [
   "--color-chart-5",
 ] as const
 
-/** 1-based index into the chart palette. */
-type ChartColorIndex = 1 | 2 | 3 | 4 | 5
+/**
+ * A4 — the categorical palette, for series with no severity meaning.
+ *
+ * Because `--chart-1..5` is the severity ramp, a chart of, say,
+ * assets-by-environment rendered in critical/high/medium red-orange-amber and
+ * read as "12 critical, 38 high". This palette is cool-only and shares no hue
+ * with the severity ramp, `--success` or `--destructive`, so a categorical
+ * chart cannot be mistaken for an alarm. See the `--cat-*` block in theme.css.
+ */
+const CAT_PALETTE = [
+  "--color-cat-1",
+  "--color-cat-2",
+  "--color-cat-3",
+  "--color-cat-4",
+  "--color-cat-5",
+  "--color-cat-6",
+] as const
+
+/**
+ * Which palette a chart paints from.
+ *  - `severity`    (default) — `--chart-1..5`; the series ARE severities.
+ *  - `categorical` — `--cat-1..6`; the series carry no severity meaning.
+ *
+ * RULE: if the series is not a severity, this must be `"categorical"`.
+ */
+type ChartPalette = "severity" | "categorical"
+
+/** 1-based index into the chart palette (6 is categorical-only). */
+type ChartColorIndex = 1 | 2 | 3 | 4 | 5 | 6
 
 /** Public per-series configuration. */
 type ChartSeries = {
@@ -72,10 +102,18 @@ type ResolvedChartSeries = {
   label: string
   /** Zero-based declaration order. */
   index: number
-  /** Palette slot (1–5) this series paints with. */
+  /** Palette slot this series paints with. */
   colorIndex: ChartColorIndex
-  /** Ready-to-use CSS value, e.g. `var(--color-chart-2)`. */
+  /** Ready-to-use CSS value, e.g. `var(--color-chart-2)`. Use for STROKES,
+   *  legend swatch borders, and anywhere a flat colour is required. */
   colorVar: string
+  /**
+   * A3 — what AREA marks should fill with. Equals `colorVar` normally; when
+   * the non-colour severity channel is on, it is a `url(#…)` reference to a
+   * hatch pattern whose density encodes the severity. Kept separate from
+   * `colorVar` because a pattern is wrong for a 1px line stroke.
+   */
+  fillVar: string
 }
 
 /* ----------------------------------------------------------------- context -- */
@@ -99,6 +137,11 @@ type ChartContextValue = {
   series: ResolvedChartSeries[]
   /** Resolved series keyed by `key` for O(1) lookup. */
   seriesByKey: Record<string, ResolvedChartSeries>
+  /** Which palette the series painted from. */
+  palette: ChartPalette
+  /** A3 — whether severity marks carry the hatch channel. `ChartPlot` reads
+   *  this to decide whether to emit the pattern `<defs>`. */
+  patternBySeverity: boolean
 }
 
 const ChartContext = React.createContext<ChartContextValue | null>(null)
@@ -117,17 +160,87 @@ function useChart(): ChartContextValue {
 
 const DEFAULT_MARGIN: ChartMargin = { top: 12, right: 16, bottom: 32, left: 44 }
 
-function resolveSeries(series: ChartSeries[]): ResolvedChartSeries[] {
+/** Stable id for a severity hatch pattern. Namespaced to avoid colliding with
+ *  ids in the consuming document. */
+const patternId = (slot: ChartColorIndex) => `aegis-sev-hatch-${slot}`
+
+function resolveSeries(
+  series: ChartSeries[],
+  palette: ChartPalette = "severity",
+  patternBySeverity = false
+): ResolvedChartSeries[] {
+  const ramp = palette === "categorical" ? CAT_PALETTE : CHART_PALETTE
+  const hatched = patternBySeverity && palette === "severity"
   return series.map((s, i) => {
-    const colorIndex = (s.color ?? ((i % CHART_PALETTE.length) + 1)) as ChartColorIndex
+    // Clamp an explicit slot into range: the severity ramp has 5 entries and
+    // the categorical one 6, so `color: 6` is only meaningful on the latter.
+    const requested = s.color ?? (i % ramp.length) + 1
+    const colorIndex = Math.min(Math.max(requested, 1), ramp.length) as ChartColorIndex
+    const colorVar = `var(${ramp[colorIndex - 1]})`
     return {
       key: s.key,
       label: s.label ?? s.key,
       index: i,
       colorIndex,
-      colorVar: `var(${CHART_PALETTE[colorIndex - 1]})`,
+      colorVar,
+      // Slot 5 is `info`, which stays a flat fill: it is the lightest weight
+      // and hatching it would imply a severity it does not carry.
+      fillVar:
+        hatched && colorIndex <= 4 ? `url(#${patternId(colorIndex)})` : colorVar,
     }
   })
+}
+
+/**
+ * A3 — the non-colour severity channel.
+ *
+ * Critical, high and medium are three warm hues that converge under
+ * deuteranopia and protanopia and collapse in greyscale. Components are fine —
+ * they always spell the level out — but charts decode severity by hue alone.
+ *
+ * This adds a second channel: hatch DENSITY, thickest for critical through
+ * thinnest for low, so the ordering survives with no colour at all.
+ *
+ * The stroke ink is per-slot (`--sev-hatch-*`) rather than one fixed value.
+ * The audit stroked every level in `--on-tone` (near-black), which is close to
+ * invisible on the darker fills.
+ */
+const HATCH: Record<number, { stroke: string; width: number }> = {
+  1: { stroke: "var(--sev-hatch-1)", width: 2.2 }, // critical — densest
+  2: { stroke: "var(--sev-hatch-2)", width: 1.8 }, // high
+  3: { stroke: "var(--sev-hatch-3)", width: 1.4 }, // medium
+  4: { stroke: "var(--sev-hatch-4)", width: 1.0 }, // low      — lightest
+}
+
+function ChartPatternDefs() {
+  return (
+    <defs data-slot="chart-pattern-defs">
+      {([1, 2, 3, 4] as const).map((slot) => {
+        const { stroke, width } = HATCH[slot]
+        return (
+          <pattern
+            key={slot}
+            id={patternId(slot)}
+            patternUnits="userSpaceOnUse"
+            width="6"
+            height="6"
+            patternTransform="rotate(45)"
+          >
+            <rect width="6" height="6" fill={`var(${CHART_PALETTE[slot - 1]})`} />
+            <line
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="6"
+              stroke={stroke}
+              strokeOpacity="0.28"
+              strokeWidth={width}
+            />
+          </pattern>
+        )
+      })}
+    </defs>
+  )
 }
 
 /* -------------------------------------------------------------------- root -- */
@@ -151,6 +264,27 @@ type ChartContainerProps = Omit<
     margin?: Partial<ChartMargin>
     /** Series metadata → stable colour + label across marks/legend/tooltip. */
     series?: ChartSeries[]
+    /**
+     * Which palette the series paint from. Default `"severity"`, which is the
+     * `--chart-1..5` severity ramp.
+     *
+     * **If the series are not severities, pass `"categorical"`.** Otherwise a
+     * chart of environments or owners renders in the alarm hues and reads as
+     * "12 critical, 38 high".
+     */
+    palette?: ChartPalette
+    /**
+     * A3 — adds the non-colour severity channel (hatch density) to
+     * severity-mapped AREA marks, so severity survives greyscale and colour
+     * vision deficiency. Ignored when `palette` is `"categorical"`.
+     *
+     * Opt-in (default `false`) rather than on-by-default: hatching every
+     * severity chart is a large visual change, and on dense marks — thin
+     * stacked bands, small treemap cells — it can cost more legibility than
+     * the redundant encoding buys. Turn it on for charts where severity is
+     * read from the marks themselves.
+     */
+    patternBySeverity?: boolean
   }
 
 function ChartContainer({
@@ -159,6 +293,8 @@ function ChartContainer({
   height = 320,
   margin: marginOverride,
   series = [],
+  palette = "severity",
+  patternBySeverity = false,
   children,
   ...props
 }: ChartContainerProps) {
@@ -167,7 +303,10 @@ function ChartContainer({
     [marginOverride]
   )
 
-  const resolved = React.useMemo(() => resolveSeries(series), [series])
+  const resolved = React.useMemo(
+    () => resolveSeries(series, palette, patternBySeverity),
+    [series, palette, patternBySeverity]
+  )
 
   const value = React.useMemo<ChartContextValue>(() => {
     const innerWidth = Math.max(0, width - margin.left - margin.right)
@@ -183,8 +322,10 @@ function ChartContainer({
       innerHeight,
       series: resolved,
       seriesByKey,
+      palette,
+      patternBySeverity: patternBySeverity && palette === "severity",
     }
-  }, [label, width, height, margin, resolved])
+  }, [label, width, height, margin, resolved, palette, patternBySeverity])
 
   return (
     <ChartContext.Provider value={value}>
@@ -221,7 +362,13 @@ type ChartPlotProps = Omit<
  * `(0, 0)` is the top-left of the plot area.
  */
 function ChartPlot({ label, children, ...props }: ChartPlotProps) {
-  const { width, height, margin, label: chartLabel } = useChart()
+  const {
+    width,
+    height,
+    margin,
+    label: chartLabel,
+    patternBySeverity,
+  } = useChart()
   return (
     <svg
       data-slot="chart-plot"
@@ -233,6 +380,9 @@ function ChartPlot({ label, children, ...props }: ChartPlotProps) {
       className={cn("block h-auto w-full")}
       {...props}
     >
+      {/* A3: emitted once per plot, so marks can reference url(#aegis-sev-…)
+          without every chart hand-rolling its own <defs>. */}
+      {patternBySeverity ? <ChartPatternDefs /> : null}
       <g
         data-slot="chart-plot-area"
         transform={`translate(${margin.left}, ${margin.top})`}
@@ -243,7 +393,7 @@ function ChartPlot({ label, children, ...props }: ChartPlotProps) {
   )
 }
 
-export { ChartContainer, ChartPlot, useChart, CHART_PALETTE }
+export { ChartContainer, ChartPlot, useChart, CHART_PALETTE, CAT_PALETTE }
 export type {
   ChartContainerProps,
   ChartPlotProps,
@@ -252,4 +402,5 @@ export type {
   ChartMargin,
   ChartColorIndex,
   ChartContextValue,
+  ChartPalette,
 }
