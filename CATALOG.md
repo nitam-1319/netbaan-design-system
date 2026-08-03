@@ -1176,7 +1176,7 @@ The foundation every AEGIS chart is built on. It establishes one shared coordina
 
 - **Do:** Wrap every chart in a Chart Container and give it a `label` — that is the chart's accessible name; Declare a `series` list so colours and labels stay consistent across the marks, legend, and tooltip; Read geometry and colour from `useChart()` inside your mark components rather than hard-coding coordinates or colours
 - **Don't:** Pass raw pixel colours to marks — use the resolved `colorVar` from the series context (a chart token); Reach for a full Chart Container for a tiny inline trend — use Sparkline instead
-- **Exports:** ChartContainer, ChartPlot, useChart, CHART_PALETTE
+- **Exports:** ChartContainer, ChartPlot, useChart, CHART_PALETTE, CAT_PALETTE
 
 #### ChartLegend
 

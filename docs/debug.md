@@ -92,9 +92,13 @@ a reduced-motion user could not distinguish *loading* from *hung*.
 
 **Fixed in** `src/theme.css` — the sweep is kept, plus an essential-motion
 allowlist (`--duration-essential: 1.4s`) for `[data-motion="essential"]`,
-`spinner`, `skeleton`, indeterminate `progress-indicator`, and `badge-dot`.
-`pulseDot` is swapped for the opacity-only `pulseDotReduced`, since scale is the
-part that provokes vestibular symptoms and the fade is not.
+`spinner`, indeterminate `progress-indicator`, and `badge-dot`. `pulseDot` is
+swapped for the opacity-only `pulseDotReduced`, since scale is the part that
+provokes vestibular symptoms and the fade is not.
+
+`Skeleton` is deliberately **not** on the allowlist (see E8): a spinner that
+stops is indistinguishable from a hung one, but a skeleton's *shape* already
+says "content pending", so it flattens to a static fill instead.
 
 `Progress` now emits `data-indeterminate` so the allowlist can select it.
 
@@ -227,50 +231,88 @@ stack requests one.
 > running the app build silently destroys the library build. Worth giving the
 > app build its own `outDir`.
 
-## ⏳ E8 · P2 — Shimmer skeletons instead of the opacity pulse
+## ✅ E8 · P2 — Shimmer skeletons instead of the opacity pulse
 
-`Skeleton` uses `animate-pulse`, which reads as blinking. A neutral
-left-to-right sweep reads as "streaming in" and adds no colour. The
-`skeletonSweep` keyframe and `--animate-skeleton` token are **already in
-`theme.css`**; this is the remaining application to `skeleton.tsx`.
+`Skeleton` used `animate-pulse`, which reads as blinking. A neutral
+left-to-right sweep reads as "streaming in" and adds no colour — it moves
+between two existing surface steps.
 
-## ⏳ A3 / A4 · P1 — Chart severity encoding *(needs redesign, not application)*
+The gradient lives in `theme.css` keyed off `data-slot="skeleton"`, so the sweep
+and its reduced-motion fallback stay in one place.
 
-Both problems are real: `--chart-1..5` **is** the severity ramp, so a chart of
-assets-by-environment renders in critical/high/medium and reads as an alarm; and
+> **Note.** Skeleton is deliberately NOT in the A5 essential-motion allowlist,
+> and flattens to a static fill under reduced motion. A spinner that stops is
+> indistinguishable from a hung one; a skeleton's *shape* already communicates
+> "content pending", so it stays legible frozen and is calmer flat.
+
+## ✅ A3 / A4 · P1 — Chart severity encoding *(redesigned, not applied as written)*
+
+Both problems were real: `--chart-1..5` **is** the severity ramp, so a chart of
+assets-by-environment rendered in critical/high/medium and read as an alarm; and
 severity decoded by hue alone fails under deuteranopia/protanopia and in
-greyscale. 14 components reference `var(--chart-*)`.
+greyscale.
 
-**The original's proposed fix does not work:**
+**The audit's fix did not work, so both parts were redesigned:**
 
-- The categorical palette claimed to exclude the alarm hues so a categorical
-  chart "can never be mistaken for a severity chart", but `--cat-2 #3a97d4` **is**
-  `--sev-low`, `--cat-4 #ecb22e` **is** `--sev-medium`, `--cat-6 #7d8798` **is**
-  `--sev-info`, and `--cat-3 #2fb680` is `--success`. Four of six are severity
-  colours; the confusion survives.
-- The hatch pattern strokes in `var(--on-tone)` = `#0c0b12`, near-black in
-  **both** themes, so the non-colour channel is nearly invisible on dark.
-- It patterns four levels, leaves `--sev-pattern-info` unused, then asks you to
+- Its categorical palette claimed to exclude the alarm hues so a categorical
+  chart "can never be mistaken for a severity chart", but `--cat-2 #3a97d4`
+  **was** `--sev-low`, `--cat-4 #ecb22e` **was** `--sev-medium`,
+  `--cat-6 #7d8798` **was** `--sev-info`, and `--cat-3 #2fb680` was
+  `--success`. Four of six were severity colours; the confusion survived.
+- Its hatch stroked `var(--on-tone)` (near-black) for every level, which is
+  close to invisible on the darker fills.
+- It patterned four levels, left `--sev-pattern-info` unused, then asked you to
   verify "the **five** segments remain distinguishable".
 
-Needs a genuinely distinct 6-hue categorical palette and a theme-aware hatch
-stroke before it is worth implementing.
+**A4 as shipped.** The real separator is **temperature**. Severity is warm-led,
+`--success` owns green, `--destructive` owns red — so `--cat-1..6` is
+**cool-only** (violet, cyan, indigo, orchid, teal, deep purple) and shares no
+hue with any of them. Lightness alternates so the series stay separable in
+greyscale and under CVD. `ChartContainer` gains `palette?: "severity" |
+"categorical"`.
 
-## ⏳ C1 · P2 — `Alert` uses `variant` where the family uses `tone`
+**A3 as shipped.** Hatch density encodes severity (thickest critical → thinnest
+low; `info` stays flat). Stroke ink is per-slot (`--sev-hatch-1..4`), light on
+the red/blue fills and dark on amber/orange.
+
+Both land entirely in `chart-container.tsx` — colour resolution was already
+centralised in `resolveSeries`/`CHART_PALETTE`, so **no chart component needed
+its own `<defs>`**, contrary to the audit's instruction to edit six of them.
+Resolved series now carry `fillVar` (pattern-aware, for area marks) alongside
+`colorVar` (flat, for strokes and legend swatches) — a pattern on a 1px line is
+noise. Funnel and Treemap render HTML `div`s, so an SVG `url(#…)` fill cannot
+apply and they keep `colorVar`.
+
+> **`patternBySeverity` defaults to FALSE**, against the audit's "default true".
+> Hatching every severity chart is a large visual change, and on dense marks —
+> thin stacked bands, small treemap cells — it can cost more legibility than the
+> redundant encoding buys. It is opt-in per chart. **This is the one Tier 2
+> decision most worth a second opinion once you have seen it rendered.**
+
+## ✅ C1 · P2 — `Alert` used `variant` where the family uses `tone`
 
 `Badge`, `StatusPill`, `Tag`, `Callout`, `SeverityBadge` express hue as `tone`
-and fill treatment as `variant`. `alert.tsx` merges both into `variant`, so
-`<Alert tone="warning">` silently does nothing. Real inconsistency.
+and fill treatment as `variant`. `alert.tsx` merged both into `variant`, so
+`<Alert tone="warning">` silently did nothing.
 
-> **Correction.** The original's "deprecation shim" is a silent visual break.
-> Alert's real variants are `default | info | success | warning | destructive`,
-> where `default` is a neutral `bg-card`. Mapping `default → info` and
-> defaulting to `tone: "info"` turns every existing bare `<Alert>` info-tinted.
-> Implement with `default` preserved as a real neutral tone.
+**Fixed** on the same two axes as Badge, reusing its `--tone` / `--tone-ink`
+custom-property pattern so the family stays consistent:
+`tone` = `neutral | accent | info | success | warning | danger`,
+`variant` = `soft | solid | outline`.
 
-Audit `Callout`, `Banner`, `ValidationMessage`, `Toast` the same way.
+Backwards compatibility is real rather than nominal: legacy hue names are still
+accepted in `variant`, mapped onto `tone`, and warned about in dev only. A
+compound variant makes `tone="neutral" variant="soft"` render byte-identically
+to the old `variant="default"`.
 
-## ⏳ E1 / E2 / E4 · P2 — Elevation scale
+> **Correction.** The audit's "deprecation shim" was a silent visual break: it
+> mapped `default -> info` and defaulted to `tone: "info"`, which would have
+> turned every existing bare `<Alert>` from a neutral card into an info tint.
+
+Internal call sites (`login-form`, `sign-up-form`, stories) migrated to `tone`.
+Still to audit the same way: `Callout`, `Banner`, `ValidationMessage`, `Toast`.
+
+## ✅ E1 / E2 / E4 · P2 — Elevation scale
 
 Four shadow names (`--glass`, `--shadow-bloom`, `--shadow-soft`, `--shadow`)
 with no ordering, so "which is higher" is a guess. A 0–5 scale with two-layer
@@ -289,38 +331,81 @@ with no ordering, so "which is higher" is a guess. A 0–5 scale with two-layer
 E4 (recessed `--shadow-inset` wells for tracks and filled fields) is the
 strongest part and is independent of the rest.
 
-## ⏳ E6 · P3 — Motion tokens as enter/exit pairs
+**As shipped.** `--elevation-0..5` per theme, each two layers (contact +
+ambient); levels 1–2 keep the top inner highlight that makes AEGIS cards read as
+glass. Exposed as `shadow-elevation-*` utilities. The four legacy names are
+aliased to scale levels so existing call sites keep working.
 
-Exits currently share the entrance duration, which makes dismissal feel
-sluggish. Enter decelerates, exit accelerates at ~2/3 the duration.
+Components were retargeted to their correct level rather than left flat:
+attached overlays (`Menu`, `Popover`, `Tooltip`, `Select`, `ContextMenu`,
+`HoverCard`, `NavigationMenu`, `ChartTooltip`) → **3**; floating
+(`Lightbox`, `FloatingActionButton`) → **5**; detached overlays keep
+`shadow-elevated`, which now resolves to **4** — their correct level. The
+E1-vs-E11 conflict is moot: E11 was removed.
 
-> **Correction.** E5 (which this replaces the useful half of) referenced
+E4 `elevation-inset` applied to the `Slider` and `Progress` grooves. `Switch`
+keeps `inset-ring` instead, because a raw `box-shadow` utility would clobber its
+focus ring; `inset-ring` composes with it.
+
+## ✅ E6 · P3 — Motion tokens as enter/exit pairs
+
+Exits shared the entrance duration, which makes dismissal feel sluggish. Enter
+decelerates; exit accelerates at ~2/3 the duration.
+
+> **Correction.** E5 (whose useful half this replaces) referenced
 > `var(--duration-card)` and `var(--ease-out)`. **Neither token exists** in the
 > repo, so E5 was never implementable as written.
+
+**As shipped.** `--ease-enter/exit/pop`, `--duration-enter/exit/pop`, the
+`--motion-*` shorthands and `--stagger-step`, plus `motion-enter` /
+`motion-exit` utilities. Applied as `data-[ending-style]:motion-exit` across
+**14 overlay components** — the closing half only. Authored entrance durations
+are deliberately left alone: a Drawer legitimately enters more slowly than a
+Tooltip and should not be flattened to one number.
+
+`Accordion` and `Collapse` were skipped — they exit by animating height
+(`h-0`), a different motion class from overlay dismissal that should not be
+retimed blind.
+
+> **Correction.** `--stagger-step` is **80ms**, not the audit's 40ms, because
+> that is what `StaggerContainer` actually does. A token that "formalises" a
+> behaviour must not contradict it.
 
 Keep the rule that overshoot easing (`--ease-pop`) is permitted only on elements
 ≤24px — checkbox marks, radio dots, chips, badge dots. Never a card or dialog.
 
-## ⏳ E7 · P3 — Beam intensity dial and static fallback
+## ✅ E7 · P3 — Beam intensity dial and static fallback
 
 `--beam-opacity` / `--beam-still`, so dense dashboards can dim the motif and
-print/reduced-motion get a static gradient instead of a frozen arc. Requires
-adding `data-slot="beam"` to the five beam wrappers (`button`, `card`,
-`beam-glow`, `floating-action-button`, `masthead`) — the slot **does not
-currently exist**, which is why the original's E7 and A5 beam rules were no-ops.
+print/reduced-motion get a static gradient instead of a frozen arc. `data-slot="beam"` was added to the five beam wrappers (`button`, `card`,
+`beam-glow`, `floating-action-button`, `masthead`). The slot **did not exist**,
+which is why the audit's E7 and A5 beam rules were no-ops as written.
 
-## ⏳ C5 · P3 — Public/internal split
+## ✅ C5 · P3 — Public/internal split *(mechanism shipped; nothing qualified)*
 
-The barrel exports all 207 components plus internal helpers; everything exported
-is API you cannot break. Mark internal-only files `@internal` and have
-`build-barrel.mjs` / `build-catalog.mjs` skip them.
+Everything the barrel exports is API you cannot break, so implementation detail
+must be able to opt out. A leading-block-comment `@internal` marker is now
+honoured by **both** `build-barrel.mjs` and `build-catalog.mjs`, and each
+reports what it skipped so a module cannot vanish from the public surface
+silently. Verified by marking `portal.tsx` and watching both drop to 206, then
+reverting.
 
-## ⏳ B5 · P3 — Keyframe naming *(partially done)*
+> **Correction.** The audit's premise — that some exports are implementation
+> detail, with `axis.tsx`, `click-outside.tsx` and `portal.tsx` named as
+> "obvious ones" — does not hold. **All 207 components ship a story and a
+> catalog entry**, i.e. each is deliberately public. `chart-container.tsx` is
+> imported by 17 siblings but is also legitimately public API for consumers
+> building custom charts. Nothing was marked; inventing internals to justify the
+> item would have been a breaking change with no benefit. The mechanism exists
+> for the first genuinely-internal helper.
+
+## ✅ B5 · P3 — Keyframe naming
 
 `progress-indeterminate` was the only kebab-case keyframe and the only one with
 no `--animate-*` token, so it had to be spelled as an arbitrary
-`animate-[…]` value at its single call site. **Already fixed** — renamed to
-`progressIndeterminate` with an `--animate-progress-indeterminate` token.
+`animate-[…]` value at its single call site. Renamed to `progressIndeterminate` with an
+`--animate-progress-indeterminate` token, and the call site now uses the
+generated `animate-progress-indeterminate` utility.
 Convention: keyframe identifiers are camelCase, the `--animate-*` token that
 wraps them is kebab-case.
 
