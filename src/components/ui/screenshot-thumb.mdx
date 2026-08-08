@@ -1,0 +1,84 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScreenshotThumb/Guidelines" />
+
+# Screenshot Thumb
+
+The capture strip that opens an asset card: a website **screenshot** at a fixed
+media height, cropped to fill. When no capture exists it degrades to a quiet hatched
+slot with a mono caption — never a broken image, never an empty gap.
+
+## Overview
+
+A triage grid only works if every card has the same silhouette. Screenshot Thumb
+guarantees that: the media band is the same height whether the capture arrived,
+failed, or was never taken, so a grid keeps its rhythm whatever the data does.
+
+## Usage
+
+- **Do** use it as the `media` slot of an **Asset Triage Card** for hosts and
+  domains.
+- **Do** always pass `emptyLabel` — the empty slot is a normal state, not an error.
+- **Do** set `loading="eager"` only for cards above the fold; a grid mounts many at
+  once.
+- **Don't** use it for an avatar or a logo (that is **Avatar**), or for a
+  full-size evidence viewer.
+- **Don't** reach for it when the asset's defining visual is where it is — that is
+  **Mini Location Map**, which fills the same slot at the same heights.
+
+## Anatomy
+
+A fixed-height, overflow-hidden band (`data-slot="screenshot-thumb"`) holding either
+an `<img>` cropped with `object-cover object-top`, or — marked `data-empty` — the
+shared 135° hatch with a centred mono caption.
+
+## Variants
+
+`size` sets the media height: `sm` (104px), `md` (132px, default), `lg` (168px).
+**Mini Location Map** exposes the same three rungs so mixed grids stay aligned.
+
+## States
+
+- **Loaded** — the capture, cropped from the top so page headers stay visible.
+- **Empty** — no `src`: hatch plus caption, carrying `data-empty`.
+- **Failed** — the image errored: identical to empty, so a dead URL and a missing
+  one look the same. A changed `src` retries on its own.
+
+## Behavior
+
+- Images are `loading="lazy"` and `decoding="async"` by default.
+- Failure is tracked per URL rather than as a flag, so recycling the node onto a new
+  asset does not inherit the previous one's failure.
+
+## Accessibility
+
+- `alt` describes the capture; when absent the image is treated as decorative
+  (`alt=""`) rather than announcing a filename.
+- The empty caption is real text, so the absent state is announced, not implied by a
+  blank region.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-surface-2` | The media band. |
+| `--surface-3` (hatch stops) | The empty-slot fill. |
+| `text-muted-foreground` | Empty caption. |
+
+No colour is hard-coded; the hatch stops are token references.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `src` | `string \| null` | — | Capture URL; absent or failing renders the empty slot. |
+| `alt` | `string` | — | Accessible description of the capture. |
+| `emptyLabel` | `string` | — | Caption for the empty slot (required). |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Media height. |
+| `loading` | `"lazy" \| "eager"` | `"lazy"` | Image loading strategy. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Loaded**, **Empty**, and **Sizes** stories.

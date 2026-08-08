@@ -238,6 +238,38 @@
     "import": "import { AssetRow } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "AssetTriageCard",
+    "module": "asset-triage-card",
+    "category": "data-display",
+    "concept": "The card in a visual-triage grid: one discovered asset, opened by a picture of it. A domain card leads with a Screenshot Thumb of the site, an IP card with a Mini Location Map of where it sits — both fill the same `media` slot, so a grid of either reads with one anatomy and one baseline.",
+    "whenToUse": [
+      "The picture is what lets someone triage at a glance — a screenshot of a site, a map of an address",
+      "Pass every severity rung, including zeroes; an empty rung is information",
+      "Let the consuming app decide which ports are `risky` — that is policy, not presentation"
+    ],
+    "whenNotToUse": [
+      "A long scannable inventory where the name is enough — that is Asset Row",
+      "A single finding (Finding / Vulnerability Card) or an org-wide posture readout (Posture Score Card)"
+    ],
+    "composesWith": [
+      "Card",
+      "DonutChart",
+      "SeverityBadge",
+      "StatusPill"
+    ],
+    "exports": [
+      "AssetTriageCard",
+      "assetTriageGradeVariants",
+      "toneForGrade"
+    ],
+    "typeExports": [
+      "AssetTriageCardProps",
+      "AssetTriageCardPort",
+      "GradeTone"
+    ],
+    "import": "import { AssetTriageCard } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "AttachmentChip",
     "module": "attachment-chip",
     "category": "utility",
@@ -2917,6 +2949,32 @@
     "import": "import { MessageBubble } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "MiniLocationMap",
+    "module": "mini-location-map",
+    "category": "charts",
+    "concept": "The locator strip that opens an IP card: a dark regional map cropped around one point, with a pulsing marker and a chip naming the place. Where a domain card shows what a host looks like, an IP card shows where it is.",
+    "whenToUse": [
+      "The `media` slot of an Asset Triage Card for IP addresses",
+      "Run your projection upstream (d3-geo, world-atlas, or geometry the backend serves) and pass the resulting `d` strings — project once at module scope and reuse across the grid",
+      "Pass `marker` already projected into the same coordinate space as `paths`"
+    ],
+    "whenNotToUse": [
+      "Expect it to project, fetch, or bundle topology — it renders, exactly like Geo / Choropleth Map",
+      "Shade countries by a value (that is Geo / Choropleth Map) or to rank a fleet by country (Hosts By Country Map)",
+      "Guess a location when the data has none — omit `marker` and let the empty state say so"
+    ],
+    "composesWith": [],
+    "exports": [
+      "MiniLocationMap",
+      "miniLocationMapVariants"
+    ],
+    "typeExports": [
+      "MiniLocationMapProps",
+      "MiniLocationMapMarker"
+    ],
+    "import": "import { MiniLocationMap } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "MobileAppBar",
     "module": "mobile-app-bar",
     "category": "navigation",
@@ -3866,6 +3924,30 @@
       "ScatterPoint"
     ],
     "import": "import { ScatterPlot } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "ScreenshotThumb",
+    "module": "screenshot-thumb",
+    "category": "other",
+    "concept": "The capture strip that opens an asset card: a website screenshot at a fixed media height, cropped to fill. When no capture exists it degrades to a quiet hatched slot with a mono caption — never a broken image, never an empty gap.",
+    "whenToUse": [
+      "The `media` slot of an Asset Triage Card for hosts and domains",
+      "Always pass `emptyLabel` — the empty slot is a normal state, not an error",
+      "Set `loading=\"eager\"` only for cards above the fold; a grid mounts many at once"
+    ],
+    "whenNotToUse": [
+      "An avatar or a logo (that is Avatar), or for a full-size evidence viewer",
+      "Reach for it when the asset's defining visual is where it is — that is Mini Location Map, which fills the same slot at the same heights"
+    ],
+    "composesWith": [],
+    "exports": [
+      "ScreenshotThumb",
+      "screenshotThumbVariants"
+    ],
+    "typeExports": [
+      "ScreenshotThumbProps"
+    ],
+    "import": "import { ScreenshotThumb } from \"@netbaan-project/ui\";"
   },
   {
     "name": "ScrollArea",

@@ -1,0 +1,113 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/AssetTriageCard/Guidelines" />
+
+# Asset Triage Card
+
+The card in a visual-triage grid: one discovered **asset**, opened by a picture of
+it. A domain card leads with a **Screenshot Thumb** of the site, an IP card with a
+**Mini Location Map** of where it sits — both fill the same `media` slot, so a grid
+of either reads with one anatomy and one baseline.
+
+## Overview
+
+An inventory tells you what you own; a triage grid tells you what to look at first.
+The picture does the recognising, the donut does the ranking, and the grade says how
+bad it already is — so an analyst can skip the table and go straight to the asset
+that looks wrong.
+
+## Usage
+
+- **Do** use it when the picture is what lets someone triage at a glance — a
+  screenshot of a site, a map of an address.
+- **Do** pass every severity rung, including zeroes; an empty rung is information.
+- **Do** let the consuming app decide which ports are `risky` — that is policy, not
+  presentation.
+- **Don't** use it for a long scannable inventory where the name is enough — that is
+  **Asset Row**.
+- **Don't** use it for a single finding (**Finding / Vulnerability Card**) or an
+  org-wide posture readout (**Posture Score Card**).
+
+## Anatomy
+
+A **Card** (`interactive` when `href` is set) wrapping a full-bleed media slot with
+an optional **Status Pill** floated over it, then: the name in mono with optional
+trailing meta and a subtitle; a **Donut Chart** on the severity palette beside a
+two-column list of all five rungs; an optional ports row (`maxPorts` chips plus an
+overflow chip); and a footer pairing the grade tile with a findings readout.
+
+## Variants
+
+Presentation is fixed — this is one recipe, not a family. What changes is the media
+you pass and which optional regions you fill: `ports`, `grade`, `findings`,
+`statusLabel`, `subtitle`, and `titleMeta` each collapse cleanly when omitted.
+
+## States
+
+- **Static** — no `href`; inert card, no lift.
+- **Interactive** — with `href`: the Card's 3px lift, accent border, elevation
+  shadow, and pointer-tracked spotlight; the title is the link and takes focus.
+- **Clean asset** — all rungs zero: the donut renders empty and every count sits in
+  `--muted-foreground`.
+- **Unmapped grade** — a grade outside A–F falls back to the C style.
+
+## Behavior
+
+- The centre total is summed from `severities`, so the ring and the number can never
+  disagree; negative or missing rungs are floored at zero.
+- Rung order is fixed worst-first (critical → info) for both the ring and the list,
+  so position carries meaning across every card in a grid.
+- Ports beyond `maxPorts` (default 4) collapse into one overflow chip; the label is
+  `formatPortOverflow`, so "+3" can be translated.
+- Hover, lift, and spotlight all come from **Card** `interactive` — nothing here
+  restyles it.
+
+## Accessibility
+
+- The donut carries `chartLabel` as its accessible name; the visible per-rung list
+  states every count as text, so severity is never colour-only (WCAG 1.4.1).
+- `data-severity`, `data-grade`, and `data-risky` expose triage state to tests
+  without scraping colour.
+- One link per card, named by the asset; the decorative centre total and the
+  severity dots are `aria-hidden` or presentational.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| Card tokens | Surface, border, lift, spotlight. |
+| `--chart-1..5` (severity ramp) | Donut segments. |
+| `--sev-*` / `--sev-*-ink` | Rung dots and counts. |
+| `--success-ink` / `--primary` / `--sev-*-ink` at 18% | Grade tile A → F. |
+| `bg-surface-2` / `border-border` | Port chips. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `media` | `ReactNode` | — | The media strip (required). |
+| `statusLabel` | `ReactNode` | — | Status word over the media. |
+| `statusTone` | `StatusPill` tone | `"neutral"` | Tone for that pill. |
+| `title` | `ReactNode` | — | Host or IP, set in mono (required). |
+| `titleMeta` | `ReactNode` | — | Trailing detail (e.g. provider). |
+| `subtitle` | `ReactNode` | — | Secondary line (type, PTR). |
+| `severities` | `Record<Severity, number>` | — | Counts per rung (required). |
+| `severityLabels` | `Record<Severity, string>` | — | Translated rung names (required). |
+| `chartLabel` | `string` | — | Accessible name for the donut (required). |
+| `ports` | `{ port, risky? }[]` | — | Open ports; omit to hide the row. |
+| `portsLabel` | `ReactNode` | — | Micro-label above the chips. |
+| `maxPorts` | `number` | `4` | Chips shown before overflow. |
+| `formatPortOverflow` | `(n) => ReactNode` | `` `+n` `` | Overflow chip label. |
+| `grade` | `string \| null` | — | Letter grade A–F. |
+| `findings` | `ReactNode` | — | Footer findings readout. |
+| `href` | `string` | — | Detail link; makes the card interactive. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Domains**, **IPs**, **Clean**, and **Minimal** stories. The card works in
+both themes and directions; in RTL the layout mirrors but the map inside
+**Mini Location Map** deliberately does not.

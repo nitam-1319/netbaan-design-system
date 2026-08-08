@@ -1,0 +1,95 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/MiniLocationMap/Guidelines" />
+
+# Mini Location Map
+
+The locator strip that opens an IP card: a dark regional map cropped around one
+point, with a pulsing marker and a chip naming the place. Where a domain card shows
+what a host looks like, an IP card shows where it is.
+
+## Overview
+
+An IP address is unreadable on its own. A map turns it into something a person can
+reason about — a region, a jurisdiction, a provider's footprint — in the same glance
+that a screenshot gives for a domain.
+
+## Usage
+
+- **Do** use it as the `media` slot of an **Asset Triage Card** for IP addresses.
+- **Do** run your projection upstream (d3-geo, world-atlas, or geometry the backend
+  serves) and pass the resulting `d` strings — project once at module scope and
+  reuse across the grid.
+- **Do** pass `marker` already projected into the same coordinate space as `paths`.
+- **Don't** expect it to project, fetch, or bundle topology — it renders, exactly
+  like **Geo / Choropleth Map**.
+- **Don't** use it to shade countries by a value (that is **Geo / Choropleth Map**)
+  or to rank a fleet by country (**Hosts By Country Map**).
+- **Don't** guess a location when the data has none — omit `marker` and let the
+  empty state say so.
+
+## Anatomy
+
+A fixed-height band holding an `<svg>` cropped to a window around the marker (land
+paths in `--surface-3`, hairline `--border`), an HTML marker overlay (a 9px dot
+under an `animate-ping` ring), and an optional bottom-start chip carrying the place
+name plus the operator in mono.
+
+## Variants
+
+`size` sets the media height: `sm` (104px), `md` (132px, default), `lg` (168px) —
+the same rungs as **Screenshot Thumb**, so mixed grids stay aligned.
+
+## States
+
+- **Placed** — a marker: cropped map, pulsing pin, chip.
+- **Empty** — no marker: the shared hatch with a caption and no pin at all.
+- **Reduced motion** — the ping is suppressed; the pin stays.
+
+## Behavior
+
+- `zoom` crops a window of the coordinate space around the marker, clamped so it
+  never runs past the edge of the geometry.
+- The marker lives in an HTML overlay, not the SVG, so its dot stays a true 9px at
+  any `zoom`.
+- The map is **not** mirrored in RTL: geography is not a reading order. Surrounding
+  layout still mirrors normally.
+- A malformed `viewBox` falls back to the world frame rather than rendering nothing.
+
+## Accessibility
+
+- The SVG is `role="img"` named by the required `label`; the pin and chip are
+  decorative beside it.
+- The empty caption is real text, so an unplaceable address is announced rather than
+  drawn somewhere plausible.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-surface-2` | The media band. |
+| `fill-surface-3` / `stroke-border` | Land and coastlines. |
+| `bg-primary` (+ `/40` ping) | Marker dot and pulse. |
+| `bg-surface/80` + `border-border` | Location chip. |
+
+No colour is hard-coded; every value comes from an AEGIS token.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name for the map (required). |
+| `paths` | `string[]` | — | Projected land outlines as SVG `d` strings. |
+| `viewBox` | `string` | `"0 0 960 480"` | Coordinate space of `paths`. |
+| `marker` | `{ x, y } \| null` | — | Projected point; omit for the empty slot. |
+| `zoom` | `number` | `6` | Crop tightness (1 = whole world). |
+| `location` | `ReactNode` | — | Place name for the chip. |
+| `asn` | `ReactNode` | — | Operator for the chip, set in mono. |
+| `emptyLabel` | `string` | — | Caption for the empty slot (required). |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Media height. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Placed**, **Unknown**, and **Zoom** stories.
