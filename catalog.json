@@ -253,8 +253,8 @@
     ],
     "composesWith": [
       "Card",
-      "DonutChart",
       "SeverityBadge",
+      "SeverityDonut",
       "StatusPill"
     ],
     "exports": [
@@ -265,7 +265,8 @@
     "typeExports": [
       "AssetTriageCardProps",
       "AssetTriageCardPort",
-      "GradeTone"
+      "GradeTone",
+      "FindingsTone"
     ],
     "import": "import { AssetTriageCard } from \"@netbaan-project/ui\";"
   },
@@ -3030,16 +3031,14 @@
     "name": "MiniLocationMap",
     "module": "mini-location-map",
     "category": "charts",
-    "concept": "The locator strip that opens an IP card: a dark regional map cropped around one point, with a pulsing marker and a chip naming the place. Where a domain card shows what a host looks like, an IP card shows where it is.",
+    "concept": "The locator strip that opens an IP card: a dark regional map centred on one address, with a pulsing marker and a chip naming the place.",
     "whenToUse": [
-      "The `media` slot of an Asset Triage Card for IP addresses",
-      "Run your projection upstream (d3-geo, world-atlas, or geometry the backend serves) and pass the resulting `d` strings — project once at module scope and reuse across the grid",
-      "Pass `marker` already projected into the same coordinate space as `paths`"
+      "Pass real `lat` / `lon`; the component centres its own projection on them",
+      "Supply `geometry` from a build-time dataset and share one object across the whole grid, so it is parsed once per session"
     ],
     "whenNotToUse": [
-      "Expect it to project, fetch, or bundle topology — it renders, exactly like Geo / Choropleth Map",
-      "Shade countries by a value (that is Geo / Choropleth Map) or to rank a fleet by country (Hosts By Country Map)",
-      "Guess a location when the data has none — omit `marker` and let the empty state say so"
+      "Guess a location when the data has none — leave `lat` / `lon` null and let the empty slot say so. An unplaceable IP must never be drawn somewhere plausible, least of all at 0,0",
+      "A general map. It frames one point at one scale; a country or region view is GeoChoroplethMap"
     ],
     "composesWith": [],
     "exports": [
@@ -3048,7 +3047,8 @@
     ],
     "typeExports": [
       "MiniLocationMapProps",
-      "MiniLocationMapMarker"
+      "MiniLocationMapGeometry",
+      "GeoRing"
     ],
     "import": "import { MiniLocationMap } from \"@netbaan-project/ui\";"
   },
@@ -3330,6 +3330,30 @@
       "OTPInputProps"
     ],
     "import": "import { OtpInput } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "PageHeaderBand",
+    "module": "page-header-band",
+    "category": "other",
+    "concept": "The console's page header: kicker, title and counts line on an accent-tinted hero surface, with the page's actions at the inline end.",
+    "whenToUse": [
+      "Make it the first element of the page's content column, with the page's normal rhythm below it",
+      "Put the page's actions in `actions`, outline before primary",
+      "Let it own the `<h1>` — a page has one title and this is it"
+    ],
+    "whenNotToUse": [
+      "Substitute `Card variant=\"beam\"`. The beam is a different motif; a page carries at most one and it belongs on the primary button, never on the band",
+      "Add a hover lift or a border colour change. The header is a landmark, not a control — only the spotlight moves",
+      "Nest it inside another blurred or `backdrop-filter` surface, and don't add more blobs. Two composited blur layers per page is the budget"
+    ],
+    "composesWith": [],
+    "exports": [
+      "PageHeaderBand"
+    ],
+    "typeExports": [
+      "PageHeaderBandProps"
+    ],
+    "import": "import { PageHeaderBand } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Pagination",
@@ -3976,6 +4000,40 @@
     "import": "import { ScanCoverageGauge } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "ScanSwitcher",
+    "module": "scan-switcher",
+    "category": "forms",
+    "concept": "The control that makes \"which scan am I looking at?\" answerable on an asset detail page. Three parts, one selection.",
+    "whenToUse": [
+      "Order `options` newest first. That is how a scan list reads, and the arrows are wired to it: \"older\" steps forward through the array",
+      "Render `HistoricalScanBanner` for the whole time the selection is not the latest scan — not as a toast on change. A reader who arrives by deep link needs it as much as one who clicked",
+      "Keep the switcher and the history list on the same state. Two independent selections is the defect this component was built to remove",
+      "Format dates and translate status words in the app. This component never formats a date and never names a scan status"
+    ],
+    "whenNotToUse": [
+      "Substitute a plain `Select`. It has no arrows, no per-scan status, and nothing to say that the page has moved",
+      "Hide the switcher when there is exactly one scan — show it, disabled by virtue of having nothing to step to. Hiding it removes the answer to \"which scan is this?\"",
+      "`--destructive` for the banner. A historical view is a caveat, not a failure; it carries `--sev-high` at a low mix"
+    ],
+    "composesWith": [
+      "StatusPill"
+    ],
+    "exports": [
+      "ScanSwitcher",
+      "ScanHistoryList",
+      "HistoricalScanBanner",
+      "scanDotVariants"
+    ],
+    "typeExports": [
+      "ScanSwitcherProps",
+      "ScanHistoryListProps",
+      "HistoricalScanBannerProps",
+      "ScanOption",
+      "ScanTone"
+    ],
+    "import": "import { ScanSwitcher } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "ScatterPlot",
     "module": "scatter-plot",
     "category": "charts",
@@ -4244,6 +4302,60 @@
       "Severity"
     ],
     "import": "import { SeverityBadge } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "SeverityDonut",
+    "module": "severity-donut",
+    "category": "charts",
+    "concept": "The findings ring: one wedge per severity, sized by its share, with the total in the hole. One component with a `size` prop — not a separate drawing per surface.",
+    "whenToUse": [
+      "Pair it with a legend beside it — the donut deliberately does not draw one, because cards and the summary bar lay theirs out differently",
+      "Pass `palette=\"categorical\"` for any breakdown that is not severity. Reusing the severity ramp for a status split implies a badness ordering that does not exist",
+      "Let it compute the total; override `total` only when the readout must differ from the sum of the wedges"
+    ],
+    "whenNotToUse": [
+      "Reach for `DonutChart` here. That one sizes itself to its parent and takes a generic series; this one owns the severity order, the gap rule and the centre-label fit",
+      "Wrap it in a fixed-size box to \"fix\" the label — the label already adapts, and the ring must not"
+    ],
+    "composesWith": [
+      "SeverityBadge"
+    ],
+    "exports": [
+      "SeverityDonut",
+      "severityDonutVariants"
+    ],
+    "typeExports": [
+      "SeverityDonutProps",
+      "DonutSize"
+    ],
+    "import": "import { SeverityDonut } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "SeverityLegend",
+    "module": "severity-legend",
+    "category": "feedback",
+    "concept": "The five-rung tally that sits under a page title: one pill per severity carrying its colour, its name, and how many findings sit on it.",
+    "whenToUse": [
+      "Put it directly under the page title, above the toolbar and the grid",
+      "Feed it totals summed across the fetched set, so the legend and the cards below it can never disagree",
+      "Pass translated `labels` — the component ships no copy of its own"
+    ],
+    "whenNotToUse": [
+      "Label chart series without quantities; that is Chart Legend",
+      "Substitute a row of Badges with `count`: a counted Badge shows the number *instead of* its label, so the rung goes unnamed",
+      "Hide zero rungs. A legend whose width changes with the data cannot be read at a glance"
+    ],
+    "composesWith": [
+      "SeverityBadge"
+    ],
+    "exports": [
+      "SeverityLegend",
+      "severityLegendDotVariants"
+    ],
+    "typeExports": [
+      "SeverityLegendProps"
+    ],
+    "import": "import { SeverityLegend } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Sidebar",
@@ -5231,6 +5343,32 @@
       "TreemapItem"
     ],
     "import": "import { Treemap } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "TrendBars",
+    "module": "trend-bars",
+    "category": "other",
+    "concept": "A findings-over-time strip: one bar per period, the newest emphasised. It answers \"is this getting worse?\" at a glance.",
+    "whenToUse": [
+      "Reach for it inside a card header block, where a real chart would dwarf its neighbours",
+      "Pass periods oldest first — the strip reads left to right (and mirrors under RTL with the document)",
+      "Keep labels short. They never wrap, and a long label forces the column wider than its bar"
+    ],
+    "whenNotToUse": [
+      "It where a reader must compare exact values or read a total. That is `BarChart`: axes, gridlines, tooltips and a series definition",
+      "Hand it a single datum. One bar scaled against itself is always full height and says nothing; show the number instead"
+    ],
+    "composesWith": [
+      "VisuallyHidden"
+    ],
+    "exports": [
+      "TrendBars"
+    ],
+    "typeExports": [
+      "TrendBarsProps",
+      "TrendBarsDatum"
+    ],
+    "import": "import { TrendBars } from \"@netbaan-project/ui\";"
   },
   {
     "name": "TwoFactorVerification",

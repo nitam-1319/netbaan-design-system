@@ -46,7 +46,8 @@ you pass and which optional regions you fill: `ports`, `grade`, `findings`,
 
 - **Static** — no `href`; inert card, no lift.
 - **Interactive** — with `href`: the Card's 3px lift, accent border, elevation
-  shadow, and pointer-tracked spotlight; the title is the link and takes focus.
+  shadow, and pointer-tracked spotlight; a stretched anchor makes the whole
+  surface the hit target, with the title as its accessible name and focus ring.
 - **Clean asset** — all rungs zero: the donut renders empty and every count sits in
   `--muted-foreground`.
 - **Unmapped grade** — a grade outside A–F falls back to the C style.
@@ -102,7 +103,7 @@ No colour is hard-coded; every value comes from an AEGIS token.
 | `formatPortOverflow` | `(n) => ReactNode` | `` `+n` `` | Overflow chip label. |
 | `grade` | `string \| null` | — | Letter grade A–F. |
 | `findings` | `ReactNode` | — | Footer findings readout. |
-| `href` | `string` | — | Detail link; makes the card interactive. |
+| `href` | `string` | — | Detail link; makes the whole card a single stretched link. |
 
 The API is closed: `className` and `style` are not accepted.
 

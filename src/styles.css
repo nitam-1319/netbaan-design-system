@@ -9,3 +9,9 @@
 @import "shadcn/tailwind.css";
 @import "./theme.css";
 @source "./components/**/*.{ts,tsx}";
+/* Shared class constants live outside `components/` too (e.g. `lib/media.ts`,
+ * which owns the asset-card media heights and the empty-slot hatch). Without
+ * this glob those utilities are silently dropped from the build: the class name
+ * still lands in the markup, so nothing errors — the element just renders
+ * unstyled, which is how the 132px media strip collapsed to a bare caption. */
+@source "./lib/**/*.{ts,tsx}";

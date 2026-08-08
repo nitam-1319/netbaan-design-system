@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/PageHeaderBand/Guidelines" />
+
+# Page Header Band
+
+The console's page header: kicker, title and counts line on an accent-tinted hero
+surface, with the page's actions at the inline end.
+
+## Overview
+
+Every page in the console opens the same way. The band gives that opening a fixed
+weight and a fixed light — a hairline-bordered surface with a diagonal accent tint,
+two blurred aurora ellipses drifting behind the content, and a spotlight that
+follows the pointer. A header sitting bare on the page background is the pattern
+this replaces.
+
+## Usage
+
+- **Do** make it the first element of the page's content column, with the page's
+  normal rhythm below it.
+- **Do** put the page's actions in `actions`, outline before primary.
+- **Do** let it own the `<h1>` — a page has one title and this is it.
+- **Don't** substitute `Card variant="beam"`. The beam is a different motif; a page
+  carries at most one and it belongs on the primary button, never on the band.
+- **Don't** add a hover lift or a border colour change. The header is a landmark,
+  not a control — only the spotlight moves.
+- **Don't** nest it inside another blurred or `backdrop-filter` surface, and don't
+  add more blobs. Two composited blur layers per page is the budget.
+
+## Anatomy
+
+A `<header>` (`data-slot="page-header-band"`) whose background is two layers: a
+280px pointer-tracked spotlight over a 135° accent tint. Behind the content sit two
+`aria-hidden` aurora spans; above it, the title block (kicker, `<h1>`, meta) and the
+action group, both raised out of the aurora's stacking level.
+
+## Behavior
+
+- **Hover** — the spotlight follows the pointer via `--mx` / `--my`, set from
+  `pointermove` relative to the band. Nothing else responds.
+- **Idle** — the aurora drifts continuously on two different periods (15s and 20s,
+  one reversed) so the motion never resolves into a visible loop.
+- **Reduced motion** — the aurora is decorative and is swept by the global rule,
+  parking both ellipses on their resting frame; the static gradient remains. The
+  spotlight is pointer-driven rather than animated, so it is unaffected.
+
+## Accessibility
+
+- The band renders the page's `<h1>`, so the document keeps one top-level heading.
+- Both aurora spans are `aria-hidden` and `pointer-events: none` — decoration is
+  never announced and never intercepts a click.
+- Contrast is unaffected: the tint tops out at 14% of `--primary` over `--card`.
+
+## RTL
+
+The blobs are anchored with `inset-inline-start` / `inset-inline-end`, so the
+composition mirrors with the document. Their drift is a physical translate on
+purpose — they are out-of-focus light sources, not content.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--primary` | Spotlight, base tint, first aurora blob. |
+| `--accent-strong` | Second aurora blob. |
+| `--card` | The band's base surface. |
+| `--border` | The hairline. |
+| `--foreground`, `--muted-foreground` | Title; kicker and meta. |
+| `--animate-aurora`, `--animate-aurora-slow` | The two drift periods. |
+
+No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `kicker` | `ReactNode` | — | Uppercase eyebrow above the title. |
+| `title` | `ReactNode` | — | The page title, rendered as `<h1>` (required). |
+| `meta` | `ReactNode` | — | Counts / context line under the title. |
+| `actions` | `ReactNode` | — | Page actions at the inline end. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default**, **TitleOnly**, and **LongTitle** stories.

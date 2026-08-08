@@ -11,6 +11,69 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.3.0]
+
+Minor: five additive components, one additive prop, and a build fix that
+restores styling the 0.2.x releases shipped broken. **No breaking changes — no
+migration required.** Component count 215 → 220.
+
+### Fixed
+
+#### Utility classes declared in `src/lib/` were dropped from the build
+`src/styles.css` only scanned `./components/**`, so Tailwind never saw the class
+names in `src/lib/media.ts`. The names still landed in the markup, so nothing
+errored — the elements just rendered unstyled. In practice the asset cards' 132px
+media strip collapsed to a bare caption. `styles.css` now also scans `./lib/**`.
+**This affects anyone on 0.2.0 or 0.2.1 using `ScreenshotThumb`,
+`MiniLocationMap` or `AssetTriageCard`** — upgrade to pick up the fix.
+
+### Added
+
+- **`SeverityDonut`** — the findings ring, one wedge per severity sized by its
+  share with the total in the hole. One component with a `size` prop, rather
+  than a separate drawing per surface. It owns the severity order, omits zero
+  rungs, drops the gap when only one rung is populated, and fits the centre
+  label so a four-digit total stays inside the hole instead of pushing its card
+  taller.
+- **`SeverityLegend`** — the five-rung tally that sits under a page title: one
+  pill per severity carrying its colour, its name, and its count.
+- **`PageHeaderBand`** — the console's page header: kicker, title and counts
+  line on an accent-tinted hero surface, with the page's actions at the inline
+  end.
+- **`TrendBars`** — a findings-over-time strip, one bar per period with the
+  newest emphasised. Every period's value is spelled out for assistive tech, so
+  the trend is never bar-height-only.
+- **`ScanSwitcher`** — makes "which scan am I looking at?" answerable on an
+  asset detail page: newer/older steppers either side of the current scan, with
+  a Latest/Historical pill.
+
+#### `AssetTriageCard` — new `findingsTone` prop
+Additive, defaults to `"muted"` (the previous appearance). Accepts `"muted" |
+"default" | "high" | "critical"` to escalate the footer findings readout as the
+count climbs. How many findings count as alarming stays the consuming app's
+policy; the prop only says how each rung is drawn.
+
+#### Theme — aurora drift for `PageHeaderBand`
+`--animate-aurora` and `--animate-aurora-slow`: two blurred ellipses drifting
+behind the page title on deliberately mismatched periods, one reversed, so they
+never resynchronise into a visible loop. Decorative, and swept by the existing
+reduced-motion rule onto the resting frame.
+
+### Changed (no API break)
+
+#### `AssetTriageCard` — `href` now makes the whole card the hit target
+Previously only the title text was the link. With `href` set the card is now a
+single stretched anchor, matching `CitationSourceCard` and
+`FindingVulnerabilityCard`: the title is still the accessible name, but a click
+anywhere on the card — media included — follows it. The prop and its type are
+unchanged. If you relied on clicks landing only on the title, that behaviour is
+gone.
+
+Internally the card now composes `SeverityDonut` instead of `DonutChart`, and
+its footer is bottom-aligned so footers in a stretched grid row share a baseline.
+
+---
+
 ## [0.2.1]
 
 **No package changes.** The published tarball is identical to `0.2.0` — same

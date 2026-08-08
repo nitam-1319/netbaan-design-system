@@ -1,0 +1,73 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SeverityLegend/Guidelines" />
+
+# Severity Legend
+
+The five-rung tally that sits under a page title: one pill per severity carrying
+its colour, its name, and how many findings sit on it.
+
+## Overview
+
+A triage page needs a single line that answers "how bad is it here?" before the
+reader looks at anything else. Severity Legend is that line. It uses the same rung
+order and the same inks as the breakdown inside **Asset Triage Card**, so moving
+from the header to a card never means re-learning what a colour means.
+
+## Usage
+
+- **Do** put it directly under the page title, above the toolbar and the grid.
+- **Do** feed it totals summed across the **fetched set**, so the legend and the
+  cards below it can never disagree.
+- **Do** pass translated `labels` — the component ships no copy of its own.
+- **Don't** use it to label chart series without quantities; that is **Chart
+  Legend**.
+- **Don't** substitute a row of **Badge**s with `count`: a counted Badge shows the
+  number *instead of* its label, so the rung goes unnamed.
+- **Don't** hide zero rungs. A legend whose width changes with the data cannot be
+  read at a glance.
+
+## Anatomy
+
+A `<dl>` (`data-slot="severity-legend"`) of five pills, each
+`data-slot="severity-legend-item"` and tagged `data-severity`. A pill is a dot, a
+`<dt>` name, and a `<dd>` count set in mono with tabular figures.
+
+## States
+
+- **Default** — every rung populated.
+- **With zeros** — empty rungs keep their pill; the count reads `0`.
+- **All clear** — nothing found yet; the legend still names all five rungs.
+
+## Accessibility
+
+- The tally is a description list, so each name is programmatically tied to its
+  count rather than merely sitting beside it.
+- `label` names the whole group; the dots are `aria-hidden` because the rung name is
+  already text.
+- Colour never carries meaning alone — every rung is spelled out.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `bg-surface-2`, `border-border` | The pill. |
+| `--sev-critical` … `--sev-info` | Rung dots. |
+| `text-muted-foreground` | Rung name. |
+| `text-foreground` | The count. |
+
+No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name for the tally (required). |
+| `counts` | `Record<Severity, number>` | — | Findings per rung; all five render. |
+| `labels` | `Record<Severity, string>` | — | Translated rung names. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default**, **WithZeros**, and **AllClear** stories.

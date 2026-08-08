@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/TrendBars/Guidelines" />
+
+# Trend Bars
+
+A findings-over-time strip: one bar per period, the newest emphasised. It answers
+"is this getting worse?" at a glance.
+
+## Overview
+
+It lives inside a detail card, usually beside `SeverityDonut` — the donut says
+what the findings are, the strip says which way they are going. It is fixed
+height, has no axes, and reads as texture rather than as a chart.
+
+## Usage
+
+- **Do** reach for it inside a card header block, where a real chart would dwarf
+  its neighbours.
+- **Do** pass periods oldest first — the strip reads left to right (and mirrors
+  under RTL with the document).
+- **Do** keep labels short. They never wrap, and a long label forces the column
+  wider than its bar.
+- **Don't** use it where a reader must compare exact values or read a total. That
+  is `BarChart`: axes, gridlines, tooltips and a series definition.
+- **Don't** hand it a single datum. One bar scaled against itself is always full
+  height and says nothing; show the number instead.
+
+## Anatomy
+
+A `role="img"` row of columns (`data-slot="trend-bars-column"`), each a bar
+(`data-slot="trend-bars-bar"`) over a mono period label, followed by a
+visually-hidden list of `label: value` pairs.
+
+## Scaling
+
+Bars are scaled against **the tallest value in the set**, not a fixed ceiling: the
+strip shows shape over time, and a fixed ceiling flattens a quiet asset into an
+unreadable row of stubs.
+
+Every bar keeps a **6px floor**, so a period with zero findings still renders as a
+period. A gap in the strip would read as missing data rather than as "nothing
+found".
+
+## Emphasis
+
+| `emphasis` | Reading |
+| --- | --- |
+| `"last"` (default) | The final bar is `--primary` at full strength — "where we are now". |
+| `"none"` | Every bar alike — a distribution, with no privileged period. |
+
+The emphasis replaces a legend: with one bar louder than the rest, no key is
+needed to find the current period.
+
+## States
+
+- **Zero period** — 6px floor, still labelled.
+- **All-equal values** — a flat strip at full height, not a collapse to the floor.
+- **Empty `data`** — nothing is drawn. Render an `EmptyState` in the card instead;
+  the strip does not own that copy.
+
+## Accessibility
+
+- The bar row is `role="img"` with the required `label`.
+- Bars and labels are `aria-hidden`; the numbers are exposed once, as a
+  visually-hidden list, so a screen reader gets every value without hearing the
+  labels twice.
+- Format the spoken values with `formatValue` so they match the page's locale.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--primary` | The emphasised bar. |
+| `--primary` at 62% transparency | Every other bar. |
+| `--muted-foreground` | Period labels. |
+
+No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name (required). |
+| `data` | `{ label: ReactNode; value: number }[]` | — | One entry per period, oldest first (required). |
+| `emphasis` | `"last" \| "none"` | `"last"` | Whether the final period is privileged. |
+| `formatValue` | `(n: number) => string` | `toLocaleString()` | Formatting for the spoken values. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **TwelveMonths**, **NoEmphasis**, **WithZeroPeriods**, **ShortSeries** and
+**Flat**.

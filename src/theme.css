@@ -136,6 +136,14 @@
     --animate-donut-in: donutIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     --animate-panel-in: panelIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
 
+    /* PageHeaderBand aurora — two blurred ellipses drifting behind the page
+       title. The periods are deliberately coprime-ish and one runs in reverse:
+       matched periods would resynchronise every cycle and read as a loop.
+       Both are decorative and are swept by the reduced-motion rule below, which
+       parks them on the 100% frame — the resting transform. */
+    --animate-aurora: aurora 15s ease-in-out infinite;
+    --animate-aurora-slow: aurora 20s ease-in-out infinite reverse;
+
     /* E1 — elevation scale exposed as `shadow-elevation-*` utilities. */
     --shadow-elevation-0: var(--elevation-0);
     --shadow-elevation-1: var(--elevation-1);
@@ -777,6 +785,18 @@
 @keyframes panelIn {
     from { opacity: 0; transform: translateX(calc(24px * var(--panel-dir, 1))); }
     to { opacity: 1; transform: none; }
+}
+
+/* Aurora drift for the page header band. Physical translate on purpose: these
+   are out-of-focus light sources, not content, so they do not mirror in RTL —
+   the blobs' anchor points are logical (inset-inline-*), which is what actually
+   mirrors the composition. The 0% and 100% frames are identical so the sweep
+   under reduced motion lands on the resting position. */
+@keyframes aurora {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(46px, 24px) scale(1.18); }
+    66% { transform: translate(-34px, 12px) scale(0.9); }
+    100% { transform: translate(0, 0) scale(1); }
 }
 
 /* A5 — opacity-only substitute for pulseDot under reduced motion. The scale

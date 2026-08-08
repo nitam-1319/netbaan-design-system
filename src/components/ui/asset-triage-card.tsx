@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
-import { DonutChart } from "@/components/ui/donut-chart"
+import { SeverityDonut } from "@/components/ui/severity-donut"
 import { StatusPill, type StatusPillProps } from "@/components/ui/status-pill"
 import { type Severity } from "@/components/ui/severity-badge"
 
@@ -41,6 +41,12 @@ import { type Severity } from "@/components/ui/severity-badge"
  * the severity ramp), so ring, dots, and counts agree by construction. Hover lift,
  * accent border, and the pointer-tracked spotlight all come from `Card`
  * `interactive` — nothing is restyled here.
+ *
+ * When `href` is set the whole card becomes a single link (a stretched anchor),
+ * matching `CitationSourceCard` and `FindingVulnerabilityCard`: the title is the
+ * accessible name, and the entire surface is the hit target — so the hover lift
+ * and `cursor-pointer` the card already shows are honoured by a click anywhere
+ * on it, not just on the title text.
  *
  * Public API is CLOSED — no `className` / `style`; labels are `ReactNode` so the
  * consuming app owns translation. Colour is token-only.
@@ -97,6 +103,25 @@ const gradeVariants = cva(
 
 type GradeTone = "a" | "b" | "c" | "d" | "f"
 
+/**
+ * Ink for the footer findings readout. How many findings count as alarming is
+ * policy the consuming app owns (it knows the product's thresholds); this only
+ * says how each rung is drawn.
+ */
+const findingsVariants = cva("font-mono text-[11px] font-semibold tabular-nums", {
+  variants: {
+    tone: {
+      muted: "text-muted-foreground",
+      default: "text-foreground",
+      high: "text-sev-high-ink",
+      critical: "text-sev-critical-ink",
+    },
+  },
+  defaultVariants: { tone: "muted" },
+})
+
+type FindingsTone = "muted" | "default" | "high" | "critical"
+
 /** Map a grade letter to its tile tone. Unmapped grades fall back to `"c"`. */
 function toneForGrade(grade: string | null | undefined): GradeTone {
   const letter = (grade ?? "").trim().toLowerCase().charAt(0)
@@ -143,7 +168,13 @@ type AssetTriageCardProps = {
   grade?: string | null
   /** Findings readout in the footer (e.g. "24 findings"). */
   findings?: React.ReactNode
-  /** Detail link. When set the card is interactive and the title is the link. */
+  /** Ink for that readout — escalate it as the count climbs. Default `"muted"`. */
+  findingsTone?: FindingsTone
+  /**
+   * Detail link. When set the whole card becomes a single link (a stretched
+   * anchor), so the title is the accessible name and the entire surface — media
+   * included — is the hit target.
+   */
   href?: string
 }
 
@@ -163,27 +194,20 @@ function AssetTriageCard({
   formatPortOverflow = (count) => `+${count}`,
   grade,
   findings,
+  findingsTone = "muted",
   href,
 }: AssetTriageCardProps) {
-  const total = SEVERITY_ORDER.reduce(
-    (sum, rung) => sum + Math.max(0, severities[rung] ?? 0),
-    0
-  )
-
-  const donutData = SEVERITY_ORDER.map((rung) => ({
-    key: rung,
-    label: severityLabels[rung],
-    value: Math.max(0, severities[rung] ?? 0),
-  }))
-
   const shownPorts = ports?.slice(0, Math.max(0, maxPorts)) ?? []
   const overflow = (ports?.length ?? 0) - shownPorts.length
 
   return (
     <Card variant="default" interactive={href != null}>
-      <div className="-my-6 flex flex-col">
+      {/* `flex-1` down this chain, then `mt-auto` on the footer: when the card is
+          stretched by its grid track, the slack collects above the footer instead
+          of below it, so every footer in a row sits on the same line. */}
+      <div className="-my-6 flex flex-1 flex-col">
         {/* Media — full-bleed to the card edge, with the status pill floated over it. */}
-        <div className="relative overflow-hidden rounded-t-xl">
+        <div className="relative shrink-0 overflow-hidden rounded-t-xl">
           {media}
           {statusLabel != null ? (
             <span
@@ -197,7 +221,7 @@ function AssetTriageCard({
           ) : null}
         </div>
 
-        <div className="flex flex-col gap-3.5 px-4 py-3.5">
+        <div className="flex flex-1 flex-col gap-3.5 px-4 py-3.5">
           {/* Identity */}
           <div className="flex min-w-0 flex-col gap-0.5">
             <span className="flex min-w-0 items-baseline gap-2">
@@ -208,7 +232,7 @@ function AssetTriageCard({
                 {href != null ? (
                   <a
                     href={href}
-                    className="outline-none hover:underline focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-accent-soft"
+                    className="outline-none after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:after:ring-3 focus-visible:after:ring-accent-soft"
                   >
                     {title}
                   </a>
@@ -234,27 +258,11 @@ function AssetTriageCard({
 
           {/* Severity: the ring, then every rung spelled out beside it. */}
           <div className="flex items-center gap-3">
-            <span className="relative shrink-0">
-              <DonutChart
-                label={chartLabel}
-                data={donutData}
-                width={58}
-                height={58}
-                innerRatio={0.52}
-                padAngle={3}
-                margin={{ top: 4, right: 4, bottom: 4, left: 4 }}
-                showLegend={false}
-                showCenterLabel={false}
-              />
-              {/* Centre total as HTML so it keeps the display face and card-scale
-                  type rather than the chart's own heading size. */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0 flex items-center justify-center font-heading text-[15px] font-bold tabular-nums text-foreground"
-              >
-                {total}
-              </span>
-            </span>
+            {/* `SeverityDonut`, not `DonutChart`: it owns the fixed 58px box, the
+                severity order, the "omit zero rungs / drop the gap for a lone
+                rung" rules, and the centre-label fit that keeps a four-digit
+                total inside the hole instead of pushing the card taller. */}
+            <SeverityDonut counts={severities} chartLabel={chartLabel} />
 
             <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-3.5 gap-y-[3px]">
               {SEVERITY_ORDER.map((rung) => {
@@ -325,7 +333,7 @@ function AssetTriageCard({
 
           {/* Footer: the grade, and how much is outstanding. */}
           {grade != null || findings != null ? (
-            <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
+            <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-3">
               {grade != null ? (
                 <span
                   data-slot="asset-triage-card-grade"
@@ -340,7 +348,8 @@ function AssetTriageCard({
               {findings != null ? (
                 <span
                   data-slot="asset-triage-card-findings"
-                  className="font-mono text-[11px] tabular-nums text-muted-foreground"
+                  data-tone={findingsTone}
+                  className={cn(findingsVariants({ tone: findingsTone }))}
                 >
                   {findings}
                 </span>
@@ -354,4 +363,4 @@ function AssetTriageCard({
 }
 
 export { AssetTriageCard, gradeVariants as assetTriageGradeVariants, toneForGrade }
-export type { AssetTriageCardProps, AssetTriageCardPort, GradeTone }
+export type { AssetTriageCardProps, AssetTriageCardPort, GradeTone, FindingsTone }

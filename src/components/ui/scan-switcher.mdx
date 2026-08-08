@@ -1,0 +1,154 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScanSwitcher/Guidelines" />
+
+# Scan Switcher
+
+The control that makes "which scan am I looking at?" answerable on an asset detail
+page. Three parts, one selection.
+
+## Overview
+
+| Part | Where it goes |
+| --- | --- |
+| `ScanSwitcher` | Beside the page's tabs — label, older/newer arrows, trigger, listbox. |
+| `ScanHistoryList` | Inside the scan-history card: the same selection as rows. |
+| `HistoricalScanBanner` | Under the tabs, whenever the selection is not the newest scan. |
+
+They exist as three because a detail page that quietly re-reads itself from a past
+scan is a page that lies — the figures change and nothing says so. The selection is
+therefore stated three times over, and the three cannot disagree because they are
+one controlled value.
+
+## Usage
+
+- **Do** order `options` **newest first**. That is how a scan list reads, and the
+  arrows are wired to it: "older" steps forward through the array.
+- **Do** render `HistoricalScanBanner` for the whole time the selection is not the
+  latest scan — not as a toast on change. A reader who arrives by deep link needs
+  it as much as one who clicked.
+- **Do** keep the switcher and the history list on the same state. Two independent
+  selections is the defect this component was built to remove.
+- **Do** format dates and translate status words in the app. This component never
+  formats a date and never names a scan status.
+- **Don't** substitute a plain `Select`. It has no arrows, no per-scan status, and
+  nothing to say that the page has moved.
+- **Don't** hide the switcher when there is exactly one scan — show it, disabled by
+  virtue of having nothing to step to. Hiding it removes the answer to "which scan
+  is this?".
+- **Don't** use `--destructive` for the banner. A historical view is a caveat, not
+  a failure; it carries `--sev-high` at a low mix.
+
+## Anatomy
+
+**Switcher** — an uppercase lead-in, a 32 × 34 stepper, a 34px-high trigger
+carrying a 7px tone dot · the date in mono `tabular-nums` · the Latest/Historical
+badge · a chevron, then the second stepper. The popup is a 300px listbox capped at
+300px tall.
+
+**History row** — a 4-column grid: 8px tone dot · date + note · the `VIEWING`
+marker · a `StatusPill`. The marker's slot is reserved with `visibility`, never
+`display`, so moving the selection cannot shift the other columns under the
+pointer.
+
+**Banner** — a full-width strip with the admission on the inline start and the way
+back on the inline end.
+
+## Tones
+
+`tone` is semantic, exactly as on `StatusPill` — the design system does not
+hard-code a scanner's state machine. The app maps its own vocabulary:
+
+| Scan state | Suggested tone |
+| --- | --- |
+| Completed | `success` |
+| Running | `info` |
+| Failed | `danger` |
+| Stopped / scheduled | `neutral` |
+
+## States
+
+- **Newest selected** — the "newer" stepper is disabled; the trigger reads Latest.
+- **Oldest selected** — the "older" stepper is disabled.
+- **Single scan** — both steppers disabled, listbox with one option.
+- **No scans** — render an `EmptyState` in the card instead. `ScanSwitcher`
+  renders nothing when it cannot resolve a selection; it does not invent copy.
+- **Selected scan failed or running** — still selectable. The row's tone and status
+  word carry the state; the page keeps showing the last known figures rather than
+  blanking.
+
+## Accessibility
+
+- The trigger is a `combobox` with `aria-haspopup="listbox"` and `aria-expanded`;
+  the popup is a `listbox` and each row an `option` with `aria-selected`. Keyboard
+  navigation, typeahead, Escape-to-close and focus return come from the Base UI
+  Select primitive.
+- The steppers are icon-only buttons and require `olderLabel` / `newerLabel`.
+- History rows are buttons carrying `aria-current` on the selection, plus a
+  `rowLabel` naming what activating them does.
+- `HistoricalScanBanner` is `role="status"` / `aria-live="polite"`, so stepping
+  through scans is announced and not only drawn.
+
+## Motion
+
+The popup enters with the shared `animate-menu-in`. Nothing else moves; both
+steppers and rows are colour-only transitions, swept by the global reduced-motion
+rule.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--surface`, `--border` | Trigger and steppers. |
+| `--card`, `--elevation-4` | Listbox popup. |
+| `--accent-soft`, `--primary` | Hover, selected row fill and its inset rail. |
+| `--success` / `--primary` / `--warning` / `--destructive` / `--muted-foreground` | Tone dots. |
+| `--sev-high` | Historical banner fill and border, at low mixes. |
+
+No colour is hard-coded.
+
+## API
+
+### `ScanOption`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Stable scan id — the switcher's value. |
+| `date` | `ReactNode` | Formatted, localised date. |
+| `note` | `ReactNode` | Optional one-line note under the date. |
+| `statusLabel` | `ReactNode` | Translated status word. |
+| `tone` | `ScanTone` | Dot and pill tone. Default `"neutral"`. |
+| `isLatest` | `boolean` | Marks the newest scan. |
+
+### `ScanSwitcher`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `label` | `ReactNode` | Uppercase lead-in (required). |
+| `options` | `ScanOption[]` | Newest first (required). |
+| `value` / `onValueChange` | `string` / `(id) => void` | Controlled selection (required). |
+| `listLabel` | `string` | Accessible name for the listbox (required). |
+| `latestLabel` / `historicalLabel` | `ReactNode` | Trigger badge copy (required). |
+| `olderLabel` / `newerLabel` | `string` | Stepper accessible names (required). |
+
+### `ScanHistoryList`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `options` | `ScanOption[]` | Newest first (required). |
+| `value` / `onValueChange` | `string` / `(id) => void` | Controlled selection (required). |
+| `viewingLabel` | `ReactNode` | Marker on the selected row (required). |
+| `rowLabel` | `(option) => string` | Accessible name per row (required). |
+
+### `HistoricalScanBanner`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `ReactNode` | The admission — which scan the figures come from (required). |
+| `action` | `ReactNode` | The way back, at the inline end. |
+
+The API is closed: `className` and `style` are not accepted on any part.
+
+## Examples
+
+See **Latest**, **Historical**, **Oldest**, **OpenListbox** and **FullSurface**.

@@ -2,9 +2,10 @@
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { ImageOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { MEDIA_FRAME, MEDIA_HATCH, MEDIA_SIZE } from "@/lib/media"
+import { MEDIA_EMPTY_STACK, MEDIA_FRAME, MEDIA_HATCH, MEDIA_SIZE } from "@/lib/media"
 
 /**
  * AEGIS — Screenshot Thumb
@@ -80,11 +81,10 @@ function ScreenshotThumb({
           className="size-full object-cover object-top"
         />
       ) : (
-        <span
-          data-slot="screenshot-thumb-empty"
-          className="px-3 text-center font-mono text-[11px] text-muted-foreground"
-        >
-          {emptyLabel}
+        <span data-slot="screenshot-thumb-empty" className={cn(MEDIA_EMPTY_STACK)}>
+          {/* The icon carries the meaning at a glance; the caption states it. */}
+          <ImageOff aria-hidden className="size-4 opacity-70" />
+          <span className="font-mono text-[11px]">{emptyLabel}</span>
         </span>
       )}
     </div>

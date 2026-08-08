@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { donutLabelSize } from "@/lib/donut-label"
 import {
   CAT_PALETTE,
   CHART_PALETTE,
@@ -63,12 +64,14 @@ const rootVariants = cva("flex items-center gap-4", {
   defaultVariants: { size: "sm" },
 })
 
+/**
+ * The hole is fixed, so the type adapts, never the ring. The size itself comes
+ * from the shared ladder in `@/lib/donut-label` (see `SeverityDonut`); a fixed
+ * size overflowed the hole and collided with the ring once the total reached
+ * four digits with a separator.
+ */
 const centerValueVariants = cva(
-  "font-heading font-bold tabular-nums tracking-[-0.02em] text-foreground",
-  {
-    variants: { size: { sm: "text-base", md: "text-xl" } },
-    defaultVariants: { size: "sm" },
-  }
+  "whitespace-nowrap font-heading font-bold tabular-nums tracking-[-0.03em] text-foreground leading-none"
 )
 
 const swatchVariants = cva("shrink-0 size-2", {
@@ -191,7 +194,11 @@ function BreakdownDonut({
           aria-hidden
           className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
         >
-          <span className={cn(centerValueVariants({ size }))}>
+          <span
+            data-slot="breakdown-donut-total"
+            style={{ fontSize: `${donutLabelSize(ring.box, String(valueFormat(total)))}px` }}
+            className={cn(centerValueVariants())}
+          >
             {valueFormat(total)}
           </span>
           {centerSublabel != null && (

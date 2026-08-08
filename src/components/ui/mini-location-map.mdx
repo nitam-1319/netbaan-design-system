@@ -4,92 +4,109 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 # Mini Location Map
 
-The locator strip that opens an IP card: a dark regional map cropped around one
-point, with a pulsing marker and a chip naming the place. Where a domain card shows
-what a host looks like, an IP card shows where it is.
+The locator strip that opens an IP card: a dark regional map centred on one
+address, with a pulsing marker and a chip naming the place.
 
 ## Overview
 
-An IP address is unreadable on its own. A map turns it into something a person can
-reason about — a region, a jurisdiction, a provider's footprint — in the same glance
-that a screenshot gives for a domain.
+The map is location **evidence**, not decoration. A reviewer has to be able to tell
+which country an address sits in, which is why **country borders are a required
+layer** — a render showing only sea and a land silhouette fails the job.
+
+It is the sibling of **Screenshot Thumb** for the same card media slot, at the same
+heights: a domain card shows what a host looks like, an IP card shows where it is.
 
 ## Usage
 
-- **Do** use it as the `media` slot of an **Asset Triage Card** for IP addresses.
-- **Do** run your projection upstream (d3-geo, world-atlas, or geometry the backend
-  serves) and pass the resulting `d` strings — project once at module scope and
-  reuse across the grid.
-- **Do** pass `marker` already projected into the same coordinate space as `paths`.
-- **Don't** expect it to project, fetch, or bundle topology — it renders, exactly
-  like **Geo / Choropleth Map**.
-- **Don't** use it to shade countries by a value (that is **Geo / Choropleth Map**)
-  or to rank a fleet by country (**Hosts By Country Map**).
-- **Don't** guess a location when the data has none — omit `marker` and let the
-  empty state say so.
+- **Do** pass real `lat` / `lon`; the component centres its own projection on them.
+- **Do** supply `geometry` from a build-time dataset and share one object across
+  the whole grid, so it is parsed once per session.
+- **Don't** guess a location when the data has none — leave `lat` / `lon` null and
+  let the empty slot say so. An unplaceable IP must never be drawn somewhere
+  plausible, least of all at 0,0.
+- **Don't** use it as a general map. It frames one point at one scale; a country
+  or region view is **GeoChoroplethMap**.
 
 ## Anatomy
 
-A fixed-height band holding an `<svg>` cropped to a window around the marker (land
-paths in `--surface-3`, hairline `--border`), an HTML marker overlay (a 9px dot
-under an `animate-ping` ring), and an optional bottom-start chip carrying the place
-name plus the operator in mono.
+A fixed-height band holding an `<svg>` of five stacked layers, an HTML marker
+overlay (a 9px dot under a ping ring), and an optional bottom-start chip carrying
+the place name plus the operator in mono.
 
-## Variants
+Layers, bottom to top — all five are required:
 
-`size` sets the media height: `sm` (104px), `md` (132px, default), `lg` (168px) —
-the same rungs as **Screenshot Thumb**, so mixed grids stay aligned.
+| # | Layer | Paint |
+| --- | --- | --- |
+| 1 | Water | `--surface` |
+| 2 | Graticule | `--border`, 40% |
+| 3 | Land fill | `--surface-3` |
+| 4 | Coastline | `--border-strong`, 1.1px |
+| 5 | Country borders | `--muted-foreground`, 0.9px, 80% |
+
+Land and coastline are the same paths — the fill stroked by its own outline — so
+they can never drift out of register. Borders are drawn lighter than the coastline
+so political divisions read first inside a landmass while the continent outline
+stays calm.
+
+## Projection
+
+The component owns the projection: a Mercator centred on the address at a fixed
+scale of 900 (one degree ≈ 15.7px). This has to happen at render time because every
+card has a different centre, and Mercator's latitude is non-linear — a single
+pre-projected frame cannot be re-centred by cropping without distorting both the
+shape and the zoom.
+
+Geometry is **not** owned here. The consuming app generates it at build time
+(Natural Earth **50m**, simplified) and passes it in, so a ~300kB dataset stays out
+of the sealed library and can be code-split by the app that needs it. 110m is not
+sufficient: at this zoom it drops nearly every internal border.
 
 ## States
 
-- **Placed** — a marker: cropped map, pulsing pin, chip.
-- **Empty** — no marker: the shared hatch with a caption and no pin at all.
-- **Reduced motion** — the ping is suppressed; the pin stays.
+- **Placed** — map, pulsing pin, chip.
+- **Unknown location** — no coordinates: the shared 135° hatch behind a `MapPinOff`
+  icon and a caption, with **no pin at all**.
+- **No place name** — map and pin, chip showing the operator alone; omitted
+  entirely when that is missing too.
 
-## Behavior
+The band is a fixed height and `shrink-0`, so every state occupies the same strip
+and a grid keeps one baseline.
 
-- `zoom` crops a window of the coordinate space around the marker, clamped so it
-  never runs past the edge of the geometry.
-- The marker lives in an HTML overlay, not the SVG, so its dot stays a true 9px at
-  any `zoom`.
-- The map is **not** mirrored in RTL: geography is not a reading order. Surrounding
-  layout still mirrors normally.
-- A malformed `viewBox` falls back to the world frame rather than rendering nothing.
+## Performance
+
+- Rings are clipped to a window around the centre **before** projecting — near a
+  typical city that is roughly an eighth of the coastline.
+- Path strings are memoised per coordinate, so a card re-rendering for any other
+  reason never re-projects.
+- Share one `geometry` object across the grid; do not parse it per card.
 
 ## Accessibility
 
-- The SVG is `role="img"` named by the required `label`; the pin and chip are
-  decorative beside it.
-- The empty caption is real text, so an unplaceable address is announced rather than
-  drawn somewhere plausible.
+- The canvas carries `role="img"` and the required `label`.
+- The marker is `aria-hidden` — the place is already named in the chip and in the
+  label, so announcing the pin adds nothing.
 
-## Design tokens
+## RTL & motion
 
-| Token / utility | Role |
-| --- | --- |
-| `bg-surface-2` | The media band. |
-| `fill-surface-3` / `stroke-border` | Land and coastlines. |
-| `bg-primary` (+ `/40` ping) | Marker dot and pulse. |
-| `bg-surface/80` + `border-border` | Location chip. |
-
-No colour is hard-coded; every value comes from an AEGIS token.
+The marker is centred with physical `left`/`top` on purpose: geography is not a
+reading order, so the map must not mirror. The chip and the empty state use logical
+properties and do mirror. The ping obeys `prefers-reduced-motion`; the static dot
+and ring remain.
 
 ## API
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `label` | `string` | — | Accessible name for the map (required). |
-| `paths` | `string[]` | — | Projected land outlines as SVG `d` strings. |
-| `viewBox` | `string` | `"0 0 960 480"` | Coordinate space of `paths`. |
-| `marker` | `{ x, y } \| null` | — | Projected point; omit for the empty slot. |
-| `zoom` | `number` | `6` | Crop tightness (1 = whole world). |
-| `location` | `ReactNode` | — | Place name for the chip. |
-| `asn` | `ReactNode` | — | Operator for the chip, set in mono. |
+| `label` | `string` | — | Accessible name (required). |
+| `lat` / `lon` | `number \| null` | — | Centre. Missing renders the empty slot. |
+| `geometry` | `{ land, borders }` | — | Flat unprojected rings. |
+| `city` / `countryCode` | `string \| null` | — | Chip place name. |
+| `asn` | `string \| null` | — | Operator, mono, after the place. |
 | `emptyLabel` | `string` | — | Caption for the empty slot (required). |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Media height. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Media height (104 / 132 / 168px). |
 
 The API is closed: `className` and `style` are not accepted.
 
 ## Examples
 
-See the **Placed**, **Unknown**, and **Zoom** stories.
+See **Placed**, **UnknownLocation**, **Antimeridian**, and **Sizes**.

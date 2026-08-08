@@ -1,0 +1,117 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SeverityDonut/Guidelines" />
+
+# Severity Donut
+
+The findings ring: one wedge per severity, sized by its share, with the total in
+the hole. One component with a `size` prop — not a separate drawing per surface.
+
+## Overview
+
+The 58px rung opens an asset card; the 84px rung anchors the vulnerabilities
+summary bar. Both draw the same ring in the same fixed order, so a reader moving
+between a card and the summary is reading one chart at two scales.
+
+## Usage
+
+- **Do** pair it with a legend beside it — the donut deliberately does not draw
+  one, because cards and the summary bar lay theirs out differently.
+- **Do** pass `palette="categorical"` for any breakdown that is not severity.
+  Reusing the severity ramp for a status split implies a badness ordering that
+  does not exist.
+- **Do** let it compute the total; override `total` only when the readout must
+  differ from the sum of the wedges.
+- **Don't** reach for `DonutChart` here. That one sizes itself to its parent and
+  takes a generic series; this one owns the severity order, the gap rule and the
+  centre-label fit.
+- **Don't** wrap it in a fixed-size box to "fix" the label — the label already
+  adapts, and the ring must not.
+
+## Anatomy
+
+A sized `<span>` (`data-slot="severity-donut"`) holding an `<svg>` of wedge
+`<path>`s (each tagged `data-severity`) under an absolutely-centred readout
+(`data-slot="severity-donut-total"`), plus an optional caption at `size={84}`.
+
+Wedges are real arcs — arc out, line in, arc back, close — not dashed strokes: a
+dash offset cannot hold a true angular gap at both ends, and the inner edge has to
+be a straight radial line for the hole to read as a hole.
+
+## Geometry
+
+| | Card (58) | Summary (84) |
+| --- | --- | --- |
+| viewBox | `0 0 58 58` | `0 0 84 84` |
+| Outer radius | 25 | 34 |
+| Inner radius | 13 | 21 |
+| Gap | 3° | 3° |
+
+The ring starts at 12 o'clock and runs clockwise: critical → high → medium → low
+→ info.
+
+## States
+
+- **Zero rung** — omitted from the ring, still listed in the legend. A zero-width
+  wedge would cost a gap and imply a sliver that is not there.
+- **Single non-zero rung** — the gap drops to 0. A full circle with a notch in it
+  reads as missing data rather than "all of it".
+- **All clear** — no wedges; the hole still reads `0`.
+
+## Centre label
+
+The hole is a fixed size, so the type adapts, never the ring. Size steps with the
+length of the **formatted** total — thousands separators count, so `3,412` is five
+characters, not four.
+
+| Card (26px hole) | Summary (42px hole) |
+| --- | --- |
+| ≤ 2 chars → 15px | ≤ 3 chars → 17px |
+| 3 chars → 12.5px | 4 chars → 15px |
+| 4 chars → 10.5px | 5–6 chars → 13px |
+| 5+ chars → 9px | 7+ chars → 11px |
+
+This is deliberate and lives inside the component: at a fixed size, three- and
+four-digit totals overflowed the hole, collided with the ring, and pushed the
+card's layout. No consumer can reintroduce that.
+
+## Motion
+
+Entrance is `opacity 0` + `scale(.85) rotate(-14deg)` → none over 700ms. It is
+decorative and is frozen by the global reduced-motion rule.
+
+## Accessibility
+
+- The ring carries `role="img"` and the required `chartLabel`.
+- The centre readout is `aria-hidden` — the total is already in the accessible
+  name and in the legend, so announcing it twice adds noise.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--sev-critical` … `--sev-info` | Wedges, severity palette. |
+| `--cat-1` … `--cat-5` | Wedges, categorical palette. |
+| `--foreground` | Centre readout. |
+| `--muted-foreground` | Caption. |
+| `--animate-donut-in` | Entrance. |
+
+No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `counts` | `Record<Severity, number>` | — | Findings per rung (required). |
+| `size` | `58 \| 84` | `58` | Ring size. |
+| `palette` | `"severity" \| "categorical"` | `"severity"` | Wedge colours. |
+| `total` | `number` | sum of `counts` | Centre readout value. |
+| `label` | `ReactNode` | — | Caption under the readout (84 only). |
+| `chartLabel` | `string` | — | Accessible name (required). |
+| `formatTotal` | `(n: number) => string` | `toLocaleString()` | Readout formatting. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See **Card**, **Summary**, **SingleSeverityNoGap**, and **CentreLabelFit**.

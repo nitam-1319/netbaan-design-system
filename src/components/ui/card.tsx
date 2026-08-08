@@ -44,11 +44,26 @@ type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
      * animates its clickable nav cards).
      */
     interactive?: boolean
+    /**
+     * Full-bleed body. Drops the card's block padding and inter-slot gap so a
+     * divided `List`, a `Table` or a `ScanHistoryList` runs edge to edge, and puts
+     * a hairline under the header to separate it from the first row.
+     *
+     * This is the "card with a header over a list" shape, which the padded default
+     * cannot express: a resting card's 24px block padding leaves rows floating
+     * inside a frame, and rows that carry their own inset instead end up
+     * double-padded. The slots keep their own vertical rhythm in this mode, so the
+     * header does not collapse.
+     *
+     * Not for prose or form content — those want the padded default.
+     */
+    flush?: boolean
   }
 
 function Card({
   variant = "default",
   interactive = false,
+  flush = false,
   children,
   onMouseMove,
   ...props
@@ -93,9 +108,17 @@ function Card({
       data-slot="card"
       data-variant={variant ?? "default"}
       data-interactive={interactive || undefined}
+      data-flush={flush || undefined}
       onMouseMove={handleMouseMove}
       className={cn(
         cardVariants({ variant }),
+        flush && [
+          "gap-0 overflow-clip py-0",
+          // The slots supply their own rhythm once the root stops doing it.
+          "[&>[data-slot=card-header]]:border-b [&>[data-slot=card-header]]:border-border [&>[data-slot=card-header]]:pt-4 [&>[data-slot=card-header]]:pb-3.5",
+          "[&>[data-slot=card-content]]:py-5",
+          "[&>[data-slot=card-footer]]:border-t [&>[data-slot=card-footer]]:border-border [&>[data-slot=card-footer]]:py-3.5",
+        ],
         interactive &&
           "group/card relative cursor-pointer overflow-hidden transition-[transform,border-color,box-shadow] duration-[180ms] ease-out hover:-translate-y-[3px] hover:border-primary hover:shadow-elevated"
       )}

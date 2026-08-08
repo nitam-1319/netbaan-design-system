@@ -30,7 +30,11 @@ failed, or was never taken, so a grid keeps its rhythm whatever the data does.
 
 A fixed-height, overflow-hidden band (`data-slot="screenshot-thumb"`) holding either
 an `<img>` cropped with `object-cover object-top`, or — marked `data-empty` — the
-shared 135° hatch with a centred mono caption.
+shared 135° hatch behind a centred `ImageOff` icon and a mono caption.
+
+The height is fixed, not a minimum, and the band is `shrink-0`: it occupies the same
+strip whether the capture arrived or not, so it cannot be squeezed by a flex parent
+and every card in a grid keeps one silhouette.
 
 ## Variants
 
