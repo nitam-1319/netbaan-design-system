@@ -11,6 +11,20 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.2.1]
+
+**No package changes.** The published tarball is identical to `0.2.0` — same
+components, same API, same `dist/`. Nothing to migrate, and no reason to upgrade
+from `0.2.0` except to sit on the version the release pipeline last built
+cleanly.
+
+Cut as a fresh number after `v0.2.0`'s publish could not be confirmed. The only
+repo change between the two tags is `.github/workflows/release.yml` (the release
+actions moved to `@v5`, targeting the Node 24 runner), which is not shipped in
+`files`.
+
+---
+
 ## [0.2.0]
 
 Minor rather than patch: eight additive components and one additive `Callout`
