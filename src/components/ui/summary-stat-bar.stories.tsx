@@ -92,7 +92,11 @@ export const FourCells: Story = {
     await expect(
       canvas.getByRole("region", { name: "Findings summary" })
     ).toBeInTheDocument()
-    await expect(canvas.getByText("3,412")).toBeInTheDocument()
+    // Scoped to the headline cell: both donut centres also read 3,412 (they
+    // summarise the same population), so a bare getByText matches three nodes.
+    await expect(
+      canvasElement.querySelector("[data-slot='summary-stat-value']")
+    ).toHaveTextContent("3,412")
     await expect(canvas.getByText("(up)")).toBeInTheDocument()
   },
 }

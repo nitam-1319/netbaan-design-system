@@ -11,6 +11,59 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.2.0]
+
+Minor rather than patch: eight additive components and one additive `Callout`
+tone. **No breaking changes — no migration required.** Component count 207 → 215.
+
+### Added
+
+#### Asset triage surface (5 components)
+A visual-triage grid for discovered assets, built bottom-up so the pieces are
+usable on their own:
+
+- **`ScreenshotThumb`** — website capture at a fixed media height, cropped to
+  fill. With no capture it degrades to a hatched slot with a mono caption,
+  never a broken image or an empty gap.
+- **`MiniLocationMap`** — the IP-card counterpart: a dark regional map cropped
+  around one point, with a pulsing marker and a chip naming the place.
+- **`AssetTriageCard`** — one discovered asset, opened by a picture of it.
+  Domain cards lead with a `ScreenshotThumb`, IP cards with a
+  `MiniLocationMap`; both fill the same `media` slot, so a mixed grid reads
+  uniformly.
+- **`ScoreRing`** — one bounded score as a ring with the figure printed inside;
+  arc length is the score's share of the scale, arc colour its severity band.
+  Sized for a table cell, exposed as `role="meter"`.
+- **`SummaryStatBar`** — the band that opens a list page: one card divided into
+  equal cells, each summarising the same population a different way.
+
+#### Summary primitives (2 components)
+- **`AttentionTile`** — a count and the thing it counts on a tone-tinted plate
+  ("218 · Critical findings open"); the smallest unit of a needs-attention strip.
+- **`BreakdownDonut`** — a compact ring plus a counted key, sized for a summary
+  cell rather than a chart panel. Every legend row spells out its name and its
+  count, so the breakdown is never wedge-colour-only (WCAG 1.4.1).
+
+#### Navigation (1 component)
+- **`DetailSidebar`** — a detail panel docked to the inline end that overlays
+  the page without taking it over: inspect one row while the list stays live.
+
+#### `Callout` — new `accent` tone
+Additive. `<Callout tone="accent">` renders a primary-tinted plate with a
+`Sparkles` default icon. Existing tones are unchanged.
+
+#### Theme — two decorative entrance animations
+`--animate-donut-in` (ring settling into place) and `--animate-panel-in` (panel
+arriving from the inline end, so it follows writing direction in RTL). Both are
+swept entirely by the existing reduced-motion rule — the content is fully
+legible without them.
+
+### Note on version numbering
+`0.1.1` and `0.1.2` were bumped locally but never tagged or published. `v0.1.0`
+is the previous release; nothing is missing between it and `v0.2.0`.
+
+---
+
 ## [0.1.0]
 
 Minor rather than patch: this removes `FormProviderActions`, and every shadow in
