@@ -1,0 +1,125 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SelectionRail/Guidelines" />
+
+# Selection Rail
+
+The left half of a two-panel browser: a narrow, sticky column of entities you pick
+from, with a detail panel beside it that shows what you picked.
+
+## Overview
+
+A two-panel browser only works if the rail is unmistakably the way in. This one
+answers "which row am I reading?" three ways at once — an accent edge on the open
+row, a tinted row surface, and a marker line under the label — so the selection
+survives a glance, a screenshot, and a monochrome print. The list scrolls inside a
+bounded, overscroll-contained box, and the "load more" control is pinned *under*
+that box: a control that scrolls out of reach is why accumulating lists get
+abandoned half-loaded.
+
+It is a selector, not navigation and not a menu. Rows are real `<button>`s
+carrying `aria-current`, so the open row is announced as the current one.
+
+## Usage
+
+- **Do** put the rail in the inline-start column of a two-panel layout and keep the
+  detail panel titled with the picked entity's name. The rail says which; the panel
+  says what.
+- **Do** give `hint` a sentence that names the payoff — "Select a host to open its
+  leaked records" — rather than "Choose one".
+- **Do** escalate `countTone` from a ladder your app owns, so the same figure gets
+  the same colour on every page that shows it.
+- **Do** keep `status` honest about pagination: "6 hosts loaded · page 1 of 4"
+  describes what was fetched. "6 hosts" does not.
+- **Don't** put a total across rows anywhere on the rail. Summing the counts
+  describes the pages fetched so far, not the data, and the figure moves as the
+  user loads more.
+- **Don't** reach for it when rows are destinations (that is `Sidebar`), when
+  nothing is ever "open" (that is `List`), or when there are five of something
+  rather than five hundred (that is `Tabs`).
+- **Don't** hide the load-more control while a page is in flight — pass
+  `loadingMore` and let it disable in place, so the rail does not change height
+  under the pointer.
+
+## Anatomy
+
+A card (`data-slot="selection-rail"`) in three parts: a head carrying the title,
+an inline-end `meta` figure, the `hint`, and the `status` line; a bounded scroll
+box of rows; and a pinned load-more button. Each row is a two-column grid — a
+truncated mono label over its reserved marker line, then the count `Badge` and a
+directional chevron.
+
+## Behavior
+
+- **Select** — clicking a row fires `onValueChange` with its `id`. The component is
+  controlled; the app owns which row is open.
+- **Current row** — takes `aria-current="true"`, the accent-soft surface, an
+  absolutely-positioned accent edge (a rule, not a border, so the row's geometry
+  never shifts on select), and reveals its `currentLabel`.
+- **Marker line** — reserved even when hidden, so picking a row does not reflow the
+  rail under the pointer.
+- **Scroll** — the box caps at 420px with `overscroll-behavior: contain`, so
+  reaching the end of the rail does not hand the scroll to the page.
+- **Loading** — `loading` swaps the rows for placeholders of the same geometry;
+  `loadingMore` disables the pinned control without removing it.
+- **Reduced motion** — the row's hover tint transition is dropped.
+
+## Accessibility
+
+- Rows are `<button>` elements inside a `<ul>` / `<li>`, so the rail is one keyboard
+  stop per row and reads as a list.
+- The open row carries `aria-current="true"`; the others carry nothing at all,
+  which is what makes "current" meaningful.
+- Focus is the AEGIS outline + accent-soft ring; the rail uses `focus-escape` so
+  the ring is not clipped by the card's rounded corners.
+- The chevron is `aria-hidden` — it is a direction, not information.
+- Placeholder rows are `aria-hidden`; announce load status from a live region in
+  the page if it matters.
+
+## RTL
+
+The accent edge is anchored with `inset-inline-start` and the chevron mirrors via
+`rtl:-scale-x-100`, so the whole composition flips with the document. Mono labels
+truncate from the correct end.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--card`, `--border`, `--shadow-elevation-1` | The rail's surface, hairline and lift. |
+| `--accent-soft` | Row hover and the open row's tint. |
+| `--primary` | The open row's edge, chevron and marker line. |
+| `--surface` | The pinned load-more control. |
+| `--muted-foreground`, `--foreground` | Meta/hint/status; row labels. |
+| `motion-enter` | The 180ms enter easing on the row tint. |
+| `focus-escape` | Lets the focus ring out of the clipped card. |
+
+Count chips are `Badge variant="soft"`, so their hues come from the shared tone
+ramp rather than from this component. No colour is hard-coded.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `ReactNode` | — | The rail's heading (required). |
+| `meta` | `ReactNode` | — | Short figure beside the title — a position, not a total. |
+| `hint` | `ReactNode` | — | One line telling the reader what picking a row does. |
+| `status` | `ReactNode` | — | What is loaded so far. |
+| `items` | `SelectionRailItem[]` | — | The rows, in the API's order (required). |
+| `value` | `string \| null` | `null` | The open row's `id`. |
+| `onValueChange` | `(id: string) => void` | — | Fired with the picked row's `id`. |
+| `loading` | `boolean` | `false` | Draw placeholder rows instead of `items`. |
+| `loadingCount` | `number` | `6` | How many placeholders. |
+| `empty` | `ReactNode` | — | Shown in the scroll box when there are no rows. |
+| `onLoadMore` | `() => void` | — | Shows the pinned control and fires on press. |
+| `loadMoreLabel` | `ReactNode` | — | Its label; required for it to render. |
+| `loadingMore` | `boolean` | `false` | Disables the control while a page is in flight. |
+| `sticky` | `boolean` | `true` | Stick the rail as the detail panel scrolls. |
+
+`SelectionRailItem`: `{ id, label, count?, countTone?, currentLabel?, disabled? }`.
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Default**, **NoSelection**, **Loading**, **Empty**, and **Scrolling** stories.

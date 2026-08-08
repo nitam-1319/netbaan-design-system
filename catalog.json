@@ -3778,6 +3778,43 @@
     "import": "import { ReasoningTrace } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "RecordCard",
+    "module": "record-card",
+    "category": "data-display",
+    "concept": "One harvested record — a leaked credential row, a scraped identity, a parsed log entry — drawn as a card that is collapsed by default and opens to its fields on demand.",
+    "whenToUse": [
+      "Keep records collapsed on load, on selection change, and on page change. The collapsed state is the feature",
+      "Put enough in the header to decide without opening: position, identity, an age or severity chip, the source, and a summary of what is inside",
+      "Make revealing imply opening. A revealed value the reader cannot see is a lie the interface is telling",
+      "Call `stopPropagation()` in every control you pass to `actions`, or pressing one will also toggle the card",
+      "Pass `maskedLabel` so assistive tech is told the field is hidden rather than finding it empty"
+    ],
+    "whenNotToUse": [
+      "Render a field the record does not carry. An \"Address —\" row asserts an absent value was checked for and found blank; the row simply should not be there",
+      "Phrase a `hint` as advice. \"Weak\", \"Reused ×3\" are facts about the value; \"You should rotate this\" is a different product",
+      "Mask anything that is already a hash. Masking a bcrypt string protects nothing and trains readers to click through the mask"
+    ],
+    "composesWith": [
+      "Badge",
+      "VisuallyHidden"
+    ],
+    "exports": [
+      "RecordCard",
+      "RecordCardHeader",
+      "RecordCardFields",
+      "RecordCardField",
+      "RecordCardFooter"
+    ],
+    "typeExports": [
+      "RecordCardProps",
+      "RecordCardHeaderProps",
+      "RecordCardFieldProps",
+      "RecordCardFooterProps",
+      "RecordCardTone"
+    ],
+    "import": "import { RecordCard } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "ReducedMotion",
     "module": "reduced-motion",
     "category": "utility",
@@ -4249,6 +4286,36 @@
     ],
     "typeExports": [],
     "import": "import { Select } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "SelectionRail",
+    "module": "selection-rail",
+    "category": "forms",
+    "concept": "The left half of a two-panel browser: a narrow, sticky column of entities you pick from, with a detail panel beside it that shows what you picked.",
+    "whenToUse": [
+      "Put the rail in the inline-start column of a two-panel layout and keep the detail panel titled with the picked entity's name. The rail says which; the panel says what",
+      "Give `hint` a sentence that names the payoff — \"Select a host to open its leaked records\" — rather than \"Choose one\"",
+      "Escalate `countTone` from a ladder your app owns, so the same figure gets the same colour on every page that shows it",
+      "Keep `status` honest about pagination: \"6 hosts loaded · page 1 of 4\" describes what was fetched. \"6 hosts\" does not"
+    ],
+    "whenNotToUse": [
+      "Put a total across rows anywhere on the rail. Summing the counts describes the pages fetched so far, not the data, and the figure moves as the user loads more",
+      "Reach for it when rows are destinations (that is `Sidebar`), when nothing is ever \"open\" (that is `List`), or when there are five of something rather than five hundred (that is `Tabs`)",
+      "Hide the load-more control while a page is in flight — pass `loadingMore` and let it disable in place, so the rail does not change height under the pointer"
+    ],
+    "composesWith": [
+      "Badge",
+      "Skeleton"
+    ],
+    "exports": [
+      "SelectionRail"
+    ],
+    "typeExports": [
+      "SelectionRailProps",
+      "SelectionRailItem",
+      "SelectionRailTone"
+    ],
+    "import": "import { SelectionRail } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SessionTimeoutModal",

@@ -1,0 +1,155 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/RecordCard/Guidelines" />
+
+# Record Card
+
+One harvested record — a leaked credential row, a scraped identity, a parsed log
+entry — drawn as a card that is collapsed by default and opens to its fields on
+demand.
+
+## Overview
+
+A page of harvested records is the worst case for a detail layout: ten rows, up to
+fifteen fields each, most of them empty, a few of them secret. Rendered flat it is
+a wall of text nobody scrolls. The Record Card turns that page into a page of
+*headers* — each one carrying enough identity to skip or open it — and puts the
+fields behind a disclosure.
+
+Two decisions are baked in, and both are the reason the component exists rather
+than a `Collapse` and some spans:
+
+1. **The header is a `role="button"` `<div>`, not a `<button>`.** It carries the
+   record's own controls, and a button inside a button is invalid HTML that
+   browsers silently unnest. So it wires its own Enter/Space handling, with
+   `preventDefault()` on Space. Without that, a page where everything starts
+   collapsed is unreachable by keyboard.
+2. **A masked value never reaches the DOM.** `masked` renders a dot placeholder
+   *instead of* the children, so a screen reader, a text copy, and a page snapshot
+   all see what the eye sees. Masking by colour or by an overlay is not masking.
+
+## Usage
+
+- **Do** keep records collapsed on load, on selection change, and on page change.
+  The collapsed state is the feature.
+- **Do** put enough in the header to decide without opening: position, identity,
+  an age or severity chip, the source, and a summary of what is inside.
+- **Do** make revealing imply opening. A revealed value the reader cannot see is a
+  lie the interface is telling.
+- **Do** call `stopPropagation()` in every control you pass to `actions`, or
+  pressing one will also toggle the card.
+- **Do** pass `maskedLabel` so assistive tech is told the field is hidden rather
+  than finding it empty.
+- **Don't** render a field the record does not carry. An "Address —" row asserts an
+  absent value was checked for and found blank; the row simply should not be there.
+- **Don't** phrase a `hint` as advice. "Weak", "Reused ×3" are facts about the
+  value; "You should rotate this" is a different product.
+- **Don't** mask anything that is already a hash. Masking a bcrypt string protects
+  nothing and trains readers to click through the mask.
+
+## Anatomy
+
+A card (`data-slot="record-card"`) of three parts. `RecordCardHeader` is always
+present: a rotating caret, the `index`, a truncated mono `title`, `badges`,
+`source`, `meta`, and an inline-end `actions` group. `RecordCardFields` is the open
+state's single-column stack of `RecordCardField` rows — a 104px uppercase label
+column, a mono value, and an optional hint chip. `RecordCardFooter` is the
+provenance line, and is part of the open state too.
+
+The stack is one column on purpose. Harvested values have wildly unequal heights —
+an email is one line, a concatenated hash bundle is twenty — and in a multi-column
+grid every cell on a row stretches to the tallest of them, stranding short fields
+at the top of an otherwise empty column. Stacked, the labels stay a single scan
+line and a long value just pushes the next field down.
+
+## Behavior
+
+- **Toggle** — click anywhere on the header, or press Enter or Space with it
+  focused. Space is `preventDefault`-ed so the page does not scroll instead.
+- **Controlled or not** — pass `open` + `onOpenChange` when the page owns expansion
+  (an "expand all" control), or let the card own it via `defaultOpen`.
+- **Caret** — rotates 90° on the 180ms AEGIS enter easing, and mirrors in RTL.
+- **Fields and footer** — genuinely unmounted while collapsed, not hidden. Ten
+  collapsed cards cost ten headers.
+- **Reduced motion** — the caret rotation and the header's hover tint transitions
+  are dropped; the states themselves are unaffected.
+
+## Accessibility
+
+- The header carries `role="button"`, `tabIndex={0}`, `aria-expanded`, and
+  `aria-controls` pointing at the panel; the panel is a `role="region"` labelled by
+  the header.
+- Nested controls stay real `<button>`s, which is only valid because the header is
+  a `div` — this is the trade the component was built around.
+- A masked field renders `aria-hidden` dots plus a visually-hidden `maskedLabel`,
+  so the plaintext is not exposed to assistive tech before reveal.
+- Focus is the AEGIS outline + accent-soft ring; the card uses `focus-escape` so
+  the ring survives the clipped corners.
+- Reveal controls should carry `aria-pressed`.
+
+## RTL
+
+The caret mirrors via `rtl:-scale-x-100` before it rotates, the label column and
+action group are laid out with logical properties, and mono values keep
+`break-all` so a long URL wraps rather than widening the grid.
+
+## Design tokens
+
+| Token / utility | Role |
+| --- | --- |
+| `--card`, `--border`, `--shadow-elevation-1` | The card surface, hairline and lift. |
+| `--surface` | Header and footer bands. |
+| `--accent-soft` | Header hover. |
+| `--sev-critical-ink` | A revealed credential's value. |
+| `--sev-high-ink` | The footer's `warning` tone. |
+| `--muted-foreground` | Index, source, meta, labels, masked dots. |
+| `motion-enter` | The 180ms caret rotation and header tint. |
+| `focus-escape` | Lets the focus ring out of the clipped card. |
+
+Hint chips are `Badge variant="soft"`, so their hues come from the shared tone ramp
+rather than from this component. No colour is hard-coded.
+
+## API
+
+### `RecordCard`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | — | Controlled open state. |
+| `defaultOpen` | `boolean` | `false` | Initial state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | — | Fired with the next state. |
+
+### `RecordCardHeader`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `index` | `ReactNode` | — | Position in the result set (e.g. `#11`). |
+| `title` | `ReactNode` | — | What identifies the record (required). |
+| `badges` | `ReactNode` | — | Status chips beside the title. |
+| `source` | `ReactNode` | — | Where the record came from. |
+| `meta` | `ReactNode` | — | What is inside, without opening it. |
+| `actions` | `ReactNode` | — | Per-record controls; each must stop propagation. |
+
+### `RecordCardField`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `ReactNode` | — | The field's name (required). |
+| `hint` | `ReactNode` | — | A stated fact about the value. |
+| `hintTone` | `RecordCardTone` | `neutral` | Tone for the hint chip. |
+| `secret` | `boolean` | `false` | Draw the value as a credential once visible. |
+| `masked` | `boolean` | `false` | Replace the value with dots; children are not rendered. |
+| `maskLength` | `number` | `10` | How many dots. |
+| `maskedLabel` | `ReactNode` | — | What AT is told in place of the value. |
+
+### `RecordCardFooter`
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `tone` | `"muted" \| "warning"` | `muted` | Provenance, or a caveat. |
+
+The API is closed: `className` and `style` are not accepted on any part.
+
+## Examples
+
+See the **Default**, **Open**, **NoFields**, and **Stack** stories.
