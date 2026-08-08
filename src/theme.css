@@ -129,6 +129,13 @@
     /* E8 — Skeleton sweep (replaces the opacity pulse, which read as blinking). */
     --animate-skeleton: skeletonSweep 1.4s ease-in-out infinite;
 
+    /* Decorative entrances. Both are swept by the reduced-motion rule below —
+       they are pure delight, and the content is fully legible without them.
+         donut-in  → BreakdownDonut ring settling into place
+         panel-in  → DetailSidebar arriving from the inline end */
+    --animate-donut-in: donutIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    --animate-panel-in: panelIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+
     /* E1 — elevation scale exposed as `shadow-elevation-*` utilities. */
     --shadow-elevation-0: var(--elevation-0);
     --shadow-elevation-1: var(--elevation-1);
@@ -758,6 +765,18 @@
 @keyframes marqueeVertical {
     from { transform: translateY(0); }
     to { transform: translateY(calc(-100% - var(--marquee-gap, 0px))); }
+}
+
+/* Decorative entrances — swept entirely under reduced motion (see below).
+   `panelIn` translates along the inline axis so it follows writing direction:
+   in RTL the panel docks to the left and must arrive from the left. */
+@keyframes donutIn {
+    from { opacity: 0; transform: scale(0.85) rotate(-14deg); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes panelIn {
+    from { opacity: 0; transform: translateX(calc(24px * var(--panel-dir, 1))); }
+    to { opacity: 1; transform: none; }
 }
 
 /* A5 — opacity-only substitute for pulseDot under reduced motion. The scale

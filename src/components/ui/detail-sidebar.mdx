@@ -1,0 +1,113 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/DetailSidebar/Guidelines" />
+
+# Detail Sidebar
+
+A detail panel docked to the inline end that **overlays** the page without taking
+it over. For inspecting one row of a list while the list stays live: pick a
+finding, read it, pick the next one without closing anything.
+
+## This is not a Dialog or a Drawer
+
+That is the whole point of the component, so it is worth stating plainly.
+
+`Dialog` and `Drawer` are **modal**. They dim the page, trap focus, and mark the
+rest of the document inert, because they demand a decision before anything else
+can happen. This panel makes the opposite promise:
+
+- no scrim, no backdrop blur — nothing dims,
+- no focus trap — Tab leaves the panel and reaches the page,
+- nothing set `inert` or `aria-hidden` behind it,
+- `role="complementary"`, not `role="dialog"`.
+
+If a change ever adds a scrim or a focus trap "for consistency", it has turned
+this into a `Drawer` and broken every page using it. Use `Drawer` when you
+actually want modality.
+
+## When to use
+
+- **Do** use it for row → detail on a dense list, where comparing rows against
+  the open detail is the job.
+- **Do** keep the selection in the URL so a detail view is shareable.
+- **Don't** use it for a form that must be completed or abandoned — that is
+  modal, so use `Dialog`.
+- **Don't** use it on a page with no list behind it; if there is nothing to stay
+  interactive, a route is simpler.
+
+## Anatomy
+
+1. **Panel** — fixed to the inline end, `--card`, hairline inline-start border,
+   `--elevation-4`, its own scroll with `overscroll-behavior: contain`.
+2. **Header** — sticky; badges, title, meta, and the close button.
+3. **Body** — a stack of sections.
+4. **Section** — an uppercase label over its content.
+
+## Optional sections
+
+The body is composed of optional blocks. When a field is absent, **omit its
+section entirely** — never render a heading over an empty space, and never print
+"undefined" or "null". A panel is a variable number of sections, not a fixed form
+with blanks.
+
+## Behavior
+
+- Esc closes it, from anywhere on the page — the listener is on the document
+  because focus is deliberately not trapped.
+- `onClose` must return focus to whatever opened the panel (usually the row). The
+  panel cannot do this itself: it never took focus captive.
+- It does not reflow the page. The columns underneath keep their measure.
+- On a narrow viewport it spans the full width, where overlaying is the only
+  sensible behaviour.
+- The entrance slide follows the inline axis, so in RTL it arrives from the left.
+  It is decorative and swept by the global reduced-motion rule.
+
+## Accessibility
+
+- `role="complementary"` with a required `label`: supporting content the user can
+  enter and leave freely.
+- The close button has a required `closeLabel` — an icon alone is not a name.
+- The opening control should carry `aria-expanded` and `aria-controls` pointing
+  at the panel's `id`, so the relationship is announced.
+- Because the background stays interactive, do not rely on the panel to scope
+  keyboard interaction; everything behind it remains in the tab order by design.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--card` | Panel surface |
+| `--surface` | Sticky header surface |
+| `--surface-2` | Close button surface |
+| `--border` | Inline-start edge, header rule, close button |
+| `--elevation-4` | Panel shadow |
+| `--muted-foreground` | Section labels, close glyph |
+| `--ring` | Focus outline |
+
+## API
+
+`DetailSidebar` — the panel.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | — | Whether the panel shows. Closed renders nothing. |
+| `onClose` | `() => void` | — | Fired on Esc and the close button. Restore focus here. |
+| `label` | `string` | — | Accessible name for the region. Required. |
+| `width` | `number` | `440` | Panel width in px, capped at the viewport. |
+
+`DetailSidebarHeader` — sticky header with the close control.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `onClose` | `() => void` | — | Fired by the close button. |
+| `closeLabel` | `string` | — | Accessible name for the close button. Required. |
+
+`DetailSidebarBody` — the scrolling stack of sections.
+
+`DetailSidebarSection` — one labelled block.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `ReactNode` | — | Small uppercase heading. |
+
+The public API is closed: there is no `className` or `style` prop.

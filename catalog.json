@@ -320,6 +320,30 @@
     "import": "import { AttackSurfaceWidget } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "AttentionTile",
+    "module": "attention-tile",
+    "category": "other",
+    "concept": "A count and the thing it counts, on a tone-tinted plate: \"218 · Critical findings open\". The smallest unit of a needs-attention strip.",
+    "whenToUse": [
+      "Stack two or three inside one summary cell to answer \"what should I look at first?\"",
+      "Give the tile an action when it can filter the list it summarises — a count you cannot act on is trivia"
+    ],
+    "whenNotToUse": [
+      "A KPI panel with a trend and a sparkline — that is `StatTile`",
+      "A status label with no figure — that is `Badge` or `StatusPill`",
+      "Build a breakdown out of five or six of them; past three, use `BreakdownDonut`"
+    ],
+    "composesWith": [],
+    "exports": [
+      "AttentionTile",
+      "attentionTileVariants"
+    ],
+    "typeExports": [
+      "AttentionTileProps"
+    ],
+    "import": "import { AttentionTile } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "AvatarGroup",
     "module": "avatar-group",
     "category": "data-display",
@@ -574,6 +598,33 @@
     ],
     "typeExports": [],
     "import": "import { Breadcrumb } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "BreakdownDonut",
+    "module": "breakdown-donut",
+    "category": "charts",
+    "concept": "A compact ring plus a counted key, sized for a summary cell rather than a chart panel. The ring carries the proportions, the centre carries the total, and every legend row spells out its name and its count.",
+    "whenToUse": [
+      "It in a summary strip, where a population's split has to land in one glance next to other cells",
+      "Pass `palette=\"categorical\"` whenever the slices are not severities"
+    ],
+    "whenNotToUse": [
+      "The main chart of a panel or report — that is `DonutChart`, which is larger and carries the shared chart legend",
+      "A part-of-whole with more than about six slices; the arcs and the key both stop being readable. Group the tail into \"Other\"",
+      "A single measurement against a target — that is `RadialGauge` or `ScoreRing`"
+    ],
+    "composesWith": [
+      "ChartContainer",
+      "DonutChart"
+    ],
+    "exports": [
+      "BreakdownDonut"
+    ],
+    "typeExports": [
+      "BreakdownDonutProps",
+      "BreakdownDonutDatum"
+    ],
+    "import": "import { BreakdownDonut } from \"@netbaan-project/ui\";"
   },
   {
     "name": "BubbleChart",
@@ -1474,6 +1525,33 @@
       "DescriptionListProps"
     ],
     "import": "import { DescriptionList } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "DetailSidebar",
+    "module": "detail-sidebar",
+    "category": "navigation",
+    "concept": "A detail panel docked to the inline end that overlays the page without taking it over. For inspecting one row of a list while the list stays live: pick a finding, read it, pick the next one without closing anything.",
+    "whenToUse": [
+      "Row → detail on a dense list, where comparing rows against the open detail is the job",
+      "Keep the selection in the URL so a detail view is shareable"
+    ],
+    "whenNotToUse": [
+      "A form that must be completed or abandoned — that is modal, so use `Dialog`",
+      "It on a page with no list behind it; if there is nothing to stay interactive, a route is simpler"
+    ],
+    "composesWith": [],
+    "exports": [
+      "DetailSidebar",
+      "DetailSidebarHeader",
+      "DetailSidebarBody",
+      "DetailSidebarSection"
+    ],
+    "typeExports": [
+      "DetailSidebarProps",
+      "DetailSidebarHeaderProps",
+      "DetailSidebarSectionProps"
+    ],
+    "import": "import { DetailSidebar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "DeviceSessionList",
@@ -3926,6 +4004,29 @@
     "import": "import { ScatterPlot } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "ScoreRing",
+    "module": "score-ring",
+    "category": "other",
+    "concept": "A small ring carrying one bounded score, with the figure printed in the middle. The arc length is the score's share of the scale; the arc colour is its severity band. Built for a table cell, so a list of findings can be skimmed for \"how bad\" before any number is read.",
+    "whenToUse": [
+      "It per row for a bounded, severity-weighted score — CVSS is the archetype",
+      "Pass the band as `tone` so colour and number always agree"
+    ],
+    "whenNotToUse": [
+      "An unbounded count or a currency figure; a ring implies a ceiling",
+      "A page-level meter — that is `RadialGauge`, which is larger and has a 270° dial",
+      "Substitute it for the severity word. It complements `SeverityBadge`; it does not replace it"
+    ],
+    "composesWith": [],
+    "exports": [
+      "ScoreRing"
+    ],
+    "typeExports": [
+      "ScoreRingProps"
+    ],
+    "import": "import { ScoreRing } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "ScreenshotThumb",
     "module": "screenshot-thumb",
     "category": "other",
@@ -4643,6 +4744,33 @@
       "SuggestionItem"
     ],
     "import": "import { SuggestionChips } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "SummaryStatBar",
+    "module": "summary-stat-bar",
+    "category": "other",
+    "concept": "The band that opens a list page: one card divided into equal cells, each summarising the same population a different way — a total, a breakdown ring, a needs-attention strip.",
+    "whenToUse": [
+      "It directly above a list, to describe the set the list is showing",
+      "Keep every cell about the same scope. If the list is filtered, the summary must be filtered identically, or it quietly lies about what is on screen"
+    ],
+    "whenNotToUse": [
+      "A dashboard row of unrelated widgets — the shared card and hairline rules assert that the cells belong together",
+      "Exceed four or five cells; past that the cells are too narrow to read and the bar should become a dashboard",
+      "Compute the figures from the page of rows below it. A page-local sum is wrong for any scope bigger than a page; fetch the aggregates"
+    ],
+    "composesWith": [],
+    "exports": [
+      "SummaryStatBar",
+      "SummaryStatCell",
+      "SummaryStatValue"
+    ],
+    "typeExports": [
+      "SummaryStatBarProps",
+      "SummaryStatCellProps",
+      "SummaryStatValueProps"
+    ],
+    "import": "import { SummaryStatBar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "SwipeActions",

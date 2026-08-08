@@ -1,0 +1,76 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/AttentionTile/Guidelines" />
+
+# Attention Tile
+
+A count and the thing it counts, on a tone-tinted plate: "218 · Critical findings
+open". The smallest unit of a needs-attention strip.
+
+## When to use
+
+- **Do** stack two or three inside one summary cell to answer "what should I look
+  at first?".
+- **Do** give the tile an action when it can filter the list it summarises — a
+  count you cannot act on is trivia.
+- **Don't** use it as a KPI panel with a trend and a sparkline — that is
+  `StatTile`.
+- **Don't** use it for a status label with no figure — that is `Badge` or
+  `StatusPill`.
+- **Don't** build a breakdown out of five or six of them; past three, use
+  `BreakdownDonut`.
+
+## Anatomy
+
+1. **Count chip** — the figure, in a solid `--tone` fill with mono tabular
+   figures.
+2. **Label** — what the count counts. Carries the meaning.
+
+The plate uses the same badge-tone maths as `Badge` (`--tone` at 88% transparent
+for the fill, 76% for the border), so a tile and a badge of the same tone are the
+same colour.
+
+## Tone
+
+Tone reinforces urgency; it never carries it alone. Use the severity tones
+(`critical`…`info`) when the tile counts findings at that severity, and the
+semantic tones (`danger`, `warning`, `success`, `accent`, `neutral`) otherwise.
+
+A count of zero is worth rendering — it is the good news. Drop it to `neutral`
+rather than hiding the tile, so the strip keeps its shape.
+
+## Behavior
+
+- The count is a `ReactNode`, so a pre-formatted figure ("12,480") is fine.
+- `interactive` adds hover and focus treatment. It does not make the tile a
+  control — pass `render`, `role` and a handler for that.
+
+## Accessibility
+
+- The label is real text: meaning never depends on the tint (WCAG 1.4.1).
+- When making the tile interactive, give it a real control role and keyboard
+  handling; the visual treatment alone is not an affordance.
+- Count-chip text uses `--on-tone` ink, which clears AA on every tone fill.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--sev-*` / `--destructive` / `--warning` / `--success` / `--accent-strong` | `--tone` per tone |
+| `--sev-*-ink` and friends | `--tone-ink` (accessible text) |
+| `--on-tone` | Count-chip ink on the solid fill |
+| `--foreground` | Label |
+| `--ring` | Focus outline when interactive |
+
+## API
+
+`AttentionTile` — a count chip and a label on a tone plate.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `count` | `ReactNode` | — | The figure, shown in the solid chip. |
+| `children` | `ReactNode` | — | What the count counts. |
+| `tone` | `"critical" \| "high" \| "medium" \| "low" \| "info" \| "accent" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Semantic colour. |
+| `interactive` | `boolean` | `false` | Hover + focus treatment. |
+
+The public API is closed: there is no `className` or `style` prop.

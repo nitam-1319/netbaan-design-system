@@ -1,0 +1,79 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/ScoreRing/Guidelines" />
+
+# Score Ring
+
+A small ring carrying one bounded score, with the figure printed in the middle.
+The arc length is the score's share of the scale; the arc colour is its severity
+band. Built for a table cell, so a list of findings can be skimmed for "how bad"
+before any number is read.
+
+## When to use
+
+- **Do** use it per row for a bounded, severity-weighted score — CVSS is the
+  archetype.
+- **Do** pass the band as `tone` so colour and number always agree.
+- **Don't** use it for an unbounded count or a currency figure; a ring implies a
+  ceiling.
+- **Don't** use it as a page-level meter — that is `RadialGauge`, which is larger
+  and has a 270° dial.
+- **Don't** substitute it for the severity word. It complements `SeverityBadge`;
+  it does not replace it.
+
+## Anatomy
+
+1. **Track** — the full ring in `--track`, the scale the value fills against.
+2. **Value arc** — the filled portion, tinted by `tone`, starting at 12 o'clock.
+3. **Readout** — the score in mono tabular figures, centred.
+
+## Unscored is not zero
+
+`value={null}` renders the empty track and an em dash, and the element degrades
+from `role="meter"` to a labelled group because it has no value to announce.
+
+Rendering an unscored finding as `0.0` would claim it was assessed and found
+harmless. Pass `null` and let the ring say so.
+
+`value={0}` is a different thing entirely: a real score at the bottom of the
+scale. It stays a meter and prints `0.0`.
+
+## Behavior
+
+- The value is clamped to `[0, max]`; `max` defaults to `10` for CVSS.
+- The arc starts at 12 o'clock and sweeps clockwise, with a round cap.
+- `precision` controls decimal places in the readout (default `1`).
+
+## Accessibility
+
+- A scored ring is `role="meter"` with `aria-valuenow`/`min`/`max` and an
+  `aria-valuetext` of `"<value> / <max>"`.
+- `label` is required — an unlabelled meter announces a bare number.
+- The SVG is decorative (`aria-hidden`); the readout carries the value as text,
+  so the score never depends on arc length or colour (WCAG 1.4.1).
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--track` | The unfilled ring |
+| `--sev-critical/high/medium/low/info` | Value arc per band |
+| `--primary` | Accent tone |
+| `--muted-foreground` | Neutral tone |
+| `--foreground` | Centre readout |
+
+## API
+
+`ScoreRing` — a bounded score as a ring plus a figure.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `number \| null` | — | The score. `null` = not scored (not zero). |
+| `max` | `number` | `10` | Top of the scale. |
+| `label` | `string` | — | Accessible name. Required. |
+| `tone` | `"critical" \| "high" \| "medium" \| "low" \| "info" \| "neutral" \| "accent"` | `"neutral"` | Arc colour band. |
+| `size` | `"sm" \| "md"` | `"sm"` | Ring diameter (38px / 48px). |
+| `emptyLabel` | `string` | `"—"` | Shown when `value` is `null`. |
+| `precision` | `number` | `1` | Decimal places in the readout. |
+
+The public API is closed: there is no `className` or `style` prop.

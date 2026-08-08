@@ -29,6 +29,7 @@ tinted surface, so it stands apart from surrounding prose.
 | `tone` | Icon | Use |
 | --- | --- | --- |
 | `note` | 💡 | Neutral aside (default). |
+| `accent` | ✨ | Machine-generated insight — an AI summary or suggestion. |
 | `info` | ℹ️ | Helpful tip / context. |
 | `success` | ✔️ | Positive confirmation. |
 | `warning` | ⚠️ | Proceed with care. |
@@ -56,6 +57,7 @@ depends on colour alone.
 
 | Token | Applies to |
 | --- | --- |
+| `--primary` / `--accent-strong` | Accent tone |
 | `--sev-low` | Info tone |
 | `--success` | Success tone |
 | `--warning` | Warning tone |
@@ -69,7 +71,7 @@ depends on colour alone.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `tone` | `"note" \| "info" \| "success" \| "warning" \| "danger"` | `"note"` | Semantic colour + default icon. |
+| `tone` | `"note" \| "accent" \| "info" \| "success" \| "warning" \| "danger"` | `"note"` | Semantic colour + default icon. |
 | `title` | `ReactNode` | — | Bold heading. |
 | `icon` | `ReactNode \| false` | tone default | Override or hide the leading icon. |
 | `children` | `ReactNode` | — | The body content. |

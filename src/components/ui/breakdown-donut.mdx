@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/BreakdownDonut/Guidelines" />
+
+# Breakdown Donut
+
+A compact ring plus a counted key, sized for a summary cell rather than a chart
+panel. The ring carries the proportions, the centre carries the total, and every
+legend row spells out its name and its count.
+
+## When to use
+
+- **Do** use it in a summary strip, where a population's split has to land in one
+  glance next to other cells.
+- **Do** pass `palette="categorical"` whenever the slices are not severities.
+- **Don't** use it as the main chart of a panel or report — that is `DonutChart`,
+  which is larger and carries the shared chart legend.
+- **Don't** use it for a part-of-whole with more than about six slices; the arcs
+  and the key both stop being readable. Group the tail into "Other".
+- **Don't** use it for a single measurement against a target — that is
+  `RadialGauge` or `ScoreRing`.
+
+## Anatomy
+
+1. **Ring** — one annular segment per non-zero slice, gapped so neighbours read
+   as separate. Decorative: everything it encodes is spelled out in the key.
+2. **Centre** — the summed total, with an optional caption (e.g. "TOTAL").
+3. **Key** — one row per slice: swatch, name, count. In one or two columns.
+
+## Palette
+
+| `palette` | Ramp | Use |
+| --- | --- | --- |
+| `severity` (default) | `--chart-1..5` | Critical → Info, in that order. |
+| `categorical` | `--cat-1..6` | Statuses, owners, environments, sensors. |
+
+A status breakdown painted in the severity ramp reads as an alarm — "1,493 open"
+becomes "1,493 critical" at a glance. This is the single most common misuse.
+
+## Behavior
+
+- Slice colour follows declaration order and wraps at the end of the ramp, so the
+  same data always paints the same way.
+- Zero-valued slices keep their legend row but take no arc: a status with no
+  findings is information, not an omission.
+- A single non-zero slice draws a closed ring with no gap — a lone segment with a
+  notch reads as missing data.
+- Counts format with `toLocaleString()` by default; override with `valueFormat`.
+
+## Accessibility
+
+- The SVG is `aria-hidden`; the key is a real list, labelled with the chart's
+  `label`, and it is the accessible representation of the data (WCAG 1.1.1).
+- Every row names its slice and prints its count, so nothing depends on colour
+  alone (WCAG 1.4.1).
+- The entrance animation is decorative and is swept by the global
+  `prefers-reduced-motion` rule.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--chart-1..5` | Severity ramp slices + swatches |
+| `--cat-1..6` | Categorical ramp slices + swatches |
+| `--foreground` | Centre total, counts |
+| `--muted-foreground` | Slice names, centre caption |
+
+## API
+
+`BreakdownDonut` — ring plus counted key.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name for the key. Required. |
+| `data` | `{ key, label?, value }[]` | — | Slices, in colour/list order. |
+| `palette` | `"severity" \| "categorical"` | `"severity"` | Which ramp to paint from. |
+| `size` | `"sm" \| "md"` | `"sm"` | Ring diameter (84px / 108px). |
+| `swatch` | `"square" \| "dot"` | `"square"` | Key swatch glyph. |
+| `legendColumns` | `1 \| 2` | `1` | Key column count. |
+| `centerSublabel` | `ReactNode` | — | Caption under the centre total. |
+| `valueFormat` | `(value: number) => string` | `toLocaleString` | Count formatting. |
+
+The public API is closed: there is no `className` or `style` prop.

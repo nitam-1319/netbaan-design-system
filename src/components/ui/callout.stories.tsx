@@ -13,7 +13,7 @@ const meta = {
   argTypes: {
     tone: {
       control: "inline-radio",
-      options: ["note", "info", "success", "warning", "danger"],
+      options: ["note", "accent", "info", "success", "warning", "danger"],
     },
   },
   args: {

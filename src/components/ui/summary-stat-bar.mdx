@@ -1,0 +1,91 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/SummaryStatBar/Guidelines" />
+
+# Summary Stat Bar
+
+The band that opens a list page: one card divided into equal cells, each
+summarising the same population a different way — a total, a breakdown ring, a
+needs-attention strip.
+
+## When to use
+
+- **Do** use it directly above a list, to describe the set the list is showing.
+- **Do** keep every cell about the **same scope**. If the list is filtered, the
+  summary must be filtered identically, or it quietly lies about what is on
+  screen.
+- **Don't** use it as a dashboard row of unrelated widgets — the shared card and
+  hairline rules assert that the cells belong together.
+- **Don't** exceed four or five cells; past that the cells are too narrow to read
+  and the bar should become a dashboard.
+- **Don't** compute the figures from the page of rows below it. A page-local sum
+  is wrong for any scope bigger than a page; fetch the aggregates.
+
+## Anatomy
+
+1. **Bar** — the card: hairline border, `--elevation-1`, `overflow: clip`.
+2. **Cell** — one summary, separated from the previous by a hairline on the
+   inline start, with a pointer-tracked accent spotlight.
+3. **Cell label** — small uppercase heading.
+4. **Value** — the headline figure, with an optional delta line.
+
+## Composition
+
+Cells take arbitrary children — commonly `SummaryStatValue`, `BreakdownDonut`,
+or a stack of `AttentionTile`s.
+
+## Direction
+
+The divider is `border-inline-start`, so it falls between cells whether the page
+runs left-to-right or right-to-left. Nothing in the bar depends on physical left
+or right.
+
+## Behavior
+
+- Cells lay out on `repeat(auto-fit, minmax(minCellWidth, 1fr))` and wrap to
+  another row when the column narrows — they never crush.
+- Every cell is `min-width: 0`, so long content truncates instead of forcing the
+  bar wider.
+- The spotlight is decorative and pointer-only; it conveys nothing.
+
+## Accessibility
+
+- The bar is a `region` named by `label`, so it can be skipped or jumped to.
+- A delta must spell out its direction in words for screen readers — an arrow
+  glyph plus a colour is invisible twice over. Wrap the direction in
+  `VisuallyHidden` (see the story).
+- `overflow: clip` rather than `hidden`, so focus rings on anything interactive
+  in a cell are not cropped.
+
+## Design tokens
+
+| Token | Applies to |
+| --- | --- |
+| `--card` / `--border` | Bar surface + hairlines |
+| `--elevation-1` | Bar shadow |
+| `--primary` | Pointer spotlight tint |
+| `--foreground` | Values |
+| `--muted-foreground` | Cell labels |
+
+## API
+
+`SummaryStatBar` — the card and its cell grid.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `string` | — | Accessible name for the region. Required. |
+| `minCellWidth` | `number` | `300` | Narrowest a cell gets before wrapping (px). |
+
+`SummaryStatCell` — one summary, with the divider and spotlight.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | `ReactNode` | — | Small uppercase heading. |
+
+`SummaryStatValue` — a headline figure with an optional delta line.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `delta` | `ReactNode` | — | Secondary line under the value. |
+
+The public API is closed: there is no `className` or `style` prop.

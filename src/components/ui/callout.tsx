@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   AlertCircle,
   Lightbulb,
+  Sparkles,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -35,6 +36,8 @@ const calloutVariants = cva(
     variants: {
       tone: {
         note: "border-border border-s-border bg-muted/40 text-foreground",
+        accent:
+          "border-transparent border-s-current bg-[color-mix(in_oklch,var(--primary),transparent_88%)] text-accent-strong",
         info: "border-transparent border-s-current bg-[color-mix(in_oklch,var(--sev-low),transparent_88%)] text-sev-low-ink",
         success:
           "border-transparent border-s-current bg-[color-mix(in_oklch,var(--success),transparent_88%)] text-success-ink",
@@ -50,6 +53,7 @@ const calloutVariants = cva(
 
 const defaultIcons = {
   note: Lightbulb,
+  accent: Sparkles,
   info: Info,
   success: CheckCircle2,
   warning: AlertTriangle,
