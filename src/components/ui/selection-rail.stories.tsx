@@ -61,7 +61,9 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const first = canvas.getByRole("button", { name: /acme-corp\.com/ })
+    // Anchored: four hosts contain "acme-corp.com" as a suffix (shop., dev-portal., mail.),
+    // so an unanchored pattern matches all of them.
+    const first = canvas.getByRole("button", { name: /^acme-corp\.com/ })
     await expect(first).toHaveAttribute("aria-current", "true")
 
     // Picking a row moves `aria-current` — the open row is announced, not just tinted.
