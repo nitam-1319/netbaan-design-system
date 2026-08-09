@@ -966,8 +966,8 @@ Represents a person or entity with an image, initials, or icon. Built on the Bas
 
 A flexible content container using the AEGIS surface treatment. It is a set of composable slot parts rather than a single monolith, so any layout — a metric tile, a finding summary, a settings panel — can be assembled from the same parts. Colors and elevation come from AEGIS tokens only.
 
-- **Do:** A card to group a single coherent unit of content with its own heading, body, and optional actions; Compose `CardHeader` + `CardAction` when a control (menu, badge, button) must pin to the top-right of the header
-- **Don't:** Nest cards more than one level deep; prefer dividers or sections; A card purely for a background — reach for a plain `--surface` element
+- **Do:** A card to group a single coherent unit of content with its own heading, body, and optional actions; Compose `CardHeader` + `CardAction` when a control (menu, badge, button) must pin to the top-right of the header; `spotlight` on a board of resting cards you want to feel alive under the pointer
+- **Don't:** Nest cards more than one level deep; prefer dividers or sections; A card purely for a background — reach for a plain `--surface` element; `interactive` to get that bloom on a card that is not clickable — it also lifts the card, lights its border and shows a pointer cursor, which promises a click that never happens. `spotlight` is that treatment on its own
 - **Exports:** Card, CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter, cardVariants
 
 #### CitationSourceCard

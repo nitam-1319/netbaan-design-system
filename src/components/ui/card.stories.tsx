@@ -181,3 +181,64 @@ export const Interactive: Story = {
     await expect(canvas.getByText("Attack surface")).toBeVisible()
   },
 }
+
+export const Spotlight: Story = {
+  name: "Spotlight (pointer glow, no lift)",
+  render: () => (
+    <div className="grid grid-cols-2 gap-5">
+      {[
+        { t: "Recent findings", d: "6 newest, severity first", n: "3,412" },
+        { t: "Assets at risk", d: "by open finding count", n: "1,284" },
+      ].map((c) => (
+        <Card key={c.t} spotlight>
+          <CardHeader>
+            <CardTitle>{c.t}</CardTitle>
+            <CardDescription>{c.d}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-semibold tracking-tight">{c.n}</p>
+            <p className="text-muted-foreground text-sm">
+              The bloom follows the pointer; the card does not move, its border
+              does not change, and the cursor stays an arrow — it is not a control.
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const card = canvasElement.querySelector<HTMLElement>(
+      "[data-spotlight='true']"
+    )
+    await expect(card).toBeInTheDocument()
+    // Resting: no lift class, no pointer cursor — the spotlight alone.
+    await expect(card).not.toHaveAttribute("data-interactive")
+    await expect(canvas.getByText("Recent findings")).toBeVisible()
+  },
+}
+
+export const SpotlightOnBeam: Story = {
+  name: "Spotlight on the beam variant",
+  render: () => (
+    <Card variant="beam" spotlight>
+      <CardHeader>
+        <CardTitle>Security posture</CardTitle>
+        <CardDescription>
+          The page's one beam, still tracking the pointer.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-3xl font-semibold tracking-tight">B</p>
+      </CardContent>
+    </Card>
+  ),
+  play: async ({ canvasElement }) => {
+    await expect(
+      canvasElement.querySelector("[data-variant='beam'][data-spotlight='true']")
+    ).toBeInTheDocument()
+    await expect(
+      canvasElement.querySelector("[data-slot='beam']")
+    ).toBeInTheDocument()
+  },
+}

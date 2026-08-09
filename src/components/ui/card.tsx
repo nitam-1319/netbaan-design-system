@@ -45,6 +45,30 @@ type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
      */
     interactive?: boolean
     /**
+     * The pointer spotlight, on its own: a 260px accent bloom that follows the
+     * cursor across the surface, with **no** lift, no border change, no shadow
+     * change and no pointer cursor.
+     *
+     * This is the treatment `interactive` uses to say "this surface is alive",
+     * separated from the three that say "this surface is a control". A board of
+     * resting cards wants the first and must not have the second: a card that
+     * rises and lights its border under the cursor reads as clickable, and a
+     * reader who clicks it and gets nothing has been lied to. `PageHeaderBand`
+     * already draws this distinction internally — it carries the spotlight and
+     * nothing else "because the header is a landmark, not a control" — so the
+     * behaviour existed in the system without being reachable on `Card`.
+     *
+     * Composes with every variant, `beam` included. Setting it alongside
+     * `interactive` is harmless but redundant.
+     *
+     * The bloom paints between the card's own background and its content (a
+     * negative z-index inside the card's stacking context), so nothing it passes
+     * under is tinted. It parks off-surface at `-500px` and returns there on
+     * `mouseleave`, so a card the pointer has left is not left glowing at the
+     * last place it saw one.
+     */
+    spotlight?: boolean
+    /**
      * Full-bleed body. Drops the card's block padding and inter-slot gap so a
      * divided `List`, a `Table` or a `ScanHistoryList` runs edge to edge, and puts
      * a hairline under the header to separate it from the first row.
@@ -60,17 +84,30 @@ type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
     flush?: boolean
   }
 
+/**
+ * The spotlight bloom itself. Parked at `-500px` so it is off-surface until the
+ * first `mousemove` writes a real position, and `-z-10` so it paints above the
+ * card's background but under its content — the card root isolates, so the
+ * negative index cannot escape behind the surface it is meant to light.
+ */
+const SPOTLIGHT_LAYER =
+  "pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-[radial-gradient(260px_circle_at_var(--mx,-500px)_var(--my,-500px),color-mix(in_srgb,var(--primary)_16%,transparent),transparent_72%)]"
+
 function Card({
   variant = "default",
   interactive = false,
+  spotlight = false,
   flush = false,
   children,
   onMouseMove,
+  onMouseLeave,
   ...props
 }: CardProps) {
+  const tracks = interactive || spotlight
+
   // Pointer-tracked spotlight: write the local cursor position into --mx/--my
   // (read by the radial-gradient overlay). Behaviour only — no public style API.
-  const handleMouseMove = interactive
+  const handleMouseMove = tracks
     ? (e: React.MouseEvent<HTMLDivElement>) => {
         const r = e.currentTarget.getBoundingClientRect()
         e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`)
@@ -79,12 +116,24 @@ function Card({
       }
     : onMouseMove
 
+  // `interactive` fades its bloom out by opacity on hover-out; a bare spotlight
+  // has no hover state to fade, so it is parked off-surface instead.
+  const handleMouseLeave = spotlight
+    ? (e: React.MouseEvent<HTMLDivElement>) => {
+        e.currentTarget.style.setProperty("--mx", "-500px")
+        e.currentTarget.style.setProperty("--my", "-500px")
+        onMouseLeave?.(e)
+      }
+    : onMouseLeave
+
   if (variant === "beam") {
     return (
       <div
         data-slot="card"
         data-variant="beam"
-        onMouseMove={onMouseMove}
+        data-spotlight={spotlight || undefined}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         className="relative isolate overflow-hidden rounded-[20px] bg-border-strong shadow-elevated"
         {...props}
       >
@@ -96,7 +145,17 @@ function Card({
         >
           <span className="absolute top-1/2 left-1/2 aspect-square w-[140%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin bg-[conic-gradient(from_0deg,transparent_0_74%,var(--primary)_85%,var(--accent-strong)_92%,transparent_100%)]" />
         </span>
-        <div className={cn("relative m-[1.5px]", cardVariants({ variant }))}>
+        {/* The bloom belongs to the INNER panel: that is the one carrying `--card`,
+            and the 1.5px frame around it is the beam's, not a surface to light.
+            `--mx`/`--my` are written on the outer element and inherit down. */}
+        <div
+          className={cn(
+            "relative m-[1.5px]",
+            spotlight && "isolate",
+            cardVariants({ variant })
+          )}
+        >
+          {spotlight ? <span aria-hidden className={SPOTLIGHT_LAYER} /> : null}
           {children}
         </div>
       </div>
@@ -108,10 +167,15 @@ function Card({
       data-slot="card"
       data-variant={variant ?? "default"}
       data-interactive={interactive || undefined}
+      data-spotlight={spotlight || undefined}
       data-flush={flush || undefined}
       onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className={cn(
         cardVariants({ variant }),
+        // `overflow-clip` (not hidden) so the bloom is cut to the radius without
+        // turning the card into a scroll container.
+        spotlight && !interactive && "relative isolate overflow-clip",
         flush && [
           "gap-0 overflow-clip py-0",
           // The slots supply their own rhythm once the root stops doing it.
@@ -129,6 +193,8 @@ function Card({
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(240px_circle_at_var(--mx,50%)_var(--my,50%),var(--accent-soft),transparent_60%)] opacity-0 transition-opacity duration-300 group-hover/card:opacity-100"
         />
+      ) : spotlight ? (
+        <span aria-hidden className={SPOTLIGHT_LAYER} />
       ) : null}
       {children}
     </div>
