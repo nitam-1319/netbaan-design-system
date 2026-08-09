@@ -11,6 +11,49 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.4.0]
+
+Minor: two additive components for the two-panel record browser — a column of
+entities you pick from, beside a column of what you picked. **No breaking
+changes — no migration required.** Component count 220 → 222.
+
+### Added
+
+- **`SelectionRail`** — the entity column. A sticky card over a bounded scroll
+  box with overscroll containment, so a long rail never steals the page's
+  scroll, and a "load more" control pinned under the list rather than inside
+  it. The open row is marked three ways at once (`aria-current`, an accent
+  edge, a marker line under the label) so the selection survives a glance, a
+  screenshot and a monochrome print. Counts are each entity's own figure; the
+  rail never totals them, because a sum across loaded pages describes the
+  fetching, not the data. Handles its own loading, loading-more and empty
+  states.
+- **`RecordCard`** — the detail column's record, collapsed by default, with
+  `RecordCardHeader` / `RecordCardFields` / `RecordCardField` /
+  `RecordCardFooter` parts. Two things make it a component rather than a
+  `Collapse` and some spans:
+  - The header is a `role="button"` div, because it carries the record's own
+    controls and a button inside a button is invalid HTML. That costs it a real
+    button's keyboard behaviour, so it wires Enter and Space itself — with
+    `preventDefault` on Space, without which a page where everything starts
+    collapsed is unreachable by keyboard.
+  - A `masked` field's value never reaches the DOM. `masked` renders dots
+    *instead of* the children, so a screen reader, a text copy and a page
+    snapshot all see what the eye sees. Masking by colour or by an overlay is
+    not masking.
+
+  Fields stack one per row against a fixed label column rather than in an
+  auto-fit grid: harvested values have wildly unequal heights — an email is one
+  line, a concatenated hash bundle is twenty — and in a grid every cell on a row
+  stretches to the tallest of them, stranding a long value's neighbours at the
+  top of an otherwise empty column.
+
+Both are token-only with closed APIs; the count and hint chips compose `Badge`,
+so their hues come from the shared tone ramp. Neither knows anything about the
+domain they were built for.
+
+---
+
 ## [0.3.0]
 
 Minor: five additive components, one additive prop, and a build fix that
