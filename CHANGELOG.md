@@ -11,6 +11,24 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.5.1]
+
+Patch: one `FilterBar` behaviour fix. **No breaking changes — no migration
+required.** Component count unchanged at 223.
+
+### Fixed
+
+- **`FilterBar`** — the hairline between the hoisted selection and the rest of
+  the options now withdraws once it would misdescribe the order, instead of
+  claiming that a checked row below it is unselected. Option order is frozen for
+  the duration of a panel visit, so checking an option further down deliberately
+  does not move it up; the line, placed unconditionally at the first unselected
+  row, then described the order as it was when the visit began rather than as it
+  is. Nothing becomes ambiguous when the line goes — the row tint and the
+  checkbox state carry the selection on their own.
+
+---
+
 ## [0.5.0]
 
 Minor: one additive component and two additive props, all aimed at the list
