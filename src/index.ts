@@ -83,6 +83,7 @@ export * from "./components/ui/file-card";
 export * from "./components/ui/file-list";
 export * from "./components/ui/file-preview";
 export * from "./components/ui/file-uploader";
+export * from "./components/ui/filter-bar";
 export * from "./components/ui/finding-vulnerability-card";
 export * from "./components/ui/first-run-onboarding";
 export * from "./components/ui/floating-action-button";

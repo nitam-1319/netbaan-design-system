@@ -2071,6 +2071,42 @@
     "import": "import { FileUploader } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "FilterBar",
+    "module": "filter-bar",
+    "category": "other",
+    "concept": "The single filter toolbar for a list page. It is configured by an array of facets: the page describes what it filters on, and the bar decides its own controls.",
+    "whenToUse": [
+      "Derive `facets` from the page's existing filter-options endpoint",
+      "Keep `values` in URL-synced list state so a link reproduces the view",
+      "Order facets by reach: the most-used first, date and free text last"
+    ],
+    "whenNotToUse": [
+      "Add a page-local Apply button — filtering is live; `Done` only closes",
+      "Fabricate `count`. Omit it and the count column does not render"
+    ],
+    "composesWith": [
+      "Button",
+      "Checkbox",
+      "ErrorState",
+      "Kbd",
+      "SearchInput",
+      "Skeleton",
+      "TextField"
+    ],
+    "exports": [
+      "FilterBar"
+    ],
+    "typeExports": [
+      "FilterBarProps",
+      "FilterBarFacet",
+      "FilterBarLabels",
+      "FilterBarOption",
+      "FilterBarValue",
+      "FilterBarDateValue"
+    ],
+    "import": "import { FilterBar } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "FindingVulnerabilityCard",
     "module": "finding-vulnerability-card",
     "category": "data-display",
@@ -4226,7 +4262,9 @@
       "Free-form text entry unrelated to search — use a Text Field",
       "Stack multiple search fields; one scoped search per view reads more clearly"
     ],
-    "composesWith": [],
+    "composesWith": [
+      "Kbd"
+    ],
     "exports": [
       "SearchInput",
       "searchInputShellVariants"

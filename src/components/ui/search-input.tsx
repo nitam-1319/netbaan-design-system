@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Search, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Kbd } from "@/components/ui/kbd"
 
 /**
  * AEGIS — Search Input
@@ -15,7 +16,9 @@ import { cn } from "@/lib/utils"
  * `border-strong`, `accent-strong` hover border, 3px `accent-soft` focus ring,
  * 32 / 40 / 48px size scale) so search fields sit consistently beside other
  * inputs. An optional `label`, `description`, and `error` render around the
- * control (associated for assistive tech).
+ * control (associated for assistive tech). A `shortcut` key (conventionally
+ * `"/"`) renders as a trailing `Kbd` hint and focuses the field from anywhere on
+ * the page — the hint is shown, never hidden, so the affordance is discoverable.
  *
  * Public API is CLOSED — no `className` / `style`; sizing is the semantic `size`
  * prop. See `.agent/rules/API_RULES.md` and the AEGIS Input reference.
@@ -89,6 +92,12 @@ type SearchInputProps = Omit<
     hideClear?: boolean
     /** Called after the field is cleared via the clear button. */
     onClear?: () => void
+    /**
+     * A single-key page shortcut that focuses this field (conventionally `"/"`).
+     * Renders the key as a trailing hint and binds it document-wide, ignoring
+     * presses made while another text control already has focus.
+     */
+    shortcut?: string
   }
 
 function SearchInput({
@@ -98,6 +107,7 @@ function SearchInput({
   error,
   hideClear = false,
   onClear,
+  shortcut,
   id,
   disabled,
   value,
@@ -145,6 +155,28 @@ function SearchInput({
 
   const showClear = !hideClear && hasValue && !disabled
 
+  // Page-level shortcut. Bound on the document so the key works from anywhere,
+  // but never steals a keystroke that belongs to whatever field is focused.
+  React.useEffect(() => {
+    if (!shortcut || disabled) return
+    const handler = (event: KeyboardEvent) => {
+      if (event.key !== shortcut) return
+      if (event.metaKey || event.ctrlKey || event.altKey) return
+      const target = event.target as HTMLElement | null
+      const tag = target?.tagName
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return
+      if (target?.isContentEditable) return
+      event.preventDefault()
+      inputRef.current?.focus()
+    }
+    document.addEventListener("keydown", handler)
+    return () => document.removeEventListener("keydown", handler)
+  }, [shortcut, disabled])
+
+  // The hint occupies the trailing edge, so it yields to the clear button the
+  // moment the field has something to clear.
+  const showShortcut = shortcut != null && !showClear && !disabled
+
   return (
     <div data-slot="search-input" className="flex flex-col gap-1.5">
       {label != null && (
@@ -187,6 +219,16 @@ function SearchInput({
           )}
           {...input}
         />
+
+        {showShortcut && (
+          <span
+            aria-hidden="true"
+            data-slot="search-input-shortcut"
+            className={cn(adornmentVariants({ size }))}
+          >
+            <Kbd size="sm">{shortcut}</Kbd>
+          </span>
+        )}
 
         {showClear && (
           <button

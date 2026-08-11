@@ -1,0 +1,102 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Components/FilterBar/Guidelines" />
+
+# Filter Bar
+
+The single filter toolbar for a list page. It is configured by an array of
+**facets**: the page describes what it filters on, and the bar decides its own
+controls.
+
+## Overview
+
+Every list page needs the same thing — narrow a table by a handful of enumerated
+fields, a date range and a free-text match, and keep the result shareable. Left
+to themselves, pages each grow a chip row plus a rank of dropdowns, and the
+copies drift. Filter Bar replaces that with one component whose entire appearance
+comes from `facets`, so a new list page is a config, not a layout.
+
+## Usage
+
+- **Do** derive `facets` from the page's existing filter-options endpoint.
+- **Do** keep `values` in URL-synced list state so a link reproduces the view.
+- **Do** order facets by reach: the most-used first, date and free text last.
+- **Don't** add a page-local Apply button — filtering is live; `Done` only closes.
+- **Don't** fabricate `count`. Omit it and the count column does not render.
+
+## Anatomy
+
+A toolbar row — the **Filters** trigger (`sliders-horizontal`, the active-facet
+count badge, an `F` key hint), a **summary sentence**, a **Clear** link, a
+**copy-link** button and a `SearchInput` — above a portalled 520px panel split
+into a 172px **facet rail** and a **facet pane** (header with a per-facet Clear,
+the control, and a footer carrying the live result line, **Clear all** and
+**Done**).
+
+The summary sentence replaces the conventional chip row. Chips cost a whole row
+of vertical space to say what one sentence says, and they push the table further
+down as filters accumulate; removing a single value happens in the panel, where
+the rest of that facet is visible anyway.
+
+## Facet types
+
+- `multi` — a scrollable checkbox list with an optional per-option `count`. Add
+  `searchable` for a client-side option filter.
+- `date` — four presets (Last 7 / 30 / 90 days, All time) plus From / To fields,
+  optionally bounded by `min` / `max`.
+- `text` — a single "contains" field.
+
+## Behavior
+
+- **Live apply.** Every change fires `onChange` at once; the footer's result line
+  updates under the user's hand, which is what makes the panel worth opening.
+- **Selected-first ordering.** Selected options are hoisted to the top of a
+  `multi` list, tinted, and separated by a hairline. The sort is captured **on
+  open and on facet switch — never on click**, because re-sorting live would
+  slide a row out from under the pointer as it is being checked.
+- **The active facet is resolved, not assumed.** The facet set can change under
+  an open panel (an org switch, a wizard step re-filtering its options), so a
+  held id that no longer exists falls back to the first facet instead of
+  rendering a blank pane.
+- **Keyboard.** `F` opens the panel from anywhere on the page, `/` focuses
+  search, `Escape` closes. Both hints are shown, not hidden.
+- **Options loading / error** are contained to the pane: placeholder rows or a
+  retry. A facet-options failure must never block the list itself, and filters
+  restored from a deep link still apply without options having loaded.
+
+## Accessibility
+
+- The trigger is a real popover trigger with `aria-expanded`; the panel is
+  portalled and dismisses on `Escape` / outside press with focus returned.
+- Option rows carry `role="checkbox"` + `aria-checked` and are labelled by their
+  option text; the list is a labelled `group`.
+- Set facets are marked by a count *and* a dot beside the label — never colour
+  alone.
+
+## Design tokens
+
+Surfaces `--card` / `--surface` / `--surface-2`; `--border`; `--foreground` /
+`--muted-foreground`; `--primary` / `--accent-strong` / `--accent-soft`;
+`--ring`. Counts use `--font-mono` with `tabular-nums`. Radius: panel 12,
+controls 10, rows and chips 7–8. Elevation `--elevation-3`. No hard-coded colour.
+
+## API
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `facets` | `FilterBarFacet[]` | — | Facets, in rail order. Required. |
+| `values` | `Record<string, string[] \| {from,to} \| string>` | — | Value per facet id. |
+| `onChange` | `(facetId, value) => void` | — | Fires on every change. |
+| `onClear` | `() => void` | — | Clears every facet. |
+| `search` / `onSearch` | `string` / `(v) => void` | — | Toolbar search. |
+| `searchPlaceholder` | `string` | `"Search"` | Search placeholder. |
+| `resultLine` | `string` | — | Live result count in the panel footer. |
+| `onCopyLink` | `() => void` | — | Shows the copy-link button; the bar copies the URL, the page confirms. |
+| `loading` / `error` / `onRetry` | `boolean` / `boolean` / `() => void` | `false` | Facet-options async states. |
+
+The API is closed: `className` and `style` are not accepted.
+
+## Examples
+
+See the **Vulnerabilities** story (all three facet types), **Searchable** (option
+search plus selected-first ordering) and **Loading** / **Error**.
