@@ -11,6 +11,63 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.5.0]
+
+Minor: one additive component and two additive props, all aimed at the list
+page — the toolbar above the table, and the two affordances that reach it from
+the keyboard. **No breaking changes — no migration required.** Component count
+222 → 223.
+
+### Added
+
+- **`FilterBar`** — the single filter toolbar for every list page. The page
+  declares a `facets` array saying *what* it filters on and the bar decides its
+  own controls, so list pages stop each re-improvising a chip row plus a rank of
+  dropdowns. Three facet types (`multi`, `date`, `text`) cover the product's
+  list surfaces. Four things about it are deliberate:
+  - **The panel is portalled.** List pages render inside `Card > CardContent`,
+    which clips, and the panel is taller than a short list card. Portalling plus
+    collision flipping is what keeps the footer's `Clear all` and `Done`
+    reachable at all — it is load-bearing, not incidental.
+  - **A summary sentence replaces the chip row.** Chips cost a whole row of
+    vertical space to say what one sentence says, and they push the table
+    further down the page as they accumulate, so the filtered list gets harder
+    to see the more you filter it.
+  - **Selected-first ordering is frozen per visit.** Selected options hoist to
+    the top, but the order is captured only where a visit begins — opening the
+    panel, switching facets — and never on click, because re-sorting live slides
+    the next row out from under the pointer as it is being checked.
+  - **The active facet is resolved, never assumed.** The facet set changes under
+    an open panel when the org switches or a wizard step re-filters its options;
+    resolving against the live set is what keeps the pane from rendering blank
+    against a stale id.
+
+  Option rows carry their own checkbox semantics (`role="checkbox"` on the row,
+  `Checkbox` rendered as a presentational span) because nesting a button inside
+  a button is invalid HTML. A facet-options failure is contained to the pane, so
+  a dead options endpoint never takes the list down with it. Filtering applies
+  live; `Done` only closes. Every string the bar renders on its own account is
+  overridable through `labels`, the same contract as `Pagination` and
+  `DataTable`.
+- **`SearchInput` `shortcut`** — a single-key page shortcut (conventionally
+  `"/"`) that renders as a trailing `Kbd` hint and focuses the field from
+  anywhere on the page, ignoring presses made while another text control already
+  has focus. The hint is shown rather than revealed on hover, so the affordance
+  is discoverable, and it yields the trailing edge to the clear button the moment
+  the field has something to clear.
+- **`Card` `spotlight`** — the pointer-tracked accent bloom on its own, without
+  the affordances that say "control". `interactive` bundles four treatments: the
+  bloom, a 3px hover lift, an accent border and a pointer cursor. The first says
+  the surface is alive; the other three say it is clickable. A board of resting
+  cards wants the first and must not have the second, because a reader who
+  clicks a card that rises and lights its border and gets nothing has been lied
+  to. `spotlight` composes with every variant, `beam` included — there the bloom
+  belongs to the inner panel, since that is the element carrying `--card`. The
+  layer parks off-surface and returns there on `mouseleave`, so a card the
+  pointer has left is never left glowing where it last saw one.
+
+---
+
 ## [0.4.0]
 
 Minor: two additive components for the two-panel record browser — a column of
