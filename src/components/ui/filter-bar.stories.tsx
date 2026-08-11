@@ -166,6 +166,32 @@ export const WithSelection: Story = {
   render: () => (
     <Demo initial={{ severity: ["critical", "high"], tag: ["external"] }} />
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: /Filters/ }))
+    const panel = within(await screenBody())
+
+    await step("the hairline marks the hoisted selection", async () => {
+      await waitFor(() =>
+        expect(
+          document.querySelectorAll('[data-slot="filter-bar-divider"]')
+        ).toHaveLength(1)
+      )
+    })
+
+    await step("and withdraws once it would misdescribe the order", async () => {
+      // The order is frozen for the visit, so checking a further option leaves
+      // it below the line — which would then claim everything under it is
+      // unselected. The line goes rather than lie; the row tint carries on.
+      await userEvent.click(panel.getByRole("checkbox", { name: /Low/ }))
+      await waitFor(() =>
+        expect(
+          document.querySelectorAll('[data-slot="filter-bar-divider"]')
+        ).toHaveLength(0)
+      )
+      await expect(panel.getByRole("checkbox", { name: /Low/ })).toBeChecked()
+    })
+  },
 }
 
 export const OptionsLoading: Story = {

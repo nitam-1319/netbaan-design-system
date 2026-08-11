@@ -640,11 +640,22 @@ function FilterBarPane({
   const visible = query
     ? ranked.filter((option) => option.label.toLowerCase().includes(query))
     : ranked
-  // The hairline sits at the boundary between the hoisted selection and the
-  // rest, so it is only drawn once and only when there is a boundary to mark.
-  const dividerAt = selected.length
-    ? visible.findIndex((option) => !selected.includes(option.value))
-    : -1
+  // The hairline marks the boundary between the hoisted selection and the rest.
+  // Because the order is frozen for the visit, checking a further option does
+  // NOT move it up — which would otherwise strand a checked row below a line
+  // that claims everything under it is unselected. So the hairline is drawn only
+  // while the list is still cleanly partitioned, and withdraws as soon as it
+  // would misdescribe the grouping; the row tint goes on carrying which options
+  // are selected, so nothing becomes ambiguous.
+  const firstUnselected = visible.findIndex(
+    (option) => !selected.includes(option.value)
+  )
+  const partitioned =
+    firstUnselected > 0 &&
+    visible
+      .slice(firstUnselected)
+      .every((option) => !selected.includes(option.value))
+  const dividerAt = partitioned ? firstUnselected : -1
 
   return (
     <>
@@ -675,6 +686,7 @@ function FilterBarPane({
                 {index === dividerAt && index > 0 ? (
                   <div
                     aria-hidden="true"
+                    data-slot="filter-bar-divider"
                     className="mx-1 my-1.5 h-px bg-border"
                   />
                 ) : null}
