@@ -217,3 +217,215 @@ export const OptionsError: Story = {
   },
   render: () => <Demo error />,
 }
+
+/**
+ * What the endpoint can actually send.
+ *
+ * `GET /{resource}/filter/` decides how many options a facet has, and a portfolio
+ * facet — registrars, CVEs, assignees — runs to thousands. This story is the one
+ * that keeps the list windowed: at 20 000 options the rendered row count must stay
+ * in the tens, and both the rail and the panel must hold their shape against a
+ * facet list longer than the panel is tall.
+ */
+const HUGE_FACETS: FilterBarFacet[] = [
+  {
+    id: "registrar",
+    label: "Registrar",
+    type: "multi",
+    searchable: true,
+    options: Array.from({ length: 20_000 }, (_, i) => ({
+      value: `r${i}`,
+      label: `Registrar ${i}`,
+      count: 20_000 - i,
+    })),
+  },
+  ...Array.from({ length: 30 }, (_, i) => ({
+    id: `spare${i}`,
+    label: `Spare facet ${i}`,
+    type: "multi" as const,
+    options: [{ value: "a", label: "Alpha", count: 1 }],
+  })),
+]
+
+export const HugeOptionSet: Story = {
+  args: {
+    facets: HUGE_FACETS,
+    values: {},
+    onChange: () => {},
+    onClear: () => {},
+    search: "",
+    onSearch: () => {},
+  },
+  render: () => (
+    <Demo facets={HUGE_FACETS} initial={{ registrar: ["r5000", "r9"] }} />
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: /Filters/ }))
+
+    await step("only the window is in the DOM", async () => {
+      await waitFor(() =>
+        expect(
+          document.querySelector('[data-slot="filter-bar-option-viewport"]')
+        ).toBeInTheDocument()
+      )
+      const rendered = document.querySelectorAll(
+        '[data-slot="filter-bar-option"]'
+      ).length
+      expect(rendered).toBeGreaterThan(0)
+      expect(rendered).toBeLessThan(40)
+    })
+
+    await step("the scroll range still covers every option", async () => {
+      const canvasEl = document.querySelector(
+        '[data-slot="filter-bar-option-canvas"]'
+      ) as HTMLElement
+      // 20 000 rows at a 32px pitch, plus the hairline's 13px.
+      await expect(canvasEl.style.height).toBe("640013px")
+    })
+
+    await step("the rail scrolls rather than stretching the panel", async () => {
+      const rail = document.querySelector(
+        '[data-slot="filter-bar-rail"]'
+      ) as HTMLElement
+      await expect(rail.scrollHeight).toBeGreaterThan(rail.clientHeight)
+    })
+
+    await step("and leaves no bare strip beneath itself", async () => {
+      // A searchable facet's option-search field makes the pane taller than any
+      // cap the rail could carry, so a capped rail stopped above the footer and
+      // showed the card through the gap. The rail must end exactly where the
+      // panel body does, whatever the pane's height turns out to be.
+      const rail = document
+        .querySelector('[data-slot="filter-bar-rail"]')!
+        .getBoundingClientRect()
+      const body = document
+        .querySelector('[data-slot="filter-bar-panel"]')!
+        .firstElementChild!.getBoundingClientRect()
+      await expect(Math.round(body.bottom - rail.bottom)).toBe(0)
+      await expect(Math.round(rail.top - body.top)).toBe(0)
+    })
+  },
+}
+
+/**
+ * A date facet bounded the way the filter-options endpoint actually bounds one:
+ * with full ISO timestamps, not bare days. A native date input silently DROPS a
+ * `min` / `max` it cannot read as `YYYY-MM-DD`, so these have to be narrowed
+ * before they reach the field or the facet's own bounds never apply.
+ */
+const DATE_FACETS: FilterBarFacet[] = [
+  {
+    id: "discovered",
+    label: "Discovered",
+    type: "date",
+    min: "2026-01-01T00:00:00.000Z",
+    max: "2026-12-31T23:59:59.000Z",
+  },
+  {
+    id: "severity",
+    label: "Severity",
+    type: "multi",
+    options: [{ value: "critical", label: "Critical", count: 2 }],
+  },
+]
+
+/**
+ * A range whose start falls after its end — the state a deep link can deliver
+ * even though the calendar will no longer produce it.
+ */
+export const BackwardsDateRange: Story = {
+  args: {
+    facets: DATE_FACETS,
+    values: {},
+    onChange: () => {},
+    onClear: () => {},
+    search: "",
+    onSearch: () => {},
+  },
+  render: () => (
+    <Demo
+      facets={DATE_FACETS}
+      initial={{ discovered: { from: "2026-08-20", to: "2026-01-01" } }}
+    />
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+
+    await step("the closed trigger already says something is wrong", async () => {
+      const badge = canvasElement.querySelector(
+        '[data-slot="filter-bar-count"]'
+      ) as HTMLElement
+      await expect(badge).toHaveAttribute("data-invalid")
+      // The facet still COUNTS — it is a constraint the user set and has to
+      // fix, and dropping it from the tally would understate that.
+      await expect(badge).toHaveTextContent("1")
+    })
+
+    await userEvent.click(canvas.getByRole("button", { name: /Filters/ }))
+    const panel = within(document.body)
+
+    await step("the rail names it in a word, not just a colour", async () => {
+      await waitFor(() =>
+        expect(
+          panel.getByRole("button", { name: /Discovered/ })
+        ).toHaveTextContent("invalid")
+      )
+    })
+
+    await step("both fields are marked and the pair is explained", async () => {
+      await userEvent.click(panel.getByRole("button", { name: /Discovered/ }))
+      const from = panel.getByLabelText("From")
+      const to = panel.getByLabelText("To")
+      await expect(from).toHaveAttribute("aria-invalid", "true")
+      await expect(to).toHaveAttribute("aria-invalid", "true")
+      await expect(
+        panel.getByText("Start date must be on or before the end date.")
+      ).toBeVisible()
+    })
+
+    await step("the endpoint's bounds arrive as days, not timestamps", async () => {
+      // Passed through whole, these would be dropped by the browser and the
+      // facet would be unbounded in both directions.
+      await expect(panel.getByLabelText("From")).toHaveAttribute(
+        "min",
+        "2026-01-01"
+      )
+      await expect(panel.getByLabelText("To")).toHaveAttribute(
+        "max",
+        "2026-12-31"
+      )
+    })
+
+    await step("and the two fields bound each other", async () => {
+      // This is what stops the range being created in the first place: the
+      // start calendar stops at the end day, and the end calendar starts at the
+      // start day.
+      await expect(panel.getByLabelText("From")).toHaveAttribute(
+        "max",
+        "2026-01-01"
+      )
+      await expect(panel.getByLabelText("To")).toHaveAttribute(
+        "min",
+        "2026-08-20"
+      )
+    })
+
+    await step("correcting the end day clears the whole state", async () => {
+      const to = panel.getByLabelText("To") as HTMLInputElement
+      await userEvent.clear(to)
+      await userEvent.type(to, "2026-09-30")
+      await waitFor(() =>
+        expect(
+          panel.queryByText("Start date must be on or before the end date.")
+        ).not.toBeInTheDocument()
+      )
+      await expect(panel.getByLabelText("From")).not.toHaveAttribute(
+        "aria-invalid"
+      )
+      await expect(
+        canvasElement.querySelector('[data-slot="filter-bar-count"]')
+      ).not.toHaveAttribute("data-invalid")
+    })
+  },
+}

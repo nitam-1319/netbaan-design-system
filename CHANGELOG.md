@@ -11,6 +11,54 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.5.3]
+
+Patch: two `FilterBar` fixes — one behavioural, one that had quietly disabled an
+existing prop. **No breaking changes — no migration required.** Component count
+unchanged at 223.
+
+> `0.5.2` was built and consumed locally but never published; the option-scale
+> work cut for it ships here.
+
+### Fixed
+
+- **`FilterBar`** — a `date` facet can no longer be walked into a backwards
+  range. The two fields now bound **each other**: the chosen end day caps the
+  start calendar and the chosen start day floors the end one, so the ordinary
+  path through the control cannot produce a range that matches nothing. The
+  calendar is not the only way in — a day can be typed, and a whole range
+  arrives from a deep link having never passed through the component — so a pair
+  that lands backwards anyway is reported rather than accepted: both fields go
+  `aria-invalid`, the pair is explained beneath them, the rail entry reads
+  `invalid`, and the trigger's count turns destructive so the state survives the
+  panel closing. The out-of-range value is still shown; blanking what the user
+  typed would leave nothing to correct.
+- **`FilterBar`** — a `date` facet's `min` / `max` are narrowed to a day before
+  they reach the field. They are documented as ISO bounds and the filter-options
+  endpoints send full timestamps, but a native date input **drops** a `min` /
+  `max` it cannot read as `YYYY-MM-DD` instead of reporting it — so the facet's
+  own bounds had never actually constrained the calendar.
+- **`FilterBar`** — a `multi` facet's option list is sized by the response, not
+  the design: past ~60 options it windows itself, rendering only the rows near
+  its viewport against a full-height scroll range, and ranking and membership
+  moved to `Map` / `Set` lookups so a wide facet costs no more per keystroke
+  than a narrow one. The rail scrolls inside the panel rather than stretching it
+  past the viewport, and is stretched to the pane so it always meets the footer.
+  Windowed rows stay direct children of the labelled `group` and are addressed
+  by arrow keys (plus `Home` / `End`), so every option is reachable even though
+  most are not materialised. *(Cut for 0.5.2.)*
+
+### Added
+
+- **`FilterBarLabels.invalidRange`** — the message shown beneath a backwards
+  date range. Defaults to `"Start date must be on or before the end date."`
+- **`FilterBarLabels.invalidShort`** — that facet's word in the rail, in place of
+  its value summary. Defaults to `"invalid"`. Both are optional, like every other
+  label; an app that overrides `labels` should add them so the state is not
+  reported in English inside a translated panel.
+
+---
+
 ## [0.5.1]
 
 Patch: one `FilterBar` behaviour fix. **No breaking changes — no migration
