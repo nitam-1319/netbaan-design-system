@@ -23,15 +23,28 @@ import { cn } from "@/lib/utils"
  *                 revealed as a 1.5px frame around an inset panel (masthead beam).
  */
 
-const cardVariants = cva("flex flex-col gap-6 py-6 text-card-foreground", {
+const cardVariants = cva("flex flex-col text-card-foreground", {
   variants: {
     variant: {
       default: "rounded-xl border border-border bg-card glass-panel",
       elevated: "rounded-xl border border-border bg-card shadow-elevated",
       beam: "rounded-[18.5px] bg-card",
     },
+    /**
+     * Padding and gap, stepped together.
+     *
+     * 24px was the only rung, which is right for a feature card and too much
+     * for a dense board — a metric card spent more of its height on inset than
+     * on the figure. `compact` is one word at the root rather than a padding
+     * prop per slot, because a card with compact padding and default gaps is
+     * neither density.
+     */
+    density: {
+      default: "gap-6 py-6",
+      compact: "gap-3.5 py-5",
+    },
   },
-  defaultVariants: { variant: "default" },
+  defaultVariants: { variant: "default", density: "default" },
 })
 
 type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
@@ -44,6 +57,51 @@ type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
      * animates its clickable nav cards).
      */
     interactive?: boolean
+    /**
+     * "Alive, but not a control": the border and shadow change on hover, with
+     * no pointer cursor and no spotlight.
+     *
+     * `interactive` bundles four treatments, three of which say "this surface
+     * is a control". A resting board wants the surface to acknowledge the
+     * cursor without promising a click — a card that rises and lights its
+     * border and then does nothing has lied to the reader.
+     */
+    lift?: boolean
+    /**
+     * Border colour, for a card that carries a status.
+     *
+     * Only the border moves; the surface stays `--card`, so a row of cards in
+     * different states still reads as one family.
+     */
+    borderTone?: "default" | "primary" | "success" | "warning" | "danger"
+    /**
+     * Full-bleed content above the header — an image, a chart, a map.
+     *
+     * Rendered inside the card's clip so it takes the top corners, and with no
+     * inset of its own: a media band that is padded is a picture in a frame,
+     * which is a different component.
+     */
+    media?: React.ReactNode
+    /**
+     * Beam cadence. `control` (3.4s) is the button's; `surface` (6.5s) is the
+     * one a page-width band wants — at the control cadence a masthead reads as
+     * something you are supposed to press.
+     */
+    beamSpeed?: "control" | "surface"
+    /**
+     * Whether the beam keeps turning under `prefers-reduced-motion`.
+     *
+     * Default `still` freezes it to the static fallback, which is right for
+     * decoration. Opt in to `essential` where the beam is the only thing
+     * saying a surface is live.
+     */
+    beamMotion?: "essential" | "still"
+    /**
+     * Tint `CardHeader` and `CardFooter` onto `--surface` under `flush`, so a
+     * banded card reads as head / body / foot rather than one sheet with two
+     * rules across it. Ignored when `flush` is false.
+     */
+    banded?: boolean
     /**
      * The pointer spotlight, on its own: a 260px accent bloom that follows the
      * cursor across the surface, with **no** lift, no border change, no shadow
@@ -93,11 +151,26 @@ type CardProps = Omit<React.ComponentProps<"div">, "className" | "style"> &
 const SPOTLIGHT_LAYER =
   "pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-[radial-gradient(260px_circle_at_var(--mx,-500px)_var(--my,-500px),color-mix(in_srgb,var(--primary)_16%,transparent),transparent_72%)]"
 
+const BORDER_TONE: Record<string, string> = {
+  default: "",
+  primary: "border-primary",
+  success: "border-[color:var(--success)]",
+  warning: "border-[color:var(--warning)]",
+  danger: "border-destructive",
+}
+
 function Card({
   variant = "default",
+  density = "default",
   interactive = false,
+  lift = false,
   spotlight = false,
   flush = false,
+  banded = false,
+  borderTone = "default",
+  media,
+  beamSpeed = "control",
+  beamMotion = "still",
   children,
   onMouseMove,
   onMouseLeave,
@@ -143,7 +216,13 @@ function Card({
           aria-hidden
           className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
         >
-          <span className="absolute top-1/2 left-1/2 aspect-square w-[140%] -translate-x-1/2 -translate-y-1/2 animate-beam-spin bg-[conic-gradient(from_0deg,transparent_0_74%,var(--primary)_85%,var(--accent-strong)_92%,transparent_100%)]" />
+          <span
+            data-motion={beamMotion === "essential" ? "essential" : undefined}
+            className={cn(
+              "absolute top-1/2 left-1/2 aspect-square w-[140%] -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(from_0deg,transparent_0_74%,var(--primary)_85%,var(--accent-strong)_92%,transparent_100%)]",
+              beamSpeed === "surface" ? "animate-beam-spin" : "animate-beam-spin-fast"
+            )}
+          />
         </span>
         {/* The bloom belongs to the INNER panel: that is the one carrying `--card`,
             and the 1.5px frame around it is the beam's, not a surface to light.
@@ -152,7 +231,7 @@ function Card({
           className={cn(
             "relative m-[1.5px]",
             spotlight && "isolate",
-            cardVariants({ variant })
+            cardVariants({ variant, density })
           )}
         >
           {spotlight ? <span aria-hidden className={SPOTLIGHT_LAYER} /> : null}
@@ -167,12 +246,20 @@ function Card({
       data-slot="card"
       data-variant={variant ?? "default"}
       data-interactive={interactive || undefined}
+      data-lift={lift || undefined}
       data-spotlight={spotlight || undefined}
       data-flush={flush || undefined}
+      data-banded={(flush && banded) || undefined}
+      // The slots read the density from here rather than taking a prop each:
+      // one word at the root cannot produce a half-converted card.
+      data-density={density ?? "default"}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        cardVariants({ variant }),
+        "group/card",
+        cardVariants({ variant, density }),
+        BORDER_TONE[borderTone ?? "default"],
+        media && "overflow-clip",
         // `overflow-clip` (not hidden) so the bloom is cut to the radius without
         // turning the card into a scroll container.
         spotlight && !interactive && "relative isolate overflow-clip",
@@ -182,7 +269,23 @@ function Card({
           "[&>[data-slot=card-header]]:border-b [&>[data-slot=card-header]]:border-border [&>[data-slot=card-header]]:pt-4 [&>[data-slot=card-header]]:pb-3.5",
           "[&>[data-slot=card-content]]:py-5",
           "[&>[data-slot=card-footer]]:border-t [&>[data-slot=card-footer]]:border-border [&>[data-slot=card-footer]]:py-3.5",
+          // Rows own their inset in this mode, so the body's inline padding
+          // was a second one — a full-bleed list came out double-inset and
+          // callers hung the `ul` off `Card` directly to escape it.
+          "[&>[data-slot=card-content]]:px-0",
         ],
+        // A banded card paints its head and foot, so the bands are surfaces
+        // rather than one sheet with two rules drawn across it.
+        flush &&
+          banded && [
+            "[&>[data-slot=card-header]]:bg-surface",
+            "[&>[data-slot=card-footer]]:bg-surface",
+          ],
+        // The lift without the promise of a click: border and shadow only, no
+        // cursor change and no bloom.
+        lift &&
+          !interactive &&
+          "transition-[border-color,box-shadow] duration-[180ms] ease-out hover:border-primary hover:shadow-elevated",
         interactive &&
           // `translate` is listed beside `transform`: Tailwind v4 writes the
           // lift as the standalone `translate` property, so transitioning
@@ -203,19 +306,45 @@ function Card({
       ) : spotlight ? (
         <span aria-hidden className={SPOTLIGHT_LAYER} />
       ) : null}
+      {/* Above the header and inside the clip, with no inset of its own: a
+          media band that is padded is a picture in a frame. The root's block
+          padding is cancelled on this edge so the image meets the corners. */}
+      {media ? (
+        <div data-slot="card-media" className={cn("-mt-6 mb-0 overflow-clip", flush && "mt-0")}>
+          {media}
+        </div>
+      ) : null}
       {children}
     </div>
   )
 }
 
-function CardHeader({
-  ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
+type CardHeaderProps = Omit<React.ComponentProps<"div">, "className" | "style"> & {
+  /**
+   * Let the action slot drop below the text instead of sharing its row.
+   *
+   * The action column is `auto`, so a header with several controls squeezed
+   * the title until it wrapped mid-word and then overflowed anyway. With
+   * `wrap`, the two stack once the header is narrower than 28rem.
+   */
+  wrap?: boolean
+}
+
+function CardHeader({ wrap = false, ...props }: CardHeaderProps) {
   return (
     <div
       data-slot="card-header"
       className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"
+        "@container/card-header grid auto-rows-min items-start px-6 [.border-b]:pb-6",
+        // Implicit rows, not a fixed two-row template: the second row existed
+        // whether or not a description did, so every header without one paid
+        // 6px of empty grid. `has-` restores the gap only when the row is real.
+        "gap-y-0 has-data-[slot=card-description]:gap-y-1.5",
+        "has-data-[slot=card-action]:grid-cols-[1fr_auto]",
+        // Compact density steps the whole header down with the card.
+        "group-data-[density=compact]/card:px-5",
+        wrap &&
+          "has-data-[slot=card-action]:@max-[28rem]/card-header:grid-cols-1 has-data-[slot=card-action]:@max-[28rem]/card-header:gap-y-3"
       )}
       {...props}
     />
@@ -238,7 +367,12 @@ function CardTitle({ render = <div />, ...props }: CardTitleProps) {
     render,
     props: {
       "data-slot": "card-title",
-      className: cn("font-heading leading-none font-semibold tracking-tight"),
+      // 16/14 is the feature-card pair; a dense board wants 13/11.5, and the
+      // two must step together or the header reads as two type systems.
+      className: cn(
+        "font-heading leading-none font-semibold tracking-tight",
+        "group-data-[density=compact]/card:text-[13px]"
+      ),
       ...props,
     },
   })
@@ -250,30 +384,59 @@ function CardDescription({
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm text-pretty text-muted-foreground")}
-      {...props}
-    />
-  )
-}
-
-function CardAction({
-  ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
-  return (
-    <div
-      data-slot="card-action"
       className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end"
+        "text-sm text-pretty text-muted-foreground",
+        "group-data-[density=compact]/card:text-[11.5px]"
       )}
       {...props}
     />
   )
 }
 
-function CardContent({
-  ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
-  return <div data-slot="card-content" className={cn("px-6")} {...props} />
+type CardActionProps = Omit<React.ComponentProps<"div">, "className" | "style"> & {
+  /** Vertical alignment against the title/description column. Default `start`. */
+  align?: "start" | "center"
+}
+
+function CardAction({ align = "start", ...props }: CardActionProps) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 justify-self-end",
+        align === "center" ? "self-center" : "self-start",
+        // Under a wrapped header the action is no longer in a second column.
+        "@max-[28rem]/card-header:group-has-data-[slot=card-action]/card:col-start-1"
+      )}
+      {...props}
+    />
+  )
+}
+
+type CardContentProps = Omit<React.ComponentProps<"div">, "className" | "style"> & {
+  /**
+   * Grow to fill the card, as a flex column.
+   *
+   * In a row of stretched cards the body used to keep its natural height and
+   * the surplus piled up at the bottom, so a chart could not take `flex: 1`
+   * and cards of different content length disagreed about where their footers
+   * sat.
+   */
+  fill?: boolean
+}
+
+function CardContent({ fill = false, ...props }: CardContentProps) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn(
+        "px-6",
+        "group-data-[density=compact]/card:px-5",
+        fill && "flex min-h-0 flex-1 flex-col"
+      )}
+      {...props}
+    />
+  )
 }
 
 function CardFooter({
@@ -282,7 +445,10 @@ function CardFooter({
   return (
     <div
       data-slot="card-footer"
-      className={cn("flex items-center px-6 [.border-t]:pt-6")}
+      className={cn(
+        "flex items-center px-6 [.border-t]:pt-6",
+        "group-data-[density=compact]/card:px-5"
+      )}
       {...props}
     />
   )

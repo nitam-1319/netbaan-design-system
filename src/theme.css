@@ -867,8 +867,11 @@
     }
 
     /* E7 — the beam is decorative, not stateful: freeze it to its static
-       fallback rather than leaving it parked mid-rotation. */
-    [data-slot="beam"] > span {
+       fallback rather than leaving it parked mid-rotation.
+       `:not([data-motion="essential"])` is the escape for the case where the
+       beam is the ONLY thing saying a surface is live — a frozen beam there is
+       indistinguishable from a dead panel. The default is still to freeze. */
+    [data-slot="beam"] > span:not([data-motion="essential"]) {
         animation: none !important;
         background: var(--beam-still) !important;
     }
