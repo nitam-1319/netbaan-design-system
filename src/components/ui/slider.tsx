@@ -71,6 +71,14 @@ type SliderProps = Omit<SliderRootProps, "className" | "style"> &
     showValue?: boolean
     /** Per-thumb accessible label, e.g. `(i) => i === 0 ? "Min" : "Max"`. */
     getAriaLabel?: (index: number) => string
+    /**
+     * Collapse the control's box to the track.
+     *
+     * The default reserves the thumb's height so the pointer target matches
+     * what the user sees and can grab. Opt out only where the slider is a
+     * decorative inline readout rather than something anyone drags.
+     */
+    dense?: boolean
   }
 
 function Slider({
@@ -79,6 +87,7 @@ function Slider({
   label,
   showValue = false,
   getAriaLabel,
+  dense = false,
   value,
   defaultValue,
   orientation = "horizontal",
@@ -124,10 +133,16 @@ function Slider({
       <SliderPrimitive.Control
         data-slot="slider-control"
         className={cn(
+          // The track is 6px and the thumb is 16px, so the control's box used
+          // to be a quarter of the target the user actually grabs — every
+          // pointer-down above or below the hairline missed. The box is given
+          // the thumb's height (and the track stays centred within it), which
+          // also brings the row to the 44px touch floor when the surrounding
+          // padding is counted. `dense` opts out for an inline sparkline use.
           "relative flex items-center",
           orientation === "vertical"
-            ? "h-full w-4 flex-col justify-center"
-            : "w-full"
+            ? cn("h-full flex-col justify-center", dense ? "w-4" : "w-6")
+            : cn("w-full", dense ? undefined : "min-h-6")
         )}
       >
         <SliderPrimitive.Track

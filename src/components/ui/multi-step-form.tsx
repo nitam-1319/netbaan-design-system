@@ -52,6 +52,22 @@ type MultiStepFormProps = Omit<
   nextDisabled?: boolean
   /** Show a loading state on the submit button. */
   submitting?: boolean
+  /**
+   * The progress readout between the footer buttons.
+   *
+   * `backLabel`, `nextLabel` and `submitLabel` were translatable and this was
+   * not — it was built as `["Step ", n, " of ", total]` — so a Persian form
+   * read `قبلی` / `بعدی` / `پایان` around an English "Step 1 of 4". Receives
+   * the 1-based current step and the total so the caller can interpolate and
+   * localise its own digits.
+   */
+  progressLabel?: (current: number, total: number) => React.ReactNode
+  /**
+   * Accessible name for the active step's region, used when the step has no
+   * string `label`. Defaulted to English for the same reason as above, so a
+   * Persian screen-reader user heard the region announced in English.
+   */
+  stepAriaLabel?: (current: number, total: number) => string
 }
 
 function MultiStepForm({
@@ -66,6 +82,8 @@ function MultiStepForm({
   submitLabel = "Submit",
   nextDisabled = false,
   submitting = false,
+  progressLabel = (current, total) => `Step ${current} of ${total}`,
+  stepAriaLabel = (current) => `Step ${current}`,
   ...props
 }: MultiStepFormProps) {
   const isControlled = activeStep != null
@@ -103,7 +121,9 @@ function MultiStepForm({
         data-slot="multi-step-form-content"
         role="group"
         aria-label={
-          typeof active?.label === "string" ? active.label : `Step ${clamped + 1}`
+          typeof active?.label === "string"
+            ? active.label
+            : stepAriaLabel(clamped + 1, steps.length)
         }
       >
         {active?.content}
@@ -126,7 +146,7 @@ function MultiStepForm({
           data-slot="multi-step-form-progress"
           className="text-xs text-muted-foreground tabular-nums"
         >
-          Step {clamped + 1} of {steps.length}
+          {progressLabel(clamped + 1, steps.length)}
         </span>
 
         <Button

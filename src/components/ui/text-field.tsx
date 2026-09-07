@@ -140,6 +140,12 @@ function TextField({
         <FieldPrimitive.Control
           data-slot="text-field-control"
           readOnly={readOnly}
+          // An `error` message with no `aria-invalid` printed the text without
+          // painting the field, so a caller could say "this is wrong" and have
+          // the control still look resting. Deriving the default from `error`
+          // keeps the two in step; an explicit `aria-invalid` still wins, which
+          // is what a field driven by native validity needs.
+          aria-invalid={control["aria-invalid"] ?? (error != null ? true : undefined)}
           className={cn(
             textFieldVariants({ variant, size, state }),
             leadingIcon ? "ps-10" : undefined,

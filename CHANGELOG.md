@@ -11,6 +11,115 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.6.0]
+
+Minor: an **accessibility and localisation** pass, driven by a full-app page
+audit of the consuming product — every item here was measured on a rendered
+page rather than reviewed by eye. **No breaking changes — no migration
+required.** Component count unchanged at 223; everything new is additive.
+
+### Fixed
+
+- **`Avatar`** *(DS-086)* — the initials were unreadable on the swatch the
+  component picks for them. Each seed ramped from its token toward **white**,
+  which put white ink on a pastel: measured on a live page, `NK` sat at
+  **1.73:1**, and the whole palette fell between **1.47 and 2.88** against the
+  4.5:1 that text needs. The ramp now mixes toward **black**, which keeps each
+  person's seeded hue — the point of the seeding — while moving every swatch
+  into a band where the ink is legible. The lighter stop is the worst case; at
+  58% of the token the weakest seed (`--warning`) measures **5.22:1**, and no
+  entry falls below it.
+
+  Choosing the ink per swatch instead could not have worked: the old gradient
+  spanned both bands, and white fails on the pale half while dark ink fails on
+  `--primary` and `--accent-strong`, which are dark to begin with. Narrowing the
+  ramp is what makes one ink correct everywhere. 169 findings across the audit
+  trace to this one component.
+
+- **`--font-mono`** *(DS-044)* — the mono stack named no Persian face, so every
+  Persian string in a mono context left the webfont stack entirely and rendered
+  in the platform monospace beside Vazirmatn text. Measured at **51 of 180**
+  Persian-bearing elements on one board, including the Persian-Indic digits in
+  stat tiles and axis labels. `Vazirmatn` now sits after `IBM Plex Mono`, so a
+  Latin payload — hostname, CVE id, hash — still resolves to Plex Mono and never
+  reaches it. The `:lang(fa)` mono rule also covers the `.font-mono` utility,
+  not only `code`/`pre`/`kbd`/`samp`.
+
+- **`TextField`** *(DS-074)* — an `error` message printed without painting the
+  field, so a caller could say "this is wrong" and have the control still look
+  resting. `aria-invalid` now defaults to whether `error` is set; an explicit
+  `aria-invalid` still wins, which is what a field driven by native validity
+  needs.
+
+- **`Card interactive`** *(DS-079)* — the hover lift never animated. Tailwind v4
+  writes it as the standalone `translate` property and the transition listed
+  only `transform`, so the card snapped. `translate` is now in the list, and the
+  lift is *removed* under `prefers-reduced-motion` rather than merely slowed —
+  clamping the duration was a no-op for a property that was never
+  transitioning.
+
+- **`Slider`** *(DS-083)* — the root was the height of the 6px track while the
+  thumb is 16px, so three quarters of the target the user aims at was outside
+  the control's box. The box now reserves the thumb's height, bringing the row
+  to the touch floor once its padding is counted; `dense` opts out for an
+  inline, undraggable readout.
+
+### Added
+
+- **`PaginationPrevious` / `PaginationNext`** *(DS-059, DS-075)* — accept
+  `children` as the visible label, defaulting to `Previous` / `Next`. The words
+  were literals inside the component and `children` was not forwarded, so a
+  translated app could not use two of the four exported controls at all and
+  re-implemented them from `PaginationLink`.
+- **`PaginationLink`** *(DS-075)* — a `variant` prop, so an outlined control no
+  longer has to be reached through `isActive`. Getting there through `isActive`
+  also stamped `aria-current="page"`, which told assistive technology that a
+  Previous button was the current page. Adds a `sm` size for pagers that sit
+  below 38px.
+- **`PaginationEllipsis`** *(DS-075)* — a `label` prop for its screen-reader
+  text.
+- **`Pagination`** *(DS-058)* — `width="inline"`, so the pager can share a
+  footer row with a count or a page readout instead of claiming the full width.
+- **`MultiStepForm`** *(DS-066)* — `progressLabel(current, total)` and
+  `stepAriaLabel(current, total)`. Three of the four strings this component
+  renders were already translatable; the progress line was built as
+  `["Step ", n, " of ", total]` and the step region's `aria-label` was literal
+  English, so a Persian form read `قبلی` / `بعدی` / `پایان` around an English
+  "Step 1 of 4" — and announced the region in English too.
+- **`HostsByCountryMap`** *(DS-006)* — `totalLabel` for the unit under the fleet
+  total, and `summaryLabel(total, countryCount)` for the accessible summary. The
+  summary was assembled from an English template with its own
+  `country`/`countries` pluralisation, so a Persian board announced itself in
+  English to a screen-reader user however carefully the visible labels were
+  translated.
+- **`Sidebar`** *(DS-063)* — `density="touch"`, read by every slot from the
+  root. `SidebarItem` was `px-3 py-2`, landing a row at about 36px: right under
+  a mouse, and under the 44×44px floor the responsive policy sets for touch. The
+  prop sits at the root because density is a property of the surface — a rail
+  with touch rows and a comfortable header is worse than either. Under `touch`
+  the footer also clears `env(safe-area-inset-bottom)`.
+- **`Button`** — `width="block"` *(DS-005)* to fill a constrained parent and let
+  a long label truncate natively, instead of a `shrink-0` control pushing its
+  siblings out; `size="xs"` and `variant="dashed"` *(DS-039)* for an inline
+  "+N more" chip; `size="touch"` and `size="icon-touch"` at 40px *(DS-065)* for
+  a tap row.
+- **`StatusPill`** *(DS-032)* — an `accent` tone. `info` was standing in for
+  in-progress work, which made a live state read the same as a note about one.
+- **`Progress`** *(DS-018)* — a `size` scale. 8px was the only height, so a
+  metric cell wanting a hairline under a figure had to hand-roll its own track.
+
+### Not shipped, deliberately
+
+- **`--sev-*` severity ramp** *(DS-049)* — the five severity hues are unrelated,
+  and High and Medium sit **ΔE 8.1** apart for a deuteranope, below the ~10 at
+  which two colours stop being separable at a glance. The measured
+  single-hue replacement is ready in the issue. It is held back because it is a
+  product-wide brand change that the queue entry itself flags for sign-off
+  before shipping, and shipping it inside an accessibility patch would change
+  every severity surface in the product without anyone having chosen to.
+
+---
+
 ## [0.5.3]
 
 Patch: two `FilterBar` fixes — one behavioural, one that had quietly disabled an

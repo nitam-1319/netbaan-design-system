@@ -184,7 +184,14 @@ function Card({
           "[&>[data-slot=card-footer]]:border-t [&>[data-slot=card-footer]]:border-border [&>[data-slot=card-footer]]:py-3.5",
         ],
         interactive &&
-          "group/card relative cursor-pointer overflow-hidden transition-[transform,border-color,box-shadow] duration-[180ms] ease-out hover:-translate-y-[3px] hover:border-primary hover:shadow-elevated"
+          // `translate` is listed beside `transform`: Tailwind v4 writes the
+          // lift as the standalone `translate` property, so transitioning
+          // `transform` alone animated nothing and the card snapped. Listing
+          // both keeps older composed transforms covered.
+          // The reduced-motion reset clamps transition-duration, which is a
+          // no-op for a property that was never transitioning — so the lift
+          // itself is removed here rather than merely slowed.
+          "group/card relative cursor-pointer overflow-hidden transition-[transform,translate,border-color,box-shadow] duration-[180ms] ease-out hover:-translate-y-[3px] hover:border-primary hover:shadow-elevated motion-reduce:transition-none motion-reduce:hover:translate-y-0"
       )}
       {...props}
     >

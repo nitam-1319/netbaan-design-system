@@ -24,15 +24,31 @@ import { cn } from "@/lib/utils"
 type SidebarProps = Omit<React.ComponentProps<"nav">, "className" | "style"> & {
   /** Accessible label for the navigation landmark. */
   navLabel?: string
+  /**
+   * Row density for the whole rail.
+   *
+   * `comfortable` (default) is the desktop rail: ~36px rows, right under a
+   * mouse. `touch` raises every slot to the 44px minimum a tap target needs,
+   * and grows the label and icon with it.
+   *
+   * Declared once at the root rather than per slot, because density is a
+   * property of the surface: a rail with touch rows and a comfortable header
+   * is worse than either, and there was previously no prop at all — a rail
+   * that was correct on desktop was uniformly too tight in a drawer.
+   */
+  density?: "comfortable" | "touch"
 }
 
-function Sidebar({ navLabel = "Sidebar", ...props }: SidebarProps) {
+function Sidebar({ navLabel = "Sidebar", density = "comfortable", ...props }: SidebarProps) {
   return (
     <nav
       data-slot="sidebar"
       aria-label={navLabel}
+      // The slots below read this through `group-data-[density=touch]/sidebar:`,
+      // so one prop at the root reaches every row without threading context.
+      data-density={density}
       className={cn(
-        "bg-sidebar text-sidebar-foreground flex h-full min-h-0 w-full flex-col gap-1"
+        "group/sidebar bg-sidebar text-sidebar-foreground flex h-full min-h-0 w-full flex-col gap-1"
       )}
       {...props}
     />
@@ -46,7 +62,8 @@ function SidebarHeader({
     <div
       data-slot="sidebar-header"
       className={cn(
-        "flex h-14 shrink-0 items-center gap-2 px-3 text-sm font-semibold text-sidebar-foreground [&_svg]:size-5"
+        "flex h-14 shrink-0 items-center gap-2 px-3 text-sm font-semibold text-sidebar-foreground [&_svg]:size-5",
+        "group-data-[density=touch]/sidebar:h-16 group-data-[density=touch]/sidebar:text-[15px]"
       )}
       {...props}
     />
@@ -59,7 +76,10 @@ function SidebarContent({
   return (
     <div
       data-slot="sidebar-content"
-      className={cn("flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-2 py-2")}
+      className={cn(
+        "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-2 py-2",
+        "group-data-[density=touch]/sidebar:gap-5 group-data-[density=touch]/sidebar:px-3 group-data-[density=touch]/sidebar:py-3"
+      )}
       {...props}
     />
   )
@@ -108,6 +128,10 @@ function SidebarItem({ active = false, render, ...props }: SidebarItemProps) {
       "aria-current": active ? "page" : undefined,
       className: cn(
         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors outline-none [&_svg]:size-4 [&_svg]:shrink-0",
+        // 44px is the floor docs/responsive-policy.md sets for touch; the
+        // comfortable row lands at about 36px, which is right for a pointer
+        // and short for a thumb.
+        "group-data-[density=touch]/sidebar:min-h-11 group-data-[density=touch]/sidebar:px-3.5 group-data-[density=touch]/sidebar:text-[15px] group-data-[density=touch]/sidebar:[&_svg]:size-[18px]",
         "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         "focus-visible:ring-3 focus-visible:ring-accent-soft focus-visible:border-ring",
         "data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground"
@@ -124,7 +148,11 @@ function SidebarFooter({
     <div
       data-slot="sidebar-footer"
       className={cn(
-        "border-sidebar-border mt-auto flex shrink-0 items-center gap-2 border-t px-3 py-3 text-sm text-muted-foreground"
+        "border-sidebar-border mt-auto flex shrink-0 items-center gap-2 border-t px-3 py-3 text-sm text-muted-foreground",
+        // A drawer's footer is the row closest to the home indicator, so the
+        // touch density also has to clear the safe area or the last control
+        // sits under it.
+        "group-data-[density=touch]/sidebar:min-h-12 group-data-[density=touch]/sidebar:px-3.5 group-data-[density=touch]/sidebar:pb-[max(0.75rem,env(safe-area-inset-bottom))] group-data-[density=touch]/sidebar:text-[15px]"
       )}
       {...props}
     />

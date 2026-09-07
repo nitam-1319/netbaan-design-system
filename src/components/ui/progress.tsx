@@ -31,6 +31,7 @@ const progressIndicatorVariants = cva("h-full w-full flex-1 transition-all", {
 
 function Progress({
   tone = "default",
+  size = "md",
   value,
   children,
   ...props
@@ -38,7 +39,14 @@ function Progress({
   React.ComponentProps<typeof ProgressPrimitive.Root>,
   "className" | "style"
 > &
-  VariantProps<typeof progressIndicatorVariants>) {
+  VariantProps<typeof progressIndicatorVariants> & {
+    /**
+     * Track height. `sm` (4px) is the hairline a metric cell wants under a
+     * figure; `md` (8px) is the form-control default; `lg` (12px) reads at a
+     * distance.
+     */
+    size?: "sm" | "md" | "lg"
+  }) {
   const indeterminate = value === null
 
   return (
@@ -53,7 +61,13 @@ function Progress({
         data-slot="progress-track"
         // E4: recessed groove — inset elevation plus the 1px ring that carries
         // the track boundary's 3:1 contrast (WCAG 1.4.11).
-        className="bg-surface-3 elevation-inset relative h-2 w-full overflow-hidden rounded-full"
+        className={cn(
+          "bg-surface-3 elevation-inset relative w-full overflow-hidden rounded-full",
+          // A metric cell wants a hairline under a figure, not a form control's
+          // bar; 8px was the only height, so a coverage readout had to hand-roll
+          // its own track.
+          size === "sm" ? "h-1" : size === "lg" ? "h-3" : "h-2"
+        )}
       >
         <ProgressPrimitive.Indicator
           data-slot="progress-indicator"

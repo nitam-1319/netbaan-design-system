@@ -19,15 +19,25 @@ import { buttonVariants } from "@/components/ui/button"
  * See `.agent/rules/API_RULES.md`.
  */
 
-function Pagination(
-  props: Omit<React.ComponentProps<"nav">, "className" | "style">
-) {
+type PaginationProps = Omit<React.ComponentProps<"nav">, "className" | "style"> & {
+  /**
+   * `full` (default) centres the pager in its own full-width row.
+   * `inline` lets it sit as one item in a footer that also carries a count or
+   * a page readout, which `w-full` made impossible without a wrapper.
+   */
+  width?: "full" | "inline"
+}
+
+function Pagination({ width = "full", ...props }: PaginationProps) {
   return (
     <nav
       data-slot="pagination"
       role="navigation"
       aria-label="pagination"
-      className={cn("mx-auto flex w-full justify-center")}
+      className={cn(
+        "flex",
+        width === "full" ? "mx-auto w-full justify-center" : "w-auto justify-start"
+      )}
       {...props}
     />
   )
@@ -56,12 +66,23 @@ type PaginationLinkProps = Omit<
   "className" | "style"
 > & {
   isActive?: boolean
-  size?: "icon" | "md"
+  size?: "icon" | "sm" | "md"
+  /**
+   * Appearance, independent of `isActive`.
+   *
+   * `isActive` used to be the only route to an outlined control, which forced a
+   * Previous/Next button to claim `aria-current="page"` to look right — telling
+   * assistive tech that a directional control is the current page. Setting
+   * `variant` overrides the active-derived default without touching the
+   * semantics.
+   */
+  variant?: "ghost" | "outline"
 }
 
 function PaginationLink({
   isActive = false,
   size = "icon",
+  variant,
   render = <a />,
   ...props
 }: PaginationLinkProps) {
@@ -73,56 +94,81 @@ function PaginationLink({
       "aria-current": isActive ? "page" : undefined,
       className: cn(
         buttonVariants({
-          variant: isActive ? "outline" : "ghost",
-          size,
+          variant: variant ?? (isActive ? "outline" : "ghost"),
+          size: size === "sm" ? "sm" : size,
         }),
         // `buttonVariants` omits inline padding/gap (Button applies it on an
         // inner content span); reproduce it here so labelled controls
         // (Previous/Next) don't collapse their text/chevron to the edges.
-        size === "md" && "gap-2 px-4"
+        size === "md" && "gap-2 px-4",
+        size === "sm" && "gap-1.5 px-2.5"
       ),
       ...props,
     },
   })
 }
 
+type PaginationDirectionProps = Omit<PaginationLinkProps, "isActive"> & {
+  /**
+   * The visible word beside the chevron. Defaults to English.
+   *
+   * The label used to be a literal inside the component and `children` was not
+   * forwarded, so a translated app had no way to use these two controls at all
+   * — a Persian footer showed "Previous" and "Next" in the middle of otherwise
+   * translated copy, and pagers were re-implemented from `PaginationLink` to
+   * avoid it. Pass `children` for the text and `aria-label` for the accessible
+   * name; both still have working English defaults.
+   */
+  children?: React.ReactNode
+}
+
 function PaginationPrevious({
   render = <a />,
+  size = "md",
+  children,
   ...props
-}: Omit<PaginationLinkProps, "isActive" | "size">) {
+}: PaginationDirectionProps) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="md"
+      size={size}
       render={render}
       {...props}
     >
       <ChevronLeft className="rtl:-scale-x-100" />
-      <span>Previous</span>
+      <span>{children ?? "Previous"}</span>
     </PaginationLink>
   )
 }
 
 function PaginationNext({
   render = <a />,
+  size = "md",
+  children,
   ...props
-}: Omit<PaginationLinkProps, "isActive" | "size">) {
+}: PaginationDirectionProps) {
   return (
     <PaginationLink
       aria-label="Go to next page"
-      size="md"
+      size={size}
       render={render}
       {...props}
     >
-      <span>Next</span>
+      <span>{children ?? "Next"}</span>
       <ChevronRight className="rtl:-scale-x-100" />
     </PaginationLink>
   )
 }
 
-function PaginationEllipsis(
-  props: Omit<React.ComponentProps<"span">, "className" | "style">
-) {
+type PaginationEllipsisProps = Omit<
+  React.ComponentProps<"span">,
+  "className" | "style" | "children"
+> & {
+  /** Screen-reader text for the gap. Defaults to English. */
+  label?: string
+}
+
+function PaginationEllipsis({ label = "More pages", ...props }: PaginationEllipsisProps) {
   return (
     <span
       data-slot="pagination-ellipsis"
@@ -132,7 +178,7 @@ function PaginationEllipsis(
       {...props}
     >
       <MoreHorizontal className="size-4 text-muted-foreground" />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">{label}</span>
     </span>
   )
 }

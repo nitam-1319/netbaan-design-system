@@ -61,6 +61,24 @@ type HostsByCountryMapProps = Omit<
   topCount?: number
   /** Format a host count for display. Default groups thousands. */
   formatCount?: (value: number) => string
+  /**
+   * The unit printed under the fleet total. Default `"hosts"`.
+   *
+   * Every other label here is a `ReactNode` the app translates; this word was
+   * a literal, which made it the only untranslatable text on the component.
+   */
+  totalLabel?: React.ReactNode
+  /**
+   * The component's accessible summary, built from the total and the number of
+   * countries with hosts.
+   *
+   * It was assembled from an English template with its own
+   * `country`/`countries` pluralisation, so a Persian board announced itself in
+   * English to a screen-reader user however carefully the visible labels were
+   * translated. `formatCount` could not help: it formats a number, not a
+   * sentence.
+   */
+  summaryLabel?: (total: number, countryCount: number) => string
 }
 
 const defaultFormat = (v: number) => v.toLocaleString("en-US")
@@ -74,6 +92,8 @@ function HostsByCountryMap({
   showRanking = true,
   topCount = 5,
   formatCount = defaultFormat,
+  totalLabel = "hosts",
+  summaryLabel,
   ...props
 }: HostsByCountryMapProps) {
   const model = React.useMemo(() => {
@@ -103,9 +123,11 @@ function HostsByCountryMap({
   }, [countries, topCount])
 
   const labelText = typeof label === "string" ? label : "Hosts by country"
-  const summary = `${formatCount(model.total)} hosts across ${model.countryCount} ${
-    model.countryCount === 1 ? "country" : "countries"
-  }`
+  const summary = summaryLabel
+    ? summaryLabel(model.total, model.countryCount)
+    : `${formatCount(model.total)} hosts across ${model.countryCount} ${
+        model.countryCount === 1 ? "country" : "countries"
+      }`
 
   return (
     <figure
@@ -131,7 +153,7 @@ function HostsByCountryMap({
             {formatCount(model.total)}
           </span>
           <span className="block text-[11px] font-medium uppercase tracking-wide text-text-faint">
-            hosts
+            {totalLabel}
           </span>
         </span>
       </figcaption>

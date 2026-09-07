@@ -31,26 +31,51 @@ const buttonVariants = cva(
         destructive:
           "border border-transparent bg-destructive text-on-tone shadow-elevated hover:brightness-110",
         link: "border border-transparent bg-transparent text-accent-strong underline underline-offset-[3px] hover:brightness-110",
+        /** Outlined, but dashed — an "add" or "+N more" affordance that is not a committed control. */
+        dashed:
+          "border border-dashed border-border-strong bg-transparent text-muted-foreground hover:border-primary hover:text-foreground",
       },
       size: {
+        /** Chip-sized, for an inline "+N more" beside a row of chips. */
+        xs: "h-6 text-[10.5px] [--r:8px]",
         sm: "h-8 text-xs [--r:10px]",
         md: "h-[38px] text-[0.8rem] [--r:11px]",
+        /** 40px — the touch floor a tap row needs; see DS-063 for the same number in navigation. */
+        touch: "h-10 text-[0.8rem] [--r:11px]",
         lg: "h-[46px] text-sm [--r:13px]",
         icon: "size-[38px] [--r:11px]",
+        "icon-xs": "size-6 [--r:8px]",
         "icon-sm": "size-8 [--r:10px]",
+        "icon-touch": "size-10 [--r:11px]",
         "icon-lg": "size-[46px] [--r:13px]",
       },
+      /**
+       * Fill the parent instead of hugging the label.
+       *
+       * The base is `shrink-0` and width:auto, so a button in a constrained
+       * column pushed its siblings out rather than truncating. `block` drops
+       * the shrink guard and allows a min-width of zero, which is what lets a
+       * long label ellipsise inside its own box.
+       */
+      width: {
+        auto: "",
+        block: "flex w-full min-w-0 shrink",
+      },
     },
-    defaultVariants: { variant: "secondary", size: "md" },
+    defaultVariants: { variant: "secondary", size: "md", width: "auto" },
   }
 )
 
 const contentPad: Record<string, string> = {
+  xs: "gap-1 px-2",
   sm: "gap-1.5 px-3",
   md: "gap-2 px-4",
+  touch: "gap-2 px-4",
   lg: "gap-2 px-5",
   icon: "",
+  "icon-xs": "",
   "icon-sm": "",
+  "icon-touch": "",
   "icon-lg": "",
 }
 
@@ -63,6 +88,7 @@ type ButtonProps = Omit<ButtonPrimitive.Props, "className" | "style"> &
 function Button({
   variant = "secondary",
   size = "md",
+  width = "auto",
   loading = false,
   disabled,
   children,
@@ -77,7 +103,7 @@ function Button({
       data-slot="button"
       aria-busy={loading || undefined}
       disabled={disabled || loading}
-      className={cn(buttonVariants({ variant, size }))}
+      className={cn(buttonVariants({ variant, size, width }))}
       {...props}
     >
       {isPrimary ? (
@@ -107,6 +133,9 @@ function Button({
       <span
         className={cn(
           "relative z-10 inline-flex items-center justify-center",
+          // A block button's label owns the row, so it has to be allowed to
+          // shrink before it can truncate.
+          width === "block" && "w-full min-w-0",
           pad
         )}
       >

@@ -52,16 +52,30 @@ const FRAME: Record<string, string> = {
 /**
  * Eight fixed token gradients (NOT hard-coded hex). A name hashes to one entry,
  * so the same person always seeds the same hue across the product.
+ *
+ * Each stop is the seed token mixed toward BLACK, not white. The earlier ramp
+ * ran `token → color-mix(token 60%, white)`, which put the white initials on a
+ * pastel: measured on a live page, `NK` sat at **1.73:1** and the whole palette
+ * fell between 1.47 and 2.88 against the 4.5:1 the initials need. Mixing the
+ * other way keeps each person's hue — the point of the seeding — while moving
+ * the swatch into a band where white ink is legible on every entry. The lighter
+ * stop is the worst case; at 58% of the token the weakest seed (`--warning`)
+ * measures 5.22:1, and no entry in the palette falls below it.
+ *
+ * A gradient that spanned both bands could not be fixed by choosing the ink
+ * instead: white fails on the pale half and dark ink fails on `--primary` and
+ * `--accent-strong`, which are dark to begin with. Narrowing the ramp is what
+ * makes one ink correct everywhere.
  */
 const SEED_FILLS = [
-  "bg-[linear-gradient(145deg,var(--primary),color-mix(in_srgb,var(--primary)_60%,white))]",
-  "bg-[linear-gradient(145deg,var(--chart-4),color-mix(in_srgb,var(--chart-4)_60%,white))]",
-  "bg-[linear-gradient(145deg,var(--success),color-mix(in_srgb,var(--success)_60%,white))]",
-  "bg-[linear-gradient(145deg,var(--warning),color-mix(in_srgb,var(--warning)_60%,white))]",
-  "bg-[linear-gradient(145deg,var(--chart-1),color-mix(in_srgb,var(--chart-1)_60%,white))]",
-  "bg-[linear-gradient(145deg,var(--chart-2),color-mix(in_srgb,var(--chart-2)_60%,white))]",
-  "bg-[linear-gradient(145deg,var(--chart-5),color-mix(in_srgb,var(--chart-5)_60%,white))]",
-  "bg-[linear-gradient(145deg,var(--accent-strong),color-mix(in_srgb,var(--accent-strong)_60%,white))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--primary)_58%,black),color-mix(in_srgb,var(--primary)_42%,black))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--chart-4)_58%,black),color-mix(in_srgb,var(--chart-4)_42%,black))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--success)_58%,black),color-mix(in_srgb,var(--success)_42%,black))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--warning)_58%,black),color-mix(in_srgb,var(--warning)_42%,black))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--chart-1)_58%,black),color-mix(in_srgb,var(--chart-1)_42%,black))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--chart-2)_58%,black),color-mix(in_srgb,var(--chart-2)_42%,black))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--chart-5)_58%,black),color-mix(in_srgb,var(--chart-5)_42%,black))]",
+  "bg-[linear-gradient(145deg,color-mix(in_srgb,var(--accent-strong)_58%,black),color-mix(in_srgb,var(--accent-strong)_42%,black))]",
 ]
 
 /** Presence dot fill — one token per status. Online is the pinging state. */

@@ -33,6 +33,13 @@ const pillVariants = cva(
           "bg-[color-mix(in_oklch,var(--warning),transparent_86%)] text-warning-ink",
         danger:
           "bg-[color-mix(in_oklch,var(--destructive),transparent_88%)] text-destructive-ink",
+        /**
+         * In-progress work that is neither informational nor a warning —
+         * "running", "generating", "scanning". `info` was standing in for it,
+         * which made a live state read the same as a note about one.
+         */
+        accent:
+          "bg-[color-mix(in_oklch,var(--accent-strong),transparent_86%)] text-accent-strong",
       },
       size: {
         sm: "h-5 px-2 text-[0.65rem]",

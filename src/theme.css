@@ -19,7 +19,17 @@
        fully covered by Plex/Space Grotesk and never reaches Vazirmatn. */
     --font-heading: "Space Grotesk", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
     --font-sans: "IBM Plex Sans", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
-    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    /* Vazirmatn sits after Plex Mono for the same reason it sits after Plex
+       Sans above: a Latin payload — hostname, CVE id, hash, timestamp — is
+       fully covered by Plex Mono and never reaches it, while an Arabic-script
+       run has nowhere else to go. Without it the compiled `.font-mono` utility
+       bakes a Latin-only stack, and every Persian string in a mono context
+       leaves the webfont stack entirely: measured at 51 of 180 Persian-bearing
+       elements on one board, including the Persian-Indic digits in stat tiles
+       and axis labels, which then render in the platform monospace beside
+       Vazirmatn text. Vazirmatn is proportional, which is the right trade —
+       the alternative is a different typeface mid-sentence. */
+    --font-mono: "IBM Plex Mono", "Vazirmatn", ui-monospace, monospace;
     --font-fa: "Vazirmatn", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
 
     --color-sidebar-ring: var(--sidebar-ring);
@@ -622,8 +632,8 @@
        otherwise-mono content would fall through to a system font. Latin
        payloads (hostnames, CVE ids, hashes) still resolve to Plex Mono
        first — Vazirmatn is only reached for the Arabic-script block. */
-    :lang(fa) :is(code, kbd, samp, pre, [data-slot="code-block"]),
-    [lang^="fa"] :is(code, kbd, samp, pre, [data-slot="code-block"]) {
+    :lang(fa) :is(code, kbd, samp, pre, [data-slot="code-block"], .font-mono),
+    [lang^="fa"] :is(code, kbd, samp, pre, [data-slot="code-block"], .font-mono) {
         font-family: var(--font-mono), var(--font-fa);
     }
 }
