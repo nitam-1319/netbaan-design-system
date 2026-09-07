@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ErrorState } from "@/components/ui/error-state"
 import { Kbd } from "@/components/ui/kbd"
 import { SearchInput } from "@/components/ui/search-input"
+import { Tag } from "@/components/ui/tag"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TextField } from "@/components/ui/text-field"
 
@@ -146,9 +147,31 @@ type FilterBarProps = {
   onChange: (facetId: string, value: FilterBarValue) => void
   /** Clears every facet at once. */
   onClear: () => void
-  search: string
-  onSearch: (value: string) => void
+  /**
+   * The toolbar's search text. OPTIONAL: a surface with nothing to search
+   * against — the report builder refines one scan's filters and has no list —
+   * gets no field at all, rather than a control that does nothing. Provide it
+   * together with `onSearch`.
+   */
+  search?: string
+  /** Fires on every search edit. Omit, with `search`, to drop the field. */
+  onSearch?: (value: string) => void
   searchPlaceholder?: string
+  /**
+   * Show the applied values as removable chips beneath the summary sentence.
+   * Default `false`: chips cost a whole row of vertical space to say what one
+   * sentence says, which is the right trade on a list page. A wizard step with
+   * room, whose whole subject IS the filter set, is the case where it is not.
+   */
+  chips?: boolean
+  /**
+   * `popover` (default) portals the panel and flips it on collision, which is
+   * what keeps `Clear all` and `Done` reachable near a viewport edge. `inline`
+   * renders the panel in flow under the trigger, so it reflows with the
+   * container it is inside — a portalled popover cannot, and under ~1060px the
+   * facet rail needs to stack above the option pane rather than beside it.
+   */
+  panel?: "popover" | "inline"
   /** Live result count shown in the panel footer, e.g. "8 of 42 findings". */
   resultLine?: string
   /**
@@ -291,6 +314,8 @@ function FilterBar({
   search,
   onSearch,
   searchPlaceholder = "Search",
+  chips = false,
+  panel = "popover",
   resultLine,
   onCopyLink,
   loading = false,
@@ -429,72 +454,19 @@ function FilterBar({
     return String(asList(values[facet.id]).length)
   }
 
-  return (
-    <div
-      data-slot="filter-bar"
-      className="flex w-full flex-wrap items-center gap-2.5"
-    >
-      <PopoverPrimitive.Root open={open} onOpenChange={handleOpenChange}>
-        <PopoverPrimitive.Trigger
-          data-slot="filter-bar-trigger"
-          data-open={open ? "" : undefined}
-          className={cn(
-            "inline-flex h-8 shrink-0 items-center gap-[7px] rounded-lg border border-border bg-surface px-[11px]",
-            "text-[0.78rem] font-medium text-foreground transition-colors",
-            "hover:border-accent-strong hover:bg-surface-2",
-            "outline-none focus-visible:ring-3 focus-visible:ring-accent-soft",
-            "data-[open]:border-primary data-[open]:bg-accent-soft"
-          )}
-        >
-          <SlidersHorizontal
-            aria-hidden="true"
-            className="size-3.5 text-muted-foreground"
-          />
-          {labels.filters}
-          {activeCount > 0 ? (
-            /* The count keeps counting an unusable facet — it IS a constraint
-               the user set, and quietly dropping it to `2` would understate the
-               thing they still have to fix. What changes is the colour, plus a
-               `title` naming the problem, because the badge is the only part of
-               this control still on screen once the panel is closed. */
-            <span
-              data-slot="filter-bar-count"
-              data-invalid={invalidCount > 0 ? "" : undefined}
-              title={invalidCount > 0 ? labels.invalidRange : undefined}
-              className={cn(
-                "inline-flex h-[17px] min-w-[17px] items-center justify-center rounded-full px-[5px]",
-                "bg-primary font-mono text-[0.66rem] font-semibold text-primary-foreground tabular-nums",
-                "data-[invalid]:bg-destructive data-[invalid]:text-on-tone"
-              )}
-            >
-              {activeCount}
-            </span>
-          ) : null}
-          <Kbd size="sm" aria-hidden="true">
-            F
-          </Kbd>
-        </PopoverPrimitive.Trigger>
-
-        <PopoverPrimitive.Portal>
-          <PopoverPrimitive.Positioner
-            data-slot="filter-bar-positioner"
-            side="bottom"
-            align="start"
-            sideOffset={7}
-            collisionPadding={8}
-            className="z-50"
-          >
-            <PopoverPrimitive.Popup
-              data-slot="filter-bar-panel"
-              aria-label="Filters"
-              className={cn(
-                "w-[520px] max-w-[calc(100vw-1rem)] overflow-clip rounded-[12px] border border-border bg-card shadow-elevation-3 outline-none",
-                "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                "data-[starting-style]:translate-y-[-6px] data-[starting-style]:scale-[0.99] data-[starting-style]:opacity-0",
-                "data-[ending-style]:scale-[0.99] data-[ending-style]:opacity-0 data-[ending-style]:motion-exit"
-              )}
-            >
-              <div className="grid grid-cols-[172px_minmax(0,1fr)] items-stretch">
+  const panelBody = (
+              <div
+                className={cn(
+                  "items-stretch",
+                  // In flow, the panel reflows with the CONTAINER it is inside:
+                  // under ~1060px the facet rail stacks above the option pane
+                  // instead of squeezing beside it. A portalled popover is not
+                  // inside that container and cannot do this.
+                  panel === "inline"
+                    ? "@container grid grid-cols-1 @[1060px]:grid-cols-[172px_minmax(0,1fr)]"
+                    : "grid grid-cols-[172px_minmax(0,1fr)]"
+                )}
+              >
                 {/* The rail SCROLLS rather than growing — a response can carry
                     more facets than fit, and an unbounded rail stretched the
                     popup past the viewport, taking `Clear all` and `Done` off
@@ -618,10 +590,148 @@ function FilterBar({
                   </div>
                 </div>
               </div>
+  )
+
+  return (
+    <div
+      data-slot="filter-bar"
+      className="flex w-full flex-wrap items-center gap-2.5"
+    >
+      <PopoverPrimitive.Root open={open} onOpenChange={handleOpenChange}>
+        <PopoverPrimitive.Trigger
+          data-slot="filter-bar-trigger"
+          data-open={open ? "" : undefined}
+          className={cn(
+            "inline-flex h-8 shrink-0 items-center gap-[7px] rounded-lg border border-border bg-surface px-[11px]",
+            "text-[0.78rem] font-medium text-foreground transition-colors",
+            "hover:border-accent-strong hover:bg-surface-2",
+            "outline-none focus-visible:ring-3 focus-visible:ring-accent-soft",
+            "data-[open]:border-primary data-[open]:bg-accent-soft"
+          )}
+        >
+          <SlidersHorizontal
+            aria-hidden="true"
+            className="size-3.5 text-muted-foreground"
+          />
+          {labels.filters}
+          {activeCount > 0 ? (
+            /* The count keeps counting an unusable facet — it IS a constraint
+               the user set, and quietly dropping it to `2` would understate the
+               thing they still have to fix. What changes is the colour, plus a
+               `title` naming the problem, because the badge is the only part of
+               this control still on screen once the panel is closed. */
+            <span
+              data-slot="filter-bar-count"
+              data-invalid={invalidCount > 0 ? "" : undefined}
+              title={invalidCount > 0 ? labels.invalidRange : undefined}
+              className={cn(
+                "inline-flex h-[17px] min-w-[17px] items-center justify-center rounded-full px-[5px]",
+                "bg-primary font-mono text-[0.66rem] font-semibold text-primary-foreground tabular-nums",
+                "data-[invalid]:bg-destructive data-[invalid]:text-on-tone"
+              )}
+            >
+              {activeCount}
+            </span>
+          ) : null}
+          <Kbd size="sm" aria-hidden="true">
+            F
+          </Kbd>
+        </PopoverPrimitive.Trigger>
+
+        {panel === "popover" ? (
+        <PopoverPrimitive.Portal>
+          <PopoverPrimitive.Positioner
+            data-slot="filter-bar-positioner"
+            side="bottom"
+            align="start"
+            sideOffset={7}
+            collisionPadding={8}
+            className="z-50"
+          >
+            <PopoverPrimitive.Popup
+              data-slot="filter-bar-panel"
+              aria-label="Filters"
+              className={cn(
+                "w-[520px] max-w-[calc(100vw-1rem)] overflow-clip rounded-[12px] border border-border bg-card shadow-elevation-3 outline-none",
+                "origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                "data-[starting-style]:translate-y-[-6px] data-[starting-style]:scale-[0.99] data-[starting-style]:opacity-0",
+                "data-[ending-style]:scale-[0.99] data-[ending-style]:opacity-0 data-[ending-style]:motion-exit"
+              )}
+            >
+              {panelBody}
             </PopoverPrimitive.Popup>
           </PopoverPrimitive.Positioner>
         </PopoverPrimitive.Portal>
+        ) : null}
       </PopoverPrimitive.Root>
+
+      {chips && activeCount > 0 ? (
+        // The applied values, spelled out and individually removable. Off by
+        // default: on a list page a chip row costs a whole line to say what the
+        // summary sentence already says. On a surface whose SUBJECT is the
+        // filter set, seeing and removing each value one at a time is the task.
+        <div
+          data-slot="filter-bar-chips"
+          className="order-last flex basis-full flex-wrap items-center gap-1.5"
+        >
+          {setFacets.flatMap((facet) => {
+            const value = values[facet.id]
+            if (facet.type === "date" || facet.type === "text") {
+              return [
+                <Tag
+                  key={facet.id}
+                  size="sm"
+                  selected
+                  removeLabel={labels.clear}
+                  onRemove={() =>
+                    onChange(
+                      facet.id,
+                      facet.type === "date" ? { from: "", to: "" } : ""
+                    )
+                  }
+                >
+                  {facet.label}
+                </Tag>,
+              ]
+            }
+            return asList(value).map((optionId) => {
+              const option = facet.options?.find((o) => o.value === optionId)
+              return (
+                <Tag
+                  key={`${facet.id}:${optionId}`}
+                  size="sm"
+                  selected
+                  removeLabel={labels.clear}
+                  onRemove={() =>
+                    onChange(
+                      facet.id,
+                      asList(value).filter((id) => id !== optionId)
+                    )
+                  }
+                >
+                  {option?.label ?? optionId}
+                </Tag>
+              )
+            })
+          })}
+        </div>
+      ) : null}
+
+      {panel === "inline" && open ? (
+        // In flow, under the trigger, inside the caller's card — so the panel
+        // is subject to the same width as everything around it.
+        <div
+          data-slot="filter-bar-panel"
+          role="group"
+          aria-label="Filters"
+          className={cn(
+            "order-last w-full basis-full max-w-[640px] overflow-clip",
+            "rounded-[12px] border border-border bg-card"
+          )}
+        >
+          {panelBody}
+        </div>
+      ) : null}
 
       <span
         data-slot="filter-bar-summary"
@@ -655,6 +765,7 @@ function FilterBar({
         </button>
       ) : null}
 
+      {search != null && onSearch ? (
       <div className="w-[248px] max-w-full shrink-0">
         <SearchInput
           size="sm"
@@ -665,6 +776,7 @@ function FilterBar({
           onChange={(event) => onSearch(event.target.value)}
         />
       </div>
+      ) : null}
     </div>
   )
 }

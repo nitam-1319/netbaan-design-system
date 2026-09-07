@@ -2114,6 +2114,7 @@
       "Kbd",
       "SearchInput",
       "Skeleton",
+      "Tag",
       "TextField"
     ],
     "exports": [
@@ -5315,6 +5316,7 @@
       "timelineMarkerVariants"
     ],
     "typeExports": [
+      "TimelineProps",
       "TimelineItemProps"
     ],
     "import": "import { Timeline } from \"@netbaan-project/ui\";"
@@ -5671,10 +5673,13 @@
     ],
     "composesWith": [],
     "exports": [
-      "VirtualizedGrid"
+      "VirtualizedGrid",
+      "useVirtualRows"
     ],
     "typeExports": [
-      "VirtualizedGridAlign"
+      "VirtualizedGridAlign",
+      "UseVirtualRowsOptions",
+      "UseVirtualRowsResult"
     ],
     "import": "import { VirtualizedGrid } from \"@netbaan-project/ui\";"
   },

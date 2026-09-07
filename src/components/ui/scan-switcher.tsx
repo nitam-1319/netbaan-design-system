@@ -161,7 +161,12 @@ function ScanSwitcher({
       </button>
 
       <SelectPrimitive.Root
-        items={options.map((option) => option.id)}
+        // Base UI resolves the trigger's text from this, so a CLOSED select
+        // shows the scan's date rather than its raw id.
+        items={options.map((option) => ({
+          label: option.date,
+          value: option.id,
+        }))}
         value={value}
         onValueChange={(next) => onValueChange(String(next))}
       >

@@ -46,6 +46,26 @@ type RemediationVelocityProps = Omit<
   showNet?: boolean
   /** Chart height in coordinate units. Default 260. */
   height?: number
+  /**
+   * Header action slot — a status marker, a period switch, a menu. The widget
+   * owns its whole `Card`, so without this there is nowhere top-right for one
+   * to go and the caller has to abandon the widget to place it.
+   */
+  action?: React.ReactNode
+  /**
+   * Supporting content under the chart — mean time to fix, fixed this quarter.
+   * Figures that belong WITH the chart otherwise have nowhere to live.
+   */
+  footer?: React.ReactNode
+  /** Caption under the net figure. Default `"net closed"` — English, so translate it. */
+  netLabel?: React.ReactNode
+  /**
+   * Screen-reader wording for the three trend directions. The defaults are
+   * English ("Backlog shrinking" / "Backlog growing" / "No change") and are
+   * announced, not shown, so they are invisible to a translator who only looks
+   * at the screen.
+   */
+  srTrendLabels?: { up?: string; down?: string; flat?: string }
 }
 
 function toNumber(v: React.ReactNode): number {
@@ -64,6 +84,10 @@ function RemediationVelocity({
   description,
   showNet = true,
   height = 260,
+  action,
+  footer,
+  netLabel = "net closed",
+  srTrendLabels,
   ...props
 }: RemediationVelocityProps) {
   let totalOpened = 0
@@ -102,12 +126,24 @@ function RemediationVelocity({
                 trend={trend}
                 sentiment={net > 0 ? "positive" : net < 0 ? "negative" : "neutral"}
                 srTrendLabel={
-                  net > 0 ? "Backlog shrinking" : net < 0 ? "Backlog growing" : "No change"
+                  net > 0
+                    ? (srTrendLabels?.up ?? "Backlog shrinking")
+                    : net < 0
+                      ? (srTrendLabels?.down ?? "Backlog growing")
+                      : (srTrendLabels?.flat ?? "No change")
                 }
               >
                 {net > 0 ? `+${net}` : `${net}`}
               </StatTileDelta>
-              <span className="text-xs text-muted-foreground">net closed</span>
+              <span className="text-xs text-muted-foreground">{netLabel}</span>
+            </div>
+          ) : null}
+          {action ? (
+            <div
+              data-slot="remediation-velocity-action"
+              className="flex shrink-0 items-center gap-2"
+            >
+              {action}
             </div>
           ) : null}
         </div>
@@ -124,6 +160,14 @@ function RemediationVelocity({
           ]}
           height={height}
         />
+        {footer ? (
+          <div
+            data-slot="remediation-velocity-footer"
+            className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-3"
+          >
+            {footer}
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   )

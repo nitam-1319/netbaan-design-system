@@ -19,11 +19,17 @@ const SEVERITY_LABELS = {
   info: "Info",
 }
 
-/** Schematic landmasses — see MiniLocationMap stories. */
-const DEMO_LAND = [
-  "M120,110 L300,90 L420,150 L380,250 L240,280 L140,220 Z",
-  "M470,60 L700,80 L760,180 L640,240 L520,200 Z",
-]
+/** Schematic, unprojected geometry — see the MiniLocationMap stories. */
+const DEMO_GEOMETRY = {
+  land: [
+    [0, 40, 20, 40, 20, 60, 0, 60, 0, 40],
+    [22, 44, 34, 44, 34, 54, 22, 54, 22, 44],
+  ],
+  borders: [
+    [10, 40, 10, 60],
+    [20, 40, 20, 60],
+  ],
+}
 
 const meta = {
   title: "Components/AssetTriageCard",
@@ -72,9 +78,11 @@ export const Ip: Story = {
     media: (
       <MiniLocationMap
         label="Location of 203.0.113.7"
-        paths={DEMO_LAND}
-        marker={{ x: 560, y: 150 }}
-        location="Frankfurt, DE"
+        geometry={DEMO_GEOMETRY}
+        lat={50.11}
+        lon={8.68}
+        city="Frankfurt"
+        countryCode="DE"
         asn="AS3320"
         emptyLabel="Location unknown"
       />

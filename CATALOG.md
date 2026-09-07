@@ -1188,7 +1188,7 @@ A row-virtualized data grid: only the rows in (and just around) the viewport are
 
 - **Do:** Very large, flat datasets (thousands of rows) where scroll performance matters; Provide a stable `getRowId` and a descriptive `label`; Set `rowHeight` to match your cell content and `visibleRows` to size the viewport
 - **Don't:** Small tables — reach for Data Table (it also gives you sort, selection, and async states); Expect variable/measured row heights or horizontal virtualization — those are out of scope (honestly-scoped)
-- **Exports:** VirtualizedGrid
+- **Exports:** VirtualizedGrid, useVirtualRows
 
 ### charts
 
@@ -1866,7 +1866,7 @@ The single filter toolbar for a list page. It is configured by an array of facet
 
 - **Do:** Derive `facets` from the page's existing filter-options endpoint; Keep `values` in URL-synced list state so a link reproduces the view; Order facets by reach: the most-used first, date and free text last
 - **Don't:** Add a page-local Apply button — filtering is live; `Done` only closes; Fabricate `count`. Omit it and the count column does not render
-- **Composes with:** Button, Checkbox, ErrorState, Kbd, SearchInput, Skeleton, TextField
+- **Composes with:** Button, Checkbox, ErrorState, Kbd, SearchInput, Skeleton, Tag, TextField
 - **Exports:** FilterBar
 
 #### GroupedStackedBar
