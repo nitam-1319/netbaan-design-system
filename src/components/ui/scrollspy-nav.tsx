@@ -23,6 +23,13 @@ type ScrollspyItem = {
   id: string
   /** Link label. */
   label: React.ReactNode
+  /**
+   * Leading glyph. Smuggling one in through `label` works, but the label then
+   * also owns the gap and the icon cannot be tinted apart from the text — an
+   * inactive row wants a dimmer icon than its label, and an active one the
+   * reverse.
+   */
+  icon?: React.ReactNode
 }
 
 type ScrollspyNavProps = Omit<
@@ -39,11 +46,29 @@ type ScrollspyNavProps = Omit<
   orientation?: "vertical" | "horizontal"
   /** Accessible name for the nav. Default "On this page". */
   label?: string
+  /**
+   * How the current item is marked. `rail` (default) is the tinted start
+   * border. `pill` is a plain rounded plate on `--surface-2` with foreground
+   * ink and no border — for a nav that is itself inside a card, where a second
+   * rail beside the card's edge reads as a stray rule.
+   */
+  activeVariant?: "rail" | "pill"
+  /** Row density. `compact` is 9px/12px at 13px. Default `default`. */
+  density?: "default" | "compact"
+  /**
+   * Let a horizontal nav wrap to a second line. Default `true`. `false` keeps
+   * one line and scrolls — the shape a narrow strip wants, and one the caller
+   * cannot produce from a wrapper.
+   */
+  wrap?: boolean
 }
 
 function ScrollspyNav({
   items,
   activeId,
+  activeVariant = "rail",
+  density = "default",
+  wrap = true,
   onActiveChange,
   orientation = "vertical",
   label = "On this page",
@@ -106,7 +131,11 @@ function ScrollspyNav({
       <ul
         className={cn(
           "flex gap-1",
-          orientation === "vertical" ? "flex-col" : "flex-row flex-wrap"
+          orientation === "vertical"
+            ? "flex-col"
+            : wrap
+              ? "flex-row flex-wrap"
+              : "flex-row flex-nowrap overflow-x-auto"
         )}
       >
         {items.map((item) => {
@@ -119,20 +148,41 @@ function ScrollspyNav({
                 data-active={isActive || undefined}
                 onClick={(e) => handleClick(e, item.id)}
                 className={cn(
-                  "block rounded-md px-3 py-1.5 text-sm outline-none transition-colors",
+                  "flex items-center gap-2 whitespace-nowrap outline-none transition-colors",
+                  density === "compact"
+                    ? "rounded-lg px-3 py-[9px] text-[13px]"
+                    : "rounded-md px-3 py-1.5 text-sm",
                   "hover:bg-muted focus-visible:ring-3 focus-visible:ring-accent-soft",
-                  orientation === "vertical" &&
+                  activeVariant === "rail" &&
+                    orientation === "vertical" &&
                     "border-s-2 rounded-s-none ps-3",
                   isActive
-                    ? orientation === "vertical"
-                      ? "border-primary bg-accent-soft font-medium text-accent-strong"
-                      : "bg-accent-soft font-medium text-accent-strong"
-                    : orientation === "vertical"
-                      ? "border-transparent text-muted-foreground hover:text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                    ? activeVariant === "pill"
+                      ? "bg-surface-2 font-semibold text-foreground"
+                      : orientation === "vertical"
+                        ? "border-primary bg-accent-soft font-medium text-accent-strong"
+                        : "bg-accent-soft font-medium text-accent-strong"
+                    : cn(
+                        "text-muted-foreground hover:text-foreground",
+                        activeVariant === "rail" &&
+                          orientation === "vertical" &&
+                          "border-transparent"
+                      )
                 )}
               >
-                {item.label}
+                {item.icon ? (
+                  <span
+                    data-slot="scrollspy-nav-icon"
+                    aria-hidden
+                    className={cn(
+                      "flex shrink-0 items-center [&_svg]:size-4",
+                      isActive ? "text-foreground" : "text-muted-foreground/70"
+                    )}
+                  >
+                    {item.icon}
+                  </span>
+                ) : null}
+                <span className="min-w-0 truncate">{item.label}</span>
               </a>
             </li>
           )

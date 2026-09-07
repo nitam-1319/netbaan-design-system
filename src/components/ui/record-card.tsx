@@ -209,8 +209,13 @@ function RecordCardHeader({
           className={cn(
             "inline-flex text-muted-foreground",
             "transition-transform motion-enter motion-reduce:transition-none",
-            "rtl:-scale-x-100",
-            open && "rotate-90 rtl:rotate-90"
+            // One rotation, never a rotation composed with a mirror. Tailwind v4
+            // writes `rotate` and `scale` as SEPARATE transform properties and
+            // CSS composes them translate → rotate → scale, so `rtl:-scale-x-100`
+            // plus `rotate-90` mirrored the already-rotated caret and pointed it
+            // UP in Persian whenever the card was open. `rtl:rotate-180` says
+            // the same thing about the closed state without the composition.
+            open ? "rotate-90" : "rtl:rotate-180"
           )}
         >
           <svg

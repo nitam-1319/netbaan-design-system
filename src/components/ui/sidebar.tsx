@@ -134,7 +134,13 @@ function SidebarItem({ active = false, render, ...props }: SidebarItemProps) {
         "group-data-[density=touch]/sidebar:min-h-11 group-data-[density=touch]/sidebar:px-3.5 group-data-[density=touch]/sidebar:text-[15px] group-data-[density=touch]/sidebar:[&_svg]:size-[18px]",
         "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         "focus-visible:ring-3 focus-visible:ring-accent-soft focus-visible:border-ring",
-        "data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground"
+        // The current row is marked TWICE: a 2px `--primary` bar on the row's
+        // inline-start edge (inset 7px, 11px at touch density) and a primary
+        // tint. `bg-sidebar-accent` alone is the same wash a hover produces, so
+        // a pointer resting anywhere on the rail made two rows look current.
+        "relative data-[active]:bg-[color-mix(in_oklch,var(--primary),transparent_84%)] data-[active]:text-sidebar-accent-foreground",
+        "data-[active]:before:absolute data-[active]:before:inset-y-[7px] data-[active]:before:start-0 data-[active]:before:w-0.5 data-[active]:before:rounded-full data-[active]:before:bg-primary data-[active]:before:content-['']",
+        "group-data-[density=touch]/sidebar:data-[active]:before:inset-y-[11px]"
       ),
       ...props,
     },

@@ -27,6 +27,14 @@ type PriorityActionItemProps = Omit<
 > & {
   /** The action title. Required. */
   title: React.ReactNode
+  /**
+   * The full title as plain text, shown as a native tooltip on the truncated
+   * heading. Titles here run past 60 characters with no natural break
+   * (`Vulnerabilities found for CPE cpe:2.3:a:php:php:7.4.33:*:*:*:*:*:*:*`),
+   * and the `title` ATTRIBUTE the row could otherwise carry is spent on the
+   * `title` PROP.
+   */
+  titleTooltip?: string
   /** Ordinal rank shown in the leading chip (e.g. 1 → "1"). */
   rank?: number
   /** Finding severity → SeverityBadge. */
@@ -35,6 +43,12 @@ type PriorityActionItemProps = Omit<
   description?: React.ReactNode
   /** Number of affected assets → "N assets". */
   affectedCount?: number
+  /**
+   * Renders the affected-count line. The built-in English "N asset(s)" cannot
+   * be translated and has no plural rule beyond one/other, which most languages
+   * need. Given this, it owns the whole string.
+   */
+  formatAffected?: (count: number) => React.ReactNode
   /** Estimated impact / effort note (e.g. "Reduces risk 38%"). */
   impact?: React.ReactNode
   /** Link to the action detail; when set the title is a link + row is interactive. */
@@ -45,6 +59,8 @@ type PriorityActionItemProps = Omit<
 
 function PriorityActionItem({
   title,
+  titleTooltip,
+  formatAffected,
   rank,
   severity,
   description,
@@ -81,6 +97,7 @@ function PriorityActionItem({
           {severity ? <SeverityBadge level={severity} size="sm" /> : null}
           <span
             data-slot="priority-action-item-title"
+            title={titleTooltip}
             className="min-w-0 truncate text-sm font-medium text-foreground"
           >
             {isLink ? (
@@ -107,7 +124,9 @@ function PriorityActionItem({
             {affectedCount != null ? (
               <span className="flex items-center gap-1">
                 <Layers aria-hidden className="size-3.5 shrink-0" />
-                {affectedCount} {affectedCount === 1 ? "asset" : "assets"}
+                {formatAffected
+                  ? formatAffected(affectedCount)
+                  : `${affectedCount} ${affectedCount === 1 ? "asset" : "assets"}`}
               </span>
             ) : null}
             {impact != null ? (

@@ -106,38 +106,58 @@ type DetailSidebarHeaderProps = Omit<
   onClose: () => void
   /** Accessible name for the close button (e.g. "Close detail"). Required. */
   closeLabel: string
+  /**
+   * Pin the header to the top of the panel. Default `true`. A header carrying
+   * badges, a title, an address and a status control runs ~100px, and pinning
+   * it costs a fifth of a 520px panel on every scroll — so a page whose header
+   * is that tall wants the whole panel to scroll, header included.
+   */
+  sticky?: boolean
+  /**
+   * Render the built-in close button. Default `true`. Turn it off to place
+   * close among the page's own actions (after a divider, beside open-in-new
+   * and delete) rather than in the header's fixed inline-end slot; `onClose`
+   * is still the panel's close callback, so Esc keeps working.
+   */
+  showClose?: boolean
 }
 
 function DetailSidebarHeader({
   onClose,
   closeLabel,
+  sticky = true,
+  showClose = true,
   children,
   ...props
 }: DetailSidebarHeaderProps) {
   return (
     <div
       data-slot="detail-sidebar-header"
+      data-sticky={sticky || undefined}
       className={cn(
-        "sticky top-0 z-[1] flex items-start justify-between gap-3",
+        "flex items-start justify-between gap-3",
+        sticky && "sticky top-0 z-[1]",
         "border-b border-border bg-surface px-5 pt-4 pb-3.5"
       )}
       {...props}
     >
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">{children}</div>
-      <button
-        type="button"
-        data-slot="detail-sidebar-close"
-        onClick={onClose}
-        aria-label={closeLabel}
-        className={cn(
-          "inline-flex size-7 shrink-0 items-center justify-center rounded-lg",
-          "border border-border bg-surface-2 text-muted-foreground",
-          "transition-colors duration-[180ms] ease-out hover:text-foreground",
-          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        )}
-      >
-        <X aria-hidden className="size-3.5" />
-      </button>
+      {showClose ? (
+        <button
+          type="button"
+          data-slot="detail-sidebar-close"
+          onClick={onClose}
+          aria-label={closeLabel}
+          className={cn(
+            "inline-flex size-7 shrink-0 items-center justify-center rounded-lg",
+            "border border-border bg-surface-2 text-muted-foreground",
+            "transition-colors duration-[180ms] ease-out hover:text-foreground",
+            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          )}
+        >
+          <X aria-hidden className="size-3.5" />
+        </button>
+      ) : null}
     </div>
   )
 }

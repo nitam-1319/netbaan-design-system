@@ -50,6 +50,13 @@ type CodeBlockProps = Omit<
     showLineNumbers?: boolean
     /** Soft-wrap long lines instead of scrolling horizontally. Default `false`. */
     wrap?: boolean
+    /**
+     * Cap the code area's height in px and give it its own scroller. Without
+     * one a block is exactly as tall as its content, and a scanner's proof of
+     * concept is often a full HTTP response — several such blocks open at once
+     * push everything below them off the screen.
+     */
+    maxHeight?: number
     /** Show the copy-to-clipboard button. Default `true`. */
     showCopy?: boolean
     /** Accessible name for the scrollable code region. Default "Code". */
@@ -62,6 +69,7 @@ function CodeBlock({
   filename,
   showLineNumbers = false,
   wrap = false,
+  maxHeight,
   showCopy = true,
   size = "md",
   label = "Code",
@@ -121,8 +129,11 @@ function CodeBlock({
         tabIndex={0}
         role="group"
         aria-label={label}
+        // A caller-chosen pixel cap is a continuous value; no utility spells it.
+        style={maxHeight != null ? { maxHeight } : undefined}
         className={cn(
           "overflow-x-auto p-4 leading-relaxed outline-none focus-visible:ring-3 focus-visible:ring-accent-soft",
+          maxHeight != null && "overflow-y-auto overscroll-contain",
           !hasHeader && showCopy && "pe-12"
         )}
       >

@@ -105,8 +105,11 @@ function ExpandableRow({
               <ChevronRight
                 aria-hidden
                 className={cn(
-                  "size-4 transition-transform duration-200 ease-out rtl:-scale-x-100",
-                  open && "rotate-90"
+                  "size-4 transition-transform duration-200 ease-out",
+                  // A single rotation, not a rotation composed with a mirror:
+                  // CSS applies `rotate` before `scale`, so mirroring an
+                  // already-rotated caret points it UP in RTL. See DS-045.
+                  open ? "rotate-90" : "rtl:rotate-180"
                 )}
               />
             </button>
