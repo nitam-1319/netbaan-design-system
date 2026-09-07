@@ -26,14 +26,32 @@ function Tabs(
   )
 }
 
-function TabsList(
-  props: Omit<React.ComponentProps<typeof TabsPrimitive.List>, "className" | "style">
-) {
+type TabsListProps = Omit<
+  React.ComponentProps<typeof TabsPrimitive.List>,
+  "className" | "style"
+> & {
+  /**
+   * `segmented` (default) is the pill: a bounded control that reads as a
+   * switch. `underline` is the page-level form — a rule under the row with the
+   * active tab marked on it, for a tab strip that navigates rather than
+   * toggles. The pill form implies a small, closed set of options; a detail
+   * page's sections are neither.
+   */
+  variant?: "segmented" | "underline"
+}
+
+function TabsList({ variant = "segmented", ...props }: TabsListProps) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
+      // TabsTab and TabsIndicator read the form from here, so the three cannot
+      // disagree about which shape the row is.
+      data-variant={variant}
       className={cn(
-        "bg-surface-2 text-muted-foreground relative inline-flex h-9 w-fit items-center justify-center rounded-lg border border-border/70 p-1"
+        "group/tabs-list text-muted-foreground relative inline-flex w-fit items-center justify-center",
+        variant === "segmented"
+          ? "bg-surface-2 h-9 rounded-lg border border-border/70 p-1"
+          : "h-10 gap-1 border-b border-border"
       )}
       {...props}
     />
@@ -47,7 +65,8 @@ function TabsTab(
     <TabsPrimitive.Tab
       data-slot="tabs-tab"
       className={cn(
-        "relative z-10 inline-flex h-7 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors outline-none select-none",
+        "relative z-10 inline-flex flex-1 items-center justify-center gap-1.5 px-3 text-sm font-medium whitespace-nowrap transition-colors outline-none select-none",
+        "h-7 rounded-md group-data-[variant=underline]/tabs-list:h-10 group-data-[variant=underline]/tabs-list:rounded-none",
         "text-muted-foreground data-[selected]:text-foreground hover:text-foreground",
         "focus-visible:ring-3 focus-visible:ring-accent-soft",
         "disabled:pointer-events-none disabled:opacity-50",
@@ -69,9 +88,11 @@ function TabsIndicator(
       data-slot="tabs-indicator"
       renderBeforeHydration
       className={cn(
-        "absolute top-1/2 left-0 z-0 h-7 -translate-y-1/2 rounded-md bg-surface-3 glass-panel",
-        "w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)]",
-        "transition-[width,transform] duration-200 ease-out"
+        "absolute left-0 z-0 w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)] transition-[width,transform] duration-200 ease-out",
+        // The pill slides a filled plate behind the tab; the underline marks
+        // the rule beneath it. Same geometry, different mark.
+        "top-1/2 h-7 -translate-y-1/2 rounded-md bg-surface-3 group-data-[variant=segmented]/tabs-list:glass-panel",
+        "group-data-[variant=underline]/tabs-list:top-auto group-data-[variant=underline]/tabs-list:bottom-0 group-data-[variant=underline]/tabs-list:h-[2px] group-data-[variant=underline]/tabs-list:translate-y-0 group-data-[variant=underline]/tabs-list:rounded-none group-data-[variant=underline]/tabs-list:bg-primary"
       )}
       {...props}
     />

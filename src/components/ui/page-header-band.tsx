@@ -47,9 +47,38 @@ type PageHeaderBandProps = {
   meta?: React.ReactNode
   /** Page actions, rendered at the inline end. Buttons, outline before primary. */
   actions?: React.ReactNode
+  /**
+   * A slot before the text column, centred on it — an avatar, a page mark, a
+   * back link.
+   *
+   * Without it a page that needs to say WHOSE page it is had to hand-roll a
+   * second header, so the band was shipped without the mark instead and two
+   * pages disagreed about what a header looks like.
+   */
+  leading?: React.ReactNode
+  /**
+   * `default` is the page hero. `compact` is 26px shorter — 18/22 inset, a
+   * 22px title, cross-axis centred — for a page whose header is a label rather
+   * than a landing.
+   */
+  density?: "default" | "compact"
+  /**
+   * Sit flush as a card's top band: no radius, no side or top borders, only
+   * the bottom hairline. The band is a page-level element by default and this
+   * is the in-card case.
+   */
+  flush?: boolean
 }
 
-function PageHeaderBand({ kicker, title, meta, actions }: PageHeaderBandProps) {
+function PageHeaderBand({
+  kicker,
+  title,
+  meta,
+  actions,
+  leading,
+  density = "default",
+  flush = false,
+}: PageHeaderBandProps) {
   // Pointer-tracked spotlight: write the local cursor position into --mx/--my,
   // which the background's first gradient layer reads. Behaviour only — the
   // component still exposes no style API. The -400px default parks the
@@ -64,9 +93,14 @@ function PageHeaderBand({ kicker, title, meta, actions }: PageHeaderBandProps) {
     <header
       data-slot="page-header-band"
       onPointerMove={handlePointerMove}
+      data-density={density}
+      data-flush={flush || undefined}
       className={cn(
-        "relative isolate flex flex-wrap items-end justify-between gap-6 overflow-hidden",
-        "rounded-xl border border-border px-7 py-[26px]",
+        "relative isolate flex flex-wrap justify-between gap-6 overflow-hidden",
+        density === "compact" ? "items-center px-[22px] py-[18px]" : "items-end px-7 py-[26px]",
+        flush
+          ? "rounded-none border-0 border-b border-border"
+          : "rounded-xl border border-border",
         // Layer 1 is the spotlight, layer 2 the static diagonal tint.
         "bg-[radial-gradient(280px_circle_at_var(--mx,-400px)_var(--my,-400px),color-mix(in_srgb,var(--primary)_13%,transparent),transparent_55%),linear-gradient(135deg,color-mix(in_srgb,var(--primary)_14%,var(--card)),var(--card)_58%)]"
       )}
@@ -83,7 +117,13 @@ function PageHeaderBand({ kicker, title, meta, actions }: PageHeaderBandProps) {
         className="pointer-events-none absolute top-[-120px] end-[10%] z-0 h-[230px] w-[340px] animate-aurora-slow rounded-full bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--accent-strong)_30%,transparent),transparent_70%)] blur-[48px]"
       />
 
-      <div className="relative z-[1] flex min-w-0 flex-col gap-1.5">
+      <div className="relative z-[1] flex min-w-0 items-center gap-3.5">
+        {leading != null ? (
+          <span data-slot="page-header-band-leading" className="flex shrink-0 items-center">
+            {leading}
+          </span>
+        ) : null}
+        <div className="flex min-w-0 flex-col gap-1.5">
         {kicker != null ? (
           <span
             data-slot="page-header-band-kicker"
@@ -94,15 +134,19 @@ function PageHeaderBand({ kicker, title, meta, actions }: PageHeaderBandProps) {
         ) : null}
         <h1
           data-slot="page-header-band-title"
-          className="font-heading text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground"
+          className={cn(
+            "font-heading font-semibold leading-[1.15] tracking-[-0.02em] text-foreground",
+            density === "compact" ? "text-[22px]" : "text-[26px]"
+          )}
         >
           {title}
         </h1>
-        {meta != null ? (
-          <span data-slot="page-header-band-meta" className="text-sm text-muted-foreground">
-            {meta}
-          </span>
-        ) : null}
+          {meta != null ? (
+            <span data-slot="page-header-band-meta" className="text-sm text-muted-foreground">
+              {meta}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       {actions != null ? (

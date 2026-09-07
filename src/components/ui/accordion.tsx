@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
@@ -37,9 +37,20 @@ const accordionVariants = cva("w-full", {
       bordered:
         "divide-y divide-border/70 focus-escape rounded-lg border border-border/70 bg-surface-2/40",
     },
+    /**
+     * Row height. `comfortable` is today's; `compact` is roughly half, for a
+     * side panel where the default spends more height on inset than on the
+     * rows themselves — and drops the divider, which at that density reads as
+     * clutter rather than structure.
+     */
+    density: {
+      comfortable: "",
+      compact: "divide-y-0",
+    },
   },
   defaultVariants: {
     variant: "default",
+    density: "comfortable",
   },
 })
 
@@ -60,6 +71,7 @@ const accordionItemVariants = cva("group/accordion-item", {
 type AccordionContextValue = VariantProps<typeof accordionVariants>
 const AccordionContext = React.createContext<AccordionContextValue>({
   variant: "default",
+  density: "comfortable",
 })
 
 type AccordionProps = Omit<
@@ -68,12 +80,22 @@ type AccordionProps = Omit<
 > &
   VariantProps<typeof accordionVariants>
 
-function Accordion({ variant = "default", ...props }: AccordionProps) {
+function Accordion({
+  variant = "default",
+  density = "comfortable",
+  ...props
+}: AccordionProps) {
   return (
-    <AccordionContext.Provider value={{ variant }}>
+    <AccordionContext.Provider value={{ variant, density }}>
       <AccordionPrimitive.Root
         data-slot="accordion"
-        className={cn(accordionVariants({ variant }))}
+        // The trigger reads the density from here through the group, so one
+        // prop at the root cannot leave half the rows at the other rung.
+        data-density={density}
+        className={cn(
+          "group/accordion",
+          accordionVariants({ variant, density })
+        )}
         {...props}
       />
     </AccordionContext.Provider>
@@ -98,17 +120,28 @@ function AccordionItem(
 
 function AccordionTrigger({
   children,
+  trailing,
   ...props
 }: Omit<
   React.ComponentProps<typeof AccordionPrimitive.Trigger>,
   "className" | "style"
->) {
+> & {
+  /**
+   * Content between the label and the chevron — a count, a status dot.
+   *
+   * Passing it as part of `children` made it share the label's flex slot, so
+   * it was pushed around by the title's length instead of sitting against the
+   * chevron.
+   */
+  trailing?: React.ReactNode
+}) {
   return (
     <AccordionPrimitive.Header data-slot="accordion-header" className="flex">
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex flex-1 items-center justify-between gap-3 py-4 text-start text-sm font-medium text-foreground outline-none transition-colors",
+          "group/accordion-trigger flex flex-1 items-center justify-between gap-3 text-start text-sm font-medium text-foreground transition-colors outline-none",
+          "py-4 group-data-[density=compact]/accordion:py-1.5 group-data-[density=compact]/accordion:text-[13px]",
           "hover:text-foreground focus-visible:rounded-md focus-visible:ring-3 focus-visible:ring-accent-soft",
           "disabled:pointer-events-none disabled:opacity-50",
           "[&>svg]:pointer-events-none [&>svg]:size-4 [&>svg]:shrink-0"
@@ -116,6 +149,14 @@ function AccordionTrigger({
         {...props}
       >
         {children}
+        {trailing != null ? (
+          <span
+            data-slot="accordion-trigger-trailing"
+            className="ms-auto flex shrink-0 items-center gap-2"
+          >
+            {trailing}
+          </span>
+        ) : null}
         <ChevronDown
           aria-hidden
           className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[panel-open]/accordion-trigger:rotate-180"
@@ -149,4 +190,10 @@ function AccordionPanel({
   )
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionPanel, accordionVariants }
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionPanel,
+  accordionVariants,
+}
