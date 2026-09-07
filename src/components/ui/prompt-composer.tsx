@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button"
 
 const shellVariants = cva(
   cn(
-    "group/composer flex w-full flex-col gap-2 bg-surface-2 text-foreground transition-[color,background-color,border-color,box-shadow] duration-150",
+    "group/composer flex w-full flex-col gap-2 text-foreground transition-[color,background-color,border-color,box-shadow] duration-150",
     "border border-border-strong",
     "focus-delegate focus-within:border-accent-strong focus-within:bg-surface focus-within:ring-[3px] focus-within:ring-accent-soft",
     "has-[textarea:disabled]:pointer-events-none has-[textarea:disabled]:opacity-50"
@@ -32,18 +32,44 @@ const shellVariants = cva(
   {
     variants: {
       size: {
-        sm: "gap-1.5 rounded-[10px] p-2 text-xs",
-        md: "gap-2 rounded-[12px] p-2.5 text-sm",
-        lg: "gap-2.5 rounded-[14px] p-3 text-base",
+        sm: "gap-1.5 p-2 text-xs",
+        md: "gap-2 p-2.5 text-sm",
+        lg: "gap-2.5 p-3 text-base",
+      },
+      /**
+       * Which surface the composer shell sits on. `raised` (default) is the
+       * composer docked inside a panel that is already `--surface`; `base` is
+       * the composer that IS the page's surface — a slightly larger radius and
+       * the flat `--surface` fill, so it does not read as a tile inside itself.
+       */
+      surface: {
+        raised: "bg-surface-2",
+        base: "bg-surface",
       },
     },
-    defaultVariants: { size: "md" },
+    compoundVariants: [
+      { surface: "raised", size: "sm", className: "rounded-[10px]" },
+      { surface: "raised", size: "md", className: "rounded-[12px]" },
+      { surface: "raised", size: "lg", className: "rounded-[14px]" },
+      { surface: "base", size: "sm", className: "rounded-[11px]" },
+      { surface: "base", size: "md", className: "rounded-[13px]" },
+      { surface: "base", size: "lg", className: "rounded-[15px]" },
+    ],
+    defaultVariants: { size: "md", surface: "raised" },
   }
 )
 
 type PromptComposerProps = Omit<
   React.ComponentProps<"textarea">,
-  "className" | "style" | "size" | "value" | "defaultValue" | "onChange"
+  | "className"
+  | "style"
+  | "size"
+  | "value"
+  | "defaultValue"
+  | "onChange"
+  // The composer submits TEXT, not a form event. Left in, the textarea's own
+  // `onSubmit` intersects with ours and no single function satisfies both.
+  | "onSubmit"
 > &
   VariantProps<typeof shellVariants> & {
     /** Controlled text value. */
@@ -60,8 +86,14 @@ type PromptComposerProps = Omit<
     loading?: boolean
     /** Enter sends, Shift+Enter inserts a newline. */
     submitOnEnter?: boolean
-    /** Accessible name for the send button. */
+    /** Name for the send button — its aria-label, and its visible text when `sendVariant="labelled"`. */
     sendLabel?: string
+    /**
+     * `icon` (default) is the compact arrow. `labelled` renders `sendLabel` as
+     * the button's visible text — the form a full-width composer wants, where
+     * an unlabelled arrow is the only unlabelled control on the surface.
+     */
+    sendVariant?: "icon" | "labelled"
     /** Leading action slot (e.g. an attach Button) shown at the inline-start of the toolbar. */
     leading?: React.ReactNode
     /** Show a `count / maxLength` counter (requires `maxLength`). */
@@ -70,6 +102,7 @@ type PromptComposerProps = Omit<
 
 function PromptComposer({
   size = "md",
+  surface = "raised",
   value,
   defaultValue = "",
   onValueChange,
@@ -80,6 +113,7 @@ function PromptComposer({
   disabled,
   submitOnEnter = true,
   sendLabel = "Send message",
+  sendVariant = "icon",
   leading,
   showCount = false,
   maxLength,
@@ -114,7 +148,12 @@ function PromptComposer({
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     onKeyDown?.(e)
     if (e.defaultPrevented) return
-    if (submitOnEnter && e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+    if (
+      submitOnEnter &&
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      !e.nativeEvent.isComposing
+    ) {
       e.preventDefault()
       submit()
     }
@@ -128,7 +167,7 @@ function PromptComposer({
       data-slot="prompt-composer"
       role="group"
       aria-label={label}
-      className={cn(shellVariants({ size: size2 }))}
+      className={cn(shellVariants({ size: size2, surface }))}
     >
       <textarea
         data-slot="prompt-composer-input"
@@ -170,13 +209,21 @@ function PromptComposer({
             type="button"
             data-slot="prompt-composer-send"
             variant="primary"
-            size={size2 === "lg" ? "icon" : "icon-sm"}
-            aria-label={sendLabel}
+            size={
+              sendVariant === "labelled"
+                ? size2 === "lg"
+                  ? "md"
+                  : "sm"
+                : size2 === "lg"
+                  ? "icon"
+                  : "icon-sm"
+            }
+            aria-label={sendVariant === "labelled" ? undefined : sendLabel}
             loading={loading}
             disabled={!canSend}
             onClick={submit}
           >
-            <ArrowUp aria-hidden />
+            {sendVariant === "labelled" ? sendLabel : <ArrowUp aria-hidden />}
           </Button>
         </div>
       </div>

@@ -1604,6 +1604,7 @@
       "DialogClose",
       "DialogContent",
       "DialogHeader",
+      "DialogBody",
       "DialogFooter",
       "DialogTitle",
       "DialogDescription",
@@ -1782,7 +1783,8 @@
       "EmptyStateTitle",
       "EmptyStateDescription",
       "EmptyStateActions",
-      "emptyStateVariants"
+      "emptyStateVariants",
+      "emptyStateIconVariants"
     ],
     "typeExports": [],
     "import": "import { EmptyState } from \"@netbaan-project/ui\";"
@@ -3215,6 +3217,26 @@
     "import": "import { Navbar } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "NavigationDrawer",
+    "module": "navigation-drawer",
+    "category": "overlays",
+    "concept": "",
+    "whenToUse": [],
+    "whenNotToUse": [],
+    "composesWith": [],
+    "exports": [
+      "NavigationDrawer",
+      "NavigationDrawerTrigger",
+      "NavigationDrawerClose",
+      "NavigationDrawerContent",
+      "navigationDrawerVariants"
+    ],
+    "typeExports": [
+      "NavigationDrawerContentProps"
+    ],
+    "import": "import { NavigationDrawer } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "NavigationMenu",
     "module": "navigation-menu",
     "category": "overlays",
@@ -4324,7 +4346,9 @@
       "SelectSeparator",
       "selectTriggerVariants"
     ],
-    "typeExports": [],
+    "typeExports": [
+      "SelectProps"
+    ],
     "import": "import { Select } from \"@netbaan-project/ui\";"
   },
   {
@@ -5159,6 +5183,23 @@
       "TextFieldProps"
     ],
     "import": "import { TextField } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "TextLink",
+    "module": "text-link",
+    "category": "other",
+    "concept": "",
+    "whenToUse": [],
+    "whenNotToUse": [],
+    "composesWith": [],
+    "exports": [
+      "TextLink",
+      "textLinkVariants"
+    ],
+    "typeExports": [
+      "TextLinkProps"
+    ],
+    "import": "import { TextLink } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Textarea",

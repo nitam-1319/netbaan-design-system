@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
@@ -29,8 +29,97 @@ import { cn } from "@/lib/utils"
 
 /* ------------------------------------------------------------------ Root -- */
 
-function Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  return <SelectPrimitive.Root data-slot="select" {...props} />
+/**
+ * Carries the ids of the field chrome down to the trigger, so a labelled
+ * `Select` is labelled the way every other AEGIS field is — a real `<label>`
+ * element, not a caller-supplied `aria-label` that leaves the control visually
+ * unlabelled.
+ */
+const SelectFieldContext = React.createContext<{
+  labelId?: string
+  describedBy?: string
+  invalid?: boolean
+}>({})
+
+type SelectProps = React.ComponentProps<typeof SelectPrimitive.Root> & {
+  /**
+   * The field's visible label, rendered in the field-label role and wired to
+   * the trigger. `SearchInput`, `TextField` and `Checkbox` all take one; the
+   * compound `Select` had no equivalent, so every labelled select in an app
+   * hand-rolled the label — or reached for a bare `aria-label` and shipped a
+   * control with no visible name.
+   */
+  label?: React.ReactNode
+  /** Supporting text under the control. */
+  description?: React.ReactNode
+  /** Error message under the control; also marks the trigger invalid. */
+  error?: React.ReactNode
+}
+
+function Select({
+  label,
+  description,
+  error,
+  children,
+  ...props
+}: SelectProps) {
+  const base = React.useId()
+  const labelId = label ? `${base}-label` : undefined
+  const descriptionId = description ? `${base}-description` : undefined
+  const errorId = error ? `${base}-error` : undefined
+  const describedBy =
+    [descriptionId, errorId].filter(Boolean).join(" ") || undefined
+
+  const root = (
+    <SelectPrimitive.Root data-slot="select" {...props}>
+      {children}
+    </SelectPrimitive.Root>
+  )
+
+  if (!label && !description && !error) return root
+
+  return (
+    <SelectFieldContext.Provider
+      value={{ labelId, describedBy, invalid: error != null }}
+    >
+      <div
+        data-slot="select-field"
+        className={cn("flex w-full flex-col gap-1.5")}
+      >
+        {label ? (
+          <span
+            id={labelId}
+            data-slot="select-label"
+            className={cn(
+              "text-sm font-medium text-foreground",
+              props.disabled && "opacity-50"
+            )}
+          >
+            {label}
+          </span>
+        ) : null}
+        {root}
+        {description ? (
+          <span
+            id={descriptionId}
+            data-slot="select-description"
+            className={cn("text-xs text-muted-foreground")}
+          >
+            {description}
+          </span>
+        ) : null}
+        {error ? (
+          <span
+            id={errorId}
+            data-slot="select-error"
+            className={cn("text-xs text-destructive-ink")}
+          >
+            {error}
+          </span>
+        ) : null}
+      </div>
+    </SelectFieldContext.Provider>
+  )
 }
 
 function SelectGroup(
@@ -55,7 +144,7 @@ function SelectValue(
 
 const selectTriggerVariants = cva(
   cn(
-    "group/select-trigger flex w-full cursor-pointer items-center justify-between gap-2.5 text-start whitespace-nowrap text-foreground bg-clip-padding outline-none select-none transition-[color,background-color,border-color,box-shadow] duration-150",
+    "group/select-trigger flex w-full cursor-pointer items-center justify-between gap-2.5 bg-clip-padding text-start whitespace-nowrap text-foreground transition-[color,background-color,border-color,box-shadow] duration-150 outline-none select-none",
     "hover:border-accent-strong",
     "focus-visible:border-primary focus-visible:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-soft",
     "data-[popup-open]:border-primary data-[popup-open]:bg-surface data-[popup-open]:ring-[3px] data-[popup-open]:ring-accent-soft",
@@ -91,12 +180,25 @@ type SelectTriggerProps = Omit<
 > &
   VariantProps<typeof selectTriggerVariants>
 
-function SelectTrigger({ variant, size, children, ...props }: SelectTriggerProps) {
+function SelectTrigger({
+  variant,
+  size,
+  children,
+  ...props
+}: SelectTriggerProps) {
+  const field = React.useContext(SelectFieldContext)
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
-      className={cn(selectTriggerVariants({ variant, size }))}
       {...props}
+      aria-labelledby={
+        field.labelId
+          ? [field.labelId, props["aria-labelledby"]].filter(Boolean).join(" ")
+          : props["aria-labelledby"]
+      }
+      aria-describedby={props["aria-describedby"] ?? field.describedBy}
+      aria-invalid={props["aria-invalid"] ?? (field.invalid || undefined)}
+      className={cn(selectTriggerVariants({ variant, size }))}
     >
       {children}
       <SelectPrimitive.Icon
@@ -141,15 +243,15 @@ function SelectContent({
       >
         <SelectPrimitive.ScrollUpArrow
           data-slot="select-scroll-up"
-          className="bg-popover text-muted-foreground flex h-6 cursor-default items-center justify-center rounded-t-[11px]"
+          className="flex h-6 cursor-default items-center justify-center rounded-t-[11px] bg-popover text-muted-foreground"
         >
           <ChevronUp aria-hidden className="size-4" />
         </SelectPrimitive.ScrollUpArrow>
         <SelectPrimitive.Popup
           data-slot="select-content"
           className={cn(
-            "bg-popover text-popover-foreground ring-border-strong max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-[11px] p-1.5 text-sm shadow-elevation-3 ring-1 outline-none",
-            "animate-menu-in origin-[var(--transform-origin)] transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0"
+            "max-h-[min(24rem,var(--available-height))] max-w-[calc(100vw-2rem)] min-w-[var(--anchor-width)] overflow-y-auto rounded-[11px] bg-popover p-1.5 text-sm text-popover-foreground shadow-elevation-3 ring-1 ring-border-strong outline-none",
+            "origin-[var(--transform-origin)] animate-menu-in transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:motion-exit"
           )}
           {...props}
         >
@@ -157,7 +259,7 @@ function SelectContent({
         </SelectPrimitive.Popup>
         <SelectPrimitive.ScrollDownArrow
           data-slot="select-scroll-down"
-          className="bg-popover text-muted-foreground flex h-6 cursor-default items-center justify-center rounded-b-[11px]"
+          className="flex h-6 cursor-default items-center justify-center rounded-b-[11px] bg-popover text-muted-foreground"
         >
           <ChevronDown aria-hidden className="size-4" />
         </SelectPrimitive.ScrollDownArrow>
@@ -184,7 +286,7 @@ function SelectItem({ children, label, ...props }: SelectItemProps) {
       data-slot="select-item"
       label={resolvedLabel}
       className={cn(
-        "text-muted-foreground relative flex w-full cursor-default items-center justify-between gap-2.5 rounded-[7px] py-2 pe-2 ps-2.5 text-[0.8rem] font-medium outline-none transition-colors select-none",
+        "relative flex w-full cursor-default items-center justify-between gap-2.5 rounded-[7px] py-2 ps-2.5 pe-2 text-[0.8rem] font-medium text-muted-foreground transition-colors outline-none select-none",
         "data-[highlighted]:bg-accent-soft data-[highlighted]:text-foreground",
         "data-[selected]:bg-accent-soft data-[selected]:text-foreground",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -215,7 +317,7 @@ function SelectGroupLabel(
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-group-label"
-      className={cn("text-muted-foreground px-2.5 py-1.5 text-xs font-medium")}
+      className={cn("px-2.5 py-1.5 text-xs font-medium text-muted-foreground")}
       {...props}
     />
   )
@@ -232,7 +334,7 @@ function SelectSeparator(
   return (
     <SeparatorPrimitive
       data-slot="select-separator"
-      className={cn("bg-border -mx-1 my-1 h-px")}
+      className={cn("-mx-1 my-1 h-px bg-border")}
       {...props}
     />
   )
@@ -249,3 +351,5 @@ export {
   SelectSeparator,
   selectTriggerVariants,
 }
+
+export type { SelectProps }

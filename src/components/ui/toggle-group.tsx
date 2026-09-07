@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
@@ -28,6 +28,7 @@ import type { VariantProps } from "class-variance-authority"
 type ToggleAppearance = VariantProps<typeof toggleVariants>
 
 const ToggleGroupContext = React.createContext<ToggleAppearance>({
+  tone: "accent",
   variant: "outline",
   size: "default",
 })
@@ -41,6 +42,7 @@ type ToggleGroupProps = Omit<
   ToggleAppearance
 
 function ToggleGroup({
+  tone = "accent",
   variant = "outline",
   size = "default",
   children,
@@ -55,7 +57,7 @@ function ToggleGroup({
       )}
       {...props}
     >
-      <ToggleGroupContext.Provider value={{ variant, size }}>
+      <ToggleGroupContext.Provider value={{ tone, variant, size }}>
         {children}
       </ToggleGroupContext.Provider>
     </ToggleGroupPrimitive>
@@ -66,15 +68,21 @@ function ToggleGroup({
 
 type ToggleGroupItemProps = Omit<
   React.ComponentProps<typeof Toggle>,
-  "variant" | "size"
+  "tone" | "variant" | "size"
 > &
   ToggleAppearance
 
-function ToggleGroupItem({ variant, size, ...props }: ToggleGroupItemProps) {
+function ToggleGroupItem({
+  tone,
+  variant,
+  size,
+  ...props
+}: ToggleGroupItemProps) {
   const ctx = React.useContext(ToggleGroupContext)
   return (
     <Toggle
       data-slot="toggle-group-item"
+      tone={tone ?? ctx.tone}
       variant={variant ?? ctx.variant}
       size={size ?? ctx.size}
       {...props}

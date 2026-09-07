@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -34,6 +34,12 @@ type StepperStep = {
   description?: React.ReactNode
   /** Optional icon shown in the indicator instead of the step number. */
   icon?: React.ReactNode
+  /**
+   * Not reachable yet. Only meaningful with `onStepSelect`: a disabled step
+   * renders as plain text rather than a button, so an unreachable step is not
+   * in the tab order at all.
+   */
+  disabled?: boolean
 }
 
 type StepStatus = "complete" | "current" | "upcoming"
@@ -53,7 +59,8 @@ const indicatorVariants = cva(
       },
       status: {
         complete: "border-transparent bg-primary-solid text-primary-foreground",
-        current: "border-primary bg-background text-primary ring-accent-soft ring-[3px]",
+        current:
+          "border-primary bg-background text-primary ring-[3px] ring-accent-soft",
         upcoming: "border-border-strong bg-background text-muted-foreground",
       },
     },
@@ -89,6 +96,23 @@ type StepperProps = Omit<
     activeStep: number
     /** Track direction. @default "horizontal" */
     orientation?: "horizontal" | "vertical"
+    /**
+     * Makes the steps navigable. Given this, each step that is not `disabled`
+     * renders its indicator + label as a real `<button>` and calls back with
+     * its index; steps without it stay plain text, which is the presentational
+     * default.
+     *
+     * The component still does not own reachability — the wizard decides which
+     * steps are `disabled`. It owns the mark, and now the affordance for it.
+     */
+    onStepSelect?: (index: number) => void
+    /**
+     * `check` (default) swaps the numeral for a tick once a step is complete.
+     * `numerals` keeps the number at every stage — for a rail where the number
+     * is how the user refers to the step ("back to 2"), and a row of ticks
+     * loses that.
+     */
+    indicator?: "check" | "numerals"
   }
 
 function statusOf(index: number, activeStep: number): StepStatus {
@@ -104,6 +128,8 @@ function Stepper({
   activeStep,
   orientation = "horizontal",
   size = "md",
+  onStepSelect,
+  indicator: indicatorMode = "check",
   ...props
 }: StepperProps) {
   const lastIndex = steps.length - 1
@@ -127,7 +153,9 @@ function Stepper({
             data-slot="stepper-indicator"
             className={cn(indicatorVariants({ size, status }))}
           >
-            {status === "complete" && !step.icon ? (
+            {status === "complete" &&
+            indicatorMode === "check" &&
+            !step.icon ? (
               <Check aria-hidden />
             ) : step.icon ? (
               step.icon
@@ -156,6 +184,8 @@ function Stepper({
           />
         ) : null
 
+        const selectable = onStepSelect != null && !step.disabled
+
         const labelBlock = (
           <div
             data-slot="stepper-label-block"
@@ -166,7 +196,10 @@ function Stepper({
           >
             <span
               data-slot="stepper-label"
-              className={cn(labelVariants({ size, status }))}
+              className={cn(
+                labelVariants({ size, status }),
+                "underline-offset-4 group-hover/stepper-step:underline"
+              )}
             >
               {step.label}
             </span>
@@ -174,7 +207,7 @@ function Stepper({
               <span
                 data-slot="stepper-description"
                 className={cn(
-                  "text-muted-foreground leading-snug",
+                  "leading-snug text-muted-foreground",
                   size === "sm" ? "text-[0.7rem]" : "text-xs"
                 )}
               >
@@ -189,6 +222,8 @@ function Stepper({
             key={index}
             data-slot="stepper-item"
             data-status={status}
+            data-selectable={selectable || undefined}
+            data-disabled={step.disabled || undefined}
             aria-current={status === "current" ? "step" : undefined}
             className={cn(
               "flex",
@@ -196,7 +231,39 @@ function Stepper({
               !isLast && "flex-1"
             )}
           >
-            {isVertical ? (
+            {selectable ? (
+              // The button wraps the indicator AND the label, so the whole step
+              // is the target — not a 24px circle. The track stays outside it:
+              // it belongs to the space between steps, not to either one.
+              <button
+                type="button"
+                data-slot="stepper-step-button"
+                onClick={() => onStepSelect(index)}
+                className={cn(
+                  "group/stepper-step flex cursor-pointer rounded-lg text-start outline-none",
+                  "focus-visible:ring-[3px] focus-visible:ring-accent-soft",
+                  isVertical ? "flex-1 gap-3" : "w-full flex-col"
+                )}
+              >
+                {isVertical ? (
+                  <>
+                    <div className="flex flex-col items-center">
+                      {indicator}
+                      {track}
+                    </div>
+                    {labelBlock}
+                  </>
+                ) : (
+                  <>
+                    <div className="flex w-full items-center">
+                      {indicator}
+                      {track}
+                    </div>
+                    {labelBlock}
+                  </>
+                )}
+              </button>
+            ) : isVertical ? (
               <>
                 {/* Left rail: indicator stacked over a vertical track */}
                 <div className="flex flex-col items-center">

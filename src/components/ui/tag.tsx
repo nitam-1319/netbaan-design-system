@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useRender } from "@base-ui/react/use-render"
 import { X } from "lucide-react"
@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils"
  */
 
 const tagVariants = cva(
-  "group/tag inline-flex w-fit shrink-0 items-center gap-[7px] border font-sans font-semibold leading-[1.2] whitespace-nowrap animate-chip-pop transition-[color,background-color,border-color,box-shadow] duration-150 outline-none select-none focus-visible:ring-[3px] focus-visible:ring-accent-soft focus-visible:border-accent-strong [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "group/tag inline-flex w-fit shrink-0 animate-chip-pop items-center gap-[7px] border font-sans leading-[1.2] font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow] duration-150 outline-none select-none focus-visible:border-accent-strong focus-visible:ring-[3px] focus-visible:ring-accent-soft [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       size: {
@@ -27,13 +27,22 @@ const tagVariants = cva(
         md: "rounded-lg px-3 py-[5px] text-[12.5px] [&_svg]:size-3.5",
         lg: "rounded-[9px] px-[15px] py-[7px] text-[13.5px] [&_svg]:size-4",
       },
+      /**
+       * `rounded` (default) is the reference chip radius. `pill` is the fully
+       * rounded filter chip — a chip that is a FILTER rather than a label, so
+       * the two read differently in a row that contains both.
+       */
+      shape: {
+        rounded: "",
+        pill: "rounded-full",
+      },
       selected: {
         true: "border-accent-strong/35 bg-accent-soft text-accent-strong",
         false:
           "border-border-strong bg-surface-3 text-muted-foreground hover:border-accent-strong hover:text-foreground",
       },
     },
-    defaultVariants: { size: "md", selected: false },
+    defaultVariants: { size: "md", shape: "rounded", selected: false },
   }
 )
 
@@ -56,11 +65,19 @@ type TagProps = Omit<
     removeLabel?: string
     /** Dim the tag and disable its dismiss affordance. */
     disabled?: boolean
+    /**
+     * A trailing count, set in the mono face and dimmed against the label — the
+     * "Hosts 4" filter chip. It is rendered inside the tag so it is part of the
+     * accessible name, which is what a screen-reader user needs to hear.
+     */
+    count?: React.ReactNode
   }
 
 function Tag({
   size = "md",
+  shape = "rounded",
   selected = false,
+  count,
   onRemove,
   removeLabel = "Remove",
   disabled = false,
@@ -78,13 +95,24 @@ function Tag({
       "data-disabled": disabled || undefined,
       "aria-disabled": disabled || undefined,
       className: cn(
-        tagVariants({ size, selected }),
+        tagVariants({ size, shape, selected }),
         disabled && "pointer-events-none opacity-45"
       ),
       ...props,
       children: (
         <>
           {children}
+          {count !== undefined && count !== null ? (
+            <span
+              data-slot="tag-count"
+              className={cn(
+                "font-mono tabular-nums",
+                selected ? "text-accent-strong" : "text-muted-foreground"
+              )}
+            >
+              {count}
+            </span>
+          ) : null}
           {onRemove ? (
             <button
               type="button"
@@ -93,7 +121,7 @@ function Tag({
               disabled={disabled}
               onClick={onRemove}
               className={cn(
-                "-me-1 ms-[1px] inline-flex shrink-0 items-center justify-center rounded-full outline-none transition-[filter,background-color] hover:brightness-110 focus-visible:ring-[3px] focus-visible:ring-accent-soft disabled:pointer-events-none",
+                "ms-[1px] -me-1 inline-flex shrink-0 items-center justify-center rounded-full transition-[filter,background-color] outline-none hover:brightness-110 focus-visible:ring-[3px] focus-visible:ring-accent-soft disabled:pointer-events-none",
                 REMOVE_SIZE[sizeKey],
                 selected
                   ? "bg-accent-strong/20 text-accent-strong"

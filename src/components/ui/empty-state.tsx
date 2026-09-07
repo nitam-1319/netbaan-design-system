@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -23,6 +23,11 @@ const emptyStateVariants = cva(
   {
     variants: {
       size: {
+        /**
+         * The in-card empty: a 40px plate and a 13.5px title, sized to sit
+         * inside a panel rather than to fill a page.
+         */
+        compact: "gap-2 p-6",
         sm: "gap-2 p-6",
         default: "gap-3 p-10",
         lg: "gap-4 p-16",
@@ -35,22 +40,41 @@ const emptyStateVariants = cva(
 )
 
 const emptyStateIconVariants = cva(
-  "flex shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground",
+  "flex shrink-0 items-center justify-center text-muted-foreground",
   {
     variants: {
       size: {
+        compact: "size-10 [&>svg]:size-[18px]",
         sm: "size-9 [&>svg]:size-4",
         default: "size-12 [&>svg]:size-6",
         lg: "size-16 [&>svg]:size-8",
       },
+      /**
+       * `circle` is the feedback plate. `squircle` is the tinted-glyph plate
+       * the rest of the app uses (12px radius), so an empty state inside a card
+       * matches the icons around it instead of introducing a second shape.
+       */
+      shape: {
+        circle: "rounded-full",
+        squircle: "rounded-xl",
+      },
+      /** Which surface the plate sits on. */
+      surface: {
+        muted: "bg-muted",
+        raised: "bg-surface-2",
+        none: "bg-transparent",
+      },
     },
     defaultVariants: {
       size: "default",
+      shape: "circle",
+      surface: "muted",
     },
   }
 )
 
-type EmptyStateContextValue = { size: "sm" | "default" | "lg" }
+type EmptyStateSize = "compact" | "sm" | "default" | "lg"
+type EmptyStateContextValue = { size: EmptyStateSize }
 const EmptyStateContext = React.createContext<EmptyStateContextValue>({
   size: "default",
 })
@@ -76,16 +100,30 @@ function EmptyState({ size = "default", children, ...props }: EmptyStateProps) {
   )
 }
 
+type EmptyStateIconProps = Omit<
+  React.ComponentProps<"div">,
+  "className" | "style"
+> &
+  Pick<VariantProps<typeof emptyStateIconVariants>, "shape" | "surface">
+
 function EmptyStateIcon({
+  shape,
+  surface,
   children,
   ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
+}: EmptyStateIconProps) {
   const { size } = React.useContext(EmptyStateContext)
   return (
     <div
       data-slot="empty-state-icon"
       aria-hidden
-      className={cn(emptyStateIconVariants({ size }))}
+      className={cn(
+        emptyStateIconVariants({
+          size,
+          shape: shape ?? (size === "compact" ? "squircle" : "circle"),
+          surface: surface ?? (size === "compact" ? "raised" : "muted"),
+        })
+      )}
       {...props}
     >
       {children}
@@ -96,10 +134,14 @@ function EmptyStateIcon({
 function EmptyStateTitle({
   ...props
 }: Omit<React.ComponentProps<"h3">, "className" | "style">) {
+  const { size } = React.useContext(EmptyStateContext)
   return (
     <h3
       data-slot="empty-state-title"
-      className={cn("text-base font-semibold text-foreground")}
+      className={cn(
+        "font-semibold text-foreground",
+        size === "compact" ? "text-[13.5px]" : "text-base"
+      )}
       {...props}
     />
   )
@@ -111,7 +153,7 @@ function EmptyStateDescription({
   return (
     <p
       data-slot="empty-state-description"
-      className={cn("max-w-sm text-sm text-muted-foreground text-pretty")}
+      className={cn("max-w-sm text-sm text-pretty text-muted-foreground")}
       {...props}
     />
   )
@@ -136,4 +178,5 @@ export {
   EmptyStateDescription,
   EmptyStateActions,
   emptyStateVariants,
+  emptyStateIconVariants,
 }

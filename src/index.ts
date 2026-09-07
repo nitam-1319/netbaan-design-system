@@ -207,6 +207,7 @@ export * from "./components/ui/tabs";
 export * from "./components/ui/tag-input";
 export * from "./components/ui/tag";
 export * from "./components/ui/text-field";
+export * from "./components/ui/text-link";
 export * from "./components/ui/textarea";
 export * from "./components/ui/theme-toggle";
 export * from "./components/ui/time-picker";

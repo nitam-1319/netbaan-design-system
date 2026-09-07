@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react"
 import { ArrowDown, ArrowUp, Minus } from "lucide-react"
@@ -146,7 +146,7 @@ function StatTileIcon({
 /* ----------------------------------------------------------------- value -- */
 
 const valueVariants = cva(
-  "font-heading font-semibold leading-none tracking-tight text-foreground tabular-nums",
+  "font-heading leading-none font-semibold tracking-tight tabular-nums",
   {
     variants: {
       size: {
@@ -154,22 +154,47 @@ const valueVariants = cva(
         md: "text-2xl",
         lg: "text-3xl",
       },
+      /**
+       * The figure's ink. A stats band exists so a reader can find the one
+       * number that matters without reading all six; with every figure in
+       * `--foreground` there is nothing to find. Tones draw from the `-ink`
+       * tokens, which are the contrast-checked pair for text on a surface —
+       * the raw fills are not.
+       *
+       * This is a per-RENDER prop, not a per-tile variant: "Failed" is tinted
+       * only when it is non-zero.
+       */
+      tone: {
+        default: "text-foreground",
+        muted: "text-muted-foreground",
+        accent: "text-accent-strong",
+        success: "text-success-ink",
+        warning: "text-warning-ink",
+        danger: "text-destructive-ink",
+        critical: "text-sev-critical-ink",
+        high: "text-sev-high-ink",
+        medium: "text-sev-medium-ink",
+        low: "text-sev-low-ink",
+        info: "text-sev-info-ink",
+      },
     },
-    defaultVariants: { size: "md" },
+    defaultVariants: { size: "md", tone: "default" },
   }
 )
 
-function StatTileValue({
-  ...props
-}: Omit<React.ComponentProps<"div">, "className" | "style">) {
+type StatTileValueProps = Omit<
+  React.ComponentProps<"div">,
+  "className" | "style"
+> &
+  Pick<VariantProps<typeof valueVariants>, "tone">
+
+function StatTileValue({ tone = "default", ...props }: StatTileValueProps) {
   const size = useStatTileSize()
   return (
     <div
       data-slot="stat-tile-value"
-      className={cn(
-        valueVariants({ size }),
-        "flex items-baseline gap-1"
-      )}
+      data-tone={tone}
+      className={cn(valueVariants({ size, tone }), "flex items-baseline gap-1")}
       {...props}
     />
   )
@@ -279,7 +304,7 @@ function StatTileCaption({
   return (
     <p
       data-slot="stat-tile-caption"
-      className={cn("text-xs text-muted-foreground text-pretty")}
+      className={cn("text-xs text-pretty text-muted-foreground")}
       {...props}
     />
   )
