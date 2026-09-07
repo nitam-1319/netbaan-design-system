@@ -40,6 +40,8 @@ const confirmDialogContentVariants = cva(
       size: {
         sm: "max-w-sm",
         default: "max-w-md",
+        /** 460px — the rung a destructive confirm with a consequence list needs. */
+        md: "max-w-[460px]",
         lg: "max-w-lg",
       },
     },
@@ -111,6 +113,24 @@ type ConfirmDialogContentProps = Omit<
     confirmDisabled?: boolean
     /** Show the tone icon in the header. */
     showIcon?: boolean
+    /**
+     * Replace the tone's glyph.
+     *
+     * The tone picks an alarm (destructive) or a question (default), which is
+     * right for "are you sure" and wrong for a confirm whose subject is the
+     * action itself — revoking a device wants the device, not a warning
+     * triangle.
+     */
+    icon?: React.ReactNode
+    /**
+     * The cancel button's variant. Default `outline`.
+     *
+     * A destructive confirm often wants cancel to be the quiet, obvious way
+     * out (`ghost`), rather than a second outlined control of equal weight.
+     */
+    cancelVariant?: "outline" | "ghost" | "secondary"
+    /** Button rung for both actions. Default `sm`. */
+    actionSize?: "sm" | "md"
     /** Extra body content between the description and the actions. */
     children?: React.ReactNode
   }
@@ -125,6 +145,9 @@ function ConfirmDialogContent({
   onConfirm,
   confirmDisabled = false,
   showIcon = true,
+  icon,
+  cancelVariant = "outline",
+  actionSize = "sm",
   children,
   ...props
 }: ConfirmDialogContentProps) {
@@ -153,13 +176,15 @@ function ConfirmDialogContent({
               data-slot="confirm-dialog-icon"
               className={cn(toneIconWrapVariants({ tone }))}
             >
-              <ToneIcon aria-hidden />
+              {icon ?? <ToneIcon aria-hidden />}
             </span>
           ) : null}
           <div className="flex min-w-0 flex-col gap-1.5">
             <AlertDialogPrimitive.Title
               data-slot="confirm-dialog-title"
-              className="text-base leading-tight font-semibold text-foreground"
+              // Every other AEGIS heading is `--font-heading`; this one sat in
+              // the body face, so a confirm's title read as a paragraph.
+              className="font-heading text-base leading-tight font-semibold text-foreground"
             >
               {title}
             </AlertDialogPrimitive.Title>
@@ -186,7 +211,7 @@ function ConfirmDialogContent({
         >
           <AlertDialogPrimitive.Close
             data-slot="confirm-dialog-cancel"
-            render={<Button variant="outline" size="sm" />}
+            render={<Button variant={cancelVariant} size={actionSize} />}
           >
             {cancelLabel}
           </AlertDialogPrimitive.Close>
@@ -196,7 +221,7 @@ function ConfirmDialogContent({
             render={
               <Button
                 variant={tone === "destructive" ? "destructive" : "primary"}
-                size="sm"
+                size={actionSize}
                 disabled={confirmDisabled}
               />
             }

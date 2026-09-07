@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils"
 
 const dialogContentVariants = cva(
   [
-    "bg-popover text-popover-foreground ring-border-strong fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-xl p-6 shadow-elevated ring-1 outline-none",
+    "bg-popover text-popover-foreground ring-border-strong fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl shadow-elevated ring-1 outline-none",
     "origin-[var(--transform-origin)] transition-[transform,opacity] duration-200 data-[ending-style]:scale-95 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
   ],
   {
@@ -29,12 +29,38 @@ const dialogContentVariants = cva(
       size: {
         sm: "max-w-sm",
         default: "max-w-md",
+        md: "max-w-[460px]",
         lg: "max-w-lg",
         xl: "max-w-2xl",
+        /** Wide enough for a two-column body — a picker, a diff, a preview. */
+        "2xl": "max-w-4xl",
+        /** Near-viewport: a modal that is a workspace rather than a question. */
+        full: "max-w-[min(1200px,calc(100vw-2rem))]",
+      },
+      /**
+       * Drop the panel's own padding and gap so the regions can own their
+       * edges — the same escape `Card flush` already offers. Without it a
+       * dialog could not carry a tinted header band or a full-bleed body, and
+       * callers rebuilt the panel from the primitives to get one.
+       */
+      flush: {
+        true: "gap-0 overflow-clip p-0",
+        false: "gap-4 p-6",
+      },
+      /**
+       * `fit` sizes to content (the default). `fill` takes a tall, bounded box
+       * whose body scrolls, which is what a dialog with chrome needs — the
+       * header and footer must stay put while the middle moves.
+       */
+      height: {
+        fit: "max-h-[calc(100vh-4rem)]",
+        fill: "h-[min(720px,calc(100vh-4rem))]",
       },
     },
     defaultVariants: {
       size: "default",
+      flush: false,
+      height: "fit",
     },
   }
 )
@@ -71,6 +97,8 @@ type DialogContentProps = Omit<
 
 function DialogContent({
   size = "default",
+  flush = false,
+  height = "fit",
   showClose = true,
   children,
   ...props
@@ -86,7 +114,8 @@ function DialogContent({
       />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
-        className={cn(dialogContentVariants({ size }))}
+        data-flush={flush || undefined}
+        className={cn(dialogContentVariants({ size, flush, height }))}
         {...props}
       >
         {children}
@@ -108,23 +137,63 @@ function DialogContent({
   )
 }
 
-function DialogHeader({ children }: { children?: React.ReactNode }) {
+type DialogRegionProps = {
+  children?: React.ReactNode
+  /**
+   * Paint the region onto `--surface` with a rule against the body.
+   *
+   * Only meaningful inside a `flush` panel, where the regions own their edges.
+   * A dialog that carries chrome needs its head and foot to read as bands, not
+   * as the first and last paragraphs of one sheet.
+   */
+  banded?: boolean
+}
+
+function DialogHeader({ children, banded = false }: DialogRegionProps) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-1.5 pe-8 text-start")}
+      className={cn(
+        "flex flex-col gap-1.5 pe-8 text-start",
+        banded && "border-b border-border bg-surface px-6 py-4"
+      )}
     >
       {children}
     </div>
   )
 }
 
-function DialogFooter({ children }: { children?: React.ReactNode }) {
+/**
+ * The scrolling middle of a dialog with chrome.
+ *
+ * Without it the panel itself scrolled, which took the header and footer with
+ * it — so a long form's actions disappeared exactly when the reader reached
+ * the end of it.
+ */
+function DialogBody({
+  children,
+  padded = true,
+}: {
+  children?: React.ReactNode
+  padded?: boolean
+}) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn("min-h-0 flex-1 overflow-y-auto", padded && "px-6 py-5")}
+    >
+      {children}
+    </div>
+  )
+}
+
+function DialogFooter({ children, banded = false }: DialogRegionProps) {
   return (
     <div
       data-slot="dialog-footer"
       className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        banded && "border-t border-border bg-surface px-6 py-3.5"
       )}
     >
       {children}
@@ -141,7 +210,10 @@ function DialogTitle(
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-base leading-none font-semibold text-foreground")}
+      // Every other AEGIS heading is `--font-heading`; this one was the
+      // exception, so a dialog title sat in the body face beside a card title
+      // that did not.
+      className={cn("font-heading text-base leading-none font-semibold text-foreground")}
       {...props}
     />
   )
@@ -168,6 +240,7 @@ export {
   DialogClose,
   DialogContent,
   DialogHeader,
+  DialogBody,
   DialogFooter,
   DialogTitle,
   DialogDescription,

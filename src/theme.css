@@ -145,6 +145,7 @@
          panel-in  → DetailSidebar arriving from the inline end */
     --animate-donut-in: donutIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     --animate-panel-in: panelIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+    --animate-sheet-in: sheetIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 
     /* PageHeaderBand aurora — two blurred ellipses drifting behind the page
        title. The periods are deliberately coprime-ish and one runs in reverse:
@@ -792,6 +793,16 @@
     from { opacity: 0; transform: scale(0.85) rotate(-14deg); }
     to { opacity: 1; transform: none; }
 }
+/* A bottom drawer enters along the BLOCK axis, not the inline one: `panelIn`
+   slides sideways, which is right for a side panel and wrong for a sheet —
+   there was no keyframe for the vertical case, so callers wrote their own in
+   app CSS. `--panel-axis` picks the axis; `--panel-dir` still picks the
+   direction along it. */
+@keyframes sheetIn {
+    from { opacity: 0; transform: translateY(calc(24px * var(--panel-dir, 1))); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes panelIn {
     from { opacity: 0; transform: translateX(calc(24px * var(--panel-dir, 1))); }
     to { opacity: 1; transform: none; }

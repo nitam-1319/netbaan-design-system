@@ -56,8 +56,22 @@ const bottomSheetContentVariants = cva(
         lg: "max-h-[85dvh]",
         full: "max-h-[95dvh]",
       },
+      /**
+       * Cap the panel's width and centre it.
+       *
+       * A sheet is a phone pattern, but the same component is the right one on
+       * a wide screen at a readable measure — full-bleed it becomes a band of
+       * text a metre wide.
+       */
+      maxWidth: {
+        none: "",
+        sm: "mx-auto max-w-md rounded-b-2xl",
+        md: "mx-auto max-w-2xl rounded-b-2xl",
+        lg: "mx-auto max-w-4xl rounded-b-2xl",
+      },
     },
     defaultVariants: {
+      maxWidth: "none",
       height: "default",
     },
   }
@@ -94,10 +108,22 @@ type BottomSheetContentProps = Omit<
     showGrabber?: boolean
     /** Render the corner close button. Default `true`. */
     showClose?: boolean
+    /**
+     * Modal behaviour: the scrim, the focus trap and the scroll lock.
+     *
+     * Default `true`. A sheet that inspects the thing behind it — a node in a
+     * graph, a row in a list — must NOT be modal: the reader is meant to keep
+     * looking at the surface while the panel is open, and a scrim plus a focus
+     * trap makes that impossible. Callers were hand-composing a panel out of
+     * DS parts for exactly this.
+     */
+    modal?: boolean
   }
 
 function BottomSheetContent({
   height = "default",
+  maxWidth = "none",
+  modal = true,
   showGrabber = true,
   showClose = true,
   children,
@@ -105,16 +131,19 @@ function BottomSheetContent({
 }: BottomSheetContentProps) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Backdrop
-        data-slot="bottom-sheet-backdrop"
-        className={cn(
-          "fixed inset-0 z-50 bg-background/70 backdrop-blur-sm",
-          "transition-opacity duration-300 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
-        )}
-      />
+      {modal ? (
+        <DialogPrimitive.Backdrop
+          data-slot="bottom-sheet-backdrop"
+          className={cn(
+            "fixed inset-0 z-50 bg-background/70 backdrop-blur-sm",
+            "transition-opacity duration-300 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
+          )}
+        />
+      ) : null}
       <DialogPrimitive.Popup
         data-slot="bottom-sheet-content"
-        className={cn(bottomSheetContentVariants({ height }))}
+        data-modal={modal || undefined}
+        className={cn(bottomSheetContentVariants({ height, maxWidth }))}
         {...props}
       >
         {showGrabber ? (

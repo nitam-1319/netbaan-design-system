@@ -129,6 +129,7 @@ export * from "./components/ui/model-selector";
 export * from "./components/ui/multi-select";
 export * from "./components/ui/multi-step-form";
 export * from "./components/ui/navbar";
+export * from "./components/ui/navigation-drawer";
 export * from "./components/ui/navigation-menu";
 export * from "./components/ui/network-graph";
 export * from "./components/ui/no-results";
