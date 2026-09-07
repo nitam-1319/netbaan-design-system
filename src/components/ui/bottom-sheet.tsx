@@ -118,22 +118,72 @@ type BottomSheetContentProps = Omit<
      * DS parts for exactly this.
      */
     modal?: boolean
+    /**
+     * Let the reader drag the grabber to resize the panel. A non-modal sheet
+     * that inspects the surface behind it is exactly the case where the reader,
+     * not the design, knows how much of that surface they need to keep seeing.
+     * Requires `showGrabber`.
+     */
+    resizable?: boolean
+    /** Floor for `resizable`, in px. Default `160`. */
+    minHeight?: number
+    /** Ceiling for `resizable`, in px. Default 95% of the viewport. */
+    maxHeight?: number
+    /**
+     * Stacking context for the panel and its scrim. Default `50`. Raise it for
+     * a sheet that must sit over another layer the app owns.
+     */
+    zIndex?: number
   }
 
 function BottomSheetContent({
   height = "default",
   maxWidth = "none",
   modal = true,
+  resizable = false,
+  minHeight = 160,
+  maxHeight,
+  zIndex,
   showGrabber = true,
   showClose = true,
   children,
   ...props
 }: BottomSheetContentProps) {
+  // `null` means "the variant decides" — dragging is what opts a panel out of
+  // its own height rung, and only from the moment the reader first drags.
+  const [dragHeight, setDragHeight] = React.useState<number | null>(null)
+  const drag = React.useRef<{ startY: number; startHeight: number } | null>(null)
+
+  function onGrabberPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (!resizable) return
+    const panel = event.currentTarget.parentElement
+    if (!panel) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    drag.current = { startY: event.clientY, startHeight: panel.getBoundingClientRect().height }
+  }
+
+  function onGrabberPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (!drag.current) return
+    const ceiling =
+      maxHeight ??
+      (typeof window === "undefined" ? Infinity : window.innerHeight * 0.95)
+    // The sheet grows UPWARD, so dragging up (a decreasing clientY) is taller.
+    const next = drag.current.startHeight + (drag.current.startY - event.clientY)
+    setDragHeight(Math.min(ceiling, Math.max(minHeight, next)))
+  }
+
+  function endDrag(event: React.PointerEvent<HTMLDivElement>) {
+    if (!drag.current) return
+    drag.current = null
+    event.currentTarget.releasePointerCapture?.(event.pointerId)
+  }
+
   return (
     <DialogPrimitive.Portal>
       {modal ? (
         <DialogPrimitive.Backdrop
           data-slot="bottom-sheet-backdrop"
+          style={zIndex != null ? { zIndex } : undefined}
           className={cn(
             "fixed inset-0 z-50 bg-background/70 backdrop-blur-sm",
             "transition-opacity duration-300 data-[ending-style]:motion-exit data-[ending-style]:opacity-0 data-[starting-style]:opacity-0"
@@ -143,15 +193,30 @@ function BottomSheetContent({
       <DialogPrimitive.Popup
         data-slot="bottom-sheet-content"
         data-modal={modal || undefined}
+        data-resizable={resizable || undefined}
+        style={{
+          ...(zIndex != null ? { zIndex } : null),
+          ...(dragHeight != null
+            ? { height: dragHeight, maxHeight: "95dvh" }
+            : null),
+        }}
         className={cn(bottomSheetContentVariants({ height, maxWidth }))}
         {...props}
       >
         {showGrabber ? (
           <div
             data-slot="bottom-sheet-grabber"
-            aria-hidden
+            aria-hidden={!resizable}
+            role={resizable ? "separator" : undefined}
+            aria-orientation={resizable ? "horizontal" : undefined}
+            aria-label={resizable ? "Resize panel" : undefined}
+            onPointerDown={onGrabberPointerDown}
+            onPointerMove={onGrabberPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
             className={cn(
-              "mx-auto -mt-2 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30"
+              "mx-auto -mt-2 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30",
+              resizable && "cursor-ns-resize touch-none hover:bg-muted-foreground/50"
             )}
           />
         ) : null}

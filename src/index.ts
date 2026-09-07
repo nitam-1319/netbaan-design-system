@@ -104,6 +104,7 @@ export * from "./components/ui/heatmap";
 export * from "./components/ui/helper-text";
 export * from "./components/ui/hosts-by-country-map";
 export * from "./components/ui/hover-card";
+export * from "./components/ui/icon-picker";
 export * from "./components/ui/image-cropper";
 export * from "./components/ui/inline-edit";
 export * from "./components/ui/input-group";

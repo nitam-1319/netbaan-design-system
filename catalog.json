@@ -2592,6 +2592,25 @@
     "import": "import { HoverCard } from \"@netbaan-project/ui\";"
   },
   {
+    "name": "IconPicker",
+    "module": "icon-picker",
+    "category": "forms",
+    "concept": "",
+    "whenToUse": [],
+    "whenNotToUse": [],
+    "composesWith": [
+      "SearchInput"
+    ],
+    "exports": [
+      "IconPicker"
+    ],
+    "typeExports": [
+      "IconPickerProps",
+      "IconPickerIcon"
+    ],
+    "import": "import { IconPicker } from \"@netbaan-project/ui\";"
+  },
+  {
     "name": "ImageCropper",
     "module": "image-cropper",
     "category": "other",
