@@ -11,6 +11,114 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.7.0]
+
+Minor: the **queue-clearing** release. Every design-system defect the consuming
+product's page audit had filed — 63 of the 66 still open after 0.6.0 — is
+addressed here, plus one build defect the release found on its way out.
+**No breaking changes — no migration required.** Component count 223 → 227.
+
+### New components
+- **`TextLink`** — a link that IS a value: phrasing content, no control box, so
+  a linked IP inside a 10px/4px row stops inflating the row by ~12px (DS-061).
+- **`DistributionBar`** — the proportional runway whose parts are controls: one
+  segment per bucket sized by count, over a key of tiles, both halves toggling
+  the same filter. Label ink is lifted toward `--foreground` because the
+  categorical palette is a FILL palette and does not clear AA as small text,
+  and slot assignment here is frequency-driven so a per-colour exception cannot
+  work (DS-023).
+- **`NavigationDrawer`** — the overlay nav surface `Drawer` was never meant to
+  be (DS-062, shipped in 0.6.0's tail).
+- **`IconPicker`** — a searchable glyph grid with a live preview at the size the
+  glyph will be used, and real `radiogroup` semantics. The glyph set stays
+  DATA: the library ships no icons, and hard-coding one vendor's would make the
+  picker useless to an app drawing from another (DS-029).
+- **`useVirtualRows`** — the windowing arithmetic behind `VirtualizedGrid`, on
+  its own, so a list that needs its own row markup does not have to give up
+  windowing to get it (DS-078).
+
+### Charts
+- `--chart-6` is a success green, and the severity ramp now auto-assigns from
+  its first five slots only, so a series lands on green by asking rather than by
+  position (DS-009).
+- A semantic `tone` on every chart series, beating the palette slot — neither
+  palette contains a green, so "this is the good direction" had no colour
+  (DS-026).
+- Per-series `area` on `LineChart` (DS-012); `yScale="log"` on `AreaChart`, via
+  `log1p` so a zero is still a position (DS-011); `scale="sqrt"` on
+  `GeoChoroplethMap`, continuous with a 0.3 floor, so a skewed domain stops
+  rendering as one bright country on an empty world (DS-013).
+- `RadialGauge` takes a continuous `diameter` and a `fluid` mode and completes
+  the five-step grade tone ramp; `Sparkline` can be fluid; `BreakdownDonut`
+  gains an `lg` rung and a continuous diameter (DS-017, DS-046, DS-048).
+- `TrendBars` distinguishes an EMPTY period from an ABSENT one, hatches a
+  provisional final period, and carries a second series (DS-050).
+- `SeverityDonut` takes a `centerLabel`, so one ring can answer "how bad" and
+  "how much" at once (DS-008).
+
+### Tables, lists and panels
+- `DataTable`: per-column `width`/`minWidth`, a table-level `minWidth`, a
+  `flush` variant that can be a `Card`'s body, an eyebrow header band, and a
+  row-activation API that owns the keyboard and ARIA wiring — so a row can be
+  ONE control instead of a button inside one cell (DS-022).
+- `VirtualizedGrid`: `headerHeight`, `variant="flush"`, `renderRow`,
+  `onEndReached` (DS-078).
+- `Timeline`: `orientation="horizontal"` and selectable items (DS-025).
+- `FilterBar`: `search` is optional (a surface with no list to search now gets
+  no field rather than a dead control), an opt-in chip row, and an in-flow
+  panel that reflows with its container (DS-067).
+- `DetailSidebarHeader`: `sticky={false}` and `showClose={false}` (DS-037).
+- `BottomSheet`: a resizable grabber with min/max clamps, and `zIndex` (DS-030).
+
+### Fields, controls and chrome
+- `Select` takes `label` / `description` / `error` and wires them to the
+  trigger, like every other AEGIS field (DS-069).
+- `Stepper` steps can be activated (`onStepSelect`, per-step `disabled`) and can
+  keep their numerals (DS-020, DS-068).
+- `ChoiceCard` gains a stacked layout, a `meta` slot, an icon chip, a check
+  mark, and an `actions` slot rendered OUTSIDE the radio's activation target
+  (DS-021, DS-081).
+- `Toggle`/`ToggleGroup` take a tone, so a filter chip can wear the colour of
+  the thing it filters (DS-052). `Tag` takes a `count` and a pill shape
+  (DS-033). `StatTileValue` takes a tone, so a stats band can say which of six
+  numbers is the alarming one (DS-082).
+- `PromptComposer`: `onSubmit` no longer intersects the textarea's own — the
+  prop was unsatisfiable — plus a labelled send button and a surface variant
+  (DS-027, DS-042).
+- `EmptyState` gains a compact rung, a squircle plate and a surface (DS-034);
+  `CodeBlock` can cap its own height (DS-038); `MessageBubble` gains a `prose`
+  reading view, a `soft` user turn and a `ch` measure (DS-040);
+  `PriorityActionItem` gains a title tooltip and stops hard-coding "assets"
+  (DS-051); `RemediationVelocity` gains action/footer slots and translatable
+  labels (DS-007); `ScrollspyNav` gains item icons, a pill active treatment, a
+  compact density and `wrap={false}` (DS-072); `SidebarItem` gains the rail's
+  own active start-marker and tint (DS-064).
+
+### Fixes
+- **`RecordCard`'s caret pointed UP in Persian whenever the card was open.**
+  Tailwind v4 writes `rotate` and `scale` as separate transform properties and
+  CSS composes them `translate → rotate → scale`, so `rtl:-scale-x-100` mirrored
+  the already-rotated caret. Both it and `ExpandableRows`, which had the same
+  pair, now use a single rotation (DS-045).
+- **`npm run typecheck` typechecked nothing.** It ran `tsc --noEmit` against the
+  root tsconfig, whose `files` is `[]` and whose `references` tsc does not
+  follow without `--build`; it had passed for as long as it existed. Pointed at
+  `tsconfig.app.json` it surfaced three real errors, all fixed here — the worst
+  being `ScanSwitcher` passing raw string ids as Base UI's `items`, so a closed
+  `Select` showed the scan's id instead of its date.
+
+### Not shipped
+- **DS-049 (the severity ramp).** Severity is ordinal but the `--sev-*` tokens
+  are five unrelated hues, and High → Medium is ΔE 8.1 for a deuteranope —
+  below the threshold at which two colours stop being separable. A measured
+  single-hue replacement was put to the product owner on 2026-09-07 and
+  declined, so the tokens are unchanged. Consequence to hold onto: every
+  five-rung surface must keep pairing the hue with the rung's WORD (or a
+  worst-first order). That redundancy is now the only thing separating High from
+  Medium for those readers.
+
+---
+
 ## [0.6.0]
 
 Minor: an **accessibility and localisation** pass, driven by a full-app page
