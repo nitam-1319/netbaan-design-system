@@ -40,6 +40,7 @@
     --color-sidebar-primary: var(--sidebar-primary);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar: var(--sidebar);
+    --color-chart-6: var(--chart-6);
     --color-chart-5: var(--chart-5);
     --color-chart-4: var(--chart-4);
     --color-chart-3: var(--chart-3);
@@ -242,6 +243,10 @@
     --chart-3: #ecb22e;
     --chart-4: #3a97d4;
     --chart-5: #7d8798;
+    /* The success slot. `--chart-1..5` IS the severity ramp, so there was no
+       green: an "opened vs fixed" pair could not be drawn from tokens. It is
+       never auto-assigned — a series lands here by asking for it. */
+    --chart-6: var(--success);
 
     --radius: 0.625rem;
 
@@ -324,6 +329,10 @@
     --chart-3: #ecb22e;
     --chart-4: #3a97d4;
     --chart-5: #7d8798;
+    /* The success slot. `--chart-1..5` IS the severity ramp, so there was no
+       green: an "opened vs fixed" pair could not be drawn from tokens. It is
+       never auto-assigned — a series lands here by asking for it. */
+    --chart-6: var(--success);
 
     --sidebar: #0e0e12;
     --sidebar-foreground: #eceaf2;

@@ -2,7 +2,11 @@
 
 import * as React from "react"
 
-import { RadialGauge, type RadialGaugeProps } from "@/components/ui/radial-gauge"
+import { cn } from "@/lib/utils"
+import {
+  RadialGauge,
+  type RadialGaugeProps,
+} from "@/components/ui/radial-gauge"
 
 /**
  * AEGIS — Scan Coverage Gauge (Domain / ASM)
@@ -47,6 +51,15 @@ type ScanCoverageGaugeProps = Omit<
   size?: RadialGaugeProps["size"]
   /** Arc weight. Default "thick". */
   thickness?: RadialGaugeProps["thickness"]
+  /** Exact ring diameter in px, overriding `size`. */
+  diameter?: RadialGaugeProps["diameter"]
+  /** Grow the ring to the width it is given; `diameter` is then a maximum. */
+  fluid?: RadialGaugeProps["fluid"]
+  /**
+   * Override the escalating coverage tone — for a card that colours each ring
+   * in something other than its own coverage (an organization's grade, say).
+   */
+  tone?: RadialGaugeProps["tone"]
 }
 
 function ScanCoverageGauge({
@@ -57,13 +70,16 @@ function ScanCoverageGauge({
   showReadout = true,
   size = "md",
   thickness = "thick",
+  diameter,
+  fluid,
+  tone: toneProp,
   ...props
 }: ScanCoverageGaugeProps) {
   const safeTotal = total > 0 ? total : 1
   const clamped = Math.min(safeTotal, Math.max(0, scanned))
   const fraction = clamped / safeTotal
   const percent = Math.round(fraction * 100)
-  const tone = toneForCoverage(fraction)
+  const tone = toneProp ?? toneForCoverage(fraction)
   const labelText = typeof label === "string" ? label : "Scan coverage"
 
   return (
@@ -91,11 +107,18 @@ function ScanCoverageGauge({
         tone={tone}
         shape="gauge"
         size={size}
+        diameter={diameter}
+        fluid={fluid}
         thickness={thickness}
         label={labelText}
         valueLabel={`${percent}% (${nf.format(clamped)} of ${nf.format(safeTotal)} ${unit})`}
       >
-        <span className="font-heading text-xl font-semibold leading-none tracking-tight text-foreground tabular-nums">
+        <span
+          className={cn(
+            "font-heading leading-none font-semibold tracking-tight text-foreground tabular-nums",
+            diameter != null || fluid ? "text-[length:22cqw]" : "text-xl"
+          )}
+        >
           {percent}%
         </span>
       </RadialGauge>
@@ -103,7 +126,7 @@ function ScanCoverageGauge({
       {showReadout ? (
         <span
           data-slot="scan-coverage-gauge-readout"
-          className="font-mono text-xs tabular-nums text-text-faint"
+          className="font-mono text-xs text-text-faint tabular-nums"
         >
           <span className="text-foreground">{nf.format(clamped)}</span>
           {" / "}

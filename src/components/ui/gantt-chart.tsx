@@ -3,7 +3,11 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { CHART_PALETTE, type ChartColorIndex } from "@/components/ui/chart-container"
+import {
+  chartColorVar,
+  type ChartColorIndex,
+  type ChartSeriesTone,
+} from "@/components/ui/chart-container"
 
 /**
  * AEGIS — Gantt Chart (Data Visualization)
@@ -38,6 +42,12 @@ type GanttTask = {
   end: number
   /** Palette slot (1–5). Defaults by row order, wrapping after five. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
   /** Completion fraction 0–1; draws a solid fill over the translucent bar. */
   progress?: number
 }
@@ -91,8 +101,10 @@ function GanttChart({
   const plotLeft = labelWidth
   const plotWidth = Math.max(0, width - labelWidth - MARGIN_RIGHT)
 
-  const dMin = domain?.[0] ?? (tasks.length ? Math.min(...tasks.map((t) => t.start)) : 0)
-  const dMax = domain?.[1] ?? (tasks.length ? Math.max(...tasks.map((t) => t.end)) : 1)
+  const dMin =
+    domain?.[0] ?? (tasks.length ? Math.min(...tasks.map((t) => t.start)) : 0)
+  const dMax =
+    domain?.[1] ?? (tasks.length ? Math.max(...tasks.map((t) => t.end)) : 1)
   const span = dMax - dMin || 1
   const xOf = (v: number) => plotLeft + ((v - dMin) / span) * plotWidth
 
@@ -163,14 +175,14 @@ function GanttChart({
 
         {/* Rows: label + bar */}
         {tasks.map((task, i) => {
-          const colorIndex = (task.color ?? ((i % CHART_PALETTE.length) + 1)) as ChartColorIndex
-          const colorVar = `var(${CHART_PALETTE[colorIndex - 1]})`
+          const colorVar = chartColorVar(task.color, task.tone, i)
           const rowTop = HEADER + i * rowHeight
           const barY = rowTop + (rowHeight - barHeight) / 2
           const x1 = xOf(task.start)
           const x2 = xOf(Math.max(task.start, task.end))
           const barW = Math.max(2, x2 - x1)
-          const progress = task.progress === undefined ? null : clamp01(task.progress)
+          const progress =
+            task.progress === undefined ? null : clamp01(task.progress)
           return (
             <g key={task.id} data-slot="gantt-row">
               <text

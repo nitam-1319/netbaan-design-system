@@ -45,12 +45,22 @@ import { cn } from "@/lib/utils"
  * The severity-mapped palette: `--chart-1..5` IS the severity ramp
  * (critical, high, medium, low, info). Correct when the series ARE severities.
  */
+/**
+ * How many slots the severity ramp AUTO-ASSIGNS from. `--chart-6` exists (it is
+ * the success green that closes DS-009) but it is not a severity, so a series
+ * never lands on it by declaration order — only by asking for it, or by asking
+ * for `tone: "success"`, which is the clearer way to say the same thing.
+ */
+const SEVERITY_AUTO_LEN = 5
+
 const CHART_PALETTE = [
   "--color-chart-1",
   "--color-chart-2",
   "--color-chart-3",
   "--color-chart-4",
   "--color-chart-5",
+  // The success slot — see SEVERITY_AUTO_LEN: reachable only on request.
+  "--color-chart-6",
 ] as const
 
 /**
@@ -80,8 +90,30 @@ const CAT_PALETTE = [
  */
 type ChartPalette = "severity" | "categorical"
 
-/** 1-based index into the chart palette (6 is categorical-only). */
+/** 1-based index into the chart palette. */
 type ChartColorIndex = 1 | 2 | 3 | 4 | 5 | 6
+
+/**
+ * A SEMANTIC series colour, for the case a palette slot cannot express: a
+ * series whose meaning is a direction, not a category.
+ *
+ * `--chart-1..5` is the severity ramp (red → grey) and `--cat-1..6` is
+ * cool-only, so neither contains a green: "findings closed" — the reliable
+ * good news on a chart whose other series is the alarm — had no colour it
+ * could be drawn in. A tone names the meaning instead of a slot, and always
+ * wins over `color`.
+ */
+type ChartSeriesTone =
+  "success" | "danger" | "warning" | "info" | "accent" | "neutral"
+
+const TONE_VARS: Record<ChartSeriesTone, string> = {
+  success: "--color-success",
+  danger: "--color-destructive",
+  warning: "--color-warning",
+  info: "--color-sev-low",
+  accent: "--color-accent-strong",
+  neutral: "--color-muted-foreground",
+}
 
 /** Public per-series configuration. */
 type ChartSeries = {
@@ -90,10 +122,15 @@ type ChartSeries = {
   /** Human label shown in the legend and tooltip. Falls back to `key`. */
   label?: string
   /**
-   * Palette slot (1–5). Omit to auto-assign by declaration order, wrapping
-   * after five series.
+   * Palette slot. Omit to auto-assign by declaration order, wrapping after the
+   * palette's auto length (5 on the severity ramp, 6 categorical).
    */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color`. Use it when the series means a
+   * DIRECTION — "this is the good one" — which no palette slot can say.
+   */
+  tone?: ChartSeriesTone
 }
 
 /** A series after the container has resolved its colour + position. */
@@ -104,6 +141,8 @@ type ResolvedChartSeries = {
   index: number
   /** Palette slot this series paints with. */
   colorIndex: ChartColorIndex
+  /** The semantic tone, when the series was given one. */
+  tone?: ChartSeriesTone
   /** Ready-to-use CSS value, e.g. `var(--color-chart-2)`. Use for STROKES,
    *  legend swatch borders, and anywhere a flat colour is required. */
   colorVar: string
@@ -164,29 +203,59 @@ const DEFAULT_MARGIN: ChartMargin = { top: 12, right: 16, bottom: 32, left: 44 }
  *  ids in the consuming document. */
 const patternId = (slot: ChartColorIndex) => `aegis-sev-hatch-${slot}`
 
+/**
+ * The CSS colour for one mark, for the charts that resolve colours themselves
+ * (a node in a graph, a task bar) rather than through `resolveSeries`. Keeps
+ * the tone-beats-slot rule and the "never auto-assign the success slot" rule in
+ * one place instead of three.
+ */
+function chartColorVar(
+  color: ChartColorIndex | undefined,
+  tone: ChartSeriesTone | undefined,
+  index: number
+): string {
+  if (tone) return `var(${TONE_VARS[tone]})`
+  const slot = Math.min(
+    Math.max(color ?? (index % SEVERITY_AUTO_LEN) + 1, 1),
+    CHART_PALETTE.length
+  )
+  return `var(${CHART_PALETTE[slot - 1]})`
+}
+
 function resolveSeries(
   series: ChartSeries[],
   palette: ChartPalette = "severity",
   patternBySeverity = false
 ): ResolvedChartSeries[] {
   const ramp = palette === "categorical" ? CAT_PALETTE : CHART_PALETTE
+  const autoLen =
+    palette === "categorical" ? CAT_PALETTE.length : SEVERITY_AUTO_LEN
   const hatched = patternBySeverity && palette === "severity"
   return series.map((s, i) => {
-    // Clamp an explicit slot into range: the severity ramp has 5 entries and
-    // the categorical one 6, so `color: 6` is only meaningful on the latter.
-    const requested = s.color ?? (i % ramp.length) + 1
-    const colorIndex = Math.min(Math.max(requested, 1), ramp.length) as ChartColorIndex
-    const colorVar = `var(${ramp[colorIndex - 1]})`
+    const requested = s.color ?? (i % autoLen) + 1
+    const colorIndex = Math.min(
+      Math.max(requested, 1),
+      ramp.length
+    ) as ChartColorIndex
+    // A tone names a meaning; a slot names a position in a ramp. When a series
+    // has both, the meaning wins — that is the whole reason the prop exists.
+    const colorVar = s.tone
+      ? `var(${TONE_VARS[s.tone]})`
+      : `var(${ramp[colorIndex - 1]})`
     return {
       key: s.key,
       label: s.label ?? s.key,
       index: i,
       colorIndex,
+      tone: s.tone,
       colorVar,
       // Slot 5 is `info`, which stays a flat fill: it is the lightest weight
       // and hatching it would imply a severity it does not carry.
+      // A toned series is not a severity, so it never carries the hatch.
       fillVar:
-        hatched && colorIndex <= 4 ? `url(#${patternId(colorIndex)})` : colorVar,
+        !s.tone && hatched && colorIndex <= 4
+          ? `url(#${patternId(colorIndex)})`
+          : colorVar,
     }
   })
 }
@@ -226,7 +295,11 @@ function ChartPatternDefs() {
             height="6"
             patternTransform="rotate(45)"
           >
-            <rect width="6" height="6" fill={`var(${CHART_PALETTE[slot - 1]})`} />
+            <rect
+              width="6"
+              height="6"
+              fill={`var(${CHART_PALETTE[slot - 1]})`}
+            />
             <line
               x1="0"
               y1="0"
@@ -393,7 +466,15 @@ function ChartPlot({ label, children, ...props }: ChartPlotProps) {
   )
 }
 
-export { ChartContainer, ChartPlot, useChart, CHART_PALETTE, CAT_PALETTE }
+export {
+  ChartContainer,
+  ChartPlot,
+  useChart,
+  CHART_PALETTE,
+  CAT_PALETTE,
+  SEVERITY_AUTO_LEN,
+  chartColorVar,
+}
 export type {
   ChartContainerProps,
   ChartPlotProps,
@@ -401,6 +482,7 @@ export type {
   ResolvedChartSeries,
   ChartMargin,
   ChartColorIndex,
+  ChartSeriesTone,
   ChartContextValue,
   ChartPalette,
 }

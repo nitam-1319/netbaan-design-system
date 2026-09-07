@@ -806,7 +806,9 @@
       "ChartPlot",
       "useChart",
       "CHART_PALETTE",
-      "CAT_PALETTE"
+      "CAT_PALETTE",
+      "SEVERITY_AUTO_LEN",
+      "chartColorVar"
     ],
     "typeExports": [
       "ChartContainerProps",
@@ -815,6 +817,7 @@
       "ResolvedChartSeries",
       "ChartMargin",
       "ChartColorIndex",
+      "ChartSeriesTone",
       "ChartContextValue",
       "ChartPalette"
     ],
@@ -1637,6 +1640,24 @@
       "DiffLineType"
     ],
     "import": "import { DiffViewer } from \"@netbaan-project/ui\";"
+  },
+  {
+    "name": "DistributionBar",
+    "module": "distribution-bar",
+    "category": "other",
+    "concept": "",
+    "whenToUse": [],
+    "whenNotToUse": [],
+    "composesWith": [],
+    "exports": [
+      "DistributionBar"
+    ],
+    "typeExports": [
+      "DistributionBarProps",
+      "DistributionSegment",
+      "DistributionTone"
+    ],
+    "import": "import { DistributionBar } from \"@netbaan-project/ui\";"
   },
   {
     "name": "Divider",

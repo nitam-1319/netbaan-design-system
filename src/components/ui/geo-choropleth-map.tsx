@@ -50,8 +50,20 @@ type GeoChoroplethMapProps = Omit<
   regions: ChoroplethRegion[]
   /** SVG `viewBox` matching the coordinate space of the region paths. Default `"0 0 960 600"`. */
   viewBox?: string
-  /** Number of shade buckets. Default `5`. */
+  /** Number of shade buckets. Ignored when `scale="sqrt"`. Default `5`. */
   steps?: number
+  /**
+   * How a value becomes a shade.
+   *
+   * `quantise` (default) is the classic choropleth: `steps` equal-width
+   * buckets. `sqrt` is continuous with a floor — `0.3 + 0.7·√(v/max)` — for a
+   * heavily SKEWED domain, where quantising is actively misleading: with one
+   * country at 397 and the rest between 1 and 22, every minor country lands in
+   * the bottom bucket and the map renders as a single bright country on an
+   * empty world, which reads as "we only have hosts there". The square root
+   * compresses the tail and the floor guarantees any present region is visible.
+   */
+  scale?: "quantise" | "sqrt"
   /** Render the shade legend beneath the map. Default `true`. */
   showLegend?: boolean
   /** Format a domain value for the legend. Default rounds to a short number. */
@@ -72,6 +84,7 @@ function GeoChoroplethMap({
   regions,
   viewBox = "0 0 960 600",
   steps = 5,
+  scale = "quantise",
   showLegend = true,
   formatValue = defaultFormat,
   ...props
@@ -91,8 +104,18 @@ function GeoChoroplethMap({
       const b = Math.floor(((v - min) / span) * nSteps)
       return Math.min(nSteps - 1, Math.max(0, b))
     }
+    // The continuous ramp: floored at 0.3 so a present-but-small region is
+    // never mistaken for a no-data one.
+    const SQRT_FLOOR = 0.3
+    const opacityOfValue = (v: number) =>
+      max > 0
+        ? SQRT_FLOOR + (1 - SQRT_FLOOR) * Math.sqrt(Math.max(0, v) / max)
+        : MAX_OPACITY
+
     const opacityOfBucket = (b: number) =>
-      nSteps === 1 ? MAX_OPACITY : MIN_OPACITY + (b / (nSteps - 1)) * (MAX_OPACITY - MIN_OPACITY)
+      nSteps === 1
+        ? MAX_OPACITY
+        : MIN_OPACITY + (b / (nSteps - 1)) * (MAX_OPACITY - MIN_OPACITY)
 
     const shaded = regions.map((r) => {
       const hasValue = Number.isFinite(r.value as number)
@@ -102,26 +125,41 @@ function GeoChoroplethMap({
         d: r.d,
         title: `${r.label ?? r.id}${hasValue ? `: ${formatValue(r.value as number)}` : " — no data"}`,
         hasValue,
-        opacity: hasValue ? opacityOfBucket(bucket) : 1,
+        opacity: hasValue
+          ? scale === "sqrt"
+            ? opacityOfValue(r.value as number)
+            : opacityOfBucket(bucket)
+          : 1,
       }
     })
 
     // Legend bucket boundaries (only meaningful when there is real data).
     const legend =
       values.length && span > 0
-        ? Array.from({ length: nSteps }, (_, b) => {
-            const lo = min + (b / nSteps) * span
-            const hi = min + ((b + 1) / nSteps) * span
-            return {
-              b,
-              opacity: opacityOfBucket(b),
-              range: `${formatValue(lo)}–${formatValue(hi)}`,
-            }
-          })
+        ? scale === "sqrt"
+          ? // A continuous ramp has no bucket boundaries to list, so the key
+            // becomes a sampled gradient from the floor to the peak.
+            Array.from({ length: 5 }, (_, b) => {
+              const v = max * ((b + 1) / 5) ** 2
+              return {
+                b,
+                opacity: opacityOfValue(v),
+                range: formatValue(v),
+              }
+            })
+          : Array.from({ length: nSteps }, (_, b) => {
+              const lo = min + (b / nSteps) * span
+              const hi = min + ((b + 1) / nSteps) * span
+              return {
+                b,
+                opacity: opacityOfBucket(b),
+                range: `${formatValue(lo)}–${formatValue(hi)}`,
+              }
+            })
         : []
 
     return { shaded, legend, hasData: values.length > 0 }
-  }, [regions, steps, formatValue])
+  }, [regions, steps, scale, formatValue])
 
   return (
     <figure
@@ -173,7 +211,10 @@ function GeoChoroplethMap({
             >
               <span
                 className={cn("inline-block size-3 rounded-[2px]")}
-                style={{ backgroundColor: "var(--color-primary)", opacity: l.opacity }}
+                style={{
+                  backgroundColor: "var(--color-primary)",
+                  opacity: l.opacity,
+                }}
               />
               {l.range}
             </span>

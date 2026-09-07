@@ -8,6 +8,7 @@ import {
   useChart,
   type ChartMargin,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { Axis } from "@/components/ui/axis"
 import { ChartLegend } from "@/components/ui/chart-legend"
@@ -51,6 +52,12 @@ type BarChartSeries = {
   label?: string
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
 }
 
 type BarChartProps = {
@@ -168,7 +175,8 @@ function BarMarks({
             <g key={i} data-slot="bar-chart-band">
               {seriesKeys.map((key) => {
                 const v = toNumber(d[key])
-                const color = seriesByKey[key]?.fillVar ?? "var(--color-chart-1)"
+                const color =
+                  seriesByKey[key]?.fillVar ?? "var(--color-chart-1)"
                 let y: number
                 let h: number
                 if (v >= 0) {

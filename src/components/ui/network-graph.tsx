@@ -3,7 +3,11 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { CHART_PALETTE, type ChartColorIndex } from "@/components/ui/chart-container"
+import {
+  chartColorVar,
+  type ChartColorIndex,
+  type ChartSeriesTone,
+} from "@/components/ui/chart-container"
 
 /**
  * AEGIS — Network Graph (Data Visualization)
@@ -42,6 +46,12 @@ type NetworkGraphNode = {
   y: number
   /** Palette slot (1–5). Defaults by node order, wrapping after five. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
   /** Node radius override, px. Defaults to `nodeRadius`. */
   size?: number
 }
@@ -75,7 +85,8 @@ type NetworkGraphProps = Omit<
   directed?: boolean
 }
 
-const clamp01 = (n: number) => (Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0)
+const clamp01 = (n: number) =>
+  Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0
 const LABEL_GAP = 4
 const MIN_EDGE = 1
 const MAX_EDGE = 4
@@ -94,7 +105,10 @@ function NetworkGraph({
 }: NetworkGraphProps) {
   const layout = React.useMemo(() => {
     const radiusOf = (n: NetworkGraphNode) =>
-      Math.max(2, Number.isFinite(n.size as number) ? (n.size as number) : nodeRadius)
+      Math.max(
+        2,
+        Number.isFinite(n.size as number) ? (n.size as number) : nodeRadius
+      )
 
     const maxR = nodes.reduce((m, n) => Math.max(m, radiusOf(n)), nodeRadius)
     const padX = maxR + 4
@@ -121,7 +135,8 @@ function NetworkGraph({
       (l) => idSet.has(l.source) && idSet.has(l.target) && l.source !== l.target
     )
     const maxV = valid.reduce(
-      (m, l) => (Number.isFinite(l.value as number) ? Math.max(m, l.value as number) : m),
+      (m, l) =>
+        Number.isFinite(l.value as number) ? Math.max(m, l.value as number) : m,
       0
     )
 
@@ -159,8 +174,7 @@ function NetworkGraph({
   const colorOf = (id: string) => {
     const idx = nodes.findIndex((n) => n.id === id)
     const node = nodes[idx]
-    const ci = (node?.color ?? ((idx % CHART_PALETTE.length) + 1)) as ChartColorIndex
-    return `var(${CHART_PALETTE[ci - 1]})`
+    return chartColorVar(node?.color, node?.tone, idx)
   }
 
   const labelFor = (id: string) => nodes.find((n) => n.id === id)?.label ?? id

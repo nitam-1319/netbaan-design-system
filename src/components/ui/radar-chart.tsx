@@ -1,11 +1,11 @@
 "use client";
 
-
 import {
   ChartContainer,
   ChartPlot,
   useChart,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { ChartLegend } from "@/components/ui/chart-legend"
 
@@ -30,6 +30,12 @@ type RadarSeries = {
   label?: string
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
   /** One value per axis, in axis order. */
   values: number[]
 }
@@ -169,9 +175,16 @@ function RadarChart({
 }: RadarChartProps) {
   const derivedMax =
     max ??
-    Math.max(1, ...series.flatMap((s) => s.values.filter((v) => Number.isFinite(v))))
+    Math.max(
+      1,
+      ...series.flatMap((s) => s.values.filter((v) => Number.isFinite(v)))
+    )
   const legend = showLegend ?? series.length > 1
-  const seriesMeta = series.map((s) => ({ key: s.key, label: s.label, color: s.color }))
+  const seriesMeta = series.map((s) => ({
+    key: s.key,
+    label: s.label,
+    color: s.color,
+  }))
 
   return (
     <ChartContainer
@@ -182,7 +195,12 @@ function RadarChart({
       series={seriesMeta}
     >
       <ChartPlot>
-        <RadarMarks axes={axes} series={series} max={derivedMax} rings={rings} />
+        <RadarMarks
+          axes={axes}
+          series={series}
+          max={derivedMax}
+          rings={rings}
+        />
       </ChartPlot>
       {legend ? <ChartLegend /> : null}
     </ChartContainer>

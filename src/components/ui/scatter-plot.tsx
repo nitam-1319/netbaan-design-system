@@ -8,6 +8,7 @@ import {
   useChart,
   type ChartMargin,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { Axis } from "@/components/ui/axis"
 import { ChartLegend } from "@/components/ui/chart-legend"
@@ -42,6 +43,12 @@ type ScatterSeries = {
   label?: string
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
   /** The points in this series. */
   points: ScatterPoint[]
 }
@@ -186,7 +193,11 @@ function ScatterPlot({
   const xd = xDomain ?? niceDomain(allX, [0, 1], tickCount)
   const yd = yDomain ?? niceDomain(allY, [0, 1], tickCount)
   const legend = showLegend ?? series.length > 1
-  const seriesMeta = series.map((s) => ({ key: s.key, label: s.label, color: s.color }))
+  const seriesMeta = series.map((s) => ({
+    key: s.key,
+    label: s.label,
+    color: s.color,
+  }))
 
   return (
     <ChartContainer

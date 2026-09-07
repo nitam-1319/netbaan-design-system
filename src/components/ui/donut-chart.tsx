@@ -8,6 +8,7 @@ import {
   useChart,
   type ChartMargin,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { ChartLegend } from "@/components/ui/chart-legend"
 
@@ -52,6 +53,12 @@ type DonutChartDatum = {
   value: number
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
 }
 
 type DonutChartProps = {

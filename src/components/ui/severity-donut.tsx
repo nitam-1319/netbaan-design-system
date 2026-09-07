@@ -139,6 +139,13 @@ type SeverityDonutProps = {
   palette?: "severity" | "categorical"
   /** Centre readout. Defaults to the sum of `counts`. */
   total?: number
+  /**
+   * Replaces the numeric centre readout — a letter grade, a short status word,
+   * a glyph. One ring can then answer "how bad" and "how much" at once, which
+   * a number alone cannot. `total` still drives the accessible text, so the
+   * ring keeps reporting its count to assistive tech.
+   */
+  centerLabel?: React.ReactNode
   /** Caption under the readout (e.g. "Total"). Shown at `size={84}`. */
   label?: React.ReactNode
   /** Accessible name for the ring (e.g. "Findings by severity"). Required. */
@@ -152,6 +159,7 @@ function SeverityDonut({
   size = 58,
   palette = "severity",
   total,
+  centerLabel,
   label,
   chartLabel,
   formatTotal = (value) => value.toLocaleString(),
@@ -177,22 +185,39 @@ function SeverityDonut({
     const sweep = (value / sum) * 360
     wedges.push({
       rung,
-      d: wedgePath(centre, outer, inner, cursor + gap / 2, cursor + sweep - gap / 2),
+      d: wedgePath(
+        centre,
+        outer,
+        inner,
+        cursor + gap / 2,
+        cursor + sweep - gap / 2
+      ),
     })
     cursor += sweep
   }
 
   return (
-    <span data-slot="severity-donut" data-size={size} className={cn(donutVariants({ size }))}>
+    <span
+      data-slot="severity-donut"
+      data-size={size}
+      className={cn(donutVariants({ size }))}
+    >
       <svg
         viewBox={`0 0 ${box} ${box}`}
         role="img"
-        aria-label={chartLabel}
+        aria-label={
+          centerLabel != null ? `${chartLabel} — ${readout}` : chartLabel
+        }
         // Decorative entrance; the global reduced-motion rule sweeps it.
         className="size-full animate-donut-in"
       >
         {wedges.map(({ rung, d }) => (
-          <path key={rung} data-severity={rung} d={d} className={cn(fills[rung])} />
+          <path
+            key={rung}
+            data-severity={rung}
+            d={d}
+            className={cn(fills[rung])}
+          />
         ))}
       </svg>
 
@@ -200,19 +225,31 @@ function SeverityDonut({
         aria-hidden
         className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
       >
-        <span
-          data-slot="severity-donut-total"
-          // The one place a computed value reaches `style`: the step table picks
-          // from a fixed set, and Tailwind cannot express "size by string length".
-          style={{ fontSize: `${donutLabelSize(box, readout)}px` }}
-          className="whitespace-nowrap font-heading font-bold leading-none tracking-[-0.03em] tabular-nums text-foreground"
-        >
-          {readout}
-        </span>
+        {centerLabel != null ? (
+          <span
+            data-slot="severity-donut-center"
+            className={cn(
+              "font-heading leading-none font-bold tracking-[-0.03em] whitespace-nowrap text-foreground",
+              size === 84 ? "text-[26px]" : "text-[18px]"
+            )}
+          >
+            {centerLabel}
+          </span>
+        ) : (
+          <span
+            data-slot="severity-donut-total"
+            // The one place a computed value reaches `style`: the step table picks
+            // from a fixed set, and Tailwind cannot express "size by string length".
+            style={{ fontSize: `${donutLabelSize(box, readout)}px` }}
+            className="font-heading leading-none font-bold tracking-[-0.03em] whitespace-nowrap text-foreground tabular-nums"
+          >
+            {readout}
+          </span>
+        )}
         {label != null && size === 84 ? (
           <span
             data-slot="severity-donut-caption"
-            className="mt-0.5 font-mono text-[8px] font-medium uppercase leading-[1.6] tracking-[0.05em] text-muted-foreground"
+            className="mt-0.5 font-mono text-[8px] leading-[1.6] font-medium tracking-[0.05em] text-muted-foreground uppercase"
           >
             {label}
           </span>

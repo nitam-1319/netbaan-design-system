@@ -1,11 +1,11 @@
 "use client";
 
-
 import { cn } from "@/lib/utils"
 import {
   ChartContainer,
   useChart,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 
 /**
@@ -31,6 +31,12 @@ type TreemapItem = {
   value: number
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
 }
 
 type Rect = { x: number; y: number; w: number; h: number }
@@ -77,7 +83,12 @@ function layout(items: TreemapItem[], rect: Rect): PlacedItem[] {
     const wA = rect.w * fracA
     return [
       ...layout(groupA, { ...rect, w: wA }),
-      ...layout(groupB, { x: rect.x + wA, y: rect.y, w: rect.w - wA, h: rect.h }),
+      ...layout(groupB, {
+        x: rect.x + wA,
+        y: rect.y,
+        w: rect.w - wA,
+        h: rect.h,
+      }),
     ]
   }
   const hA = rect.h * fracA
@@ -132,7 +143,7 @@ function TreemapTiles({
           >
             {bigEnough ? (
               <span aria-hidden className="text-on-tone">
-                <span className="block truncate text-xs font-semibold leading-tight">
+                <span className="block truncate text-xs leading-tight font-semibold">
                   {p.label}
                 </span>
                 <span className="block text-[11px] tabular-nums opacity-90">
@@ -157,6 +168,7 @@ function Treemap({
     key: it.key ?? it.label,
     label: it.label,
     color: it.color,
+    tone: it.tone,
   }))
 
   return (

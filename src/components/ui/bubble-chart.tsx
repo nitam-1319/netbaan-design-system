@@ -8,6 +8,7 @@ import {
   useChart,
   type ChartMargin,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { Axis } from "@/components/ui/axis"
 import { ChartLegend } from "@/components/ui/chart-legend"
@@ -32,6 +33,12 @@ type BubbleSeries = {
   key: string
   label?: string
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
   points: BubblePoint[]
 }
 
@@ -78,7 +85,10 @@ function formatTick(value: number): string {
   return String(Number(value.toFixed(6)))
 }
 
-function extent(values: number[], fallback: [number, number]): [number, number] {
+function extent(
+  values: number[],
+  fallback: [number, number]
+): [number, number] {
   if (values.length === 0) return fallback
   let lo = Infinity
   let hi = -Infinity
@@ -174,7 +184,11 @@ function BubbleChart({
   const yd = yDomain ?? extent(allY, [0, 1])
   const sizeExtent = extent(allSize, [0, 1])
   const legend = showLegend ?? series.length > 1
-  const seriesMeta = series.map((s) => ({ key: s.key, label: s.label, color: s.color }))
+  const seriesMeta = series.map((s) => ({
+    key: s.key,
+    label: s.label,
+    color: s.color,
+  }))
 
   return (
     <ChartContainer

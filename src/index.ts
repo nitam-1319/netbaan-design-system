@@ -66,6 +66,7 @@ export * from "./components/ui/detail-sidebar";
 export * from "./components/ui/device-session-list";
 export * from "./components/ui/dialog";
 export * from "./components/ui/diff-viewer";
+export * from "./components/ui/distribution-bar";
 export * from "./components/ui/divider";
 export * from "./components/ui/donut-chart";
 export * from "./components/ui/drawer";

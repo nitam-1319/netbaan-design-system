@@ -8,6 +8,7 @@ import {
   useChart,
   type ChartMargin,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { Axis, type AxisTick } from "@/components/ui/axis"
 import { ChartLegend } from "@/components/ui/chart-legend"
@@ -69,6 +70,12 @@ type AreaChartSeries = {
   label?: string
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
 }
 
 type AreaChartProps = {
@@ -84,6 +91,18 @@ type AreaChartProps = {
   stackMode?: AreaStackMode
   /** Fixed y range. Omit to derive from the data. Ignored when `stackMode="expand"`. */
   yDomain?: [number, number]
+  /**
+   * How the y axis maps value → position.
+   *
+   * `linear` (default) is right whenever the series are comparable. `log` is
+   * for `stackMode="overlap"` when they are NOT: overlaying severity bands from
+   * zero is the correct encoding — stacking hides a critical count going 12 →
+   * 34 under 1,600 stacked lows — but on one linear domain, series spanning
+   * three orders of magnitude (info in the tens of thousands, critical in the
+   * tens) flatten four of five bands onto the axis. It is `log1p`, so a zero is
+   * still a real position rather than negative infinity.
+   */
+  yScale?: "linear" | "log"
   /** Fill opacity for each band (0–1). Defaults by mode (translucent when overlapping). */
   fillOpacity?: number
   /** Stroke the top edge of each band. Default `true`. */
@@ -160,6 +179,26 @@ function computeYExtent(
 /* --------------------------------------------------------------- the marks -- */
 
 /** One boundary point of a band: the lower/upper stacked values at an index. */
+/**
+ * Value → 0..1 within the y domain. `log` uses `log1p` so a zero maps to the
+ * axis rather than to negative infinity, which is what a count series needs.
+ */
+function projectY(
+  v: number,
+  yMin: number,
+  yMax: number,
+  scale: "linear" | "log"
+): number {
+  if (scale === "log") {
+    const lo = Math.log1p(Math.max(0, yMin))
+    const hi = Math.log1p(Math.max(0, yMax))
+    const span = hi - lo || 1
+    return (Math.log1p(Math.max(0, v)) - lo) / span
+  }
+  const span = yMax - yMin || 1
+  return (v - yMin) / span
+}
+
 type BandPoint = { lower: number; upper: number }
 
 type MarksProps = {
@@ -167,6 +206,7 @@ type MarksProps = {
   seriesKeys: string[]
   yMin: number
   yMax: number
+  yScale: "linear" | "log"
   mode: AreaStackMode
   fillOpacity: number
   showLine: boolean
@@ -178,16 +218,18 @@ function AreaMarks({
   seriesKeys,
   yMin,
   yMax,
+  yScale,
   mode,
   fillOpacity,
   showLine,
   showDots,
 }: MarksProps) {
   const { innerWidth, innerHeight, seriesByKey } = useChart()
-  const span = yMax - yMin || 1
   const n = data.length
-  const xAt = (i: number) => (n > 1 ? (i / (n - 1)) * innerWidth : innerWidth / 2)
-  const yAt = (v: number) => innerHeight - ((v - yMin) / span) * innerHeight
+  const xAt = (i: number) =>
+    n > 1 ? (i / (n - 1)) * innerWidth : innerWidth / 2
+  const yAt = (v: number) =>
+    innerHeight - projectY(v, yMin, yMax, yScale) * innerHeight
 
   // Resolve each series to its lower/upper boundary at every point. For the
   // stacked/expand modes we accumulate a running lower edge per index so the
@@ -238,7 +280,10 @@ function AreaMarks({
               ].join(" ")
             : ""
         const linePath = upper
-          .map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`)
+          .map(
+            ([x, y], i) =>
+              `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`
+          )
           .join(" ")
         return (
           <g key={key} data-slot="area-chart-series" data-series={key}>
@@ -284,6 +329,19 @@ function AreaMarks({
 
 /* -------------------------------------------------------------------- root -- */
 
+/**
+ * Tick values evenly spaced in log1p space, so the gridlines land where the eye
+ * expects them on a log axis.
+ */
+function logTicks(yMin: number, yMax: number, count: number): number[] {
+  const lo = Math.log1p(Math.max(0, yMin))
+  const hi = Math.log1p(Math.max(0, yMax))
+  const n = Math.max(2, count)
+  return Array.from({ length: n }, (_, i) =>
+    Math.round(Math.expm1(lo + ((hi - lo) * i) / (n - 1)))
+  )
+}
+
 function AreaChart({
   label,
   data,
@@ -291,6 +349,7 @@ function AreaChart({
   series,
   stackMode = "overlap",
   yDomain,
+  yScale = "linear",
   fillOpacity,
   showLine = true,
   showDots = false,
@@ -331,9 +390,20 @@ function AreaChart({
         {showYAxis && (
           <Axis
             orientation="left"
-            domain={[yMin, yMax]}
-            tickCount={yTickCount}
-            format={yFormat ? (v) => yFormat(v) : undefined}
+            // A log axis cannot be sampled linearly, so the ticks are computed
+            // here against the same projection the marks use.
+            {...(yScale === "log"
+              ? {
+                  ticks: logTicks(yMin, yMax, yTickCount).map((v) => ({
+                    value: (yFormat ?? String)(v),
+                    position: projectY(v, yMin, yMax, "log"),
+                  })),
+                }
+              : {
+                  domain: [yMin, yMax] as [number, number],
+                  tickCount: yTickCount,
+                  format: yFormat ? (v: number) => yFormat(v) : undefined,
+                })}
             showGrid={showGrid}
           />
         )}
@@ -342,6 +412,7 @@ function AreaChart({
           seriesKeys={seriesKeys}
           yMin={yMin}
           yMax={yMax}
+          yScale={yScale}
           mode={stackMode}
           fillOpacity={resolvedFill}
           showLine={showLine}

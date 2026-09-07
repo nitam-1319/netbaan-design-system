@@ -8,6 +8,7 @@ import {
   useChart,
   type ChartMargin,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { Axis, type AxisTick } from "@/components/ui/axis"
 import { ChartLegend } from "@/components/ui/chart-legend"
@@ -52,8 +53,20 @@ type LineChartSeries = {
   key: string
   /** Legend/label text. Falls back to `key`. */
   label?: string
-  /** Palette slot (1–5). Omit to auto-assign by order. */
+  /** Palette slot. Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a category.
+   */
+  tone?: ChartSeriesTone
+  /**
+   * Fill under THIS line, overriding the chart-wide `area`. A two-series plot
+   * where one series is arriving volume and the other is a closing rate needs
+   * exactly one fill; a chart-wide flag makes it all or nothing, and the
+   * contrast between volume and rate is the reading.
+   */
+  area?: boolean
 }
 
 type LineChartProps = {
@@ -67,7 +80,7 @@ type LineChartProps = {
   series: LineChartSeries[]
   /** Fixed y range. Omit to derive from the data (extended to include 0). */
   yDomain?: [number, number]
-  /** Fill the area under each line. Default `false`. */
+  /** Fill the area under every line. Default `false`; a series may override it. */
   area?: boolean
   /** Draw a dot at each point. Default `false`. */
   showDots?: boolean
@@ -125,6 +138,7 @@ type MarksProps = {
   yMin: number
   yMax: number
   area: boolean
+  areaByKey: Record<string, boolean | undefined>
   showDots: boolean
 }
 
@@ -134,12 +148,14 @@ function LineMarks({
   yMin,
   yMax,
   area,
+  areaByKey,
   showDots,
 }: MarksProps) {
   const { innerWidth, innerHeight, seriesByKey } = useChart()
   const span = yMax - yMin || 1
   const n = data.length
-  const xAt = (i: number) => (n > 1 ? (i / (n - 1)) * innerWidth : innerWidth / 2)
+  const xAt = (i: number) =>
+    n > 1 ? (i / (n - 1)) * innerWidth : innerWidth / 2
   const yAt = (v: number) => innerHeight - ((v - yMin) / span) * innerHeight
 
   return (
@@ -149,7 +165,10 @@ function LineMarks({
         const color = resolved?.colorVar ?? "var(--color-chart-1)"
         const pts = data.map((d, i) => [xAt(i), yAt(toNumber(d[key]))] as const)
         const linePath = pts
-          .map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`)
+          .map(
+            ([x, y], i) =>
+              `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`
+          )
           .join(" ")
         const areaPath =
           pts.length > 0
@@ -159,7 +178,7 @@ function LineMarks({
             : ""
         return (
           <g key={key} data-slot="line-chart-series" data-series={key}>
-            {area && pts.length > 1 && (
+            {(areaByKey[key] ?? area) && pts.length > 1 && (
               <path
                 data-slot="line-chart-area"
                 d={areaPath}
@@ -220,6 +239,14 @@ function LineChart({
   margin,
 }: LineChartProps) {
   const seriesKeys = series.map((s) => s.key)
+  const areaByKey = React.useMemo(
+    () =>
+      Object.fromEntries(series.map((s) => [s.key, s.area])) as Record<
+        string,
+        boolean | undefined
+      >,
+    [series]
+  )
 
   // y extent across all plotted series, extended to include zero so the
   // baseline is meaningful (unless the caller fixes `yDomain`). The data sets a
@@ -258,6 +285,7 @@ function LineChart({
           yMin={yMin}
           yMax={yMax}
           area={area}
+          areaByKey={areaByKey}
           showDots={showDots}
         />
         {showXAxis && <Axis orientation="bottom" ticks={xTicks} />}

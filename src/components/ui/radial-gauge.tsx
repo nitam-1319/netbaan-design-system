@@ -74,12 +74,22 @@ const gaugeVariants = cva(
         md: "size-24",
         lg: "size-32",
       },
+      /**
+       * The arc's ink. `accent`…`neutral` are the semantic four; `low` /
+       * `medium` / `high` / `critical` complete the five-step GRADE ramp with
+       * `success`, so a ring can be drawn in the grade it is reporting rather
+       * than in one of four buckets that do not line up with five grades.
+       */
       tone: {
         accent: "text-primary",
         success: "text-success-ink",
         warning: "text-warning-ink",
         danger: "text-destructive-ink",
         neutral: "text-muted-foreground",
+        low: "text-sev-low-ink",
+        medium: "text-sev-medium-ink",
+        high: "text-sev-high-ink",
+        critical: "text-sev-critical-ink",
       },
     },
     defaultVariants: {
@@ -90,7 +100,7 @@ const gaugeVariants = cva(
 )
 
 const valueTextVariants = cva(
-  "font-heading font-semibold leading-none tracking-tight text-foreground tabular-nums",
+  "font-heading leading-none font-semibold tracking-tight text-foreground tabular-nums",
   {
     variants: {
       size: {
@@ -132,6 +142,19 @@ type RadialGaugeProps = Omit<
     valueLabel?: string
     /** Custom centre content (replaces the value readout). */
     children?: React.ReactNode
+    /**
+     * An exact diameter in px, overriding `size`. The rungs are 64/96/128 and a
+     * card that sizes its rings from how many it is showing — 108 at two, 92 at
+     * four, 74 beyond — cannot reach any of them. The readout scales with it.
+     */
+    diameter?: number
+    /**
+     * Grow to the width the gauge is given (square). For a summary band whose
+     * headline mark should not stay 128px on a 2560px display, where it ends up
+     * the smallest thing on the row while carrying the number the card is
+     * named after. `diameter` then acts as a maximum.
+     */
+    fluid?: boolean
   }
 
 function RadialGauge({
@@ -146,6 +169,8 @@ function RadialGauge({
   showValue = true,
   valueLabel,
   children,
+  diameter,
+  fluid = false,
   ...props
 }: RadialGaugeProps) {
   const span = max - min || 1
@@ -155,12 +180,13 @@ function RadialGauge({
   const { start, sweep } = SHAPE[shape]
 
   const percentText = `${Math.round(fraction * 100)}%`
-  const centre =
-    children ?? (showValue ? (valueLabel ?? percentText) : null)
+  const centre = children ?? (showValue ? (valueLabel ?? percentText) : null)
 
   // Track: the full arc/ring the value fills against.
   const trackPath =
-    shape === "ring" ? null : describeArc(CENTER, CENTER, r, start, start + sweep)
+    shape === "ring"
+      ? null
+      : describeArc(CENTER, CENTER, r, start, start + sweep)
   // Value: the filled portion. A full ring is drawn as a <circle> because a
   // 360° single arc command degenerates (start === end).
   const valueSweep = fraction * sweep
@@ -180,7 +206,25 @@ function RadialGauge({
       aria-valuemax={max}
       aria-label={label}
       aria-valuetext={valueLabel}
-      className={cn(gaugeVariants({ size, tone }))}
+      data-fluid={fluid || undefined}
+      // The one computed value that reaches `style`: a continuous diameter is
+      // exactly what Tailwind's scale cannot express, and the alternative is a
+      // caller-supplied className, which the API forbids for good reasons.
+      style={
+        fluid
+          ? { width: "100%", maxWidth: diameter, aspectRatio: "1 / 1" }
+          : diameter
+            ? { width: diameter, height: diameter }
+            : undefined
+      }
+      className={cn(
+        gaugeVariants({
+          size: diameter != null || fluid ? undefined : size,
+          tone,
+        }),
+        (diameter != null || fluid) &&
+          "@container inline-grid place-items-center"
+      )}
       {...props}
     >
       <svg
@@ -233,7 +277,11 @@ function RadialGauge({
         <div
           data-slot="radial-gauge-label"
           aria-hidden
-          className={cn(valueTextVariants({ size }))}
+          className={cn(
+            diameter != null || fluid
+              ? "font-heading text-[length:22cqw] leading-none font-semibold tracking-tight text-foreground tabular-nums"
+              : valueTextVariants({ size })
+          )}
         >
           {centre}
         </div>

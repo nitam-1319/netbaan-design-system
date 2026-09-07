@@ -61,6 +61,13 @@ type SparklineProps = Omit<
     variant?: "line" | "area" | "bar"
     /** Intrinsic width in px (SVG user units). Default 100. */
     width?: number
+    /**
+     * Grow to the width the sparkline is given, keeping `width`/`height` as the
+     * drawing aspect. A trend mark inside a summary band that is 1,750px wide
+     * should not stay 100px; `preserveAspectRatio="none"` already means the
+     * shape is drawn to whatever box it gets, so only the box was fixed.
+     */
+    fluid?: boolean
     /** Intrinsic height in px (SVG user units). Default 28. */
     height?: number
     /** Stroke width for line/area. Default 2. */
@@ -73,12 +80,7 @@ type SparklineProps = Omit<
   }
 
 /** Normalise a series into SVG coordinates within the padded plot area. */
-function toPoints(
-  data: number[],
-  width: number,
-  height: number,
-  pad: number
-) {
+function toPoints(data: number[], width: number, height: number, pad: number) {
   const min = Math.min(...data)
   const max = Math.max(...data)
   const span = max - min || 1
@@ -99,6 +101,7 @@ function Sparkline({
   tone = "accent",
   width = 100,
   height = 28,
+  fluid = false,
   strokeWidth = 2,
   label,
   ...props
@@ -117,11 +120,12 @@ function Sparkline({
       <svg
         data-slot="sparkline"
         data-empty=""
-        width={width}
-        height={height}
+        data-fluid={fluid || undefined}
+        width={fluid ? undefined : width}
+        height={fluid ? undefined : height}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="none"
-        className={cn(sparklineVariants({ tone }))}
+        className={cn(sparklineVariants({ tone }), fluid && "h-full w-full")}
         {...a11y}
         {...props}
       />
@@ -138,7 +142,8 @@ function Sparkline({
     height - pad
   ).toFixed(2)} Z`
 
-  const barGap = safe.length > 1 ? Math.min(2, (width - pad * 2) / safe.length / 3) : 1
+  const barGap =
+    safe.length > 1 ? Math.min(2, (width - pad * 2) / safe.length / 3) : 1
   const barW = Math.max(1, (width - pad * 2) / safe.length - barGap)
   const baseY = height - pad
 
@@ -146,11 +151,12 @@ function Sparkline({
     <svg
       data-slot="sparkline"
       data-variant={variant}
-      width={width}
-      height={height}
+      data-fluid={fluid || undefined}
+      width={fluid ? undefined : width}
+      height={fluid ? undefined : height}
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
-      className={cn(sparklineVariants({ tone }))}
+      className={cn(sparklineVariants({ tone }), fluid && "h-full w-full")}
       {...a11y}
       {...props}
     >
@@ -164,37 +170,37 @@ function Sparkline({
         />
       )}
 
-      {variant === "bar"
-        ? points.map(([, y], i) => {
-            // Bars occupy per-index SLOTS (width innerW/n) centred in the slot,
-            // NOT the line points (which sit on the plot edges) — otherwise the
-            // first and last bars overhang the viewBox and clip.
-            const slotW = (width - pad * 2) / safe.length
-            const cx = pad + (i + 0.5) * slotW
-            return (
-              <rect
-                key={i}
-                data-slot="sparkline-bar"
-                x={(cx - barW / 2).toFixed(2)}
-                y={y.toFixed(2)}
-                width={barW.toFixed(2)}
-                height={Math.max(1, baseY - y).toFixed(2)}
-                rx={1}
-                fill="currentColor"
-              />
-            )
-          })
-        : (
-            <path
-              data-slot="sparkline-line"
-              d={linePath}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      {variant === "bar" ? (
+        points.map(([, y], i) => {
+          // Bars occupy per-index SLOTS (width innerW/n) centred in the slot,
+          // NOT the line points (which sit on the plot edges) — otherwise the
+          // first and last bars overhang the viewBox and clip.
+          const slotW = (width - pad * 2) / safe.length
+          const cx = pad + (i + 0.5) * slotW
+          return (
+            <rect
+              key={i}
+              data-slot="sparkline-bar"
+              x={(cx - barW / 2).toFixed(2)}
+              y={y.toFixed(2)}
+              width={barW.toFixed(2)}
+              height={Math.max(1, baseY - y).toFixed(2)}
+              rx={1}
+              fill="currentColor"
             />
-          )}
+          )
+        })
+      ) : (
+        <path
+          data-slot="sparkline-line"
+          d={linePath}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      )}
     </svg>
   )
 }

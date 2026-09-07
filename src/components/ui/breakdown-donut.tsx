@@ -8,6 +8,7 @@ import { donutLabelSize } from "@/lib/donut-label"
 import {
   CAT_PALETTE,
   CHART_PALETTE,
+  SEVERITY_AUTO_LEN,
   type ChartPalette,
 } from "@/components/ui/chart-container"
 import { donutSegmentPath } from "@/components/ui/donut-chart"
@@ -57,10 +58,26 @@ type BreakdownDonutDatum = {
 const RING = {
   sm: { box: 84, outer: 34, inner: 21, gap: 3 },
   md: { box: 108, outer: 44, inner: 27, gap: 3 },
+  /** For a two-up card at 440px, where `md` leaves the ring at a quarter of it. */
+  lg: { box: 140, outer: 57, inner: 35, gap: 3 },
 } as const
 
+/**
+ * Ring geometry for an arbitrary diameter, keeping `md`'s proportions
+ * (outer 0.407·box, inner 0.25·box). A card that is 312px at four-up and 440px
+ * at two-up needs a ring between the rungs, not one of them.
+ */
+function ringFor(box: number) {
+  return {
+    box,
+    outer: box * (44 / 108),
+    inner: box * (27 / 108),
+    gap: 3,
+  }
+}
+
 const rootVariants = cva("flex items-center gap-4", {
-  variants: { size: { sm: "", md: "" } },
+  variants: { size: { sm: "", md: "", lg: "" } },
   defaultVariants: { size: "sm" },
 })
 
@@ -71,10 +88,10 @@ const rootVariants = cva("flex items-center gap-4", {
  * four digits with a separator.
  */
 const centerValueVariants = cva(
-  "whitespace-nowrap font-heading font-bold tabular-nums tracking-[-0.03em] text-foreground leading-none"
+  "font-heading leading-none font-bold tracking-[-0.03em] whitespace-nowrap text-foreground tabular-nums"
 )
 
-const swatchVariants = cva("shrink-0 size-2", {
+const swatchVariants = cva("size-2 shrink-0", {
   variants: { swatch: { square: "rounded-[2px]", dot: "rounded-full" } },
   defaultVariants: { swatch: "square" },
 })
@@ -93,6 +110,14 @@ type BreakdownDonutProps = Omit<
      * Pass `"categorical"` (`--cat-1..6`) for anything that is not a severity.
      */
     palette?: ChartPalette
+    /**
+     * An exact ring diameter in px, overriding `size` and keeping `md`'s
+     * proportions. The rungs are 84/108/140; a card that is 312px wide at
+     * four-up and 440px at two-up wants a ring between them, and a ring that
+     * does not grow with its card falls out of balance with the key beside it,
+     * which does.
+     */
+    diameter?: number
     /** Legend swatch glyph. Default `"square"`. */
     swatch?: "square" | "dot"
     /** Lay the key out in one or two columns. Default `1`. */
@@ -113,21 +138,26 @@ function BreakdownDonut({
   data,
   palette = "severity",
   size = "sm",
+  diameter,
   swatch = "square",
   legendColumns = 1,
   centerSublabel,
   valueFormat = (v) => v.toLocaleString(),
   ...props
 }: BreakdownDonutProps) {
-  const ring = RING[size ?? "sm"]
+  const ring = diameter != null ? ringFor(diameter) : RING[size ?? "sm"]
   const ramp = palette === "categorical" ? CAT_PALETTE : CHART_PALETTE
+  // The severity ramp auto-assigns from its first five slots only: `--chart-6`
+  // is the success green, and a breakdown slice never means "good" by position.
+  const rampLen =
+    palette === "categorical" ? CAT_PALETTE.length : SEVERITY_AUTO_LEN
 
   // Colour follows declaration order and wraps at the end of the ramp, so the
   // slice, its legend swatch and any sibling chart of the same data agree.
   const slices = data.map((d, i) => ({
     ...d,
     count: toCount(d.value),
-    color: `var(${ramp[i % ramp.length]})`,
+    color: `var(${ramp[i % rampLen]})`,
   }))
 
   const total = slices.reduce((sum, d) => sum + d.count, 0)
@@ -196,7 +226,9 @@ function BreakdownDonut({
         >
           <span
             data-slot="breakdown-donut-total"
-            style={{ fontSize: `${donutLabelSize(ring.box, String(valueFormat(total)))}px` }}
+            style={{
+              fontSize: `${donutLabelSize(ring.box, String(valueFormat(total)))}px`,
+            }}
             className={cn(centerValueVariants())}
           >
             {valueFormat(total)}
@@ -215,7 +247,8 @@ function BreakdownDonut({
         aria-label={label}
         className={cn(
           "grid min-w-0 flex-1 gap-x-4 gap-y-1",
-          legendColumns === 2 && "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
+          legendColumns === 2 &&
+            "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
         )}
       >
         {slices.map((d) => (
@@ -235,7 +268,7 @@ function BreakdownDonut({
             <span className="min-w-0 flex-1 truncate text-[11.5px] text-muted-foreground">
               {d.label ?? d.key}
             </span>
-            <span className="font-mono text-[11.5px] font-semibold tabular-nums text-foreground">
+            <span className="font-mono text-[11.5px] font-semibold text-foreground tabular-nums">
               {valueFormat(d.count)}
             </span>
           </li>

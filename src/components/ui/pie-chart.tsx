@@ -8,6 +8,7 @@ import {
   useChart,
   type ChartMargin,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 import { ChartLegend } from "@/components/ui/chart-legend"
 
@@ -54,6 +55,12 @@ type PieChartDatum = {
   value: number
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
 }
 
 type PieChartProps = {
@@ -151,7 +158,10 @@ function PieMarks({
   const cx = innerWidth / 2
   const cy = innerHeight / 2
   // Leave room outside the pie for labels so they stay within the coordinate box.
-  const rOuter = Math.max(0, Math.min(innerWidth, innerHeight) / 2 - (showLabels ? 20 : 0))
+  const rOuter = Math.max(
+    0,
+    Math.min(innerWidth, innerHeight) / 2 - (showLabels ? 20 : 0)
+  )
 
   const slices = data.filter((d) => toNumber(d.value) > 0)
   const pad = slices.length > 1 ? Math.max(0, padAngle) : 0

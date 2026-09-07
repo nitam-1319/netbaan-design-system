@@ -6,6 +6,7 @@ import {
   ChartContainer,
   useChart,
   type ChartColorIndex,
+  type ChartSeriesTone,
 } from "@/components/ui/chart-container"
 
 /**
@@ -31,6 +32,12 @@ type FunnelStage = {
   value: number
   /** Palette slot (1–5). Omit to auto-assign by order. */
   color?: ChartColorIndex
+  /**
+   * A semantic colour, overriding `color` — for a series whose meaning is a
+   * direction ("closed", "recovered") rather than a slot in a ramp. Neither
+   * palette contains a green, so this is the only way to say "good".
+   */
+  tone?: ChartSeriesTone
 }
 
 type FunnelChartProps = {
@@ -79,7 +86,7 @@ function FunnelBars({
               </span>
               <span
                 dir="ltr"
-                className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground"
+                className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums"
               >
                 {valueFormat(stage.value)}
                 {showConversion && i > 0 ? (
@@ -111,6 +118,7 @@ function FunnelChart({
     key: s.key ?? String(s.label),
     label: typeof s.label === "string" ? s.label : s.key,
     color: s.color,
+    tone: s.tone,
   }))
 
   return (
