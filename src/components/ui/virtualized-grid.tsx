@@ -61,10 +61,146 @@ export interface VirtualizedGridProps<TRow> extends DivProps {
   visibleRows?: number
   /** Extra rows rendered above/below the viewport to smooth scrolling. Default `4`. */
   overscan?: number
+  /**
+   * Header height in px. Every list design here has a compact column strip over
+   * taller rows (31px over 49px); pinning the header to `rowHeight` makes that
+   * unreachable. Defaults to `rowHeight`.
+   */
+  headerHeight?: number
+  /**
+   * `card` (default) draws the grid's own rounded, bordered surface. `flush`
+   * drops it, so the grid can be the body of a `Card` the caller owns without a
+   * second border and a second radius around the rows.
+   */
+  variant?: "card" | "flush"
+  /**
+   * Render a whole row yourself, instead of the column `cell` renderers. The
+   * built-in cell is `flex items-center truncate`, which cannot hold a host
+   * over a muted meta line — a shape every list here uses. The grid still owns
+   * the geometry: it hands you the row, its index and the height to fill.
+   */
+  renderRow?: (row: TRow, rowIndex: number) => React.ReactNode
+  /**
+   * Fires once when the scroller nears the end. Use it to reveal the next page.
+   */
+  onEndReached?: () => void
+  /** How close to the end counts as reaching it, in px. Default `rowHeight * 8`. */
+  endThreshold?: number
   /** Fires when a row is activated (click / Enter / Space). */
   onRowActivate?: (row: TRow, rowIndex: number) => void
   /** Message shown when `data` is empty. Default "No rows". */
   emptyMessage?: React.ReactNode
+}
+
+
+/* ------------------------------------------------------- useVirtualRows -- */
+
+type UseVirtualRowsOptions = {
+  /** Total number of rows in the FULL set. */
+  count: number
+  /** Height of one row in px. Every row is this tall. */
+  rowHeight: number
+  /** Height of the scrolling viewport in px. */
+  viewportHeight: number
+  /** Extra rows rendered above and below the viewport. Default `4`. */
+  overscan?: number
+  /**
+   * Fires once when the scroller comes within `endThreshold` px of the end —
+   * for revealing the next page. At 10,000 rows the canvas is 490,000px tall
+   * and the scrollbar thumb is a few pixels of travel, so incremental loading
+   * is not optional at this size.
+   */
+  onEndReached?: () => void
+  /** How close to the end counts as reaching it, in px. Default `rowHeight * 8`. */
+  endThreshold?: number
+}
+
+type UseVirtualRowsResult = {
+  /** First row index to render (inclusive). */
+  first: number
+  /** Last row index to render (exclusive) — use as `slice(first, last)`. */
+  last: number
+  /** Top offset of the first rendered row, in px. */
+  offsetTop: number
+  /** Height of the spacer that establishes the scroll range, in px. */
+  canvasHeight: number
+  /** Current scroll offset, in px. */
+  scrollTop: number
+  /** Hand this to the scrolling element's `onScroll`. */
+  onScroll: (event: React.UIEvent<HTMLElement>) => void
+}
+
+/**
+ * The windowing arithmetic behind `VirtualizedGrid`, on its own.
+ *
+ * Windowing is arithmetic, not a look. A list that needs its own row markup —
+ * a two-line first cell, a header shorter than a row, a hover treatment that is
+ * not the grid's — should not have to give up windowing to get it, and at this
+ * size windowing is not optional: 3,000 rows unwindowed is 42,000 DOM nodes, a
+ * 152,764px-tall card and a ~2s freeze on every return to the list.
+ *
+ *   const { first, last, offsetTop, canvasHeight, onScroll } = useVirtualRows({
+ *     count: rows.length, rowHeight: 49, viewportHeight: 49 * 8,
+ *   })
+ *
+ * Render `rows.slice(first, last)` inside a `canvasHeight`-tall spacer,
+ * translated down by `offsetTop`, and hand `onScroll` to the scroller.
+ *
+ * Fixed row height only: variable heights need measurement, which is a
+ * different component rather than a flag on this one.
+ */
+function useVirtualRows({
+  count,
+  rowHeight,
+  viewportHeight,
+  overscan = 4,
+  onEndReached,
+  endThreshold,
+}: UseVirtualRowsOptions): UseVirtualRowsResult {
+  const [scrollTop, setScrollTop] = React.useState(0)
+  // Fired-once latch: without it every scroll event inside the end zone asks
+  // for another page.
+  const endFired = React.useRef(false)
+
+  const safeRowHeight = Math.max(1, rowHeight)
+  const threshold = endThreshold ?? safeRowHeight * 8
+
+  const first = Math.max(0, Math.floor(scrollTop / safeRowHeight) - overscan)
+  const windowCount =
+    Math.ceil(Math.max(1, viewportHeight) / safeRowHeight) + overscan * 2
+  const last = Math.min(count, first + windowCount)
+
+  // A new page arriving grows the set, which re-arms the callback.
+  React.useEffect(() => {
+    endFired.current = false
+  }, [count])
+
+  const onScroll = React.useCallback(
+    (event: React.UIEvent<HTMLElement>) => {
+      const el = event.currentTarget
+      setScrollTop(el.scrollTop)
+      if (!onEndReached) return
+      const remaining = el.scrollHeight - el.scrollTop - el.clientHeight
+      if (remaining <= threshold) {
+        if (!endFired.current) {
+          endFired.current = true
+          onEndReached()
+        }
+      } else {
+        endFired.current = false
+      }
+    },
+    [onEndReached, threshold]
+  )
+
+  return {
+    first,
+    last,
+    offsetTop: first * safeRowHeight,
+    canvasHeight: count * safeRowHeight,
+    scrollTop,
+    onScroll,
+  }
 }
 
 const alignClass: Record<VirtualizedGridAlign, string> = {
@@ -79,27 +215,35 @@ function VirtualizedGrid<TRow>({
   getRowId,
   label,
   rowHeight = 44,
+  headerHeight,
   visibleRows = 8,
   overscan = 4,
+  variant = "card",
+  renderRow,
   onRowActivate,
+  onEndReached,
+  endThreshold,
   emptyMessage = "No rows",
   ...props
 }: VirtualizedGridProps<TRow>) {
-  const [scrollTop, setScrollTop] = React.useState(0)
   const total = data.length
   const viewportHeight = Math.max(1, visibleRows) * rowHeight
+  const { first, last, canvasHeight, onScroll } = useVirtualRows({
+    count: total,
+    rowHeight,
+    viewportHeight,
+    overscan,
+    onEndReached,
+    endThreshold,
+  })
 
   const template = React.useMemo(
     () => columns.map((c) => c.width ?? "minmax(0, 1fr)").join(" "),
     [columns]
   )
 
-  const start = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan)
-  const windowCount = Math.ceil(viewportHeight / rowHeight) + overscan * 2
-  const end = Math.min(total, start + windowCount)
-
   const rows: React.ReactNode[] = []
-  for (let i = start; i < end; i++) {
+  for (let i = first; i < last; i++) {
     const row = data[i]
     const id = getRowId(row, i)
     rows.push(
@@ -131,7 +275,9 @@ function VirtualizedGrid<TRow>({
           gridTemplateColumns: template,
         }}
       >
-        {columns.map((column, ci) => (
+        {renderRow
+          ? renderRow(row, i)
+          : columns.map((column, ci) => (
           <div
             key={column.id}
             role="gridcell"
@@ -157,8 +303,12 @@ function VirtualizedGrid<TRow>({
       aria-label={label}
       aria-rowcount={total + 1 /* header counts as a row */}
       aria-colcount={columns.length}
+      data-variant={variant}
       className={cn(
-        "w-full overflow-hidden rounded-lg border border-border bg-card text-foreground"
+        "w-full text-foreground",
+        variant === "card"
+          ? "overflow-hidden rounded-lg border border-border bg-card"
+          : "min-w-0"
       )}
       {...props}
     >
@@ -170,7 +320,7 @@ function VirtualizedGrid<TRow>({
         className={cn(
           "grid items-center border-b border-border bg-surface-2 text-xs font-medium text-muted-foreground"
         )}
-        style={{ gridTemplateColumns: template, height: rowHeight }}
+        style={{ gridTemplateColumns: template, height: headerHeight ?? rowHeight }}
       >
         {columns.map((column, ci) => (
           <div
@@ -204,7 +354,7 @@ function VirtualizedGrid<TRow>({
           // region keyboard access (scrollable-region-focusable).
           role="rowgroup"
           tabIndex={0}
-          onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
+          onScroll={onScroll}
           className={cn(
             "relative overflow-y-auto outline-none focus-visible:ring-3 focus-visible:ring-accent-soft"
           )}
@@ -217,7 +367,7 @@ function VirtualizedGrid<TRow>({
             data-slot="virtualized-grid-canvas"
             role="presentation"
             className={cn("relative w-full")}
-            style={{ height: total * rowHeight }}
+            style={{ height: canvasHeight }}
           >
             {rows}
           </div>
@@ -227,4 +377,5 @@ function VirtualizedGrid<TRow>({
   )
 }
 
-export { VirtualizedGrid }
+export { VirtualizedGrid, useVirtualRows }
+export type { UseVirtualRowsOptions, UseVirtualRowsResult }

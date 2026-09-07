@@ -71,6 +71,15 @@ export interface DataTableColumn<TRow> {
   sortable?: boolean
   /** The comparable value used to sort this column. */
   sortValue?: (row: TRow) => string | number
+  /**
+   * Column width — a CSS length or a px number, emitted into a `<colgroup>`.
+   * Requires `layout="fixed"` (which `variant="flush"` turns on by default).
+   * Content-sized columns let one long hostname starve every column beside it;
+   * a design that fixes ratios (`54px minmax(0,2.2fr) …`) needs this.
+   */
+  width?: string | number
+  /** Minimum width in px for this column. */
+  minWidth?: number
 }
 
 type DivProps = Omit<React.ComponentProps<"div">, "className" | "style">
@@ -87,6 +96,37 @@ export interface DataTableProps<TRow> extends Omit<DivProps, "children"> {
 
   /** Row density. Default `"comfortable"`. */
   density?: DataTableDensity
+
+  /**
+   * `card` (default) wraps the table in its own rounded, bordered surface and
+   * puts `toolbar` / `footer` outside it. `flush` drops that surface and moves
+   * both inside, so the table can BE the body of a `Card` the caller owns —
+   * nesting the card variant inside a `Card` draws a second border around the
+   * rows.
+   */
+  variant?: "card" | "flush"
+  /**
+   * Header treatment. `eyebrow` is the uppercase, tracked band on `--surface-2`
+   * a dense list wants, with the sort affordance as a glyph beside the label
+   * rather than a ghost `Button` around it.
+   */
+  headerVariant?: "default" | "eyebrow"
+  /** Honour the columns' `width`s instead of sizing to content. */
+  layout?: "auto" | "fixed"
+  /** Width below which the table scrolls instead of crushing its columns. */
+  minWidth?: number
+
+  /**
+   * Makes each row ONE control: the row itself takes the click, Enter and
+   * Space, `aria-expanded` when `isRowActive` is supplied, and the hover tint.
+   * Without it a page has to make one CELL a button, which puts the affordance
+   * on a fifth of the row.
+   */
+  onRowActivate?: (row: TRow, rowIndex: number) => void
+  /** Marks a row as the currently open one; drives `aria-expanded` and the tint. */
+  isRowActive?: (row: TRow, rowIndex: number) => boolean
+  /** Accessible name for an activatable row. Default: the row's ordinal. */
+  getRowLabel?: (row: TRow, rowIndex: number) => string
 
   /** Show the loading (skeleton) surface. Takes priority over data/empty. */
   loading?: boolean
@@ -193,6 +233,13 @@ function DataTable<TRow>({
   onSortChange,
   toolbar,
   footer,
+  variant = "card",
+  headerVariant = "default",
+  layout,
+  minWidth,
+  onRowActivate,
+  isRowActive,
+  getRowLabel,
   ...props
 }: DataTableProps<TRow>) {
   const [selection, setSelection] = useControllableState<string[]>(
@@ -270,20 +317,74 @@ function DataTable<TRow>({
   const showBody = !loading && !error && sortedData.length > 0
   const showEmpty = !loading && !error && sortedData.length === 0
 
+  const flush = variant === "flush"
+  const resolvedLayout =
+    layout ?? (columns.some((c) => c.width != null) ? "fixed" : "auto")
+  const hasWidths = columns.some((c) => c.width != null || c.minWidth != null)
+
+  const toolbarNode = toolbar ? (
+    <div
+      data-slot="data-table-toolbar"
+      className={cn(
+        "flex flex-wrap items-center gap-2",
+        flush && "border-b border-border px-4 py-3"
+      )}
+    >
+      {toolbar}
+    </div>
+  ) : null
+
+  const footerNode = footer ? (
+    <div
+      data-slot="data-table-footer"
+      className={cn(
+        "flex flex-wrap items-center justify-between gap-2",
+        flush && "border-t border-border px-4 py-3"
+      )}
+    >
+      {footer}
+    </div>
+  ) : null
+
   return (
-    <div data-slot="data-table" data-density={density} className={cn("flex w-full flex-col gap-3")} {...props}>
-      {toolbar ? (
-        <div data-slot="data-table-toolbar" className={cn("flex flex-wrap items-center gap-2")}>
-          {toolbar}
-        </div>
-      ) : null}
+    <div
+      data-slot="data-table"
+      data-density={density}
+      data-variant={variant}
+      className={cn(flush ? "flex w-full flex-col" : "flex w-full flex-col gap-3")}
+      {...props}
+    >
+      {toolbarNode}
 
       <div
         data-slot="data-table-surface"
-        className={cn("overflow-hidden rounded-lg border border-border bg-card")}
+        className={cn(
+          flush
+            ? "min-w-0"
+            : "overflow-hidden rounded-lg border border-border bg-card"
+        )}
       >
-        <Table>
+        <Table
+          density={density === "compact" ? "compact" : "default"}
+          headerVariant={headerVariant}
+          layout={resolvedLayout}
+          minWidth={minWidth}
+        >
           <caption className="sr-only">{caption}</caption>
+          {hasWidths ? (
+            <colgroup>
+              {selectable ? <col style={{ width: 44 }} /> : null}
+              {columns.map((column) => (
+                <col
+                  key={column.id}
+                  style={{
+                    width: column.width,
+                    minWidth: column.minWidth,
+                  }}
+                />
+              ))}
+            </colgroup>
+          ) : null}
 
           <TableHeader>
             <TableRow>
@@ -321,7 +422,29 @@ function DataTable<TRow>({
                     data-align={column.align ?? "start"}
                   >
                     <div className={cn(headDensityClass[density], "flex items-center", alignClass[column.align ?? "start"], (column.align ?? "start") === "end" && "justify-end", (column.align ?? "start") === "center" && "justify-center")}>
-                      {column.sortable ? (
+                      {column.sortable && headerVariant === "eyebrow" ? (
+                        // The eyebrow band is a rule with labels on it; a ghost
+                        // Button around each label turns it back into a row of
+                        // controls, which is the treatment it exists to avoid.
+                        <button
+                          type="button"
+                          onClick={() => handleSort(column)}
+                          aria-label={`Sort by ${label}`}
+                          className={cn(
+                            "inline-flex cursor-pointer items-center gap-1 rounded-sm outline-none",
+                            "hover:text-foreground focus-visible:ring-3 focus-visible:ring-accent-soft"
+                          )}
+                        >
+                          <span>{column.header}</span>
+                          <span aria-hidden className="text-[9px] leading-none">
+                            {isSorted
+                              ? sortState!.direction === "asc"
+                                ? "\u2191"
+                                : "\u2193"
+                              : "\u2195"}
+                          </span>
+                        </button>
+                      ) : column.sortable ? (
                         <Button
                           type="button"
                           variant="ghost"
@@ -377,7 +500,34 @@ function DataTable<TRow>({
                   const id = rowIds[rowIndex]
                   const isSelected = selectedSet.has(id)
                   return (
-                    <TableRow key={id} data-state={isSelected ? "selected" : undefined}>
+                    <TableRow
+                      key={id}
+                      data-state={isSelected ? "selected" : undefined}
+                      {...(onRowActivate
+                        ? {
+                            // The ROW is the control. `tabIndex`/`role` rather
+                            // than a nested <button>, because a button wrapping
+                            // table cells is not valid markup — and a button in
+                            // one cell puts the affordance on a fifth of the row.
+                            role: "button" as const,
+                            tabIndex: 0,
+                            "aria-label":
+                              getRowLabel?.(row, rowIndex) ?? `Row ${rowIndex + 1}`,
+                            "aria-expanded": isRowActive
+                              ? isRowActive(row, rowIndex)
+                              : undefined,
+                            "data-active":
+                              isRowActive?.(row, rowIndex) ? "" : undefined,
+                            onClick: () => onRowActivate(row, rowIndex),
+                            onKeyDown: (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault()
+                                onRowActivate(row, rowIndex)
+                              }
+                            },
+                          }
+                        : {})}
+                    >
                       {selectable ? (
                         <TableCell>
                           <div className={cn(cellDensityClass[density], "flex items-center")}>
@@ -447,11 +597,7 @@ function DataTable<TRow>({
         </div>
       ) : null}
 
-      {footer ? (
-        <div data-slot="data-table-footer" className={cn("flex flex-wrap items-center justify-between gap-2")}>
-          {footer}
-        </div>
-      ) : null}
+      {footerNode}
     </div>
   )
 }

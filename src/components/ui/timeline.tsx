@@ -22,21 +22,47 @@ import { cn } from "@/lib/utils"
 
 /* ------------------------------------------------------------------ Root -- */
 
-function Timeline(
-  props: Omit<useRender.ComponentProps<"ol">, "className" | "style">
-) {
+const TimelineOrientationContext = React.createContext<
+  "vertical" | "horizontal"
+>("vertical")
+
+type TimelineProps = Omit<
+  useRender.ComponentProps<"ol">,
+  "className" | "style"
+> & {
+  /**
+   * `vertical` (default) is the feed. `horizontal` is the dense chronological
+   * RAIL — a scrolling strip of events, newest first, the shape a detail
+   * panel's history tab wants. The connector then runs along the row rather
+   * than down the side, and the strip scrolls instead of wrapping.
+   */
+  orientation?: "vertical" | "horizontal"
+}
+
+function Timeline({ orientation = "vertical", ...props }: TimelineProps) {
   const { render = <ol />, ...rest } = props
-  return useRender({
+  const horizontal = orientation === "horizontal"
+  const list = useRender({
     render,
     props: {
       "data-slot": "timeline",
+      "data-orientation": orientation,
       // The last item's connector is hidden so the rail stops at the final dot.
       className: cn(
-        "flex flex-col [&>li:last-child_[data-slot=timeline-connector]]:hidden"
+        "[&>li:last-child_[data-slot=timeline-connector]]:hidden",
+        horizontal
+          ? "flex flex-row items-stretch overflow-x-auto"
+          : "flex flex-col"
       ),
       ...rest,
     },
   })
+
+  return (
+    <TimelineOrientationContext.Provider value={orientation}>
+      {list}
+    </TimelineOrientationContext.Provider>
+  )
 }
 
 /* ------------------------------------------------------------------ Item -- */
@@ -73,25 +99,68 @@ type TimelineItemProps = Omit<
      * place of the default dot; the coloured ring is kept.
      */
     marker?: React.ReactNode
+    /**
+     * Makes the item a CONTROL — it activates on click, Enter and Space and
+     * reports `aria-pressed`. A rail where one event type opens its record
+     * below otherwise has to nest a `<button>` inside the `<li>`, which puts
+     * the affordance on part of the item and leaves the rest inert.
+     */
+    onSelect?: () => void
+    /** Marks this item as the selected one. Requires `onSelect` to be meaningful. */
+    selected?: boolean
   }
 
 function TimelineItem({
   tone = "accent",
   size = "md",
   marker,
+  onSelect,
+  selected = false,
   children,
   ...props
 }: TimelineItemProps) {
+  const orientation = React.useContext(TimelineOrientationContext)
+  const horizontal = orientation === "horizontal"
   return (
     <li
       data-slot="timeline-item"
       data-tone={tone ?? undefined}
-      className={cn("relative flex gap-3 pb-6 last:pb-0")}
+      data-selected={selected || undefined}
+      {...(onSelect
+        ? {
+            role: "button" as const,
+            tabIndex: 0,
+            "aria-pressed": selected,
+            onClick: onSelect,
+            onKeyDown: (e: React.KeyboardEvent<HTMLLIElement>) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                onSelect()
+              }
+            },
+          }
+        : {})}
+      className={cn(
+        "relative flex",
+        horizontal
+          ? "min-w-[168px] shrink-0 flex-col gap-2 pe-6 last:pe-0"
+          : "gap-3 pb-6 last:pb-0",
+        onSelect &&
+          cn(
+            "cursor-pointer rounded-lg outline-none transition-colors",
+            "focus-visible:ring-3 focus-visible:ring-accent-soft",
+            horizontal ? "px-2 py-1.5 hover:bg-surface-2" : "hover:bg-surface-2"
+          ),
+        selected && "bg-accent-soft"
+      )}
       {...props}
     >
       <div
         data-slot="timeline-rail"
-        className={cn("flex flex-col items-center gap-1")}
+        className={cn(
+          "flex gap-1",
+          horizontal ? "flex-row items-center" : "flex-col items-center"
+        )}
       >
         {marker != null ? (
           <span
@@ -114,12 +183,18 @@ function TimelineItem({
         <span
           aria-hidden="true"
           data-slot="timeline-connector"
-          className={cn("w-px flex-1 bg-border")}
+          className={cn(
+            "bg-border flex-1",
+            horizontal ? "h-px" : "w-px"
+          )}
         />
       </div>
       <div
         data-slot="timeline-content"
-        className={cn("flex flex-1 flex-col gap-0.5 pb-1")}
+        className={cn(
+          "flex flex-1 flex-col gap-0.5",
+          horizontal ? "min-w-0" : "pb-1"
+        )}
       >
         {children}
       </div>
@@ -177,4 +252,4 @@ export {
   TimelineDescription,
   markerVariants as timelineMarkerVariants,
 }
-export type { TimelineItemProps }
+export type { TimelineProps, TimelineItemProps }

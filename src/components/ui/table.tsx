@@ -38,12 +38,19 @@ type TableProps = Omit<React.ComponentProps<"table">, "className" | "style"> & {
    * every other column in the row.
    */
   layout?: "auto" | "fixed"
+  /**
+   * Width below which the table stops shrinking and its container scrolls
+   * instead. Fixed column ratios only hold above some width; under it, columns
+   * crush rather than scroll, which is the worse failure.
+   */
+  minWidth?: number
 }
 
 function Table({
   density = "default",
   headerVariant = "default",
   layout = "auto",
+  minWidth,
   ...props
 }: TableProps) {
   return (
@@ -57,6 +64,8 @@ function Table({
         // whole grid rather than every cell agreeing by hand.
         data-density={density}
         data-header={headerVariant}
+        // A continuous px floor; no utility spells a caller-chosen one.
+        style={minWidth != null ? { minWidth } : undefined}
         className={cn(
           "group/table w-full caption-bottom border-collapse text-sm",
           layout === "fixed" && "table-fixed"
@@ -115,7 +124,13 @@ function TableRow({
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-accent-soft"
+        "border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-accent-soft",
+        // A row that IS a control: the whole row takes the pointer, the focus
+        // ring and the open tint, rather than one cell inside it.
+        "[&[role=button]]:cursor-pointer [&[role=button]]:outline-none",
+        "[&[role=button]:hover]:bg-accent-soft",
+        "[&[role=button]:focus-visible]:ring-3 [&[role=button]:focus-visible]:ring-accent-soft",
+        "data-[active]:bg-accent-soft"
       )}
       {...props}
     />
