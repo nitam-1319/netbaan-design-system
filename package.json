@@ -1,6 +1,6 @@
 {
   "name": "@netbaan-project/ui",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "type": "module",
   "description": "AEGIS design system \u2014 sealed, immutable React component library.",
   "license": "UNLICENSED",
@@ -49,11 +49,12 @@
     "gen:barrel": "node .agent/scripts/build-barrel.mjs",
     "verify:conformance": "node .agent/scripts/verify-conformance.mjs",
     "verify:tokens": "node .agent/scripts/verify-tokens.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run verify:conformance && npm run verify:tokens",
+    "verify": "npm run typecheck && npm run lint && npm run verify:conformance && npm run verify:tokens && npm run verify:sr-copy",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build:fonts": "node .agent/scripts/build-fonts.mjs"
+    "build:fonts": "node .agent/scripts/build-fonts.mjs",
+    "verify:sr-copy": "node .agent/scripts/verify-sr-copy.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

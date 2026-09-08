@@ -141,6 +141,14 @@ type PasswordStrengthMeterProps = Omit<
     showLabel?: boolean
     /** Custom label per score index (5 entries, weakest → strongest). */
     labels?: readonly string[]
+    /**
+     * What assistive tech hears after each requirement. Never shown, so a
+     * reviewer looking at the screen cannot see that the English is wrong for a
+     * translated app. English defaults, supplied strings — the `Pagination`
+     * contract.
+     */
+    metLabel?: string
+    notMetLabel?: string
     /** Show the requirements checklist. Default `false`. */
     showRequirements?: boolean
     /** Override the requirements list. */
@@ -155,6 +163,8 @@ function PasswordStrengthMeter({
   labels = DEFAULT_LABELS,
   showRequirements = false,
   requirements,
+  metLabel,
+  notMetLabel,
   ...props
 }: PasswordStrengthMeterProps) {
   const est = estimatePasswordStrength(value)
@@ -219,7 +229,11 @@ function PasswordStrengthMeter({
                 )}
               </span>
               <span>{r.label}</span>
-              <span className="sr-only">{r.met ? " (met)" : " (not met)"}</span>
+              <span className="sr-only">
+                {" ("}
+                {r.met ? (metLabel ?? "met") : (notMetLabel ?? "not met")}
+                {")"}
+              </span>
             </li>
           ))}
         </ul>

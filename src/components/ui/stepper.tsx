@@ -113,6 +113,14 @@ type StepperProps = Omit<
      * loses that.
      */
     indicator?: "check" | "numerals"
+    /**
+     * What assistive tech hears after each step's number. Hardcoded English
+     * here is unreachable for a translated app — the words are never shown, so
+     * a reviewer looking at the screen cannot see that they are wrong. Same
+     * contract as `Pagination` and `DataTable`: supplied strings, English
+     * defaults, no locale dependency in the library.
+     */
+    statusLabels?: { complete?: string; current?: string; upcoming?: string }
   }
 
 function statusOf(index: number, activeStep: number): StepStatus {
@@ -130,6 +138,7 @@ function Stepper({
   size = "md",
   onStepSelect,
   indicator: indicatorMode = "check",
+  statusLabels,
   ...props
 }: StepperProps) {
   const lastIndex = steps.length - 1
@@ -163,11 +172,13 @@ function Stepper({
               index + 1
             )}
             <span className="sr-only">
+              {" ("}
               {status === "complete"
-                ? " (completed)"
+                ? (statusLabels?.complete ?? "completed")
                 : status === "current"
-                  ? " (current step)"
-                  : " (upcoming)"}
+                  ? (statusLabels?.current ?? "current step")
+                  : (statusLabels?.upcoming ?? "upcoming")}
+              {")"}
             </span>
           </span>
         )

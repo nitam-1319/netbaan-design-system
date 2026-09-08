@@ -11,6 +11,45 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.7.1]
+
+Patch: **screen-reader copy that no app could translate.** Six components
+announced hardcoded English. It was invisible to review — the words are never
+painted, so nothing on the page showed that a Persian build was reading English
+aloud — and the consuming product's page audit is what surfaced it.
+
+The rule is the one `Pagination` and `DataTable` already followed: English
+DEFAULTS, suppliable strings, no locale dependency in the library.
+
+- **`Stepper`** — `statusLabels` for the per-step "(completed)" / "(current
+  step)" / "(upcoming)".
+- **`PasswordStrengthMeter`** — `metLabel` / `notMetLabel` for each requirement.
+- **`FieldLabel`** — `requiredLabel` / `optionalLabel`. `(optional)` is VISIBLE,
+  so that one was mistranslatable in plain sight.
+- **`Lightbox`** — `announceLabel` for the live-region sentence and `emptyLabel`
+  for the empty case. `label` was already suppliable; the sentence announced on
+  every slide change was not.
+- **`BottomNavigation`** — `newLabel` / `notificationsLabel` for badge copy.
+- **`Breadcrumb`** — the ellipsis carried an sr-only "More" inside a span that is
+  `role="presentation"` and `aria-hidden`, so it could never be announced at
+  all. Removed rather than made suppliable: the collapsed crumbs are reachable
+  through the menu the ellipsis opens, and that is where the name belongs.
+
+### The guard
+`npm run verify` now runs **`verify:sr-copy`**, which fails on a hardcoded
+literal — or bare JSX text — inside `sr-only` / `VisuallyHidden` where no prop
+can replace it.
+
+Worth recording how it was built, because the first version was worse than
+nothing: it passed on a tree with all six defects still present. Its literal
+regex allowed newlines, so it paired the CLOSING quote of one string with the
+OPENING quote of the next and never saw a real string. It is now tested by
+reintroducing each fixed defect and asserting the check fails — and that test
+is what found the last two (`BottomNavigation`, `Breadcrumb`), which the
+hand-read had missed.
+
+---
+
 ## [0.7.0]
 
 Minor: the **queue-clearing** release. Every design-system defect the consuming

@@ -38,6 +38,14 @@ type LightboxProps = {
   images: LightboxImage[]
   /** Element that opens the lightbox (rendered as the Dialog trigger). */
   trigger?: React.ReactNode
+  /**
+   * The live-region sentence, announced on every slide change and never shown.
+   * `label` was already suppliable; this sentence was not, so a translated app
+   * announced English no matter what it passed.
+   */
+  announceLabel?: (position: number, total: number, alt: string) => string
+  /** Announced when there is nothing to show. */
+  emptyLabel?: string
   /** Controlled open state. */
   open?: boolean
   /** Uncontrolled initial open state. */
@@ -67,6 +75,8 @@ function Lightbox({
   onIndexChange,
   loop = false,
   label = "Image viewer",
+  announceLabel,
+  emptyLabel,
 }: LightboxProps) {
   const [uncontrolledIndex, setUncontrolledIndex] = React.useState(defaultIndex)
   const currentIndex = index ?? uncontrolledIndex
@@ -141,8 +151,9 @@ function Lightbox({
           {/* Live position + description, announced politely on navigation. */}
           <span role="status" aria-live="polite" className="sr-only">
             {count > 0
-              ? `Image ${currentIndex + 1} of ${count}: ${current?.alt ?? ""}`
-              : "No images"}
+              ? (announceLabel?.(currentIndex + 1, count, current?.alt ?? "") ??
+                `Image ${currentIndex + 1} of ${count}: ${current?.alt ?? ""}`)
+              : (emptyLabel ?? "No images")}
           </span>
 
           {/* Top bar: counter + close. */}

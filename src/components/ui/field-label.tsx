@@ -51,6 +51,13 @@ type LabelProps = Omit<
   VariantProps<typeof labelVariants> & {
     /** Show a required indicator (`*`) plus an sr-only "(required)". */
     required?: boolean
+    /**
+     * Wording for the two indicators. `(required)` is announced and never
+     * shown; `(optional)` IS shown. Both were hardcoded English, which a
+     * translated app could not reach.
+     */
+    requiredLabel?: string
+    optionalLabel?: string
     /** Show a muted "(optional)" hint after the label text. */
     optional?: boolean
     /** Dim the label to match a disabled control. */
@@ -61,6 +68,8 @@ function Label({
   size = "md",
   required = false,
   optional = false,
+  requiredLabel,
+  optionalLabel,
   disabled = false,
   children,
   render = <label />,
@@ -80,12 +89,12 @@ function Label({
               <span aria-hidden="true" className="text-destructive-ink">
                 *
               </span>
-              <span className="sr-only"> (required)</span>
+              <span className="sr-only"> ({requiredLabel ?? "required"})</span>
             </>
           )}
           {!required && optional && (
             <span className="font-normal text-muted-foreground">
-              (optional)
+              ({optionalLabel ?? "optional"})
             </span>
           )}
         </>

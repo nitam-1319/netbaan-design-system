@@ -62,6 +62,14 @@ type BottomNavigationProps = Omit<
     showLabels?: "always" | "active" | "never"
     /** Pin to the viewport bottom (`fixed`) or flow inline. Default `"fixed"`. */
     placement?: "fixed" | "inline"
+    /**
+     * What a badge announces. `newLabel` is used for a dot badge that carries
+     * no number; `notificationsLabel` follows the count. Both were hardcoded
+     * English — announced, never shown, so nothing on screen revealed that a
+     * translated app could not reach them.
+     */
+    newLabel?: string
+    notificationsLabel?: string
     /** Accessible name for the nav landmark. Default "Primary". */
     "aria-label"?: string
   }
@@ -72,6 +80,8 @@ function BottomNavigation({
   onValueChange,
   showLabels = "always",
   placement = "fixed",
+  newLabel,
+  notificationsLabel,
   "aria-label": ariaLabel = "Primary",
   ...props
 }: BottomNavigationProps) {
@@ -104,11 +114,14 @@ function BottomNavigation({
                   )}
                 >
                   {item.badge === true ? (
-                    <span className="sr-only">New</span>
+                    <span className="sr-only">{newLabel ?? "New"}</span>
                   ) : (
                     <>
                       {item.badge > 99 ? "99+" : item.badge}
-                      <span className="sr-only"> notifications</span>
+                      <span className="sr-only">
+                        {" "}
+                        {notificationsLabel ?? "notifications"}
+                      </span>
                     </>
                   )}
                 </span>

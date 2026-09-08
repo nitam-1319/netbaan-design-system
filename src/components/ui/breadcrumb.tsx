@@ -110,8 +110,11 @@ function BreadcrumbEllipsis(
       className={cn("flex size-5 items-center justify-center")}
       {...props}
     >
+      {/* No sr-only label here: this span is `role="presentation"` and
+          `aria-hidden`, so anything inside it is never announced. The collapsed
+          crumbs are reachable through the menu the ellipsis opens, which is
+          where the accessible name belongs. */}
       <MoreHorizontal className="size-4" />
-      <span className="sr-only">More</span>
     </span>
   )
 }
