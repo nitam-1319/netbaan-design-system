@@ -23,6 +23,9 @@ comes from `facets`, so a new list page is a config, not a layout.
 - **Do** order facets by reach: the most-used first, date and free text last.
 - **Don't** add a page-local Apply button — filtering is live; `Done` only closes.
 - **Don't** fabricate `count`. Omit it and the count column does not render.
+- **Do** pass `formatCount` in an app whose language is a user preference. The
+  default reads the *runtime's* locale, which follows the machine, not the app —
+  a Persian page in an `en-US` browser prints `1,234` beside Persian labels.
 
 ## Anatomy
 
@@ -130,10 +133,13 @@ controls 10, rows and chips 7–8. Elevation `--elevation-3`. No hard-coded colo
 | `resultLine` | `string` | — | Live result count in the panel footer. |
 | `onCopyLink` | `() => void` | — | Shows the copy-link button; the bar copies the URL, the page confirms. |
 | `loading` / `error` / `onRetry` | `boolean` / `boolean` / `() => void` | `false` | Facet-options async states. |
+| `labels` | `Partial<FilterBarLabels>` | English | Every string the bar renders on its own account. |
+| `formatCount` | `(value: number) => string` | `v => v.toLocaleString()` | Every NUMBER the bar renders on its own account: option counts, the trigger badge, the summary count. |
 
 The API is closed: `className` and `style` are not accepted.
 
 ## Examples
 
 See the **Vulnerabilities** story (all three facet types), **Searchable** (option
-search plus selected-first ordering) and **Loading** / **Error**.
+search plus selected-first ordering), **Loading** / **Error**, and **Formatted
+Counts** (every figure through the app's own numeral formatter).

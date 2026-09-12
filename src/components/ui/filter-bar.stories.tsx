@@ -82,11 +82,13 @@ function Demo({
   initial = {},
   loading,
   error,
+  formatCount,
 }: {
   facets?: FilterBarFacet[]
   initial?: Record<string, FilterBarValue>
   loading?: boolean
   error?: boolean
+  formatCount?: (value: number) => string
 }) {
   const [values, setValues] =
     React.useState<Record<string, FilterBarValue>>(initial)
@@ -105,6 +107,7 @@ function Demo({
       onCopyLink={() => {}}
       loading={loading}
       error={error}
+      formatCount={formatCount}
     />
   )
 }
@@ -429,3 +432,77 @@ export const BackwardsDateRange: Story = {
     })
   },
 }
+
+/**
+ * Every number the bar prints on its own account, routed through the app's own
+ * formatter.
+ *
+ * `toLocaleString()` — the default, and all this component ever did — reads the
+ * RUNTIME's locale, so it follows the machine rather than the app. An app whose
+ * language is a user preference needs the opposite: the same Persian-Indic
+ * digits it uses everywhere else, in an `en-US` browser. Two of the three
+ * figures were not even localised to the runtime; they were interpolated raw.
+ */
+export const FormattedCounts: Story = {
+  args: {
+    facets: VULN_FACETS,
+    values: {},
+    onChange: () => {},
+    onClear: () => {},
+    search: "",
+    onSearch: () => {},
+  },
+  render: () => (
+    <Demo
+      facets={BIG_COUNT_FACETS}
+      initial={{ severity: ["critical"], status: ["open"] }}
+      formatCount={faDigits}
+    />
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+
+    await step("the trigger badge counts in the supplied numerals", async () => {
+      await waitFor(() =>
+        expect(
+          canvasElement.querySelector('[data-slot="filter-bar-count"]')
+        ).toHaveTextContent("۲")
+      )
+    })
+
+    await step("so does the summary sentence", async () => {
+      await expect(canvas.getByText(/^۲ filters/)).toBeVisible()
+    })
+
+    await step("and so does an option's count, grouping included", async () => {
+      await userEvent.click(canvas.getByRole("button", { name: /Filters/ }))
+      const panel = within(await screenBody())
+      const option = await waitFor(() =>
+        panel.getByRole("checkbox", { name: /Critical/ })
+      )
+      await expect(option).toHaveTextContent("۱٬۲۳۴")
+    })
+  },
+}
+
+/** Persian-Indic digits with a Persian group separator, as an app would supply. */
+function faDigits(value: number) {
+  const FA = "۰۱۲۳۴۵۶۷۸۹"
+  return new Intl.NumberFormat("en-US")
+    .format(value)
+    .replace(/[0-9]/g, (d) => FA[Number(d)])
+    .replace(/,/g, "٬")
+}
+
+/** Counts large enough to show the group separator as well as the digits. */
+const BIG_COUNT_FACETS: FilterBarFacet[] = VULN_FACETS.map((facet) =>
+  facet.type === "multi"
+    ? {
+        ...facet,
+        options: facet.options.map((option, index) => ({
+          ...option,
+          count: 1234 + index,
+        })),
+      }
+    : facet
+)

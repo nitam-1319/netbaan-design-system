@@ -1869,7 +1869,7 @@ A low-level motion primitive that shows and hides a region by animating its heig
 
 The single filter toolbar for a list page. It is configured by an array of facets: the page describes what it filters on, and the bar decides its own controls.
 
-- **Do:** Derive `facets` from the page's existing filter-options endpoint; Keep `values` in URL-synced list state so a link reproduces the view; Order facets by reach: the most-used first, date and free text last
+- **Do:** Derive `facets` from the page's existing filter-options endpoint; Keep `values` in URL-synced list state so a link reproduces the view; Order facets by reach: the most-used first, date and free text last; Pass `formatCount` in an app whose language is a user preference. The default reads the *runtime's* locale, which follows the machine, not the app — a Persian page in an `en-US` browser prints `1,234` beside Persian labels
 - **Don't:** Add a page-local Apply button — filtering is live; `Done` only closes; Fabricate `count`. Omit it and the count column does not render
 - **Composes with:** Button, Checkbox, ErrorState, Kbd, SearchInput, Skeleton, Tag, TextField
 - **Exports:** FilterBar

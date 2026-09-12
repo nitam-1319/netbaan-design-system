@@ -113,6 +113,13 @@ type FilterBarLabels = {
   invalidShort: string
 }
 
+/**
+ * The pre-`formatCount` behaviour, kept as the default so the prop is additive:
+ * the runtime's own locale. See `formatCount` for why an app with a language
+ * preference must not rely on it.
+ */
+const defaultFormatCount = (value: number) => value.toLocaleString()
+
 const DEFAULT_LABELS: FilterBarLabels = {
   filters: "Filters",
   noFilters: "No filters applied",
@@ -187,6 +194,24 @@ type FilterBarProps = {
   onRetry?: () => void
   /** Overrides for the bar's own copy; anything omitted stays English. */
   labels?: Partial<FilterBarLabels>
+  /**
+   * Renders every NUMBER the bar prints on its own account: an option's `count`,
+   * the active-facet badge, and the count in the summary sentence.
+   *
+   * Defaults to `value.toLocaleString()`, which reads the RUNTIME's locale —
+   * `navigator.language` in a browser — and therefore the language of the
+   * machine rather than the language of the app. That is wrong for any app whose
+   * language is a user preference: a Persian page in an `en-US` browser printed
+   * `1,234` beside Persian option labels, and the badge and the summary count
+   * were interpolated raw, so they were Latin even when the runtime agreed.
+   *
+   * Supplied as a function rather than a locale string because a numbering
+   * system is not always something `Intl` models the way an app needs it — the
+   * app that found this formats Persian-Indic digits with its own grouping, and
+   * keeps ONE formatter for every figure on the page. The words beside these
+   * numbers already arrive through `labels` for the same reason.
+   */
+  formatCount?: (value: number) => string
 }
 
 /**
@@ -322,6 +347,7 @@ function FilterBar({
   error = false,
   onRetry,
   labels: labelOverrides,
+  formatCount = defaultFormatCount,
 }: FilterBarProps) {
   const labels = { ...DEFAULT_LABELS, ...labelOverrides }
   const [open, setOpen] = React.useState(false)
@@ -342,7 +368,7 @@ function FilterBar({
   const summary =
     activeCount === 0
       ? labels.noFilters
-      : `${activeCount} ${
+      : `${formatCount(activeCount)} ${
           activeCount === 1 ? labels.filterOne : labels.filterMany
         } · ${setFacets.map((facet) => facet.label.toLowerCase()).join(", ")}`
 
@@ -568,6 +594,7 @@ function FilterBar({
                       error={error}
                       onRetry={onRetry}
                       labels={labels}
+                      formatCount={formatCount}
                     />
                   </div>
 
@@ -630,7 +657,7 @@ function FilterBar({
                 "data-[invalid]:bg-destructive data-[invalid]:text-on-tone"
               )}
             >
-              {activeCount}
+              {formatCount(activeCount)}
             </span>
           ) : null}
           <Kbd size="sm" aria-hidden="true">
@@ -793,6 +820,7 @@ type FilterBarPaneProps = {
   error: boolean
   onRetry?: () => void
   labels: FilterBarLabels
+  formatCount: (value: number) => string
 }
 
 function FilterBarPane({
@@ -806,6 +834,7 @@ function FilterBarPane({
   error,
   onRetry,
   labels,
+  formatCount,
 }: FilterBarPaneProps) {
   if (!facet) return null
 
@@ -927,6 +956,7 @@ function FilterBarPane({
         optionQuery={optionQuery}
         onChange={onChange}
         labels={labels}
+        formatCount={formatCount}
       />
     </>
   )
@@ -939,6 +969,7 @@ type FilterBarOptionListProps = {
   optionQuery: string
   onChange: FilterBarProps["onChange"]
   labels: FilterBarLabels
+  formatCount: (value: number) => string
 }
 
 /**
@@ -974,6 +1005,7 @@ function FilterBarOptionList({
   optionQuery,
   onChange,
   labels,
+  formatCount,
 }: FilterBarOptionListProps) {
   const selectedSet = React.useMemo(() => new Set(selected), [selected])
 
@@ -1071,7 +1103,7 @@ function FilterBarOptionList({
         </span>
         {option.count != null ? (
           <span className="font-mono text-[0.69rem] text-muted-foreground tabular-nums">
-            {option.count.toLocaleString()}
+            {formatCount(option.count)}
           </span>
         ) : null}
       </button>

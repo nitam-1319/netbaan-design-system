@@ -11,6 +11,29 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.7.2]
+
+Patch: **`FilterBar` numbers followed the browser, not the app.**
+
+The bar renders three figures on its own account — an option's `count`, the
+active-facet badge, and the count in the summary sentence. The first went
+through a bare `toLocaleString()`, which reads the RUNTIME's locale
+(`navigator.language`); the other two were interpolated raw. For an app whose
+language is a *user preference* all three are wrong: a Persian page in an
+`en-US` browser printed `1,234` beside Persian option labels, and the badge and
+summary stayed Latin even where the runtime agreed.
+
+- **`FilterBar`** — new `formatCount?: (value: number) => string`, applied to all
+  three. Defaults to `value.toLocaleString()`, so nothing changes for an app that
+  does not pass it.
+
+A function rather than a `locale` string, for the same reason `labels` is a bag
+of strings rather than a locale code: the library stays free of locale data, and
+an app that already owns one number formatter uses it here too. See the
+**Formatted Counts** story.
+
+---
+
 ## [0.7.1]
 
 Patch: **screen-reader copy that no app could translate.** Six components

@@ -2101,7 +2101,8 @@
     "whenToUse": [
       "Derive `facets` from the page's existing filter-options endpoint",
       "Keep `values` in URL-synced list state so a link reproduces the view",
-      "Order facets by reach: the most-used first, date and free text last"
+      "Order facets by reach: the most-used first, date and free text last",
+      "Pass `formatCount` in an app whose language is a user preference. The default reads the *runtime's* locale, which follows the machine, not the app — a Persian page in an `en-US` browser prints `1,234` beside Persian labels"
     ],
     "whenNotToUse": [
       "Add a page-local Apply button — filtering is live; `Done` only closes",
