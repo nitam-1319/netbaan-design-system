@@ -22,8 +22,15 @@ Number Input, Time Picker, and the rest. You own the value; the picker emits a
   needs (the trigger already shows a readable value).
 - **Do** bound the range with `minDate` / `maxDate` when only some days are valid.
 - **Do** set `defaultMonth` to control which month opens when there is no value.
+- **Do** set `calendar="persian"` (with the matching `locale`) on a Persian
+  surface — it draws a true Jalali month, and the value it emits is still an
+  ordinary `Date`, so nothing downstream changes.
 - **Don't** use it for time-of-day — that is `Time Picker`. For a start/end range,
   use `Date Range Picker`.
+- **Don't** reach for `locale` alone to change the calendar. A locale carries a
+  default calendar — `fa`'s is Persian — so `locale="fa"` on its own paints
+  Persian month names over Gregorian month boundaries, which is wrong in its
+  heading, its first cell and its length.
 
 ## Anatomy
 
@@ -63,6 +70,18 @@ Trigger shell: `border-border-strong` + `bg-background` + `accent-strong` hover 
 `bg-primary` / `text-primary-foreground`. Inherits the `Popover` surface. No
 hard-coded colour, shadow, or ring.
 
+## Calendars
+
+`calendar` states the system the grid is DRAWN in, independently of `locale`.
+`"persian"` gives a real Jalali month — 31-day months through Shahrivar, a
+29-or-30-day Esfand, the year turning at Nowruz, Saturday-first columns — and
+names it in the locale's own words and digits (`شهریور ۱۴۰۵`).
+
+The VALUE is untouched. `value` / `onValueChange` are `Date`s in every calendar,
+because a `Date` is an instant and a calendar is a notation — so a page that
+sends `YYYY-MM-DD` to a backend keeps sending the Gregorian one whichever
+calendar the day was chosen in.
+
 ## Scope
 
 Single-date selection ships here. A start/end **Date Range Picker** builds on this,
@@ -80,16 +99,19 @@ and localisation of the first day of week is the `weekStartsOn` prop.
 | `placeholder` | `string` | `"Pick a date"` | Trigger text when empty. |
 | `label` | `string` | `"Choose date"` | Trigger accessible name. |
 | `locale` | `string` | runtime | BCP-47 locale for formatting. |
-| `weekStartsOn` | `number` | `0` | First weekday (0 = Sunday). |
+| `calendar` | `"gregory" \| "persian"` | `"gregory"` | Calendar system the grid is drawn in. |
+| `weekStartsOn` | `number` | calendar's | First weekday (0 = Sunday; Persian defaults to 6). |
 | `formatDate` | `(date) => string` | medium date | Trigger value format. |
 | `size` | `"sm" \| "md" \| "lg"` | `"md"` | Trigger size. |
 | `disabled` | `boolean` | `false` | Disable the control. |
 | `invalid` | `boolean` | `false` | Paint invalid + set `aria-invalid`. |
+| `previousMonthLabel` / `nextMonthLabel` | `string` | English | Month-nav accessible names. |
 
 The API is closed: `className` and `style` are not accepted.
 
 ## Examples
 
 See **Default** (open, pick June 15), **MonthNavigation** (arrows change month),
-**WithMinMax** (bounded range), **Sizes**, and **Invalid**. Works in both themes and
+**WithMinMax** (bounded range), **JalaliCalendar** (a real Shahrivar 1405),
+**Sizes**, and **Invalid**. Works in both themes and
 directions.

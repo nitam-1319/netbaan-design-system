@@ -296,8 +296,8 @@ A numeric money field. It edits as a plain number and, on blur, reformats to a g
 
 A single-date field: an AEGIS Input-shell trigger (leading calendar glyph and the formatted value) that opens a `Popover` holding a self-contained month calendar.
 
-- **Do:** Keep the emitted `Date` in your state and format it however your app needs (the trigger already shows a readable value); Bound the range with `minDate` / `maxDate` when only some days are valid; Set `defaultMonth` to control which month opens when there is no value
-- **Don't:** Time-of-day — that is `Time Picker`. For a start/end range, use `Date Range Picker`
+- **Do:** Keep the emitted `Date` in your state and format it however your app needs (the trigger already shows a readable value); Bound the range with `minDate` / `maxDate` when only some days are valid; Set `defaultMonth` to control which month opens when there is no value; Set `calendar="persian"` (with the matching `locale`) on a Persian surface — it draws a true Jalali month, and the value it emits is still an ordinary `Date`, so nothing downstream changes
+- **Don't:** Time-of-day — that is `Time Picker`. For a start/end range, use `Date Range Picker`; Reach for `locale` alone to change the calendar. A locale carries a default calendar — `fa`'s is Persian — so `locale="fa"` on its own paints Persian month names over Gregorian month boundaries, which is wrong in its heading, its first cell and its length
 - **Composes with:** Button, Popover
 - **Exports:** DatePicker
 
@@ -305,8 +305,8 @@ A single-date field: an AEGIS Input-shell trigger (leading calendar glyph and th
 
 The start/end sibling of `Date Picker`: an AEGIS Input-shell trigger showing the chosen range that opens a `Popover` with the same month grid, extended to pick two endpoints.
 
-- **Do:** Keep the emitted `{ start, end }` in your state (both are local midnight); Bound the selectable span with `minDate` / `maxDate`
-- **Don't:** Rely on the click order — endpoints picked out of order are swapped so `start` is always on or before `end`; A single day — that is `Date Picker`
+- **Do:** Keep the emitted `{ start, end }` in your state (both are local midnight); Bound the selectable span with `minDate` / `maxDate`; Set `calendar="persian"` (with the matching `locale`) on a Persian surface — the grid becomes a true Jalali month and the endpoints stay ordinary `Date`s
+- **Don't:** Rely on the click order — endpoints picked out of order are swapped so `start` is always on or before `end`; A single day — that is `Date Picker`; Change the calendar with `locale` alone: `fa`'s default calendar is Persian, so that paints Persian month names over Gregorian month boundaries
 - **Composes with:** Button, Popover
 - **Exports:** DateRangePicker
 
@@ -1869,9 +1869,9 @@ A low-level motion primitive that shows and hides a region by animating its heig
 
 The single filter toolbar for a list page. It is configured by an array of facets: the page describes what it filters on, and the bar decides its own controls.
 
-- **Do:** Derive `facets` from the page's existing filter-options endpoint; Keep `values` in URL-synced list state so a link reproduces the view; Order facets by reach: the most-used first, date and free text last; Pass `formatCount` in an app whose language is a user preference. The default reads the *runtime's* locale, which follows the machine, not the app — a Persian page in an `en-US` browser prints `1,234` beside Persian labels
+- **Do:** Derive `facets` from the page's existing filter-options endpoint; Keep `values` in URL-synced list state so a link reproduces the view; Order facets by reach: the most-used first, date and free text last; Pass `calendar` + `locale` on a surface whose language is not the browser's. A native date field draws the BROWSER's calendar and takes no instruction about it, so it is the one control here that cannot otherwise follow the app; Pass `formatCount` in an app whose language is a user preference. The default reads the *runtime's* locale, which follows the machine, not the app — a Persian page in an `en-US` browser prints `1,234` beside Persian labels
 - **Don't:** Add a page-local Apply button — filtering is live; `Done` only closes; Fabricate `count`. Omit it and the count column does not render
-- **Composes with:** Button, Checkbox, ErrorState, Kbd, SearchInput, Skeleton, Tag, TextField
+- **Composes with:** Button, Checkbox, DatePicker, ErrorState, Kbd, SearchInput, Skeleton, Tag, TextField, ValidationMessage
 - **Exports:** FilterBar
 
 #### GroupedStackedBar

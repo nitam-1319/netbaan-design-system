@@ -20,6 +20,17 @@ export default defineConfig({
   },
   test: {
     projects: [{
+      // Plain-node unit tests for `src/lib` — the calendar arithmetic behind the
+      // date controls is integer day-walking whose failure mode is a grid that
+      // is silently one day out, which no story can see. Components stay in the
+      // storybook project below; this one never touches the DOM.
+      extends: true,
+      test: {
+        name: 'unit',
+        environment: 'node',
+        include: ['src/lib/**/*.test.ts']
+      }
+    }, {
       extends: true,
       plugins: [
       // The plugin will run tests for the stories defined in your Storybook config

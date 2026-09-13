@@ -87,6 +87,42 @@ export const Preselected: Story = {
   },
 }
 
+/**
+ * The Jalali sibling of `Date Picker`'s story: a real Shahrivar 1405 grid, and a
+ * range picked across it that comes back as the two Gregorian instants it is.
+ */
+export const JalaliCalendar: Story = {
+  args: {
+    defaultMonth: new Date(2026, 8, 13), // 22 Shahrivar 1405
+    label: "انتخاب بازه",
+    locale: "fa-IR",
+    calendar: "persian",
+    previousMonthLabel: "ماه قبل",
+    nextMonthLabel: "ماه بعد",
+  },
+  render: (args) => {
+    const [value, setValue] = React.useState<DateRange | null>(null)
+    return <DateRangePicker {...args} value={value} onValueChange={setValue} />
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: "انتخاب بازه" }))
+    const body = within(document.body)
+    await waitFor(() => body.getByRole("grid", { name: /شهریور ۱۴۰۵/ }))
+
+    // 1 Shahrivar → 31 Shahrivar, the whole month.
+    const cells = body.getAllByRole("gridcell")
+    await userEvent.click(cells[1])
+    await userEvent.click(cells[31])
+
+    await waitFor(() =>
+      expect(canvas.getByRole("button", { name: "انتخاب بازه" })).toHaveTextContent(
+        /۱ شهریور ۱۴۰۵ – ۳۱ شهریور ۱۴۰۵/
+      )
+    )
+  },
+}
+
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-3">

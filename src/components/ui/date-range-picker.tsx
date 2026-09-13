@@ -4,6 +4,22 @@ import * as React from "react"
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import {
+  addCalendarMonths,
+  addDays,
+  buildCalendarGrid,
+  defaultWeekStart,
+  formatCalendarDate,
+  formatCalendarDay,
+  formatCalendarDayLabel,
+  formatCalendarMonth,
+  isSameCalendarMonth,
+  isSameDay,
+  startOfCalendarMonth,
+  startOfDay,
+  weekdayHeaders,
+  type CalendarId,
+} from "@/lib/calendar"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -30,22 +46,11 @@ import {
 
 /* -------------------------------------------------------------- date utils -- */
 
-function makeDay(year: number, month: number, day: number): Date {
-  return new Date(year, month, day, 0, 0, 0, 0)
-}
-function startOfDay(d: Date): Date {
-  return makeDay(d.getFullYear(), d.getMonth(), d.getDate())
-}
-function isSameDay(a: Date | null | undefined, b: Date | null | undefined): boolean {
-  if (!a || !b) return false
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
-}
-function addDays(d: Date, n: number): Date {
-  return makeDay(d.getFullYear(), d.getMonth(), d.getDate() + n)
-}
-function addMonths(d: Date, n: number): Date {
-  return makeDay(d.getFullYear(), d.getMonth() + n, 1)
-}
+/*
+ * Day arithmetic and month grouping live in `@/lib/calendar` — shared with
+ * `Date Picker`, because both controls draw the same grid and must agree about
+ * what a month is in either calendar.
+ */
 function time(d: Date): number {
   return startOfDay(d).getTime()
 }
@@ -60,12 +65,6 @@ function clampDay(d: Date, min?: Date, max?: Date): Date {
   if (min && isBefore(d, min)) return startOfDay(min)
   if (max && isBefore(max, d)) return startOfDay(max)
   return d
-}
-function buildMonthGrid(viewYear: number, viewMonth: number, weekStartsOn: number): Date[] {
-  const first = makeDay(viewYear, viewMonth, 1)
-  const offset = (first.getDay() - weekStartsOn + 7) % 7
-  const gridStart = addDays(first, -offset)
-  return Array.from({ length: 42 }, (_, i) => addDays(gridStart, i))
 }
 function keyOf(d: Date): string {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
@@ -99,9 +98,25 @@ export interface DateRangePickerProps {
   label?: string
   /** BCP-47 locale for month / weekday / value formatting. Default the runtime's. */
   locale?: string
-  /** First day of the week (0 = Sunday … 6 = Saturday). Default 0. */
+  /**
+   * The calendar system the grid is DRAWN in. Default `"gregory"`.
+   *
+   * `"persian"` draws a true Jalali month — 31-day months through Shahrivar, a
+   * 29-or-30-day Esfand, the year turning at Nowruz, Saturday-first columns —
+   * rather than Persian month names over Gregorian boundaries, which is what a
+   * `locale="fa"` grid produced before this existed. Stated rather than inferred
+   * from `locale`, because calendar and language are independent choices.
+   *
+   * Endpoints stay `Date`s in both calendars, so what a page sends to a backend
+   * is unchanged; the calendar is a display concern only.
+   */
+  calendar?: CalendarId
+  /**
+   * First day of the week (0 = Sunday … 6 = Saturday). Defaults to the
+   * calendar's own: Saturday for Persian, Sunday for Gregorian.
+   */
   weekStartsOn?: number
-  /** Format one endpoint shown in the trigger. Default a medium local date. */
+  /** Format one endpoint shown in the trigger. Default a medium date in `calendar`. */
   formatDate?: (date: Date) => string
   /** Trigger size. Default "md". */
   size?: DateRangePickerSize
@@ -109,6 +124,10 @@ export interface DateRangePickerProps {
   disabled?: boolean
   /** Mark the field invalid (paints the shell + sets `aria-invalid`). */
   invalid?: boolean
+  /** Accessible name for the back-a-month button. Default "Previous month". */
+  previousMonthLabel?: string
+  /** Accessible name for the forward-a-month button. Default "Next month". */
+  nextMonthLabel?: string
 }
 
 const shellSize: Record<DateRangePickerSize, string> = {
@@ -136,11 +155,14 @@ function DateRangePicker({
   placeholder = "Pick a date range",
   label = "Choose date range",
   locale,
-  weekStartsOn = 0,
+  calendar = "gregory",
+  weekStartsOn = defaultWeekStart(calendar),
   formatDate,
   size = "md",
   disabled = false,
   invalid = false,
+  previousMonthLabel = "Previous month",
+  nextMonthLabel = "Next month",
 }: DateRangePickerProps) {
   const isControlled = value !== undefined
   const [internal, setInternal] = React.useState<DateRange | null>(normalize(defaultValue))
@@ -151,10 +173,8 @@ function DateRangePicker({
   const anchor = selected?.start ?? (defaultMonth ? startOfDay(defaultMonth) : startOfDay(new Date()))
 
   const fmt = React.useMemo(
-    () =>
-      formatDate ??
-      ((d: Date) => d.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" })),
-    [formatDate, locale]
+    () => formatDate ?? ((d: Date) => formatCalendarDate(d, calendar, locale)),
+    [formatDate, locale, calendar]
   )
 
   function commit(range: DateRange) {
@@ -197,7 +217,10 @@ function DateRangePicker({
           minDate={minDate}
           maxDate={maxDate}
           locale={locale}
+          calendar={calendar}
           weekStartsOn={weekStartsOn}
+          previousMonthLabel={previousMonthLabel}
+          nextMonthLabel={nextMonthLabel}
           onComplete={commit}
         />
       </PopoverContent>
@@ -213,7 +236,10 @@ type RangeCalendarProps = {
   minDate?: Date
   maxDate?: Date
   locale?: string
+  calendar: CalendarId
   weekStartsOn: number
+  previousMonthLabel: string
+  nextMonthLabel: string
   onComplete: (range: DateRange) => void
 }
 
@@ -223,10 +249,15 @@ function RangeCalendar({
   minDate,
   maxDate,
   locale,
+  calendar,
   weekStartsOn,
+  previousMonthLabel,
+  nextMonthLabel,
   onComplete,
 }: RangeCalendarProps) {
-  const [view, setView] = React.useState<Date>(makeDay(anchor.getFullYear(), anchor.getMonth(), 1))
+  // The FIRST DAY of the displayed month — see `Date Picker` for why a month is
+  // held as a day rather than as a (year, month) pair.
+  const [view, setView] = React.useState<Date>(startOfCalendarMonth(anchor, calendar))
   const [focusDay, setFocusDay] = React.useState<Date>(anchor)
   // The first endpoint of an in-progress selection (null = start a new range).
   const [anchorStart, setAnchorStart] = React.useState<Date | null>(null)
@@ -240,18 +271,16 @@ function RangeCalendar({
   }, [focusDay, view])
 
   const monthLabel = React.useMemo(
-    () => view.toLocaleDateString(locale, { month: "long", year: "numeric" }),
-    [view, locale]
+    () => formatCalendarMonth(view, calendar, locale),
+    [view, calendar, locale]
   )
-  const weekdays = React.useMemo(() => {
-    const ref = makeDay(2024, 11, 1) // a Sunday
-    return Array.from({ length: 7 }, (_, i) =>
-      addDays(ref, (weekStartsOn + i) % 7).toLocaleDateString(locale, { weekday: "short" })
-    )
-  }, [locale, weekStartsOn])
+  const weekdays = React.useMemo(
+    () => weekdayHeaders(calendar, weekStartsOn, locale),
+    [calendar, locale, weekStartsOn]
+  )
   const grid = React.useMemo(
-    () => buildMonthGrid(view.getFullYear(), view.getMonth(), weekStartsOn),
-    [view, weekStartsOn]
+    () => buildCalendarGrid(view, calendar, weekStartsOn),
+    [view, calendar, weekStartsOn]
   )
   const isDisabledDay = React.useCallback(
     (d: Date) => (minDate && isBefore(d, startOfDay(minDate))) || (maxDate && isBefore(startOfDay(maxDate), d)),
@@ -275,8 +304,8 @@ function RangeCalendar({
   function moveFocus(next: Date) {
     const clamped = clampDay(next, minDate, maxDate)
     focusRef.current = true
-    if (clamped.getMonth() !== view.getMonth() || clamped.getFullYear() !== view.getFullYear()) {
-      setView(makeDay(clamped.getFullYear(), clamped.getMonth(), 1))
+    if (!isSameCalendarMonth(clamped, view, calendar)) {
+      setView(startOfCalendarMonth(clamped, calendar))
     }
     setFocusDay(clamped)
   }
@@ -289,8 +318,8 @@ function RangeCalendar({
       case "ArrowUp": e.preventDefault(); moveFocus(addDays(focusDay, -7)); break
       case "Home": e.preventDefault(); moveFocus(addDays(focusDay, -((focusDay.getDay() - weekStartsOn + 7) % 7))); break
       case "End": e.preventDefault(); moveFocus(addDays(focusDay, 6 - ((focusDay.getDay() - weekStartsOn + 7) % 7))); break
-      case "PageUp": e.preventDefault(); moveFocus(addMonths(focusDay, -1)); break
-      case "PageDown": e.preventDefault(); moveFocus(addMonths(focusDay, 1)); break
+      case "PageUp": e.preventDefault(); moveFocus(addCalendarMonths(focusDay, -1, calendar)); break
+      case "PageDown": e.preventDefault(); moveFocus(addCalendarMonths(focusDay, 1, calendar)); break
       case "Enter":
       case " ":
         e.preventDefault()
@@ -302,13 +331,13 @@ function RangeCalendar({
   return (
     <div data-slot="date-range-picker" className="flex w-64 flex-col gap-3">
       <div className="flex items-center justify-between">
-        <Button type="button" variant="ghost" size="icon-sm" aria-label="Previous month" onClick={() => setView(addMonths(view, -1))}>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label={previousMonthLabel} onClick={() => setView(addCalendarMonths(view, -1, calendar))}>
           <ChevronLeft aria-hidden className="rtl:rotate-180" />
         </Button>
         <span data-slot="date-range-picker-month" className="text-sm font-semibold text-foreground">
           {monthLabel}
         </span>
-        <Button type="button" variant="ghost" size="icon-sm" aria-label="Next month" onClick={() => setView(addMonths(view, 1))}>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label={nextMonthLabel} onClick={() => setView(addCalendarMonths(view, 1, calendar))}>
           <ChevronRight aria-hidden className="rtl:rotate-180" />
         </Button>
       </div>
@@ -316,8 +345,8 @@ function RangeCalendar({
       <div role="grid" aria-label={monthLabel} data-slot="date-range-picker-grid" className="flex flex-col gap-1" onKeyDown={onGridKeyDown}>
         <div role="row" className="grid grid-cols-7">
           {weekdays.map((w, i) => (
-            <span key={i} role="columnheader" aria-label={w} className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground">
-              {w.slice(0, 2)}
+            <span key={i} role="columnheader" aria-label={w.name} className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground">
+              {w.short}
             </span>
           ))}
         </div>
@@ -325,7 +354,7 @@ function RangeCalendar({
         {Array.from({ length: 6 }).map((_, week) => (
           <div key={week} role="row" className="grid grid-cols-7 gap-1">
             {grid.slice(week * 7, week * 7 + 7).map((day) => {
-              const outside = day.getMonth() !== view.getMonth()
+              const outside = !isSameCalendarMonth(day, view, calendar)
               const isStart = isSameDay(day, effectiveSelected?.start) || isSameDay(day, anchorStart)
               const isEnd = isSameDay(day, effectiveSelected?.end)
               const isEndpoint = isStart || isEnd
@@ -342,7 +371,7 @@ function RangeCalendar({
                   type="button"
                   role="gridcell"
                   aria-selected={isEndpoint || within}
-                  aria-label={day.toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+                  aria-label={formatCalendarDayLabel(day, calendar, locale)}
                   tabIndex={isFocusDay ? 0 : -1}
                   disabled={dayDisabled}
                   data-outside={outside || undefined}
@@ -358,7 +387,7 @@ function RangeCalendar({
                     isEndpoint && "bg-primary text-primary-foreground hover:bg-primary"
                   )}
                 >
-                  {day.getDate()}
+                  {formatCalendarDay(day, calendar, locale)}
                 </button>
               )
             })}

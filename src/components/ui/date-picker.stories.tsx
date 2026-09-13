@@ -90,6 +90,51 @@ export const WithMinMax: Story = {
   },
 }
 
+/**
+ * `calendar="persian"` draws a true Jalali month rather than Persian names over
+ * Gregorian days. Shahrivar 1405 has 31 days and starts on 2026-08-23, a Sunday
+ * — so with Saturday-first columns one day of Mordad leads the grid in, and the
+ * 31st has no Gregorian counterpart at all.
+ */
+export const JalaliCalendar: Story = {
+  args: {
+    defaultMonth: new Date(2026, 8, 13), // 22 Shahrivar 1405
+    label: "انتخاب تاریخ",
+    locale: "fa-IR",
+    calendar: "persian",
+    previousMonthLabel: "ماه قبل",
+    nextMonthLabel: "ماه بعد",
+  },
+  render: (args) => {
+    const [value, setValue] = React.useState<Date | null>(null)
+    return <DatePicker {...args} value={value} onValueChange={setValue} />
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: "انتخاب تاریخ" }))
+    const body = within(document.body)
+
+    // The heading is the JALALI month, month before year.
+    const grid = await waitFor(() => body.getByRole("grid", { name: /شهریور ۱۴۰۵/ }))
+    await expect(grid).toBeInTheDocument()
+
+    // Saturday-first columns, and the month's own days are 31 of them.
+    const cells = body.getAllByRole("gridcell")
+    await expect(cells).toHaveLength(42)
+    await expect(cells[0]).toHaveAttribute("data-outside") // 31 Mordad
+    await expect(cells[1]).toHaveTextContent("۱") // 1 Shahrivar
+    await expect(cells[31]).toHaveTextContent("۳۱") // 31 Shahrivar — no Gregorian equivalent
+    await expect(cells[32]).toHaveAttribute("data-outside") // 1 Mehr
+
+    // Picking the first of the month gives back the Gregorian day it IS, so
+    // nothing downstream has to know which calendar it was chosen in.
+    await userEvent.click(cells[1])
+    await waitFor(() =>
+      expect(canvas.getByRole("button", { name: "انتخاب تاریخ" })).toHaveTextContent(/۱ شهریور ۱۴۰۵/)
+    )
+  },
+}
+
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-3">

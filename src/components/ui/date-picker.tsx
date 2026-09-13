@@ -4,6 +4,22 @@ import * as React from "react"
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import {
+  addCalendarMonths,
+  addDays,
+  buildCalendarGrid,
+  defaultWeekStart,
+  formatCalendarDate,
+  formatCalendarDay,
+  formatCalendarDayLabel,
+  formatCalendarMonth,
+  isSameCalendarMonth,
+  isSameDay,
+  startOfCalendarMonth,
+  startOfDay,
+  weekdayHeaders,
+  type CalendarId,
+} from "@/lib/calendar"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -31,31 +47,12 @@ import {
 
 /* -------------------------------------------------------------- date utils -- */
 
-/** Local-midnight Date for a y/m/d, so values never carry a time or drift by tz. */
-function makeDay(year: number, month: number, day: number): Date {
-  return new Date(year, month, day, 0, 0, 0, 0)
-}
-
-function startOfDay(d: Date): Date {
-  return makeDay(d.getFullYear(), d.getMonth(), d.getDate())
-}
-
-function isSameDay(a: Date | null | undefined, b: Date | null | undefined): boolean {
-  if (!a || !b) return false
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  )
-}
-
-function addDays(d: Date, n: number): Date {
-  return makeDay(d.getFullYear(), d.getMonth(), d.getDate() + n)
-}
-
-function addMonths(d: Date, n: number): Date {
-  return makeDay(d.getFullYear(), d.getMonth() + n, 1)
-}
+/*
+ * Day arithmetic — `makeDay` / `startOfDay` / `addDays` / `isSameDay` — and
+ * everything that groups days into months lives in `@/lib/calendar`, because a
+ * month is a question about a CALENDAR and this control draws two of them. See
+ * that module for why Jalali is day-walking rather than a conversion.
+ */
 
 function isBefore(a: Date, b: Date): boolean {
   return startOfDay(a).getTime() < startOfDay(b).getTime()
@@ -65,14 +62,6 @@ function clampDay(d: Date, min?: Date, max?: Date): Date {
   if (min && isBefore(d, min)) return startOfDay(min)
   if (max && isBefore(max, d)) return startOfDay(max)
   return d
-}
-
-/** The 6×7 grid of days for a displayed month, aligned to `weekStartsOn`. */
-function buildMonthGrid(viewYear: number, viewMonth: number, weekStartsOn: number): Date[] {
-  const first = makeDay(viewYear, viewMonth, 1)
-  const offset = (first.getDay() - weekStartsOn + 7) % 7
-  const gridStart = addDays(first, -offset)
-  return Array.from({ length: 42 }, (_, i) => addDays(gridStart, i))
 }
 
 /* -------------------------------------------------------------------- types -- */
@@ -98,9 +87,30 @@ export interface DatePickerProps {
   label?: string
   /** BCP-47 locale for month / weekday / value formatting. Default the runtime's. */
   locale?: string
-  /** First day of the week (0 = Sunday … 6 = Saturday). Default 0. */
+  /**
+   * The calendar system the grid is DRAWN in. Default `"gregory"`.
+   *
+   * Stated rather than inferred from `locale`, because the two are independent
+   * choices and inferring gets it wrong in both directions: a locale carries a
+   * default calendar, and `fa`'s is Persian, so `locale="fa"` alone used to
+   * paint Persian month names over Gregorian month boundaries — a calendar that
+   * is wrong in its heading, its first cell and its length, and that reads as a
+   * bug to anyone who can use it. `calendar="persian"` draws a true Jalali
+   * month: 31-day months through Shahrivar, a 29-or-30-day Esfand, the year
+   * turning at Nowruz, and Saturday-first columns.
+   *
+   * The VALUE is unaffected. `value` / `onValueChange` are `Date`s in both
+   * calendars, because a `Date` is an instant, not a notation — so a page that
+   * sends `YYYY-MM-DD` to a backend keeps sending the Gregorian one, and the
+   * calendar stays a display concern.
+   */
+  calendar?: CalendarId
+  /**
+   * First day of the week (0 = Sunday … 6 = Saturday). Defaults to the
+   * calendar's own: Saturday for Persian, Sunday for Gregorian.
+   */
   weekStartsOn?: number
-  /** Format the value shown in the trigger. Default a medium local date. */
+  /** Format the value shown in the trigger. Default a medium date in `calendar`. */
   formatDate?: (date: Date) => string
   /** Trigger size. Default "md". */
   size?: DatePickerSize
@@ -108,6 +118,10 @@ export interface DatePickerProps {
   disabled?: boolean
   /** Mark the field invalid (paints the shell + sets `aria-invalid`). */
   invalid?: boolean
+  /** Accessible name for the back-a-month button. Default "Previous month". */
+  previousMonthLabel?: string
+  /** Accessible name for the forward-a-month button. Default "Next month". */
+  nextMonthLabel?: string
 }
 
 const shellSize: Record<DatePickerSize, string> = {
@@ -128,11 +142,14 @@ function DatePicker({
   placeholder = "Pick a date",
   label = "Choose date",
   locale,
-  weekStartsOn = 0,
+  calendar = "gregory",
+  weekStartsOn = defaultWeekStart(calendar),
   formatDate,
   size = "md",
   disabled = false,
   invalid = false,
+  previousMonthLabel = "Previous month",
+  nextMonthLabel = "Next month",
 }: DatePickerProps) {
   const isControlled = value !== undefined
   const [internal, setInternal] = React.useState<Date | null>(
@@ -145,10 +162,8 @@ function DatePicker({
   const anchor = selected ?? (defaultMonth ? startOfDay(defaultMonth) : startOfDay(new Date()))
 
   const fmt = React.useMemo(
-    () =>
-      formatDate ??
-      ((d: Date) => d.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" })),
-    [formatDate, locale]
+    () => formatDate ?? ((d: Date) => formatCalendarDate(d, calendar, locale)),
+    [formatDate, locale, calendar]
   )
 
   function commit(next: Date) {
@@ -192,7 +207,10 @@ function DatePicker({
           minDate={minDate}
           maxDate={maxDate}
           locale={locale}
+          calendar={calendar}
           weekStartsOn={weekStartsOn}
+          previousMonthLabel={previousMonthLabel}
+          nextMonthLabel={nextMonthLabel}
           onSelect={commit}
         />
       </PopoverContent>
@@ -208,7 +226,10 @@ type MonthCalendarProps = {
   minDate?: Date
   maxDate?: Date
   locale?: string
+  calendar: CalendarId
   weekStartsOn: number
+  previousMonthLabel: string
+  nextMonthLabel: string
   onSelect: (day: Date) => void
 }
 
@@ -218,10 +239,16 @@ function MonthCalendar({
   minDate,
   maxDate,
   locale,
+  calendar,
   weekStartsOn,
+  previousMonthLabel,
+  nextMonthLabel,
   onSelect,
 }: MonthCalendarProps) {
-  const [view, setView] = React.useState<Date>(makeDay(anchor.getFullYear(), anchor.getMonth(), 1))
+  // `view` is the FIRST DAY of the displayed month, not a (year, month) pair —
+  // a Jalali month has no Gregorian month number to hold, and the first day is
+  // the one thing both calendars can name.
+  const [view, setView] = React.useState<Date>(startOfCalendarMonth(anchor, calendar))
   const [focusDay, setFocusDay] = React.useState<Date>(anchor)
   const focusRef = React.useRef(false)
   const dayRefs = React.useRef<Map<string, HTMLButtonElement>>(new Map())
@@ -234,18 +261,16 @@ function MonthCalendar({
   }, [focusDay, view])
 
   const monthLabel = React.useMemo(
-    () => view.toLocaleDateString(locale, { month: "long", year: "numeric" }),
-    [view, locale]
+    () => formatCalendarMonth(view, calendar, locale),
+    [view, calendar, locale]
   )
-  const weekdays = React.useMemo(() => {
-    const ref = makeDay(2024, 11, 1) // 2024-12-01 is a Sunday
-    return Array.from({ length: 7 }, (_, i) =>
-      addDays(ref, (weekStartsOn + i) % 7).toLocaleDateString(locale, { weekday: "short" })
-    )
-  }, [locale, weekStartsOn])
+  const weekdays = React.useMemo(
+    () => weekdayHeaders(calendar, weekStartsOn, locale),
+    [calendar, locale, weekStartsOn]
+  )
   const grid = React.useMemo(
-    () => buildMonthGrid(view.getFullYear(), view.getMonth(), weekStartsOn),
-    [view, weekStartsOn]
+    () => buildCalendarGrid(view, calendar, weekStartsOn),
+    [view, calendar, weekStartsOn]
   )
   const isDisabledDay = React.useCallback(
     (d: Date) => (minDate && isBefore(d, startOfDay(minDate))) || (maxDate && isBefore(startOfDay(maxDate), d)),
@@ -255,8 +280,8 @@ function MonthCalendar({
   function moveFocus(next: Date) {
     const clamped = clampDay(next, minDate, maxDate)
     focusRef.current = true
-    if (clamped.getMonth() !== view.getMonth() || clamped.getFullYear() !== view.getFullYear()) {
-      setView(makeDay(clamped.getFullYear(), clamped.getMonth(), 1))
+    if (!isSameCalendarMonth(clamped, view, calendar)) {
+      setView(startOfCalendarMonth(clamped, calendar))
     }
     setFocusDay(clamped)
   }
@@ -269,8 +294,8 @@ function MonthCalendar({
       case "ArrowUp": e.preventDefault(); moveFocus(addDays(focusDay, -7)); break
       case "Home": e.preventDefault(); moveFocus(addDays(focusDay, -((focusDay.getDay() - weekStartsOn + 7) % 7))); break
       case "End": e.preventDefault(); moveFocus(addDays(focusDay, 6 - ((focusDay.getDay() - weekStartsOn + 7) % 7))); break
-      case "PageUp": e.preventDefault(); moveFocus(addMonths(focusDay, -1)); break
-      case "PageDown": e.preventDefault(); moveFocus(addMonths(focusDay, 1)); break
+      case "PageUp": e.preventDefault(); moveFocus(addCalendarMonths(focusDay, -1, calendar)); break
+      case "PageDown": e.preventDefault(); moveFocus(addCalendarMonths(focusDay, 1, calendar)); break
       case "Enter":
       case " ":
         e.preventDefault()
@@ -282,13 +307,13 @@ function MonthCalendar({
   return (
     <div data-slot="date-picker" className="flex w-64 flex-col gap-3">
       <div className="flex items-center justify-between">
-        <Button type="button" variant="ghost" size="icon-sm" aria-label="Previous month" onClick={() => setView(addMonths(view, -1))}>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label={previousMonthLabel} onClick={() => setView(addCalendarMonths(view, -1, calendar))}>
           <ChevronLeft aria-hidden className="rtl:rotate-180" />
         </Button>
         <span data-slot="date-picker-month" className="text-sm font-semibold text-foreground">
           {monthLabel}
         </span>
-        <Button type="button" variant="ghost" size="icon-sm" aria-label="Next month" onClick={() => setView(addMonths(view, 1))}>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label={nextMonthLabel} onClick={() => setView(addCalendarMonths(view, 1, calendar))}>
           <ChevronRight aria-hidden className="rtl:rotate-180" />
         </Button>
       </div>
@@ -296,8 +321,8 @@ function MonthCalendar({
       <div role="grid" aria-label={monthLabel} data-slot="date-picker-grid" className="flex flex-col gap-1" onKeyDown={onGridKeyDown}>
         <div role="row" className="grid grid-cols-7">
           {weekdays.map((w, i) => (
-            <span key={i} role="columnheader" aria-label={w} className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground">
-              {w.slice(0, 2)}
+            <span key={i} role="columnheader" aria-label={w.name} className="flex h-8 items-center justify-center text-xs font-medium text-muted-foreground">
+              {w.short}
             </span>
           ))}
         </div>
@@ -305,7 +330,7 @@ function MonthCalendar({
         {Array.from({ length: 6 }).map((_, week) => (
           <div key={week} role="row" className="grid grid-cols-7 gap-1">
             {grid.slice(week * 7, week * 7 + 7).map((day) => {
-              const outside = day.getMonth() !== view.getMonth()
+              const outside = !isSameCalendarMonth(day, view, calendar)
               const isSelected = isSameDay(day, selected)
               const isFocusDay = isSameDay(day, focusDay)
               const dayDisabled = isDisabledDay(day)
@@ -319,12 +344,7 @@ function MonthCalendar({
                   type="button"
                   role="gridcell"
                   aria-selected={isSelected}
-                  aria-label={day.toLocaleDateString(locale, {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  aria-label={formatCalendarDayLabel(day, calendar, locale)}
                   tabIndex={isFocusDay ? 0 : -1}
                   disabled={dayDisabled}
                   data-outside={outside || undefined}
@@ -338,7 +358,7 @@ function MonthCalendar({
                     isSelected && "bg-primary text-primary-foreground hover:bg-primary"
                   )}
                 >
-                  {day.getDate()}
+                  {formatCalendarDay(day, calendar, locale)}
                 </button>
               )
             })}

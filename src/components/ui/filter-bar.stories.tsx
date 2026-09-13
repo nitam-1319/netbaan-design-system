@@ -5,6 +5,7 @@ import { expect, userEvent, waitFor, within } from "storybook/test"
 import { FilterBar } from "@/components/ui/filter-bar"
 import type {
   FilterBarFacet,
+  FilterBarProps,
   FilterBarValue,
 } from "@/components/ui/filter-bar"
 
@@ -83,12 +84,18 @@ function Demo({
   loading,
   error,
   formatCount,
+  calendar,
+  locale,
+  labels,
 }: {
   facets?: FilterBarFacet[]
   initial?: Record<string, FilterBarValue>
   loading?: boolean
   error?: boolean
   formatCount?: (value: number) => string
+  calendar?: FilterBarProps["calendar"]
+  locale?: string
+  labels?: FilterBarProps["labels"]
 }) {
   const [values, setValues] =
     React.useState<Record<string, FilterBarValue>>(initial)
@@ -108,6 +115,9 @@ function Demo({
       loading={loading}
       error={error}
       formatCount={formatCount}
+      calendar={calendar}
+      locale={locale}
+      labels={labels}
     />
   )
 }
@@ -429,6 +439,63 @@ export const BackwardsDateRange: Story = {
       await expect(
         canvasElement.querySelector('[data-slot="filter-bar-count"]')
       ).not.toHaveAttribute("data-invalid")
+    })
+  },
+}
+
+/**
+ * A `date` facet picked in the Jalali calendar.
+ *
+ * The bar's Gregorian date facet is two NATIVE date fields, and a native field
+ * draws whatever calendar the browser is set to — so on a Persian page it is
+ * Gregorian for most people and unaskable in every case. Under
+ * `calendar="persian"` the pair is built from `Date Picker` instead, which can
+ * be told. Everything else about the facet is unchanged, including the value:
+ * what leaves this control is still `YYYY-MM-DD` Gregorian.
+ */
+export const PersianCalendar: Story = {
+  args: {
+    facets: DATE_FACETS,
+    values: {},
+    onChange: () => {},
+    onClear: () => {},
+    search: "",
+    onSearch: () => {},
+  },
+  render: () => (
+    <Demo
+      facets={DATE_FACETS}
+      calendar="persian"
+      locale="fa-IR"
+      initial={{ discovered: { from: "2026-08-23", to: "" } }}
+      labels={{
+        filters: "فیلترها",
+        from: "از",
+        to: "تا",
+        previousMonth: "ماه قبل",
+        nextMonth: "ماه بعد",
+      }}
+    />
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole("button", { name: /فیلترها/ }))
+    const panel = within(document.body)
+    await userEvent.click(await panel.findByRole("button", { name: /Discovered/ }))
+
+    await step("the held day reads as the Jalali day it is", async () => {
+      // 2026-08-23 is 1 Shahrivar 1405 — a different month AND year from the
+      // Gregorian value the facet actually holds.
+      await waitFor(() =>
+        expect(panel.getByRole("button", { name: "از" })).toHaveTextContent(/۱ شهریور ۱۴۰۵/)
+      )
+    })
+
+    await step("and the grid behind it is a real Jalali month", async () => {
+      await userEvent.click(panel.getByRole("button", { name: "از" }))
+      await waitFor(() => panel.getByRole("grid", { name: /شهریور ۱۴۰۵/ }))
+      // 31 days, which no Gregorian month of that name has.
+      await expect(panel.getAllByRole("gridcell")[31]).toHaveTextContent("۳۱")
     })
   },
 }

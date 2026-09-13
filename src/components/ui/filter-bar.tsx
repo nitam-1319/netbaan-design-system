@@ -7,7 +7,10 @@ import { Link2, SlidersHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { DatePicker } from "@/components/ui/date-picker"
 import { ErrorState } from "@/components/ui/error-state"
+import { ValidationMessage } from "@/components/ui/validation-message"
+import type { CalendarId } from "@/lib/calendar"
 import { Kbd } from "@/components/ui/kbd"
 import { SearchInput } from "@/components/ui/search-input"
 import { Tag } from "@/components/ui/tag"
@@ -111,6 +114,15 @@ type FilterBarLabels = {
    * set-facet dot follows.
    */
   invalidShort: string
+  /**
+   * The month-navigation buttons of a `date` facet's calendar.
+   *
+   * Reached only under a non-Gregorian `calendar`, where the pair is built from
+   * `Date Picker` rather than from native fields — a native field's own picker
+   * is the browser's, and is already in the browser's language.
+   */
+  previousMonth: string
+  nextMonth: string
 }
 
 /**
@@ -143,6 +155,8 @@ const DEFAULT_LABELS: FilterBarLabels = {
   retry: "Retry",
   invalidRange: "Start date must be on or before the end date.",
   invalidShort: "invalid",
+  previousMonth: "Previous month",
+  nextMonth: "Next month",
 }
 
 type FilterBarProps = {
@@ -194,6 +208,25 @@ type FilterBarProps = {
   onRetry?: () => void
   /** Overrides for the bar's own copy; anything omitted stays English. */
   labels?: Partial<FilterBarLabels>
+  /**
+   * The calendar a `date` facet is picked in. Default `"gregory"`.
+   *
+   * `"persian"` swaps that facet's two native date fields for AEGIS `Date
+   * Picker`s drawing a true Jalali month, because a native date field draws the
+   * BROWSER's calendar and takes no instruction about it — leaving the one
+   * control in the bar that cannot follow the app's own language.
+   *
+   * The filter value is unaffected: `{from, to}` stays `YYYY-MM-DD` Gregorian in
+   * both calendars, so a list page's request, its query string and its shareable
+   * link are byte-identical whichever calendar the user picked in.
+   */
+  calendar?: CalendarId
+  /**
+   * BCP-47 locale for the calendar's month, weekday and day names. Default the
+   * runtime's. Supply it with `calendar` — the same reason `formatCount` exists:
+   * the app's language is a preference, not the browser's setting.
+   */
+  locale?: string
   /**
    * Renders every NUMBER the bar prints on its own account: an option's `count`,
    * the active-facet badge, and the count in the summary sentence.
@@ -279,6 +312,23 @@ function asDay(value: string | undefined): string {
   return value ? value.slice(0, 10) : ""
 }
 
+/**
+ * A `YYYY-MM-DD` day as a local-midnight `Date`, or `null` if it is not one.
+ *
+ * Parsed by hand rather than with `new Date(day)`, which reads a bare day as
+ * UTC — so west of Greenwich it lands on the evening of the day BEFORE, and a
+ * calendar opened on the 1st of a month would highlight the last of the one
+ * before it. Anything that is not a plain day (a timestamp typed into a URL, a
+ * half-finished value) is `null`: the picker shows nothing rather than a date
+ * nobody chose, and the raw value stays in the query string to be corrected.
+ */
+function dayToDate(day: string): Date | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return null
+  const [year, month, date] = day.split("-").map(Number)
+  const parsed = new Date(year, month - 1, date, 0, 0, 0, 0)
+  return Number.isNaN(parsed.getTime()) ? null : parsed
+}
+
 /** The later of two days, ignoring an absent one. */
 function laterDay(a: string, b: string): string {
   if (!a) return b
@@ -347,6 +397,8 @@ function FilterBar({
   error = false,
   onRetry,
   labels: labelOverrides,
+  calendar = "gregory",
+  locale,
   formatCount = defaultFormatCount,
 }: FilterBarProps) {
   const labels = { ...DEFAULT_LABELS, ...labelOverrides }
@@ -584,6 +636,8 @@ function FilterBar({
 
                   <div className="flex flex-1 flex-col gap-2.5 px-3 py-2.5">
                     <FilterBarPane
+                      calendar={calendar}
+                      locale={locale}
                       facet={active}
                       values={values}
                       order={activeOrder}
@@ -808,7 +862,138 @@ function FilterBar({
   )
 }
 
+/* ------------------------------------------------------ date facet: fields -- */
+
+type DateRangeFieldsProps = {
+  labels: FilterBarLabels
+  /** Both bounds as days, `YYYY-MM-DD` or empty. */
+  from: string
+  to: string
+  /** The facet's own bounds, already narrowed to days. */
+  min: string
+  max: string
+  inverted: boolean
+  onChange: (from: string, to: string) => void
+}
+
+/**
+ * The Gregorian pair: two native date fields.
+ *
+ * Native is the right control wherever it can express the calendar. It can be
+ * TYPED into — the fastest way in for anyone who already knows the day they
+ * want — it carries the platform's own picker, and it needs no popover to reach
+ * a date a year away.
+ */
+function FilterBarNativeDateRange({
+  labels,
+  from,
+  to,
+  min,
+  max,
+  inverted,
+  onChange,
+}: DateRangeFieldsProps) {
+  return (
+    <>
+      <TextField
+        size="sm"
+        type="date"
+        label={labels.from}
+        value={from}
+        min={min || undefined}
+        max={earlierDay(max, to) || undefined}
+        aria-invalid={inverted || undefined}
+        onChange={(event) => onChange(event.target.value, to)}
+      />
+      <TextField
+        size="sm"
+        type="date"
+        label={labels.to}
+        value={to}
+        min={laterDay(min, from) || undefined}
+        max={max || undefined}
+        aria-invalid={inverted || undefined}
+        error={inverted ? labels.invalidRange : undefined}
+        onChange={(event) => onChange(from, event.target.value)}
+      />
+    </>
+  )
+}
+
+/**
+ * The same pair for any other calendar, built from `Date Picker`.
+ *
+ * A native date field draws whatever calendar the BROWSER is set to, and takes
+ * no instruction about it — so on a Persian page it is Gregorian for most
+ * people, Jalali for a few, and unaskable in either case. It is therefore the
+ * one control in the bar that cannot be made to follow the app's own calendar,
+ * and a Persian filter has to be built from the AEGIS picker instead, which can.
+ *
+ * The bounding, the invalid marking and the message are the same guarantee as
+ * the native pair, stated through the props this control has for them: the end
+ * day caps the start calendar and the start day floors the end one, both
+ * triggers paint invalid when the range is backwards, and the message hangs
+ * below the pair. The VALUE that leaves here is `YYYY-MM-DD` Gregorian either
+ * way — the calendar changes what is read, never what is filed.
+ */
+function FilterBarCalendarDateRange({
+  calendar,
+  locale,
+  labels,
+  from,
+  to,
+  min,
+  max,
+  inverted,
+  onChange,
+}: DateRangeFieldsProps & { calendar: CalendarId; locale?: string }) {
+  const field = (
+    which: "from" | "to",
+    value: string,
+    lower: string,
+    upper: string
+  ) => (
+    <div className="flex flex-col gap-1.5">
+      <span data-slot="filter-bar-date-label" className="text-sm font-medium text-foreground select-none">
+        {which === "from" ? labels.from : labels.to}
+      </span>
+      <DatePicker
+        size="sm"
+        label={which === "from" ? labels.from : labels.to}
+        placeholder={which === "from" ? labels.from : labels.to}
+        value={dayToDate(value)}
+        minDate={dayToDate(lower) ?? undefined}
+        maxDate={dayToDate(upper) ?? undefined}
+        locale={locale}
+        calendar={calendar}
+        invalid={inverted}
+        previousMonthLabel={labels.previousMonth}
+        nextMonthLabel={labels.nextMonth}
+        onValueChange={(picked) =>
+          which === "from"
+            ? onChange(picked ? isoDay(picked) : "", to)
+            : onChange(from, picked ? isoDay(picked) : "")
+        }
+      />
+    </div>
+  )
+
+  return (
+    <>
+      {field("from", from, min, earlierDay(max, to))}
+      {field("to", to, laterDay(min, from), max)}
+      {inverted ? (
+        <ValidationMessage tone="error" size="sm" icon={false}>
+          {labels.invalidRange}
+        </ValidationMessage>
+      ) : null}
+    </>
+  )
+}
+
 type FilterBarPaneProps = {
+  calendar: CalendarId
+  locale?: string
   facet: FilterBarFacet | null
   values: FilterBarProps["values"]
   /** The frozen option order for a `multi` facet's current visit. */
@@ -824,6 +1009,8 @@ type FilterBarPaneProps = {
 }
 
 function FilterBarPane({
+  calendar,
+  locale,
   facet,
   values,
   order,
@@ -912,28 +1099,34 @@ function FilterBarPane({
             leaving the state to its caller by design — and the message hangs off
             the second field so it reads beneath the pair rather than between
             them. An out-of-range value is still SHOWN; a control that blanked
-            what the user typed would leave nothing to correct. */}
-        <TextField
-          size="sm"
-          type="date"
-          label={labels.from}
-          value={from}
-          min={min || undefined}
-          max={earlierDay(max, to) || undefined}
-          aria-invalid={inverted || undefined}
-          onChange={(event) => setRange(event.target.value, range.to)}
-        />
-        <TextField
-          size="sm"
-          type="date"
-          label={labels.to}
-          value={to}
-          min={laterDay(min, from) || undefined}
-          max={max || undefined}
-          aria-invalid={inverted || undefined}
-          error={inverted ? labels.invalidRange : undefined}
-          onChange={(event) => setRange(range.from, event.target.value)}
-        />
+            what the user typed would leave nothing to correct.
+
+            Under a non-Gregorian calendar the same pair is built from `Date
+            Picker` instead — see `FilterBarDateRange`, which carries the reason
+            a native field cannot be used there. */}
+        {calendar === "gregory" ? (
+          <FilterBarNativeDateRange
+            labels={labels}
+            from={from}
+            to={to}
+            min={min}
+            max={max}
+            inverted={inverted}
+            onChange={setRange}
+          />
+        ) : (
+          <FilterBarCalendarDateRange
+            calendar={calendar}
+            locale={locale}
+            labels={labels}
+            from={from}
+            to={to}
+            min={min}
+            max={max}
+            inverted={inverted}
+            onChange={setRange}
+          />
+        )}
       </div>
     )
   }

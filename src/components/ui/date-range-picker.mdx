@@ -22,7 +22,12 @@ of local-midnight dates once both ends are chosen.
 - **Do** bound the selectable span with `minDate` / `maxDate`.
 - **Don't** rely on the click order — endpoints picked out of order are swapped so
   `start` is always on or before `end`.
+- **Do** set `calendar="persian"` (with the matching `locale`) on a Persian
+  surface — the grid becomes a true Jalali month and the endpoints stay ordinary
+  `Date`s.
 - **Don't** use it for a single day — that is `Date Picker`.
+- **Don't** change the calendar with `locale` alone: `fa`'s default calendar is
+  Persian, so that paints Persian month names over Gregorian month boundaries.
 
 ## Anatomy
 
@@ -79,7 +84,9 @@ deferred follow-up; a dual-month panel is likewise out of scope for now.
 | `placeholder` | `string` | `"Pick a date range"` | Trigger text when empty. |
 | `label` | `string` | `"Choose date range"` | Trigger accessible name. |
 | `locale` | `string` | runtime | BCP-47 locale for formatting. |
-| `weekStartsOn` | `number` | `0` | First weekday (0 = Sunday). |
+| `calendar` | `"gregory" \| "persian"` | `"gregory"` | Calendar system the grid is drawn in. |
+| `weekStartsOn` | `number` | calendar's | First weekday (0 = Sunday; Persian defaults to 6). |
+| `previousMonthLabel` / `nextMonthLabel` | `string` | English | Month-nav accessible names. |
 | `formatDate` | `(date) => string` | medium date | Endpoint value format. |
 | `size` | `"sm" \| "md" \| "lg"` | `"md"` | Trigger size. |
 | `disabled` | `boolean` | `false` | Disable the control. |

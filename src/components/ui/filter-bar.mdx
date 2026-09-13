@@ -23,6 +23,10 @@ comes from `facets`, so a new list page is a config, not a layout.
 - **Do** order facets by reach: the most-used first, date and free text last.
 - **Don't** add a page-local Apply button — filtering is live; `Done` only closes.
 - **Don't** fabricate `count`. Omit it and the count column does not render.
+- **Do** pass `calendar` + `locale` on a surface whose language is not the
+  browser's. A native date field draws the BROWSER's calendar and takes no
+  instruction about it, so it is the one control here that cannot otherwise
+  follow the app.
 - **Do** pass `formatCount` in an app whose language is a user preference. The
   default reads the *runtime's* locale, which follows the machine, not the app —
   a Persian page in an `en-US` browser prints `1,234` beside Persian labels.
@@ -52,7 +56,8 @@ the rest of that facet is visible anyway.
   optionally bounded by `min` / `max`. Pass those bounds in whatever ISO shape
   the endpoint sends them; they are narrowed to a day before they reach the
   field, because a native date input drops a `min` / `max` it cannot read as
-  `YYYY-MM-DD` instead of reporting it.
+  `YYYY-MM-DD` instead of reporting it. Under a non-Gregorian `calendar` the
+  same two fields are built from `Date Picker` instead — see **Calendars**.
 - `text` — a single "contains" field.
 
 ## Behavior
@@ -134,9 +139,26 @@ controls 10, rows and chips 7–8. Elevation `--elevation-3`. No hard-coded colo
 | `onCopyLink` | `() => void` | — | Shows the copy-link button; the bar copies the URL, the page confirms. |
 | `loading` / `error` / `onRetry` | `boolean` / `boolean` / `() => void` | `false` | Facet-options async states. |
 | `labels` | `Partial<FilterBarLabels>` | English | Every string the bar renders on its own account. |
+| `calendar` | `"gregory" \| "persian"` | `"gregory"` | Calendar a `date` facet is picked in. |
+| `locale` | `string` | runtime | BCP-47 locale for that calendar's names and digits. |
 | `formatCount` | `(value: number) => string` | `v => v.toLocaleString()` | Every NUMBER the bar renders on its own account: option counts, the trigger badge, the summary count. |
 
 The API is closed: `className` and `style` are not accepted.
+
+## Calendars
+
+A `date` facet is two native date fields, which is the right control wherever it
+can express the calendar: it can be typed into, it carries the platform's own
+picker, and it reaches a day a year away without a popover. What it cannot do is
+be TOLD which calendar to draw — it follows the browser — so on a Persian page it
+is Gregorian for most people, Jalali for a few, and unaskable in either case.
+
+`calendar="persian"` therefore swaps that pair for AEGIS `Date Picker`s drawing a
+true Jalali month. Everything else about the facet is unchanged, including the
+bounding, the invalid marking, the message, and — the part that matters
+downstream — the VALUE: `{from, to}` stays `YYYY-MM-DD` Gregorian in every
+calendar, so a page's request, its query string and its shareable link are
+identical whichever calendar the user picked in.
 
 ## Examples
 

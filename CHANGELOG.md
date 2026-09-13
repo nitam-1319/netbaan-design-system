@@ -11,6 +11,52 @@ Consumer-facing. Lives at repo root (not under `.agent/`) because application de
 
 ---
 
+## [0.8.0]
+
+Minor: **the date controls can be told which calendar to draw.**
+
+Picking a date was the one thing a Persian surface could not do. `FilterBar`'s
+`date` facet was two native `<input type="date">` fields, and a native date field
+draws whatever calendar the BROWSER is set to and takes no instruction about it —
+so on a Persian page it was Gregorian for most people and unaskable in every
+case. `DatePicker` / `DateRangePicker` took only a `locale`, and a locale carries
+a default calendar: `locale="fa"` therefore produced PERSIAN month names over
+GREGORIAN month boundaries, wrong in its heading, its first cell and its length
+at once. (Jalali months run 31/31/31/31/31/31/30/30/30/30/30/29-or-30 and the
+year turns at the March equinox, so Shahrivar 1405 has 31 days and starts on
+2026-08-23.)
+
+- **`DatePicker`, `DateRangePicker`, `FilterBar`** — new
+  `calendar?: "gregory" | "persian"`, default `"gregory"`. Stated rather than
+  inferred from `locale`, because calendar and language are independent choices.
+  `"persian"` draws a true Jalali month; `FilterBar` builds its `date` facet from
+  `DatePicker` under a non-Gregorian calendar and keeps its native pair — which
+  can be typed into — under `"gregory"`.
+- **`DatePicker`, `DateRangePicker`** — `weekStartsOn` now defaults to the
+  calendar's own first day (Saturday for Persian, Sunday for Gregorian) instead
+  of a flat `0`; new `previousMonthLabel` / `nextMonthLabel` for the two
+  accessible names that were hardcoded English.
+- **`FilterBar`** — new `locale`, and `previousMonth` / `nextMonth` in
+  `FilterBarLabels`.
+
+The VALUE is unchanged in every calendar: the pickers emit `Date`s and the facet
+emits `{from, to}` as `YYYY-MM-DD` Gregorian, so a page's request, its query
+string and its shareable link are byte-identical whichever calendar the user
+picked in. A calendar is a notation; a date is an instant.
+
+No Jalali dependency: `src/lib/calendar.ts` is day-walking plus one `Intl`
+primitive, with no reverse conversion and so no hand-rolled leap rule to drift
+out of step with the platform's.
+
+### Migration
+
+None required — `"gregory"` is the default and every existing call site keeps
+its exact behaviour. One thing to *undo*, though: if you were passing a Persian
+`locale` to a picker in the belief it gave you a Persian calendar, it did not.
+Pass `calendar="persian"` alongside it.
+
+---
+
 ## [0.7.2]
 
 Patch: **`FilterBar` numbers followed the browser, not the app.**
